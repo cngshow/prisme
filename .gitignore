@@ -13,4 +13,6 @@
 /tmp
 /public/assets/*
 setup.bat
-ets_tooling.war
+start_rm.bat
+ets_prisme.war
+/gem_home

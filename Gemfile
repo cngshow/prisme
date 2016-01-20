@@ -8,7 +8,7 @@ gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
 # Use CoffeeScript for .coffee assets and views
-gem 'coffee-rails', '~> 4.1.0'
+#gem 'coffee-rails', '~> 4.1.0'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 gem 'therubyrhino'
 # Use jquery as the JavaScript library
@@ -32,3 +32,14 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+
+#ETS tooling gems
+gem 'mongoid', '~> 5.0.0'
+gem 'bootstrap-sass', '~> 3.3.6'
+gem 'trinidad', require: nil
+gem 'yard'
+gem 'jquery-ui-rails'
+gem 'logging', '~> 2.0'
+gem 'gon'
+gem 'warbler'
+gem 'activeresource'
