@@ -1,5 +1,6 @@
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
+  config.relative_url_root = ENV['RAILS_RELATIVE_URL_ROOT'] #'/' + to_snake_case(Rails.application.class.parent)
 
   # Code is not reloaded between requests.
   config.cache_classes = true
