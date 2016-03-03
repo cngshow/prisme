@@ -126,19 +126,6 @@
 					
 					<!-- Build two instances of the war for now - one with a relative path of _a, one with _b, so we can deploy twice on the same server -->
 					<execution>
-						<id>build war a</id>
-						<phase>compile</phase>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<configuration>
-							<jrubyVerbose>true</jrubyVerbose>
-							<execArgs>RAILS_ENV=${railsMode} RAILS_RELATIVE_URL_ROOT=ets_prisme_a</execArgs>
-							<command>rake</command>
-							<args>devops:build_war</args>
-						</configuration>
-					</execution>
-					<execution>
 						<id>build war b</id>
 						<phase>compile</phase>
 						<goals>
@@ -146,7 +133,7 @@
 						</goals>
 						<configuration>
 							<jrubyVerbose>true</jrubyVerbose>
-							<execArgs>RAILS_ENV=${railsMode} RAILS_RELATIVE_URL_ROOT=ets_prisme_b</execArgs>
+							<execArgs>RAILS_ENV=${railsMode} RAILS_RELATIVE_URL_ROOT=ets_prisme</execArgs>
 							<command>rake</command>
 							<args>devops:build_war</args>
 						</configuration>
@@ -191,13 +178,7 @@
 						<configuration>
 							<artifacts>
 								<artifact>
-									<file>${project.build.directory}/ets_prisme_a.war</file>
-									<classifier>a</classifier>
-									<type>war</type>
-								</artifact>
-								<artifact>
-									<file>${project.build.directory}/ets_prisme_b.war</file>
-									<classifier>b</classifier>
+									<file>${project.build.directory}/ets_prisme.war</file>
 									<type>war</type>
 								</artifact>
 							</artifacts>
