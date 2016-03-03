@@ -34,12 +34,18 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 #ETS tooling gems
-gem 'mongoid', '~> 5.0.0'
+#gem 'mongoid', '~> 5.0.0'
 gem 'bootstrap-sass', '~> 3.3.6'
 gem 'trinidad', require: nil
 gem 'yard'
 gem 'jquery-ui-rails'
 gem 'logging', '~> 2.0'
 gem 'gon'
-gem 'activeresource'
 gem 'warbler', '>= 2.0.0.pre3'
+gem 'faraday', '~> 0.9.2'
+gem 'ci_reporter_test_unit'
+#gem 'jdbc-hsqldb', '~> 2.3'
+#gem 'activerecord-jdbchsqldb-adapter', '~> 1.3'
+#gem 'activerecord-jdbcderby-adapter'
+gem 'activerecord-jdbch2-adapter'
+#gem 'activerecord-jdbc-adapter'

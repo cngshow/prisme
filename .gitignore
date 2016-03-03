@@ -15,4 +15,8 @@
 setup.bat
 start_rm.bat
 ets_prisme.war
-/gem_home
+/target/
+/.settings/
+/lib/ets_common/
+/.project
+/.idea
