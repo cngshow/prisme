@@ -18,5 +18,6 @@ ets_prisme.war
 /target/
 /.settings/
 /lib/ets_common/
+/lib/jars/
 /.project
 /.idea

@@ -82,21 +82,39 @@
               <overWriteSnapshots>true</overWriteSnapshots>
             </configuration>
           </execution>
-          <execution>
+          
+          <!-- Attempt 1 - but this isn't transitive... likely wont work. -->
+          <!--execution>
             <id>place-jenkins_client</id>
             <phase>initialize</phase>
             <goals>
-              <goal>unpack-dependencies</goal>
+              <goal>copy</goal>
             </goals>
             <configuration>
               <artifactItems>
                 <artifactItem>
                   <artifactId>jenkins-client</artifactId>
+                  <groupId>com.offbytwo.jenkins</groupId>
+                  <outputDirectory>${basedir}/lib/jars/jenkins_client</outputDirectory>
+                  <destFileName>jenkins-client.jar</destFileName>
                   <overWrite>true</overWrite>
-                  <type>jar</type>
                 </artifactItem>
               </artifactItems>
-              <outputDirectory>${basedir}/lib/jars/jenkins_client</outputDirectory>
+            </configuration>
+          </execution-->
+          <execution>
+            <id>place-jenkins_client</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <!-- We really just want jenkins-client, and its transitive dependencies. -->
+              <excludeArtifactIds>jruby-complete,rake,bundler,ets_common,junit,log4j-core,log4j-api,slf4j-api,log4j-slf4j-impl,log4j-jul,hamcrest-core,</excludeArtifactIds>
+              <overWriteReleases>true</overWriteReleases>
+              <overWriteSnapshots>true</overWriteSnapshots>
+              <stripVersion>true</stripVersion>
+              <outputDirectory>${basedir}/lib/jars/</outputDirectory>
             </configuration>
           </execution>
         </executions>
