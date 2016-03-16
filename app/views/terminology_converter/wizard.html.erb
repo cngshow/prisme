@@ -1,0 +1,79 @@
+
+<h1>TerminologyConverter#load_source_content</h1>
+
+
+<!--<form id="example-advanced-form" action="#">-->
+<%= form_tag terminology_converter_process_form_path , {:id => 'terminology_converter_form'}do |f| %>
+<h3>Instructions</h3>
+<fieldset>
+  <legend>Instructions</legend>
+  <p>these are instructions. Click next to continue...</p>
+  <!--    <label for="userName-2">User name *</label>
+      <input id="userName-2" name="userName" type="text" class="required">
+      <label for="password-2">Password *</label>
+      <input id="password-2" name="password" type="text" class="required">
+      <label for="confirm-2">Confirm Password *</label>
+      <input id="confirm-2" name="confirm" type="text" class="required">
+      <p>(*) Mandatory</p>-->
+</fieldset>
+
+<h3>Terminology Source</h3>
+<fieldset>
+  <legend>Terminology Source</legend>
+  <label for="terminology_source">Terminology Source *</label>
+  <input id="terminology_source" name="terminology_source" type="text" class="required">
+  <%= @options.to_s %>
+  <%#= f.select(:country, @options.map(&:name), {:include_blank => 'Select a Terminology Source'}) %>
+  <%#= collection_select("person", "role_id", @roles.collect {|r| [ r.name, r.id ] }, { :include_blank => true }) %>
+
+  <!--    <label for="surname-2">Last name *</label>
+      <input id="surname-2" name="surname" type="text" class="required">
+      <label for="email-2">Email *</label>
+      <input id="email-2" name="email" type="text" class="required email">
+      <label for="address-2">Address</label>
+      <input id="address-2" name="address" type="text">
+      <label for="age-2">Age (The warning step will show up if age is less than 18) *</label>
+      <input id="age-2" name="age" type="text" class="required number">-->
+  <p>(*) Mandatory</p>
+</fieldset>
+
+<!--
+  <h3>Warning</h3>
+  <fieldset>
+    <legend>You are to young</legend>
+
+    <p>Please go away ;-)</p>
+  </fieldset>
+-->
+
+<h3>Terminology Converter</h3>
+<fieldset>
+  <legend>Terminology Converter</legend>
+  <label for="terminology_converter">Terminology Converter *</label>
+  <input id="terminology_converter" name="terminology_converter" type="text" class="required">
+  <!--    <label for="surname-2">Last name *</label>
+      <input id="surname-2" name="surname" type="text" class="required">
+      <label for="email-2">Email *</label>
+      <input id="email-2" name="email" type="text" class="required email">
+      <label for="address-2">Address</label>
+      <input id="address-2" name="address" type="text">
+      <label for="age-2">Age (The warning step will show up if age is less than 18) *</label>
+      <input id="age-2" name="age" type="text" class="required number">-->
+  <p>(*) Mandatory</p>
+</fieldset>
+
+<h3>Finish</h3>
+<fieldset>
+  <legend>Submit Terminology Conversion Request</legend>
+  <p>submitting the form...</p>
+</fieldset>
+<% end %>
+
+<script>
+  $("#example-basic").steps({
+    headerTag: "h3",
+    bodyTag: "section",
+    transitionEffect: "slideLeft",
+    autoFocus: true
+  });
+</script>
