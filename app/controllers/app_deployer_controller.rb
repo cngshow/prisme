@@ -6,18 +6,21 @@ class AppDeployerController < ApplicationController
   end
 
   def deploy_app
-    p = params
     url = "http://vadev.mantech.com:8081/nexus/service/local/artifact/maven/content"
     # g a v r c p
-    params = {}
-    war_info = params['komet_wars'].split('|')
+    p = {}
+    greg = params['komet_war']
+    komet_war = KometWar.init_from_select_key(params['komet_war'])
+    war_name = komet_war.select_value
+
+    war_info = params['komet_war'].split('|')
     p[:g] = war_info[0]
     p[:a] = war_info[1]
     p[:v] = war_info[2]
     p[:r] = war_info[3]
     p[:c] = war_info[4]
     p[:p] = war_info[5]
-
+    url << '?' << p.to_query
     redirect_to welcome_index_path
   end
 

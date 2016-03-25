@@ -62,12 +62,18 @@ class KometWar
     @classifier = classifier
   end
 
+  def self.init_from_select_key(key)
+    vals = key.split('|')
+    raise ArgumentError.new('String passed in from select input is blank!') if vals.length != 6
+    KometWar.new(groupId: vals[0], artifactId: vals[1], version: vals[2], repo: vals[3], classifier: vals[4], package: vals[5])
+  end
+
   def select_key
     "#{groupId}|#{artifactId}|#{version}|#{repo}|#{classifier}|#{package}"
   end
 
   def select_value
-    ret = "#{artifactId} _#{classifier}.#{package}"
+    ret = "#{artifactId}_#{classifier}.#{package}"
 
     if (classifier.nil? || classifier.length == 0)
       ret = "#{artifactId}.#{package}"
