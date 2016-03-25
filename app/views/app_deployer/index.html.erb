@@ -1,0 +1,31 @@
+<%= form_tag(app_deployer_deploy_app_path, :id => 'app_deployer') do %>
+    <%= field_set_tag 'Available Applications' do %>
+        <%= radio_button_tag 'application', 'KOMET', true %>
+        <%= label_tag 'application_KOMET', 'KOMET Tooling' %>
+        <br>
+        <%= radio_button_tag 'application', 'ISAAC' %>
+        <%= label_tag 'application_ISAAC', 'ISAAC' %>
+    <% end %>
+    <br><br>
+    <%= field_set_tag 'Available KOMET Wars' do %>
+        <%= label_tag 'komet_wars', 'KOMET wars' %><br>
+        <%= select_tag 'komet_war', options_from_collection_for_select(@komet_wars, 'select_key', 'select_value'), {:prompt => '-- Select a war to deploy --'}%>
+    <% end %>
+    <br>
+    <br>
+    <%= submit_tag 'Submit Deployment' %>
+<% end %>
+
+<script>
+  $(document).ready(function () {
+    /*
+
+     $('#app_deployer').steps({
+     headerTag: "h3",
+     bodyTag: "section",
+     transitionEffect: "slideLeft",
+     autoFocus: true
+     });
+     */
+  });
+</script>

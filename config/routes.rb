@@ -1,6 +1,14 @@
 Rails.application.routes.draw do
-  get 'terminology_converter/setup'
+  get 'welcome/index'
+  get 'app_deployer' => 'app_deployer#index'
+  post 'app_deployer/deploy_app'
+
+  get 'terminology_converter' => 'terminology_converter#setup'
   post 'terminology_converter/process_form'
+
+  root 'welcome#index'
+
+  # match 'logic_graph/chronology/:id' => 'logic_graph#chronology', :as => :logic_graph_chronology, via: [:get]
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

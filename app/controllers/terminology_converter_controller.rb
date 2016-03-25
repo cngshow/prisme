@@ -1,49 +1,53 @@
 require 'json'
+require 'erb'
+# include ApplicationHelper
+include NexusConcern
 
 class TerminologyConverterController < ApplicationController
-  def setup
+  def setup_last
     @options = load_source_content
     render 'terminology_converter/wizard'
   end
 
+  def setup
+    @options = load_source_content
+  end
+
   def process_form
+    term_source = params[:terminology_source]
+    source = TermSource.init_from_select_key(term_source) unless term_source.nil?
+    base_dir = './tmp/vhat-ibdf/'
+    source_version = source.version
+    loader_version = 'SNAPSHOT-LOADER-VERSION-KMA'
+    erb = 'pom.xml.erb'
+
+    # use 'binding' (method in Kernel) which binds the current block for erb so that the local variables are visible to the pom.xml.erb
+    pom_result = ERB.new(File.open("#{base_dir}/#{erb}", 'r') { |file| file.read }).result(binding)
+
+    # write the new pom file out
+    File.open("#{base_dir}/pom.xml", 'w') {|f| f.write(pom_result) }
+
+    # delete the pom.xml.erb file
+    File.delete("#{base_dir}/#{erb}")
+
+    # move zip to nexus
+    # download from nexus to temp
+    # unzip in temp
+
+
+    url_string = source.artifact('pom')
+    @pom = get_nexus_connection.get(url_string, {}).body
+    @pom = pom_result
+
   end
 
-  TermSource = Struct.new(:repoUrl, :groupId, :artifactId, :version) do
-    def get_full_path
-      "#{repoUrl}/#{groupId.gsub('.', '/')}/#{artifactId}/#{version}/"
-    end
+  def get_repo_zip
+    # 'http://localhost:8081/nexus/service/local/artifact/maven/content?g=vhat_ibdf&a=converter&v=LATEST&r=vhat_ibdf&c=vhat_ibdf_converters&e=zip'
+    url_string = '/nexus/service/local/artifact/maven/content'
+    params = {g: 'vhat_ibdf', a: 'converter', v: 'LATEST', r: 'vhat_ibdf', c: 'vhat_ibdf_converters', e: 'zip'}
+    File.open('./tmp/vhat_ibdf.zip', 'w') {|f| f.write(get_nexus_connection.get(url_string, params)) }
 
-    def artifact(ext)
-      "#{get_full_path}#{artifactId}-#{version}.#{ext}"
-    end
-
-    def get_key
-      "#{groupId}-#{artifactId}-#{version}"
-    end
-
-    def select_option
-      {key: get_key, value: "#{artifactId} version #{version}"}
-    end
   end
-
-=begin
-  private
-
-  # setup the nexus connection
-  # todo move this to an initializer?
-  def get_nexus_connection
-    nexus_conn = Faraday.new(url: $PROPS['ENDPOINT.nexus_root']) do |faraday|
-      faraday.request :url_encoded # form-encode POST params
-      faraday.use Faraday::Response::Logger, $log
-      faraday.headers['Accept'] = 'application/json'
-      faraday.adapter :net_http # make requests with Net::HTTP
-    end
-
-    nexus_conn.basic_auth('devtest', 'devtest')
-    nexus_conn
- end
-=end
 
   ##################################################################################
   # load the source content from nexus using a lucene search based on the group name
@@ -68,6 +72,7 @@ class TerminologyConverterController < ApplicationController
 
     # iterate over the results building the sorted TermSource Struct
     hits = json['data']
-    hits.map { |i| Struct::TermSource.new(repo_url, i['groupId'], i['artifactId'], i['version']) }.sort_by { |e| [e.get_key] }
+    data = hits.map { |i| TermSource.new(repoUrl: repo_url, groupId: i['groupId'], artifactId: i['artifactId'], version: i['version']) }.sort_by { |e| [e.get_key] }
+    data
   end
 end
