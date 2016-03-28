@@ -2,6 +2,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+  <!-- in order to get your jars run this -->
+  <!-- mvn clean dependency:copy-dependencies -->
+
   <parent>
     <groupId>gov.vha.isaac.ochre</groupId>
     <artifactId>isaac-parent</artifactId>
@@ -59,10 +62,36 @@
       <artifactId>jenkins-client</artifactId>
       <version>0.3.3</version>
     </dependency>
+    <dependency>
+      <groupId>org.codehaus.cargo</groupId>
+      <artifactId>cargo-core-uberjar</artifactId>
+      <version>1.4.19</version>
+    </dependency>
   </dependencies>
 
   <build>
     <plugins>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <configuration>
+          <artifactItems>
+            <artifactItem>
+              <artifactId>cargo-core-uberjar</artifactId>
+              <overWrite>true</overWrite>
+              <type>jar</type>
+            </artifactItem>
+            <artifactItem>
+              <artifactId>jenkins-client</artifactId>
+              <overWrite>true</overWrite>
+              <type>jar</type>
+            </artifactItem>
+
+          </artifactItems>
+          <outputDirectory>./lib/jars/</outputDirectory>
+        </configuration>
+      </plugin>
 
       <!-- Extract the rails_common code into the correct place here, overwriting any existing version -->
       <plugin>
@@ -109,7 +138,7 @@
               <goal>copy-dependencies</goal>
             </goals>
             <configuration>
-              <!-- We really just want jenkins-client, and its transitive dependencies. -->
+              <!-- We really just want jenkins-client, cargo, and their transitive dependencies. -->
               <excludeArtifactIds>jruby-complete,rake,bundler,rails_common,junit,log4j-core,log4j-api,slf4j-api,log4j-slf4j-impl,log4j-jul,hamcrest-core,</excludeArtifactIds>
               <overWriteReleases>true</overWriteReleases>
               <overWriteSnapshots>true</overWriteSnapshots>
