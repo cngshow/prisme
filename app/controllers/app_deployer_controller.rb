@@ -9,7 +9,6 @@ class AppDeployerController < ApplicationController
     url = "http://vadev.mantech.com:8081/nexus/service/local/artifact/maven/content"
     # g a v r c p
     p = {}
-    greg = params['komet_war']
     komet_war = KometWar.init_from_select_key(params['komet_war'])
     war_name = komet_war.select_value
 
@@ -21,6 +20,8 @@ class AppDeployerController < ApplicationController
     p[:c] = war_info[4]
     p[:p] = war_info[5]
     url << '?' << p.to_query
+    #ActiveRecord Job set to pending
+    ArtifactDownloadJob.perform_later(url,war_name)#,job-id
     redirect_to welcome_index_path
   end
 
