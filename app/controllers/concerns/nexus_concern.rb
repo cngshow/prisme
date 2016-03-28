@@ -1,11 +1,11 @@
 require 'faraday'
 
 module NexusConcern
-  def get_nexus_connection
+  def get_nexus_connection(header = 'application/json')
     nexus_conn = Faraday.new(url: $PROPS['ENDPOINT.nexus_root']) do |faraday|
       faraday.request :url_encoded # form-encode POST params
       faraday.use Faraday::Response::Logger, $log
-      faraday.headers['Accept'] = 'application/json'
+      faraday.headers['Accept'] = header
       faraday.adapter :net_http # make requests with Net::HTTP
       faraday.basic_auth($PROPS['ENDPOINT.nexus_user'], $PROPS['ENDPOINT.nexus_pwd'])
     end
