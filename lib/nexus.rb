@@ -1,7 +1,7 @@
 require 'faraday'
 require 'json'
-require './lib/ets_common/util/helpers'
-include ETSUtilities
+require './lib/rails_common/util/helpers'
+include KOMETUtilities
 
 NEXUS_CONN = Faraday.new(url: 'http://vadev.mantech.com:8081') do |faraday|
   faraday.request :url_encoded # form-encode POST params

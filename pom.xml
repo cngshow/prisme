@@ -9,24 +9,24 @@
   </parent>
 
   <groupId>gov.vha.isaac.gui.rails</groupId>
-  <artifactId>ets_prisme</artifactId>
+  <artifactId>rails_prisme</artifactId>
   <version>1.3-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <name>ISAAC Rails ETS PRISME</name>
+  <name>ISAAC Rails PRISME</name>
 
   <description>
     This project is the Ruby on Rails web GUI for PRISME
   </description>
 
   <properties>
-    <ets_common.version>1.0-SNAPSHOT</ets_common.version>
+    <rails_common.version>1.0-SNAPSHOT</rails_common.version>
     <!-- railsMode is automatically set to 'test' or 'production' - 'test' if the version number ends with '-SNAPSHOT'
     or 'production' otherwise.  See ant execution below-->
   </properties>
 
   <scm>
-    <url>https://github.com/VA-CTT/ets_prisme.git</url>
+    <url>https://github.com/VA-CTT/rails_prisme.git</url>
   </scm>
 
   <dependencies>
@@ -49,8 +49,8 @@
     </dependency>
     <dependency>
       <groupId>gov.vha.isaac.gui.rails</groupId>
-      <artifactId>ets_common</artifactId>
-      <version>${ets_common.version}</version>
+      <artifactId>rails_common</artifactId>
+      <version>${rails_common.version}</version>
       <type>zip</type>
       <optional>true</optional> <!-- Not needed at runtime / transitively -->
     </dependency>
@@ -64,19 +64,19 @@
   <build>
     <plugins>
 
-      <!-- Extract the ets_common code into the correct place here, overwriting any existing version -->
+      <!-- Extract the rails_common code into the correct place here, overwriting any existing version -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
-            <id>extract-ets_common</id>
+            <id>extract-rails_common</id>
             <phase>initialize</phase>
             <goals>
               <goal>unpack-dependencies</goal>
             </goals>
             <configuration>
-              <includeArtifactIds>ets_common</includeArtifactIds>
+              <includeArtifactIds>rails_common</includeArtifactIds>
               <outputDirectory>${basedir}/lib/</outputDirectory>
               <overWriteReleases>true</overWriteReleases>
               <overWriteSnapshots>true</overWriteSnapshots>
@@ -110,7 +110,7 @@
             </goals>
             <configuration>
               <!-- We really just want jenkins-client, and its transitive dependencies. -->
-              <excludeArtifactIds>jruby-complete,rake,bundler,ets_common,junit,log4j-core,log4j-api,slf4j-api,log4j-slf4j-impl,log4j-jul,hamcrest-core,</excludeArtifactIds>
+              <excludeArtifactIds>jruby-complete,rake,bundler,rails_common,junit,log4j-core,log4j-api,slf4j-api,log4j-slf4j-impl,log4j-jul,hamcrest-core,</excludeArtifactIds>
               <overWriteReleases>true</overWriteReleases>
               <overWriteSnapshots>true</overWriteSnapshots>
               <stripVersion>true</stripVersion>
@@ -173,7 +173,7 @@
             </goals>
             <configuration>
               <jrubyVerbose>true</jrubyVerbose>
-              <execArgs>RAILS_ENV=${railsMode} RAILS_RELATIVE_URL_ROOT=ets_prisme</execArgs>
+              <execArgs>RAILS_ENV=${railsMode} RAILS_RELATIVE_URL_ROOT=rails_prisme</execArgs>
               <command>rake</command>
               <args>devops:build_war</args>
             </configuration>
@@ -218,7 +218,7 @@
             <configuration>
               <artifacts>
                 <artifact>
-                  <file>${project.build.directory}/ets_prisme.war</file>
+                  <file>${project.build.directory}/rails_prisme.war</file>
                   <type>war</type>
                 </artifact>
               </artifacts>

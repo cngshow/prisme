@@ -14,10 +14,10 @@
 /public/assets/*
 setup.bat
 start_rm.bat
-ets_prisme.war
+rails_prisme.war
 /target/
 /.settings/
-/lib/ets_common/
+/lib/rails_common/
 /lib/jars/
 /.project
 /.idea
