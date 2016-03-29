@@ -1,3 +1,4 @@
+require './app/jobs/prisme_base_job'
 require 'sucker_punch/async_syntax'
 SuckerPunch.logger = $log
 
@@ -39,4 +40,13 @@ module ActiveJob
   end
 end
 
-# ArtifactDownloadJob.set(wait_until: 5.seconds.from_now).perform_later
+# update any uncompleted jobs that are in the PrismeJobs table to failure status
+params = [PrismeJobConstants::Status::COMPLETED,
+          PrismeJobConstants::Status::FAILED,
+]
+
+update_hash = {status: PrismeJobConstants::Status::FAILED, last_error: 'System Failure - Incompleted job update to Failed in initializer!'}
+PrismeJob.where(['status != ? and status != ?', *params]).update_all(update_hash)
+
+# schedule the CleanJobQueueJob to run soon
+CleanJobQueueJob.perform_later
