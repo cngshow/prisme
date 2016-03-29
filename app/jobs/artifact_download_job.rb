@@ -1,7 +1,6 @@
 require 'zip'
 require './app/controllers/concerns/nexus_concern'
-class ArtifactDownloadJob < ActiveJob::Base
-  queue_as :default
+class ArtifactDownloadJob < PrismeBaseJob
   include NexusConcern
 
   @@connection = get_nexus_connection('*/*')
@@ -35,4 +34,8 @@ class ArtifactDownloadJob < ActiveJob::Base
 
 end
 # ArtifactDownloadJob.set(wait_until: 5.seconds.from_now).perform_later
-#
+#  include NexusConcern
+#job = ArtifactDownloadJob.set(wait_until: 5.years.from_now).perform_later
+#job = ArtifactDownloadJob.set(wait_until: 5.years.from_now)
+# job.perform_later
+#ActiveJobStatus::JobStatus.get_status(job_id: job.job_id)

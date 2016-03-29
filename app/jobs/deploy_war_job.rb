@@ -1,8 +1,6 @@
 require './lib/cargo'
 
-class DeployWarJob < ActiveJob::Base
-  queue_as :default
-
+class DeployWarJob < PrismeBaseJob
 
   def perform(*args)
     logger = CargoSupport::CargoLogger.new
