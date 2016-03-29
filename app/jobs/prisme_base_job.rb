@@ -19,7 +19,8 @@ class PrismeBaseJob < ActiveJob::Base
     $log.debug("Preparing to enqueue job #{job}")
     active_record = PrismeJob.new
     active_record.job_id = job.job_id
-    active_record.scheduled_at = Time.at(job.scheduled_at)
+    active_record.scheduled_at = Time.at(job.scheduled_at) unless job.scheduled_at.nil?
+    active_record.scheduled_at = Time.now if job.scheduled_at.nil?
     active_record.queue = job.queue_name
     active_record.job_name = job.class.to_s
     active_record.status = PrismeJobConstants::Status::NOT_QUEUED
@@ -71,3 +72,4 @@ class PrismeBaseJob < ActiveJob::Base
 end
 # load('./app/jobs/prisme_base_job.rb')
 # job = TestJob.set(wait_until: 5.seconds.from_now).perform_later
+# job = TestJob.perform_later
