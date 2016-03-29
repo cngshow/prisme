@@ -12,22 +12,28 @@ class PrismeBaseJob < ActiveJob::Base
   queue_as :default
 
   def lookup
-    PrismeJob.where(job_id: self.job_id).first
+    active_record = PrismeJob.where(job_id: self.job_id).first
+    if (active_record.nil?)
+      active_record = PrismeJob.new
+      active_record.job_id = self.job_id
+      active_record.scheduled_at = Time.at(self.scheduled_at) unless self.scheduled_at.nil?
+      active_record.scheduled_at = Time.now if self.scheduled_at.nil?
+      active_record.queue = self.queue_name
+      active_record.job_name = self.class.to_s
+      active_record.status = PrismeJobConstants::Status::NOT_QUEUED
+    end
+    active_record
   end
 
   before_enqueue do |job|
+    #this lifecycle is skipped on job.perform_now
     $log.debug("Preparing to enqueue job #{job}")
-    active_record = PrismeJob.new
-    active_record.job_id = job.job_id
-    active_record.scheduled_at = Time.at(job.scheduled_at)
-    active_record.queue = job.queue_name
-    active_record.job_name = job.class.to_s
-    active_record.status = PrismeJobConstants::Status::NOT_QUEUED
-    active_record.save!
+    lookup.save!
   end
 
 
   after_enqueue do |job|
+    #this lifecycle is skipped on job.perform_now
     $log.debug("Enqueued job #{job}")
     active_record = lookup
     active_record.status = PrismeJobConstants::Status::QUEUED
@@ -71,3 +77,6 @@ class PrismeBaseJob < ActiveJob::Base
 end
 # load('./app/jobs/prisme_base_job.rb')
 # job = TestJob.set(wait_until: 5.seconds.from_now).perform_later
+# job = TestJob.set(wait: 1.days).perform_later
+# job = TestJob.set(wait_until: 60.seconds.from_now).perform_later
+# job = TestJob.perform_later
