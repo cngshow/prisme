@@ -13,7 +13,7 @@
 
 ActiveRecord::Schema.define(version: 20160329150821) do
 
-  create_table "prisme_jobs", force: :cascade do |t|
+  create_table "prisme_jobs", id: false, force: :cascade do |t|
     t.string   "job_id",       limit: 255,        null: false
     t.string   "job_name",     limit: 255,        null: false
     t.string   "status",       limit: 255,        null: false
