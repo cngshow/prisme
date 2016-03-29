@@ -52,7 +52,6 @@ class PrismeBaseJob < ActiveJob::Base
   end
 
   rescue_from(StandardError) do |exception|
-    puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " + self.job_id
     active_record = lookup
     $log.debug("Rescue block self is " + self.to_s + " Is @act nil : " + active_record.nil?.to_s)
     active_record.last_error = exception.message
