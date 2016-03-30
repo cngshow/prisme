@@ -7,8 +7,8 @@ class CleanJobQueueJob < PrismeBaseJob
 
   def perform(*args)
     params = [$PROPS['PRISME.job_queue_trim'].to_i.days.ago,
-              PrismeJobConstants::Status::COMPLETED,
-              PrismeJobConstants::Status::FAILED,
+              PrismeJobConstants::Status::STATUS_HASH[:COMPLETED],
+              PrismeJobConstants::Status::STATUS_HASH[:FAILED],
     ]
 
     # delete all jobs that are x days old

@@ -1,11 +1,14 @@
 module PrismeJobConstants
   module Status
-    NOT_QUEUED = :not_queued
-    QUEUED = :queued
-    RUNNING = :running
-    COMPLETED = :completed
-    FAILED = :failed
+    STATUS_HASH = {
+        NOT_QUEUED: 0,
+        QUEUED: 1,
+        RUNNING: 2,
+        FAILED: 3,
+        COMPLETED: 4,
+    }
   end
+
   module User
     SYSTEM  = :"Prisme System"
   end
@@ -24,7 +27,7 @@ class PrismeBaseJob < ActiveJob::Base
       active_record.scheduled_at = Time.now if self.scheduled_at.nil?
       active_record.queue = self.queue_name
       active_record.job_name = self.class.to_s
-      active_record.status = PrismeJobConstants::Status::NOT_QUEUED
+      active_record.status = PrismeJobConstants::Status::STATUS_HASH[:NOT_QUEUED]
     end
     active_record
   end
@@ -40,7 +43,7 @@ class PrismeBaseJob < ActiveJob::Base
     #this lifecycle is skipped on job.perform_now
     $log.debug("Enqueued job #{job}")
     active_record = lookup
-    active_record.status = PrismeJobConstants::Status::QUEUED
+    active_record.status = PrismeJobConstants::Status::STATUS_HASH[:QUEUED]
     active_record.enqueued_at = Time.now
     active_record.save!
   end
@@ -48,7 +51,7 @@ class PrismeBaseJob < ActiveJob::Base
   before_perform do |job|
     active_record = lookup
     $log.debug("Preparing to perform job #{job}")
-    active_record.status = PrismeJobConstants::Status::RUNNING
+    active_record.status = PrismeJobConstants::Status::STATUS_HASH[:RUNNING]
     active_record.started_at = Time.now
     active_record.save!
   end
@@ -56,7 +59,7 @@ class PrismeBaseJob < ActiveJob::Base
   after_perform do |job|
     active_record = lookup
     $log.debug("Performed job #{job}")
-    active_record.status = PrismeJobConstants::Status::COMPLETED
+    active_record.status = PrismeJobConstants::Status::STATUS_HASH[:COMPLETED]
     active_record.completed_at = Time.now
     active_record.save!
   end
@@ -65,7 +68,7 @@ class PrismeBaseJob < ActiveJob::Base
     active_record = lookup
     $log.debug("Rescue block self is " + self.to_s + " Is @act nil : " + active_record.nil?.to_s)
     active_record.last_error = exception.message
-    active_record.status = PrismeJobConstants::Status::FAILED
+    active_record.status = PrismeJobConstants::Status::STATUS_HASH[:FAILED]
     active_record.completed_at = Time.now
     active_record.save!
   end
@@ -84,3 +87,5 @@ end
 # job = TestJob.set(wait: 1.days).perform_later
 # job = TestJob.set(wait_until: 60.seconds.from_now).perform_later
 # job = TestJob.perform_later
+#convert status example
+# PrismeJobConstants::Status::STATUS_HASH.invert[PrismeJob.all[1].status]
