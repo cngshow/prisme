@@ -17,11 +17,17 @@ module CargoSupport
   class CargoLogger
     include JCargoLogger
 
+    attr_reader :results
+
+    def initialize
+      @results = String.new
+    end
+
     def getLevel
-      return JCargo::LogLevel::DEBUG if ($log.debug?)
-      return JCargo::LogLevel::INFO if ($log.info?)
-      return JCargo::LogLevel::WARN #Cargo's max is warn, as all exceptions are simply raised.  So no matter our lewel
-                                    #We will at least return warn.
+      return JCargo::LogLevel::DEBUG #always return debug so we capture all of Cargo's chatter for the job result.
+      # return JCargo::LogLevel::INFO if ($log.info?)
+      # return JCargo::LogLevel::WARN #Cargo's max is warn, as all exceptions are simply raised.  So no matter our lewel
+      #                               #We will at least return warn.
     end
 
     def setLevel(level)
@@ -29,20 +35,23 @@ module CargoSupport
     end
 
     def debug(message, category)
+      @results << "debug: #{message} -- #{category}\n"
       $log.debug("#{message} -- #{category}}")
     end
 
     def info(message, category)
+      @results << "info: #{message} -- #{category}\n"
       $log.info("#{message} -- #{category}}")
     end
 
     def warn(message, category)
-      $log.warn("#{message} -- #{category}}") if $log.warn?
+      @results << "warn: #{message} -- #{category}\n"
+      $log.warn("#{message} -- #{category}}")
     end
 
   end
 end
-#below moves to active record later
+#below moves to active record later (service libraries)
 java.lang.System.getProperties.put('cargo.remote.username','devtest')
 java.lang.System.getProperties.put('cargo.remote.password','devtest')
 java.lang.System.getProperties.put('cargo.tomcat.manager.url','http://vadev.mantech.com:4848/manager')
