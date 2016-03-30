@@ -22,7 +22,7 @@ class AppDeployerController < ApplicationController
     url << '?' << p.to_query
     #ActiveRecord Job set to pending
     ArtifactDownloadJob.perform_later(url,war_name)#,job-id
-    redirect_to welcome_index_path
+    redirect_to prisme_job_queue_list_path
   end
 
   private

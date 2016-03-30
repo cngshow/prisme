@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  get 'prisme_job_queue/list'
+  get 'prisme_job_queue/reload_job_queue_list'
+
   get 'welcome/index'
   get 'app_deployer' => 'app_deployer#index'
   post 'app_deployer/deploy_app'

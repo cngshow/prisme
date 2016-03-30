@@ -1,0 +1,126 @@
+<h1>PRISME Job Queue</h1>
+<style>
+  html, body {
+    padding: 5px;
+  }
+
+  #data-table {
+    font-family: calibri, arial;
+    width: 400px;
+  }
+
+  #data-table thead td {
+    background-color: #8CCCF1;
+    font-weight: bold;
+  }
+
+  #data-table td {
+    border: 1px solid #466E85;
+    width: 136px;
+    padding: 7px;
+  }
+</style>
+
+<table id="data-table">
+  <thead>
+  <tr>
+    <td>Job ID</td>
+    <td>Job Name</td>
+    <td>Status</td>
+    <td>Enqueued At</td>
+    <td>Scheduled At</td>
+    <!--<td>Elapsed Time</td>-->
+    <td>User</td>
+    <td>Last Error</td>
+    <td>Result</td>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td colspan="9" style="text-align:center">There are no items to list...</td>
+  </tr>
+  </tbody>
+</table>
+<br/>
+
+<button id="btn-update">Update List</button>
+<button id="btn-test">Test Job</button>
+
+<script>
+  $(document).ready(function (e) {
+    function loadTable(tableId, fields, data) {
+      //$('#' + tableId).empty(); //not really necessary
+      var rows = '';
+      $.each(data, function (index, item) {
+        var row = '<tr>';
+        $.each(fields, function (index, field) {
+          if (field === 'status') {
+            row += '<td>' + gon.job_status_constants[item[field + '']] + '</td>';
+          }
+          else {
+            row += '<td>' + item[field + ''] + '</td>';
+          }
+        });
+        rows += row + '<tr>';
+      });
+      $('#' + tableId + ' tbody').html(rows);
+    }
+
+    var fields = ['job_id', 'job_name', 'status', 'enqueued_at', 'scheduled_at', 'user', 'last_error', 'result'];
+
+    $('#btn-test').click(function (e) {
+    });
+
+    $('#btn-update').click(function (e) {
+      $.ajax({
+        url: '/prisme_job_queue/reload_job_queue_list',
+        type: "GET",
+        success: function (data) {
+          loadTable('data-table', fields, data);
+        },
+        dataType: "json"
+//        complete: setTimeout(function () {
+//          poll()
+//        }, 5000),
+//        timeout: 2000
+      })
+    });
+//    })();
+
+  });
+</script>
+<!--
+
+<script>
+  (function poll() {
+    $.ajax({
+      url: '/prisme_job_queue/reload_job_queue_list',
+      type: "GET",
+      success: function (data) {
+        loadTable('data-table', fields, data);
+      },
+      dataType: "json",
+      complete: setTimeout(function () {
+        poll()
+      }, 5000),
+      timeout: 2000
+    })
+  })();
+</script>
+-->
+
+<!--
+
+<script>
+  $(document).ready(function() {
+    var intervalID = setInterval(function() {
+      $.get('async', function(data) {
+        $('#datum').text(data);
+        if(data === 'completed'){
+          clearInterval(intervalID);
+        }
+      } );
+    }, 1000); // 1000 milliseconds = 1 second.
+
+  });
+</script>-->

@@ -1,0 +1,2 @@
+module PrismeJobQueueHelper
+end

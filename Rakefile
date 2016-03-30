@@ -10,5 +10,5 @@ def running_tasks
 end
 
 def is_running_migration_or_rollback?
-  running_tasks.include?("db:migrate") || running_tasks.include?("db::rollback")
+  running_tasks.include?('db:migrate') || running_tasks.include?('db:rollback')
 end
