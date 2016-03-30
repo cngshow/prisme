@@ -1,6 +1,9 @@
 class CleanJobQueueJob < PrismeBaseJob
   queue_as :default
-  default_user= PrismeJobConstants::User::SYSTEM
+
+  def default_user
+    PrismeJobConstants::User::SYSTEM
+  end
 
   def perform(*args)
     params = [$PROPS['PRISME.job_queue_trim'].to_i.days.ago,

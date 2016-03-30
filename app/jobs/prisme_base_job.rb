@@ -13,18 +13,17 @@ end
 
 class PrismeBaseJob < ActiveJob::Base
   queue_as :default
-  attr_accessor :default_user
 
   def lookup
     active_record = PrismeJob.find_by(job_id: self.job_id)
     if (active_record.nil?)
       active_record = PrismeJob.new
+      active_record.user = default_user if self.respond_to? :default_user
       active_record.job_id = self.job_id
       active_record.scheduled_at = Time.at(self.scheduled_at) unless self.scheduled_at.nil?
       active_record.scheduled_at = Time.now if self.scheduled_at.nil?
       active_record.queue = self.queue_name
       active_record.job_name = self.class.to_s
-      active_record.user = default_user unless default_user.nil?
       active_record.status = PrismeJobConstants::Status::NOT_QUEUED
     end
     active_record
@@ -76,7 +75,7 @@ class PrismeBaseJob < ActiveJob::Base
   end
 
   def to_s
-    "Job: " + self.class.to_s + " , ID: " + self.job_id
+    "Job: " + self.class.to_s + " , ID: " + self.job_id.to_s
   end
 
 end
