@@ -1,5 +1,6 @@
 class CleanJobQueueJob < PrismeBaseJob
   queue_as :default
+  default_user= PrismeJobConstants::User::SYSTEM
 
   def perform(*args)
     params = [$PROPS['PRISME.job_queue_trim'].to_i.days.ago,
@@ -9,8 +10,11 @@ class CleanJobQueueJob < PrismeBaseJob
 
     # delete all jobs that are x days old
     cnt = PrismeJob.delete_all(['completed_at < ? AND (status = ? OR status= ?)', *params])
-    $log.info("CleanJobQueueJob deleted #{cnt} records from the prisme_jobs table.")
-
+    result = "CleanJobQueueJob deleted #{cnt} old records from the prisme_jobs table.\n"
+    $log.info(result)
+    active_record = lookup
+    active_record.result= result
+    active_record.save!
     # schedule this job to run again one day from now
     num_days = $PROPS['PRISME.resched_clean_queue_days'].to_i
     CleanJobQueueJob.set(wait: num_days.days).perform_later

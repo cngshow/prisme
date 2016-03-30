@@ -6,13 +6,17 @@ module PrismeJobConstants
     COMPLETED = :completed
     FAILED = :failed
   end
+  module User
+    SYSTEM  = :"Prisme System"
+  end
 end
 
 class PrismeBaseJob < ActiveJob::Base
   queue_as :default
+  attr_accessor :default_user
 
   def lookup
-    active_record = PrismeJob.where(job_id: self.job_id).first
+    active_record = PrismeJob.find_by(job_id: self.job_id)
     if (active_record.nil?)
       active_record = PrismeJob.new
       active_record.job_id = self.job_id
@@ -20,6 +24,7 @@ class PrismeBaseJob < ActiveJob::Base
       active_record.scheduled_at = Time.now if self.scheduled_at.nil?
       active_record.queue = self.queue_name
       active_record.job_name = self.class.to_s
+      active_record.user = default_user unless default_user.nil?
       active_record.status = PrismeJobConstants::Status::NOT_QUEUED
     end
     active_record

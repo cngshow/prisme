@@ -22,7 +22,12 @@ class DeployWarJob < PrismeBaseJob
     war = deployer_factory.createDeployable(tom_container.getId(), file_name, deployable_type);
     $log.info("About to deploy #{file_name}")
     #to_do -- switch to undeploy/redeploy
-    deployer.deploy(war, url)
+    deployer.redeploy(war, url)
+    results = logger.results
+    results << "Deployed #{file_name}\n"
+    active_record = lookup
+    active_record.result= results
+    active_record.save!
     $log.info("Deployed #{file_name}")
   end
 end
