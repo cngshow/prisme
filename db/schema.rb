@@ -23,6 +23,7 @@ ActiveRecord::Schema.define(version: 20160329150821) do
     t.datetime "started_at",   limit: 23
     t.datetime "completed_at", limit: 23
     t.text     "last_error",   limit: 2147483647
+    t.text     "result",       limit: 2147483647
     t.string   "user",         limit: 255
     t.datetime "created_at",   limit: 23
     t.datetime "updated_at",   limit: 23

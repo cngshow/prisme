@@ -9,7 +9,8 @@ class CreatePrismeJobs < ActiveRecord::Migration
       table.datetime :enqueued_at                     # When the job was put on the queue
       table.datetime :started_at                      # When the job was started
       table.datetime :completed_at                    # When the job was completed
-      table.text :last_error                          # reason for last failure (See Note below)
+      table.text :last_error                          # reason for last failure
+      table.text :result                              # optional result text for the job.
       table.string :user                              # the user requesting the job
       table.timestamps null: true
     end
