@@ -16,7 +16,7 @@ ActiveRecord::Schema.define(version: 20160329150821) do
   create_table "prisme_jobs", id: false, force: :cascade do |t|
     t.string   "job_id",       limit: 255,        null: false
     t.string   "job_name",     limit: 255,        null: false
-    t.string   "status",       limit: 255,        null: false
+    t.integer  "status",       limit: 10,         null: false
     t.string   "queue",        limit: 255,        null: false
     t.datetime "scheduled_at", limit: 23,         null: false
     t.datetime "enqueued_at",  limit: 23

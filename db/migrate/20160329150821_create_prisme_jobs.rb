@@ -3,7 +3,7 @@ class CreatePrismeJobs < ActiveRecord::Migration
     create_table :prisme_jobs,{force: true, id: false} do |table|
       table.string :job_id, :null => false            # the assigned global_id guid
       table.string :job_name, :null => false          # the name of the job
-      table.string :status, :null => false            # not_queued, queued, running, completed, failed
+      table.integer :status, :null => false            # not_queued, queued, running, completed, failed
       table.string :queue, :null => false             # The name of the queue this job is in
       table.datetime :scheduled_at, :null => false    # When the job is scheduled to run.
       table.datetime :enqueued_at                     # When the job was put on the queue
