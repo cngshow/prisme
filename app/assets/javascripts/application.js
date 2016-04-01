@@ -14,6 +14,7 @@
 //= require jquery_ujs
 //= require bootstrap
 //= require turbolinks
+//= require ag-grid/ag-grid
 //= require jquery.smartWizard/jquery.smartWizard
 //= require jquery.steps-1.1.0/jquery.steps
 // = require_tree .
