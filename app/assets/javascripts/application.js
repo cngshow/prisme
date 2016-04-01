@@ -17,4 +17,5 @@
 //= require ag-grid/ag-grid
 //= require jquery.smartWizard/jquery.smartWizard
 //= require jquery.steps-1.1.0/jquery.steps
+//= require jquery-validation/jquery.validate.min
 // = require_tree .
