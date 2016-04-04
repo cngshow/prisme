@@ -15,6 +15,7 @@ class CipherSupport
 
   private
   def init
+    #128 bit AES Cipher Block Chaining encryption
     @encrypt = OpenSSL::Cipher::AES.new(128, :CBC)
     @decrypt = OpenSSL::Cipher::AES.new(128, :CBC)
     secret = Rails.application.secrets.secret_key_base
@@ -27,4 +28,4 @@ end
 
 # load './lib/cipher.rb'
 #v = CipherSupport.instance.encrypt(unencrypted_string: 'bob')
-#> v = CipherSupport.instance.decrypt(encrypted_string: v)
+# v = CipherSupport.instance.decrypt(encrypted_string: v)
