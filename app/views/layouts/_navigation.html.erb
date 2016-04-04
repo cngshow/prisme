@@ -4,10 +4,11 @@
   </div>
   <div>
     <ul class="nav navbar-nav">
-      <li><a href="<%= root_path%>" ><span class="glyphicon glyphicon-home"> Home</span></a></li>
-      <li><a href="<%= terminology_converter_path%>">Terminology Converter</a></li>
-      <li><a href="<%= app_deployer_path%>">App Deployer</a></li>
-      <li><a href="#">DB Builder</a></li>
+      <li><a href="<%= root_path%>" ><span class="glyphicon glyphicon-home" onclick="checkPolling('welcome');"></span></a></li>
+      <li><a href="<%= terminology_converter_path%>" onclick="checkPolling('converter');">Terminology Converter</a></li>
+      <li><a href="<%= app_deployer_path%>" onclick="checkPolling('deployer');">App Deployer</a></li>
+      <li><a href="#" onclick="checkPolling('db_builder');">DB Builder</a></li>
+      <li><a href="<%= prisme_job_queue_list_path%>" onclick="checkPolling('job_queue');">Job Queue Listing</a></li>
     </ul>
   </div>
 </nav>
