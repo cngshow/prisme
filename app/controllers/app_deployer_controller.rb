@@ -3,10 +3,11 @@ include NexusConcern
 class AppDeployerController < ApplicationController
   def index
     @komet_wars = get_komet_wars
+    @tomcat_servers = []
   end
 
   def deploy_app
-    url = "http://vadev.mantech.com:8081/nexus/service/local/artifact/maven/content"
+    url = 'http://vadev.mantech.com:8081/nexus/service/local/artifact/maven/content'
     # g a v r c p
     p = {}
     komet_war = KometWar.init_from_select_key(params['komet_war'])

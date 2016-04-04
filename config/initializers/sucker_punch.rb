@@ -45,10 +45,9 @@ unless defined?(is_running_migration_or_rollback?) && is_running_migration_or_ro
 # update any uncompleted jobs that are in the PrismeJobs table to failure status
   params = [PrismeJobConstants::Status::STATUS_HASH[:COMPLETED],
             PrismeJobConstants::Status::STATUS_HASH[:FAILED],]
-  update_hash = {status: PrismeJobConstants::Status::STATUS_HASH[:FAILED], last_error: 'System Failure - Incompleted job update to Failed in initializer!'}
+  update_hash = {status: PrismeJobConstants::Status::STATUS_HASH[:FAILED], last_error: 'System Failure - Uncompleted job were updated to Failed in initializer!'}
   PrismeJob.where(['status != ? and status != ?', *params]).update_all(update_hash)
 
 # schedule the CleanJobQueueJob to run soon
   CleanJobQueueJob.perform_later
 end
-

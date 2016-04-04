@@ -6,7 +6,7 @@
 
   #data-table {
     font-family: calibri, arial;
-    width: 400px;
+    width: 100%;
   }
 
   #data-table thead td {
@@ -27,8 +27,10 @@
     <td>Job ID</td>
     <td>Job Name</td>
     <td>Status</td>
-    <td>Enqueued At</td>
     <td>Scheduled At</td>
+    <td>Enqueued At</td>
+    <td>Started At</td>
+    <td>Completed At</td>
     <td>Elapsed Time</td>
     <td>User</td>
     <td>Last Error</td>
@@ -66,61 +68,45 @@
       $('#' + tableId + ' tbody').html(rows);
     }
 
-    var fields = ['job_id', 'job_name', 'status', 'enqueued_at', 'scheduled_at','elapsed_time', 'user', 'last_error', 'result'];
+    var fields = ['job_id', 'job_name', 'status', 'scheduled_at', 'enqueued_at', 'started_at', 'completed_at', 'elapsed_time', 'user', 'last_error', 'result'];
 
     $('#btn-test').click(function (e) {
+      $.ajax({
+        url: '/prisme_job_queue/reload_job_queue_list',
+        type: "GET",
+        data: {add_test_job: true},
+        dataType: "json",
+        success: function (data) {
+          loadTable('data-table', fields, data);
+        }
+      })
     });
 
     $('#btn-update').click(function (e) {
       $.ajax({
         url: '/prisme_job_queue/reload_job_queue_list',
         type: "GET",
+        dataType: "json",
+        success: function (data) {
+          loadTable('data-table', fields, data);
+        }
+      })
+    });
+    function poll() {
+      $.ajax({
+        url: '/prisme_job_queue/reload_job_queue_list',
+        type: "GET",
         success: function (data) {
           loadTable('data-table', fields, data);
         },
-        dataType: "json"
-//        complete: setTimeout(function () {
-//          poll()
-//        }, 5000),
-//        timeout: 2000
+        dataType: "json",
+        complete: setTimeout(function () {
+          poll()
+        }, 3000),
+        timeout: 2000
       })
-    });
-//    })();
+    }
 
+    poll();
   });
 </script>
-<!--
-
-<script>
-  (function poll() {
-    $.ajax({
-      url: '/prisme_job_queue/reload_job_queue_list',
-      type: "GET",
-      success: function (data) {
-        loadTable('data-table', fields, data);
-      },
-      dataType: "json",
-      complete: setTimeout(function () {
-        poll()
-      }, 5000),
-      timeout: 2000
-    })
-  })();
-</script>
--->
-
-<!--
-
-<script>
-  $(document).ready(function() {
-    var intervalID = setInterval(function() {
-      $.get('async', function(data) {
-        $('#datum').text(data);
-        if(data === 'completed'){
-          clearInterval(intervalID);
-        }
-      } );
-    }, 1000); // 1000 milliseconds = 1 second.
-
-  });
-</script>-->
