@@ -3,7 +3,7 @@ require './app/controllers/concerns/nexus_concern'
 class ArtifactDownloadJob < PrismeBaseJob
   include NexusConcern
 
-  @@connection = get_nexus_connection('*/*')
+  @@connection = get_nexus_connection('*/*')#move this to instance method to pull from currently configured artifactory
   # rescue_from(ActiveRecord::RecordNotFound) do |exception|
   #   # do something with the exception
   # end
@@ -11,6 +11,7 @@ class ArtifactDownloadJob < PrismeBaseJob
   def perform(*args)
     url = args.shift
     war_name = args.shift
+    tomcat_ar = args.shift
     result = String.new
     result << "Downloading from URL #{url}.\n"
     result << "Fetching war #{war_name}.\n"
@@ -33,8 +34,7 @@ class ArtifactDownloadJob < PrismeBaseJob
     end
     $log.debug("Kicking off next job (DeployWar) #{file_name} #{context}")
     #activeRecord instantiate new job
-    DeployWarJob.perform_later(file_name,context)#, pass in parent id and my ID
-    #DeployWarJob.perform_later()
+    DeployWarJob.perform_later(file_name,context,tomcat_ar)#, pass in parent id and my ID
     active_record = lookup
     active_record.result= result
     active_record.save!

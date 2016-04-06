@@ -19,8 +19,8 @@
 
     <h3>Select the Tomcat Server for Deployment</h3>
     <%= field_set_tag 'Select Tomcat Server' do %>
-        <%= label_tag 'tomcat_server', 'Tomcat Server URL' %><br>
-        <%= select_tag 'tomcat_server', options_from_collection_for_select(@tomcat_servers, 'select_key', 'select_value'), {:prompt => '-- Select the Tomcat Server --'} %>
+        <%= label_tag PrismeService::TOMCAT, 'Tomcat Server URL' %><br>
+        <%= select_tag PrismeService::TOMCAT, options_from_collection_for_select(@tomcat_servers, 'select_key', 'select_value'), {:prompt => '-- Select the Tomcat Server --'} %>
     <% end %>
 
     <h3>Submit Deployment Request</h3>
@@ -76,7 +76,7 @@
         return form.valid();
       },
       onFinished: function (event, currentIndex) {
-        alert("Submitted!");
+        form.submit();
       }
     }).validate({
       errorPlacement: function errorPlacement(error, element) {

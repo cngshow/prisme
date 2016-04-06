@@ -4,12 +4,27 @@ class AppDeployerController < ApplicationController
   def index
     @komet_wars = get_komet_wars
     @tomcat_servers = []
+    Service.where(service_type: PrismeService::TOMCAT).each do |active_record|
+      active_record.define_singleton_method(:select_value) do
+        self.name
+      end
+      active_record.define_singleton_method(:select_key) do
+        self.id
+      end
+      active_record.define_singleton_method(:select_option) do
+        {key: select_key, value: select_value}
+      end
+      @tomcat_servers << active_record
+    end
+    $log.debug(@tomcat_servers.inspect)
   end
 
   def deploy_app
     url = 'http://vadev.mantech.com:8081/nexus/service/local/artifact/maven/content'
     # g a v r c p
     p = {}
+    tomcat_id = params[PrismeService::TOMCAT]
+    tomcat_ar = Service.find_by(id: tomcat_id)
     komet_war = KometWar.init_from_select_key(params['komet_war'])
     war_name = komet_war.select_value
 
@@ -22,7 +37,7 @@ class AppDeployerController < ApplicationController
     p[:p] = war_info[5]
     url << '?' << p.to_query
     #ActiveRecord Job set to pending
-    ArtifactDownloadJob.perform_later(url,war_name)#,job-id
+    ArtifactDownloadJob.perform_later(url,war_name, tomcat_ar)#,job-id
     redirect_to prisme_job_queue_list_path
   end
 

@@ -51,9 +51,3 @@ module CargoSupport
 
   end
 end
-#below moves to active record later (service libraries)
-java.lang.System.getProperties.put('cargo.remote.username','devtest')
-java.lang.System.getProperties.put('cargo.remote.password','devtest')
-java.lang.System.getProperties.put('cargo.tomcat.manager.url','http://vadev.mantech.com:4848/manager')
-java.lang.System.getProperties.put('cargo.servlet.port','4848')
-java.lang.System.getProperties.put('cargo.hostname','vadev.mantech.com')
