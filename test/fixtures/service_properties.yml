@@ -1,9 +1,40 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  key: MyString
-  value: MyString
+# To load fixtures run the following rake task
+# bundle exec rake db:fixtures:load
 
+# tomcat service properties
+one:
+  service: tomcat
+  key: cargo.remote.username
+  value: devtest
 two:
-  key: MyString
-  value: MyString
+  service: tomcat
+  key: cargo.remote.password
+  value: devtest
+three:
+  service: tomcat
+  key: cargo.remote.url
+  value: http://vadev.mantech.com:4848/manager
+four:
+  service: tomcat
+  key: cargo.remote.port
+  value: 4848
+five:
+  service: tomcat
+  key: cargo.hostname
+  value: vadev.mantech.com
+
+# nexus service properties
+six:
+  service: nexus
+  key: nexus_root
+  value: http://vadev.mantech.com:8081/
+seven:
+  service: nexus
+  key: nexus_user
+  value: devtest
+eight:
+  service: nexus
+  key: nexus_pwd
+  value: devtest

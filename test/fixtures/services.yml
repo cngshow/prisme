@@ -1,11 +1,16 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  name: MyString
-  description: MyText
-  service_type: false
+# To load fixtures run the following rake task
+# bundle exec rake db:fixtures:load
 
-two:
-  name: MyString
-  description: MyText
-  service_type: false
+# tomcat service data
+tomcat:
+  name: Tomcat Application Server
+  description: Tomcat Application Server
+  service_type: tomcat
+
+# nexus service data
+nexus:
+  name: Nexus
+  description: Nexus Artifactory
+  service_type: nexus
