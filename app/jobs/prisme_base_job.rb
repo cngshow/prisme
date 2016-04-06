@@ -66,8 +66,9 @@ class PrismeBaseJob < ActiveJob::Base
 
   rescue_from(StandardError) do |exception|
     active_record = lookup
-    $log.debug("Rescue block self is " + self.to_s + " Is @act nil : " + active_record.nil?.to_s)
     active_record.last_error = exception.message
+    $log.error("Job failed: " + self.to_s + ". Error message is: " +  exception.message)
+    $log.error(exception.backtrace.join("\n"))
     active_record.status = PrismeJobConstants::Status::STATUS_HASH[:FAILED]
     active_record.completed_at = Time.now
     active_record.save!

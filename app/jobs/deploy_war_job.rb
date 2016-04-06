@@ -2,10 +2,14 @@ require './lib/cargo'
 
 class DeployWarJob < PrismeBaseJob
 
+  @@mutex = Mutex.new
+
   def perform(*args)
     logger = CargoSupport::CargoLogger.new
     file_name = args.shift
     context = args.shift
+    tomcat_ar = args.shift
+
     factory = JCargo::DefaultContainerFactory.new
     type = JCargo::ContainerType::REMOTE
     runtime_config = JCargo::TomcatRuntimeConfiguration.new
@@ -16,13 +20,24 @@ class DeployWarJob < PrismeBaseJob
     deployer = JCargo::Tomcat8xRemoteDeployer.new(remote_container)
     deployer.setLogger(logger)
     #to_do: pull string below from ActiveRecord
-    url = JCargo::URLDeployableMonitor.new(java.net.URL.new("http://vadev.mantech.com:4848/"))
     #url.registerListener(DeployListener.new)
-    url.setLogger(logger)
     war = deployer_factory.createDeployable(tom_container.getId(), file_name, deployable_type);
-    $log.info("About to deploy #{file_name}")
     #to_do -- switch to undeploy/redeploy
-    deployer.redeploy(war, url)
+    @@mutex.synchronize do
+      $log.info("About to deploy #{file_name}")
+      #only allow one deployment at a time.
+      #The user will see their job as running, but, since cargo was engineered for maven and communicates via props
+      #we cannot have a user selecting a different tomcat motivating deployment to the wrong server.
+      props = tomcat_ar.properties_hash
+      url = JCargo::URLDeployableMonitor.new(java.net.URL.new(props[PrismeService::CARGO_REMOTE_URL]))#("http://vadev.mantech.com:4848/"))
+      url.setLogger(logger)
+      props.each_pair do |k,v|
+        java.lang.System.getProperties.put(k, v)
+        $log.debug("Added #{k} -- #{v} to java's system props")
+      end
+      deployer.redeploy(war, url)
+    end
+
     results = logger.results
     results << "Deployed #{file_name}\n"
     active_record = lookup
@@ -31,3 +46,9 @@ class DeployWarJob < PrismeBaseJob
     $log.info("Deployed #{file_name}")
   end
 end
+#below moves to active record later (service libraries)
+# java.lang.System.getProperties.put('cargo.remote.username', 'devtest')
+# java.lang.System.getProperties.put('cargo.remote.password', 'devtest')
+# java.lang.System.getProperties.put('cargo.tomcat.manager.url', 'http://vadev.mantech.com:4848/manager')
+# java.lang.System.getProperties.put('cargo.servlet.port', '4848')
+# java.lang.System.getProperties.put('cargo.hostname', 'vadev.mantech.com')
