@@ -1,0 +1,51 @@
+<%= form_for(@service) do |f| %>
+    <% if @service.errors.any? %>
+        <div id="error_explanation">
+          <h2><%= pluralize(@service.errors.count, "error") %> prohibited this service from being saved:</h2>
+
+          <ul>
+            <% @service.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+    <% end %>
+
+    <div class="field">
+      <%= f.label :name %><br>
+      <%= f.text_field :name, required: true, title: "Please enter a service name" %>
+    </div>
+    <div class="field">
+      <%= f.label :description %><br>
+      <%= f.text_area :description, required: true %>
+    </div>
+    <div class="field">
+      <%= f.label :service_type %><br>
+      <%= f.select :service_type, fetch_types, {prompt: "Pick a service type"}, onchange: 'serviceType(this)'%>
+    </div>
+    <br><br>
+    <div class="field" id="service_props">
+    </div>
+    <div class="actions" id="submit_div">
+      <%= f.submit %>
+    </div>
+<% end %>
+<script>
+  $(document).ready(function () {
+    $('#submit_div').hide();
+  });
+    function serviceType(elem) {
+      //services_render_props_path
+      if (elem.value === '') {
+        $('#submit_div').hide();
+        $('#service_props').empty();
+      }else{
+        $.get('<%=services_render_props_path%>', {service_type: elem.value}, function (data) {
+          $('#service_props').html(data);
+          console.log(data);
+        });
+
+        $('#submit_div').show();
+      }
+  }
+</script>

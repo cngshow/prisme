@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160329150821) do
+ActiveRecord::Schema.define(version: 20160404194247) do
 
   create_table "prisme_jobs", id: false, force: :cascade do |t|
     t.string   "job_id",       limit: 255,        null: false
@@ -37,4 +37,25 @@ ActiveRecord::Schema.define(version: 20160329150821) do
   add_index "prisme_jobs", ["status", "scheduled_at"], name: "prisme_job_status"
   add_index "prisme_jobs", ["user", "scheduled_at"], name: "prisme_job_user"
 
+  create_table "service_properties", force: :cascade do |t|
+    t.integer  "service_id", limit: 10
+    t.string   "key",        limit: 255
+    t.string   "value",      limit: 255
+    t.datetime "created_at", limit: 23,  null: false
+    t.datetime "updated_at", limit: 23,  null: false
+  end
+
+  add_index "service_properties", ["service_id"], name: "index_service_properties_on_service_id"
+
+  create_table "services", force: :cascade do |t|
+    t.string   "name",         limit: 255
+    t.text     "description",  limit: 2147483647
+    t.string   "service_type", limit: 255
+    t.datetime "created_at",   limit: 23,         null: false
+    t.datetime "updated_at",   limit: 23,         null: false
+  end
+
+  add_index "services", ["name"], name: "service_name"
+
+  add_foreign_key "service_properties", "services"
 end
