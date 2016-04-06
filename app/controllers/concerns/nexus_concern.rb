@@ -2,12 +2,14 @@ require 'faraday'
 
 module NexusConcern
   def get_nexus_connection(header = 'application/json')
-    nexus_conn = Faraday.new(url: $PROPS['ENDPOINT.nexus_root']) do |faraday|
+    nexus_config = Service.find_by!(service_type: PrismeService::NEXUS)#ActiveRecordNotFound Will be raised if a Nexus is not configured
+    props = nexus_config.properties_hash
+    nexus_conn = Faraday.new(url: props[PrismeService::NEXUS_ROOT]) do |faraday|
       faraday.request :url_encoded # form-encode POST params
       faraday.use Faraday::Response::Logger, $log
       faraday.headers['Accept'] = header
       faraday.adapter :net_http # make requests with Net::HTTP
-      faraday.basic_auth($PROPS['ENDPOINT.nexus_user'], $PROPS['ENDPOINT.nexus_pwd'])
+      faraday.basic_auth(props[PrismeService::NEXUS_USER], props[PrismeService::NEXUS_PWD])
     end
     nexus_conn
   end

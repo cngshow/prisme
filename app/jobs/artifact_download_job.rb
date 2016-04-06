@@ -3,7 +3,6 @@ require './app/controllers/concerns/nexus_concern'
 class ArtifactDownloadJob < PrismeBaseJob
   include NexusConcern
 
-  @@connection = get_nexus_connection('*/*')#move this to instance method to pull from currently configured artifactory
   # rescue_from(ActiveRecord::RecordNotFound) do |exception|
   #   # do something with the exception
   # end
@@ -17,7 +16,7 @@ class ArtifactDownloadJob < PrismeBaseJob
     result << "Fetching war #{war_name}.\n"
     $log.debug("This job is doing URL " + url + ".")
     $log.debug("This job is doing war " + war_name + ".")
-    response = @@connection.get(url,{})
+    response = get_nexus_connection('*/*').get(url,{})
     file_name = "./tmp/#{war_name}"
     File.open(file_name, 'wb') { |fp| fp.write(response.body) }
     $log.debug("The file #{war_name} has completed the download!")

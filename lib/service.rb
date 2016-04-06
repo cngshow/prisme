@@ -6,4 +6,7 @@ module PrismeService
   CARGO_REMOTE_PASSWORD = 'cargo.remote.password'
   CARGO_HOSTNAME = 'vadev.mantech.com'
   CARGO_REMOTE_PORT = 'cargo.remote.port'
+  NEXUS_ROOT = 'nexus_root'
+  NEXUS_USER = 'nexus_user'
+  NEXUS_PWD = 'nexus_pwd'
 end
