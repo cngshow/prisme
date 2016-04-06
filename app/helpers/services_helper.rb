@@ -2,6 +2,7 @@ module ServicesHelper
   TYPE_PASSWORD='password'
   TYPE_URL='url'
   TYPE_NUMBER='number'
+
   #returns a password field or textfield
   def prop_input(p)
     case p['type']
@@ -29,4 +30,10 @@ module ServicesHelper
     valid_types
   end
 
+  def get_label(type, key)
+    props = $SERVICE_TYPES[type]['props']
+    prop = props.select {|p| p['key'].eql?(key)}
+    label = prop.first['label']
+    label
+  end
 end

@@ -1,15 +1,17 @@
 <%= form_for(@service) do |f| %>
-    <% if @service.errors.any? %>
-        <div id="error_explanation">
-          <h2><%= pluralize(@service.errors.count, "error") %> prohibited this service from being saved:</h2>
+    <!--
+    <%# if @service.errors.any? %>
+            <div id="error_explanation">
+              <h2><%#= pluralize(@service.errors.count, "error") %> prohibited this service from being saved:</h2>
 
-          <ul>
-            <% @service.errors.full_messages.each do |message| %>
-                <li><%= message %></li>
-            <% end %>
-          </ul>
-        </div>
-    <% end %>
+              <ul>
+                <%# @service.errors.full_messages.each do |message| %>
+                    <li><%#= message %></li>
+                <%# end %>
+              </ul>
+            </div>
+        <%# end %>
+    -->
 
     <div class="field">
       <%= f.label :name %><br>
@@ -21,10 +23,25 @@
     </div>
     <div class="field">
       <%= f.label :service_type %><br>
-      <%= f.select :service_type, fetch_types, {prompt: "Pick a service type"}, onchange: 'serviceType(this)'%>
+      <% if ('edit'.eql?(mode)) %>
+          <%= f.text_field :service_type, {readonly: true} %>
+      <% else %>
+          <%= f.select :service_type, fetch_types, {prompt: "Pick a service type"}, onchange: 'serviceTypeChange(this)' %>
+      <% end %>
     </div>
     <br><br>
     <div class="field" id="service_props">
+      <% if ('edit'.eql?(mode)) %>
+          <%= field_set_tag (@service.description + ' Properties') do %>
+              <%= f.fields_for :service_properties do |ff| %>
+                  <div>
+                    <%= ff.label :value, get_label(@service.service_type, ff.object.key) %><br>
+                    <%= ff.text_field :value %><br><br>
+                  </div>
+              <% end %>
+          <% end %>
+          <hr>
+      <% end %>
     </div>
     <div class="actions" id="submit_div">
       <%= f.submit %>
@@ -32,20 +49,21 @@
 <% end %>
 <script>
   $(document).ready(function () {
+    <% unless (mode) %>
     $('#submit_div').hide();
+    <% end %>
   });
-    function serviceType(elem) {
-      //services_render_props_path
-      if (elem.value === '') {
-        $('#submit_div').hide();
-        $('#service_props').empty();
-      }else{
-        $.get('<%=services_render_props_path%>', {service_type: elem.value}, function (data) {
-          $('#service_props').html(data);
-          console.log(data);
-        });
 
-        $('#submit_div').show();
-      }
+  function serviceTypeChange(elem) {
+    if (elem.value === '') {
+      $('#submit_div').hide();
+      $('#service_props').empty();
+    } else {
+      $.get('<%=services_render_props_path%>', {service_type: elem.value}, function (data) {
+        $('#service_props').html(data);
+      });
+
+      $('#submit_div').show();
+    }
   }
 </script>
