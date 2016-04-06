@@ -14,11 +14,11 @@ two:
   value: devtest
 three:
   service: tomcat
-  key: cargo.remote.url
+  key: cargo.tomcat.manager.url
   value: http://vadev.mantech.com:4848/manager
 four:
   service: tomcat
-  key: cargo.remote.port
+  key: cargo.servlet.port
   value: 4848
 five:
   service: tomcat

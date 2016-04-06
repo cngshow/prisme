@@ -1,3 +1,4 @@
+# it is CRITICAL that the keys specified here match the fixtures
  tomcat:
    label: Tomcat
    description: Tomcat Application Server
