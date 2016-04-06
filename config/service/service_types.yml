@@ -1,0 +1,42 @@
+ tomcat:
+   label: Tomcat
+   description: Tomcat Application Server
+   singleton: false
+   props:
+     - key: cargo.remote.username
+       label: User Name
+     - key: cargo.remote.password
+       label: Password
+       type: password
+     - key: cargo.tomcat.manager.url
+       label: URL
+       type: url
+     - key: cargo.servlet.port
+       label: Port
+       type: number
+     - key: cargo.hostname
+       label: Hostname
+ nexus:
+   label: Nexus
+   description: Nexus Artifactory Server
+   singleton: true
+   props:
+     - key: nexus_root
+       label: Root URL:port
+       type: url
+     - key: nexus_user
+       label: User Name
+     - key: nexus_pwd
+       label: Password
+       type: password
+
+       # java.lang.System.getProperties.put('cargo.remote.username','devtest')
+       # java.lang.System.getProperties.put('cargo.remote.password','devtest')
+       # java.lang.System.getProperties.put('cargo.tomcat.manager.url','http://vadev.mantech.com:4848/manager')
+       # java.lang.System.getProperties.put('cargo.servlet.port','4848')
+       # java.lang.System.getProperties.put('cargo.hostname','vadev.mantech.com')
+
+       #Nexus
+       # nexus_root = http://vadev.mantech.com:8081/
+       # nexus_user = devtest
+       # nexus_pwd = devtest

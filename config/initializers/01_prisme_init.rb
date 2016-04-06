@@ -13,3 +13,4 @@ require './lib/rails_common/logging/logging'
 #System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
 props = java.lang.System.getProperties
 props.put("java.util.logging.manager", $PROPS['PRISME.log_manager'])
+$SERVICE_TYPES = YAML.load_file('./config/service/service_types.yml').freeze
