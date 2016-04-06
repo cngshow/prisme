@@ -1,4 +1,4 @@
-# jdbc:hsqldb:file:C:/work/ETS/rails_prisme/db/data/prisme_development
+#jdbc:h2:C:/work/ETS/rails_prisme/db/data/h2_prisme_development
 default: &default
 #  adapter: hsqldb
   adapter: jdbch2
