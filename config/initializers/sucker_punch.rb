@@ -41,7 +41,7 @@ module ActiveJob
 end
 
 
-unless defined?(is_running_migration_or_rollback?) && is_running_migration_or_rollback?
+unless($rake)
 # update any uncompleted jobs that are in the PrismeJobs table to failure status
   params = [PrismeJobConstants::Status::STATUS_HASH[:COMPLETED],
             PrismeJobConstants::Status::STATUS_HASH[:FAILED],]
