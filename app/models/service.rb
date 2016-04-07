@@ -6,10 +6,15 @@ class Service < ActiveRecord::Base
   class << self
     #put class methods here...
     def get_artifactory_props
-      Service.find_by!(service_type: PrismeService::NEXUS).properties_hash #ActiveRecordNotFound Will be raised if a Nexus is not configured
+      get_artifactory.properties_hash
+    end
+
+    def get_artifactory
+      Service.find_by!(service_type: PrismeService::NEXUS) #ActiveRecordNotFound Will be raised if a Nexus is not configured
     end
 
   end
+
 
   def properties_hash
     hash = {}
