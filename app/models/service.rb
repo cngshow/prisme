@@ -11,8 +11,6 @@ class Service < ActiveRecord::Base
 
   end
 
-
-
   def properties_hash
     hash = {}
     self.service_properties.each do |sp|

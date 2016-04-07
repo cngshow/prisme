@@ -33,14 +33,13 @@
     <div class="field" id="service_props">
       <% if ('edit'.eql?(mode)) %>
           <%= field_set_tag (@service.description + ' Properties') do %>
-              <%= f.fields_for :service_properties do |ff| %>
+              <%= f.fields_for :service_properties, @service.service_properties.ordered_props do |ff| %>
                   <div>
                     <%= ff.label :value, get_label(@service.service_type, ff.object.key) %><br>
                     <%= ff.text_field :value %><br><br>
                   </div>
               <% end %>
           <% end %>
-          <hr>
       <% end %>
     </div>
     <div class="actions" id="submit_div">
