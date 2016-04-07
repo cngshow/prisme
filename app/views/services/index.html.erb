@@ -4,6 +4,7 @@
     border-width: thin;
     border: solid;
   }
+
   th {
     text-align: center;
     background-color: cornsilk;
@@ -12,9 +13,10 @@
     border-width: thin;
     padding: 5px;
   }
-    td {
-      padding: 2px;
-    }
+
+  td {
+    padding: 2px;
+  }
 </style>
 <h1>Listing Services</h1>
 <%= field_set_tag 'Provisioned Services' do %>
@@ -36,7 +38,11 @@
             <td><%= service.service_type %></td>
             <td><%= link_to 'Show', service, class: 'btn btn-primary' %></td>
             <td><%= link_to 'Edit', edit_service_path(service), class: 'btn btn-primary' %></td>
-            <td><%= link_to 'Destroy', service, method: :delete, data: {confirm: 'Are you sure?'}, class: 'btn btn-danger' %></td>
+            <% if (is_disabled?(service.service_type)) %>
+                <td><button type="button" class="btn btn-danger" disabled>Destroy</button></td>
+            <% else %>
+                <td><%= link_to 'Destroy', service, method: :delete, data: {confirm: 'Are you sure?'}, class: 'btn btn-danger', disabled: is_disabled?(service.service_type) %></td>
+            <% end %>
           </tr>
       <% end %>
       </tbody>

@@ -14,19 +14,19 @@
 ActiveRecord::Schema.define(version: 20160404194247) do
 
   create_table "prisme_jobs", id: false, force: :cascade do |t|
-    t.string   "job_id",       limit: 255,        null: false
-    t.string   "job_name",     limit: 255,        null: false
-    t.integer  "status",       limit: 10,         null: false
-    t.string   "queue",        limit: 255,        null: false
-    t.datetime "scheduled_at", limit: 23,         null: false
-    t.datetime "enqueued_at",  limit: 23
-    t.datetime "started_at",   limit: 23
-    t.datetime "completed_at", limit: 23
-    t.text     "last_error",   limit: 2147483647
-    t.text     "result",       limit: 2147483647
+    t.string   "job_id",       limit: 255, null: false
+    t.string   "job_name",     limit: 255, null: false
+    t.integer  "status",                   null: false
+    t.string   "queue",        limit: 255, null: false
+    t.datetime "scheduled_at",             null: false
+    t.datetime "enqueued_at"
+    t.datetime "started_at"
+    t.datetime "completed_at"
+    t.text     "last_error"
+    t.text     "result"
     t.string   "user",         limit: 255
-    t.datetime "created_at",   limit: 23
-    t.datetime "updated_at",   limit: 23
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "prisme_jobs", ["completed_at"], name: "prisme_job_completed_at"
@@ -38,25 +38,24 @@ ActiveRecord::Schema.define(version: 20160404194247) do
   add_index "prisme_jobs", ["user", "scheduled_at"], name: "prisme_job_user"
 
   create_table "service_properties", force: :cascade do |t|
-    t.integer  "service_id", limit: 10
+    t.integer  "service_id"
     t.string   "key",        limit: 255
     t.string   "value",      limit: 255
-    t.integer  "order_idx",  limit: 10
-    t.datetime "created_at", limit: 23,  null: false
-    t.datetime "updated_at", limit: 23,  null: false
+    t.integer  "order_idx"
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
   end
 
   add_index "service_properties", ["service_id"], name: "index_service_properties_on_service_id"
 
   create_table "services", force: :cascade do |t|
     t.string   "name",         limit: 255
-    t.text     "description",  limit: 2147483647
+    t.text     "description"
     t.string   "service_type", limit: 255
-    t.datetime "created_at",   limit: 23,         null: false
-    t.datetime "updated_at",   limit: 23,         null: false
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
   end
 
   add_index "services", ["name"], name: "service_name"
 
-  add_foreign_key "service_properties", "services"
 end

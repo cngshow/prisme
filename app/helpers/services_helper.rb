@@ -36,4 +36,8 @@ module ServicesHelper
     label = prop.first['label']
     label
   end
+
+  def is_disabled?(service_type)
+    Service.where(service_type: service_type).count == 1
+  end
 end
