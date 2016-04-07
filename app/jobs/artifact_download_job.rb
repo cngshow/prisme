@@ -24,7 +24,7 @@ class ArtifactDownloadJob < PrismeBaseJob
     context = nil
     begin
       context = z.get_entry('context.txt').get_input_stream.read
-      $log.debug("The context root is " + context)
+      $log.debug('The context root is ' + context)
       result << "The war will be deployed to context root #{context}.\n"
     rescue
       $log.debug("No context.txt file found")
