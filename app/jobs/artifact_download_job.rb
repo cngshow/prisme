@@ -20,7 +20,15 @@ class ArtifactDownloadJob < PrismeBaseJob
     file_name = "./tmp/#{war_name}"
     File.open(file_name, 'wb') { |fp| fp.write(response.body) }
     $log.debug("The file #{war_name} has completed the download!")
-    z = Zip::File.open(file_name)
+    z = nil
+    begin
+      z = Zip::File.open(file_name)
+    rescue => e
+      $log.error("#{file_name} is not a valid war file!")
+      $log.error(e.backtrace.join("\n"))
+      $log.error("Rethrowing: " + e.message)
+      raise e
+    end
     context = nil
     begin
       context = z.get_entry('context.txt').get_input_stream.read
