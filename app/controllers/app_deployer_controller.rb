@@ -20,7 +20,9 @@ class AppDeployerController < ApplicationController
   end
 
   def deploy_app
-    url = 'http://vadev.mantech.com:8081/nexus/service/local/artifact/maven/content'
+    nexus_props = Service.get_artifactory_props
+    url = nexus_props[PrismeService::NEXUS_ROOT] + $PROPS['ENDPOINT.nexus_maven_content']
+    # Should look sometyhing like this: url = 'http://vadev.mantech.com:8081/nexus/service/local/artifact/maven/content'
     # g a v r c p
     p = {}
     tomcat_id = params[PrismeService::TOMCAT]
@@ -43,7 +45,8 @@ class AppDeployerController < ApplicationController
 
   private
   def get_komet_wars
-    url_string = '/nexus/service/local/lucene/search'
+    url_string = $PROPS['ENDPOINT.nexus_lucene_search']
+    #'/nexus/service/local/lucene/search'
     params = {g: 'gov.vha.isaac.gui.rails', a: 'rails_komet'}
     conn = NexusConcern.get_nexus_connection
     response = conn.get(url_string, params)

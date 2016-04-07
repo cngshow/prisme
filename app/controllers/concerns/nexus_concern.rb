@@ -2,8 +2,7 @@ require 'faraday'
 
 module NexusConcern
   def get_nexus_connection(header = 'application/json')
-    nexus_config = Service.find_by!(service_type: PrismeService::NEXUS)#ActiveRecordNotFound Will be raised if a Nexus is not configured
-    props = nexus_config.properties_hash
+    props = Service.get_artifactory_props
     nexus_conn = Faraday.new(url: props[PrismeService::NEXUS_ROOT]) do |faraday|
       faraday.request :url_encoded # form-encode POST params
       faraday.use Faraday::Response::Logger, $log
