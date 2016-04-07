@@ -3,7 +3,7 @@ class PrismeJobQueueController < ApplicationController
   end
 
   def reload_job_queue_list
-    TestJob.set(wait_until: 1.seconds.from_now).perform_later if params['add_test_job']
+    TestJob.set(wait_until: 1.seconds.from_now).perform_later if params['add_test_job']#todo remove this call!
     json = JSON.parse PrismeJob.order(status: :asc, scheduled_at: :desc).limit(30).to_json
 
     json.each do |j|

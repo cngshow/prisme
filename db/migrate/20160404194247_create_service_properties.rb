@@ -4,6 +4,7 @@ class CreateServiceProperties < ActiveRecord::Migration
       t.references :service, index: true
       t.string :key
       t.string :value
+      t.integer :order_idx
 
       t.timestamps null: false
     end

@@ -8,33 +8,41 @@ one:
   service: tomcat
   key: cargo.remote.username
   value: devtest
+  order_idx: 0
 two:
   service: tomcat
   key: cargo.remote.password
   value: devtest
+  order_idx: 1
 three:
   service: tomcat
   key: cargo.tomcat.manager.url
   value: http://vadev.mantech.com:4848/manager
+  order_idx: 2
 four:
   service: tomcat
   key: cargo.servlet.port
   value: 4848
+  order_idx: 3
 five:
   service: tomcat
   key: cargo.hostname
   value: vadev.mantech.com
+  order_idx: 4
 
 # nexus service properties
 six:
   service: nexus
   key: nexus_root
   value: http://vadev.mantech.com:8081/
+  order_idx: 0
 seven:
   service: nexus
   key: nexus_user
   value: devtest
+  order_idx: 1
 eight:
   service: nexus
   key: nexus_pwd
   value: devtest
+  order_idx: 2

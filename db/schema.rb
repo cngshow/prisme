@@ -41,6 +41,7 @@ ActiveRecord::Schema.define(version: 20160404194247) do
     t.integer  "service_id", limit: 10
     t.string   "key",        limit: 255
     t.string   "value",      limit: 255
+    t.integer  "order_idx",  limit: 10
     t.datetime "created_at", limit: 23,  null: false
     t.datetime "updated_at", limit: 23,  null: false
   end
