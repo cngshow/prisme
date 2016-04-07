@@ -3,7 +3,7 @@ module ServicesHelper
   TYPE_URL='url'
   TYPE_NUMBER='number'
 
-  #returns a password field or textfield
+  #returns a password field or text field
   def prop_input(p)
     case p['type']
       when TYPE_PASSWORD

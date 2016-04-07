@@ -39,7 +39,7 @@ class AppDeployerController < ApplicationController
     p[:p] = war_info[5]
     url << '?' << p.to_query
     #ActiveRecord Job set to pending
-    ArtifactDownloadJob.perform_later(url, war_name)
+    ArtifactDownloadJob.perform_later(url, war_name, tomcat_ar)
     redirect_to prisme_job_queue_list_path
   end
 
