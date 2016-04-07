@@ -4,11 +4,10 @@ default: &default
   adapter: jdbch2
 
 development:
-  <<: *default
-  #schema: prisme_development
+  adapter: sqlite3  #schema: prisme_development
  # url: jdbc:hsqldb:file:./db/data/prisme_development
   #url: jdbc:derby:file:./db/data/prisme_development
-  database: db/data/h2_prisme_development
+  database: db/data/prisme_development.sqlite3
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".

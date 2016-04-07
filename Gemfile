@@ -50,6 +50,13 @@ gem 'ci_reporter_test_unit'
 #gem 'jdbc-hsqldb', '~> 2.3'
 #gem 'activerecord-jdbchsqldb-adapter', '~> 1.3'
 #gem 'activerecord-jdbcderby-adapter'
-gem 'activerecord-jdbch2-adapter'
 #gem 'activerecord-jdbc-adapter'
 gem 'sucker_punch', '~> 2.0.0'
+
+group :development do
+  gem 'jdbc-sqlite3'
+  gem 'activerecord-jdbcsqlite3-adapter'
+end
+group :test, :production do
+  gem 'activerecord-jdbch2-adapter'
+end
