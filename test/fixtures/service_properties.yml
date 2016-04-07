@@ -34,7 +34,7 @@ five:
 six:
   service: nexus
   key: nexus_root
-  value: http://vadev.mantech.com:8081/
+  value: http://vadev.mantech.com:8081
   order_idx: 0
 seven:
   service: nexus
