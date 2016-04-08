@@ -12,7 +12,7 @@ one:
 two:
   service: tomcat
   key: cargo.remote.password
-  value: devtest
+  value: >\xC5\x14>GH\xBA@Ar\x99m\x95wA2
   order_idx: 1
 three:
   service: tomcat
@@ -44,5 +44,5 @@ seven:
 eight:
   service: nexus
   key: nexus_pwd
-  value: devtest
+  value: >\xC5\x14>GH\xBA@Ar\x99m\x95wA2
   order_idx: 2

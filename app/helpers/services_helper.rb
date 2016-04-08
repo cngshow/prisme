@@ -1,16 +1,14 @@
 module ServicesHelper
-  TYPE_PASSWORD='password'
-  TYPE_URL='url'
-  TYPE_NUMBER='number'
+
 
   #returns a password field or text field
   def prop_input(p)
     case p['type']
-      when TYPE_PASSWORD
+      when PrismeService::TYPE_PASSWORD
         password_field_tag 'props[' + p['key']+']', nil, required: true
-      when TYPE_URL
+      when PrismeService::TYPE_URL
         return url_field_tag 'props[' + p['key']+']', nil, required: true
-      when TYPE_NUMBER
+      when PrismeService::TYPE_NUMBER
         return number_field_tag 'props[' + p['key']+']',nil, in: 1..9999, required: true
       else
         return text_field_tag 'props[' + p['key']+']', nil, required: true, pattern: '^\w+$', title: 'No space allowed'

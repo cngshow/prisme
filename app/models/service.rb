@@ -15,11 +15,17 @@ class Service < ActiveRecord::Base
 
   end
 
-
+  #if property is encrypted it is decrypted
   def properties_hash
     hash = {}
+    password_keys = $SERVICE_TYPES[self.service_type][PrismeService::TYPE_PROPS].reject do |e| !e[PrismeService::TYPE_TYPE].eql? PrismeService::TYPE_PASSWORD end.map do |e| e['key'] end
     self.service_properties.each do |sp|
-      hash[sp.key] = sp.value unless (sp.value.nil? || sp.value.empty?)
+      key = sp.key
+      value = sp.value
+      if (password_keys.include?(key))
+        value = CipherSupport.instance.decrypt(encrypted_string: value)
+      end
+      hash[key] = value unless (value.nil? || value.empty?)
     end
     hash
   end

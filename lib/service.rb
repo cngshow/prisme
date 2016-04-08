@@ -9,4 +9,10 @@ module PrismeService
   NEXUS_ROOT = 'nexus_root'
   NEXUS_USER = 'nexus_user'
   NEXUS_PWD = 'nexus_pwd'
+  TYPE_PROPS = 'props'
+  TYPE_PASSWORD = 'password'
+  TYPE_URL = 'url'
+  TYPE_NUMBER = 'number'
+  TYPE_TYPE = 'type'
+  TYPE_KEY = 'key'
 end

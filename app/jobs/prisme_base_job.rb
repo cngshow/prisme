@@ -10,7 +10,7 @@ module PrismeJobConstants
   end
 
   module User
-    SYSTEM  = :"Prisme System"
+    SYSTEM = :"Prisme System"
   end
 end
 
@@ -65,13 +65,18 @@ class PrismeBaseJob < ActiveJob::Base
   end
 
   rescue_from(StandardError) do |exception|
-    active_record = lookup
-    active_record.last_error = exception.message
-    $log.error("Job failed: " + self.to_s + ". Error message is: " +  exception.message)
-    $log.error(exception.backtrace.join("\n"))
-    active_record.status = PrismeJobConstants::Status::STATUS_HASH[:FAILED]
-    active_record.completed_at = Time.now
-    active_record.save!
+    begin
+      active_record = lookup
+      active_record.last_error = exception.message
+      $log.error("Job failed: " + self.to_s + ". Error message is: " + exception.message)
+      $log.error(exception.backtrace.join("\n"))
+      active_record.status = PrismeJobConstants::Status::STATUS_HASH[:FAILED]
+      active_record.completed_at = Time.now
+      active_record.save!
+    rescue => e
+      $log.error(self.to_s + " failed to rescue from an exception.  The error is " + e.message)
+      $log.error(e.backtrace.join("\n"))
+    end
   end
 
   def perform(*args)
