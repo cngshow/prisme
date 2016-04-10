@@ -1,25 +1,33 @@
 module ServicesHelper
+  PORT_RANGE = {min: 1, max: 9999, pattern: "\d*"}
+  NO_SPACES = {pattern: '^[\w|\.]+$',title: 'No space allowed'}
 
+  def get_input_type(service_type, key)
+    hash = {}
+    props = $SERVICE_TYPES[service_type][PrismeService::TYPE_PROPS]
+    type = props.select {|t| t[PrismeService::TYPE_KEY].eql?(key)}.first[PrismeService::TYPE_TYPE]
+    type = type.nil? ? 'text' : type
+    hash[:type] = type
+    hash[:required] = true
 
-  #returns a password field or text field
-  def prop_input(p)
-    case p['type']
+    case type
       when PrismeService::TYPE_PASSWORD
-        password_field_tag 'props[' + p['key']+']', nil, required: true
+      #   only type is needed
       when PrismeService::TYPE_URL
-        return url_field_tag 'props[' + p['key']+']', nil, required: true
+      #   only type is needed
       when PrismeService::TYPE_NUMBER
-        return number_field_tag 'props[' + p['key']+']',nil, in: 1..9999, required: true
+        hash.merge!(PORT_RANGE)
       else
-        return text_field_tag 'props[' + p['key']+']', nil, required: true, pattern: '^\w+$', title: 'No space allowed'
+        hash.merge!(NO_SPACES)
     end
+    hash
   end
 
   def fetch_types
     types = $SERVICE_TYPES.keys
     valid_types = []
     types.each do |type|
-      if($SERVICE_TYPES[type]['singleton'])
+      if ($SERVICE_TYPES[type]['singleton'])
         valid_types << type unless Service.exists?(service_type: type)
       else
         valid_types << type
@@ -29,10 +37,9 @@ module ServicesHelper
   end
 
   def get_label(type, key)
-    props = $SERVICE_TYPES[type]['props']
-    prop = props.select {|p| p['key'].eql?(key)}
-    label = prop.first['label']
-    label
+    props = $SERVICE_TYPES[type][PrismeService::TYPE_PROPS]
+    prop = props.select { |p| p[PrismeService::TYPE_KEY].eql?(key) }
+    prop.first['label']
   end
 
   def is_disabled?(service_type)

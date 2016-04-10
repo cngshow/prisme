@@ -26,17 +26,8 @@ class ServicesController < ApplicationController
   # POST /services.json
   def create
     @service = Service.new(service_params)
-    web_props = params['props']
-    web_props.each_pair do |k, v|
-      props = @service.service_properties.build
-      $SERVICE_TYPES[@service.service_type]['props'].each do |p|
-        if (p['key'].eql?(k) && p['password'])
-          v = CipherSupport.instance.encrypt(unencrypted_string: v)
-        end
-      end
-      props.key= k
-      props.value= v
-    end
+    prep_props_for_save
+
     respond_to do |format|
       if @service.save
         format.html { redirect_to @service, notice: 'Service was successfully created.' }
@@ -52,6 +43,8 @@ class ServicesController < ApplicationController
   # PATCH/PUT /services/1.json
   def update
     respond_to do |format|
+      prep_props_for_save
+
       if @service.update(service_params)
         format.html { redirect_to @service, notice: 'Service was successfully updated.' }
         format.json { render :show, status: :ok, location: @service }
@@ -86,5 +79,54 @@ class ServicesController < ApplicationController
   # Never trust parameters from the scary internet, only allow the white list through.
   def service_params
     params.require(:service).permit(:name, :description, :service_type, service_properties_attributes: [:id, :key, :value])
+  end
+
+  def prep_props_for_save
+    service = params['service']
+    service_type = service['service_type']
+    service_type_props = $SERVICE_TYPES[service_type][PrismeService::TYPE_PROPS]
+
+    if (@service.id?)
+      props = service['service_properties_attributes']
+      props.each do |p|
+        order_idx = p[0].to_i
+        value = p[1][PrismeService::TYPE_VALUE]
+
+        service_type_props.each do |prop|
+          if prop[PrismeService::TYPE_ORDER_IDX] == order_idx
+            if (prop[PrismeService::TYPE_TYPE].eql?(PrismeService::TYPE_PASSWORD))
+              value = CipherSupport.instance.encrypt(unencrypted_string: value)
+            elsif prop[PrismeService::TYPE_TYPE].eql?(PrismeService::TYPE_URL)
+              while (value[-1].eql?('/')) do
+                value = value.chop
+              end
+            end
+            break
+          end
+        end
+        p[1][PrismeService::TYPE_VALUE] = value
+      end
+    else
+      props = params[PrismeService::TYPE_PROPS]
+      props.each_pair do |k, v|
+        v = v.first
+        prop = @service.service_properties.build
+
+        service_type_props.each do |p|
+          if p[PrismeService::TYPE_KEY].eql?(k)
+            if p[PrismeService::TYPE_TYPE].eql?(PrismeService::TYPE_PASSWORD)
+              v = CipherSupport.instance.encrypt(unencrypted_string: v)
+            elsif p[PrismeService::TYPE_TYPE].eql?(PrismeService::TYPE_URL)
+              while (v[-1].eql?('/')) do
+                v = v.chop
+              end
+            end
+            break
+          end
+        end
+        prop.key = k
+        prop.value = v
+      end
+    end
   end
 end

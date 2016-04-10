@@ -36,7 +36,7 @@
               <%= f.fields_for :service_properties, @service.service_properties.ordered_props do |ff| %>
                   <div>
                     <%= ff.label :value, get_label(@service.service_type, ff.object.key) %><br>
-                    <%= ff.text_field :value %><br><br>
+                    <%= ff.text_field :value, get_input_type(@service.service_type, ff.object.key) %><br><br>
                   </div>
               <% end %>
           <% end %>

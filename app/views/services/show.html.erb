@@ -20,7 +20,8 @@
     <% @service.service_properties.ordered_props.each do |prop| %>
         <p>
           <strong><%= get_label(@service.service_type, prop.key) + ':' %></strong><br>
-          <%= prop.value %>
+          <% my_prop = $SERVICE_TYPES[@service.service_type][PrismeService::TYPE_PROPS].select {|p| p[PrismeService::TYPE_KEY].eql?(prop.key)}.first %>
+          <%= my_prop[PrismeService::TYPE_TYPE].eql?(PrismeService::TYPE_PASSWORD) ? '*****' : prop.value %>
         </p>
     <% end %>
 <% end %>
