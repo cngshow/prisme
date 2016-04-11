@@ -108,11 +108,13 @@ class ServicesController < ApplicationController
       end
     else
       props = params[PrismeService::TYPE_PROPS]
+      order_idx = nil
       props.each_pair do |k, v|
         v = v.first
         prop = @service.service_properties.build
 
         service_type_props.each do |p|
+          order_idx = p['order_idx']
           if p[PrismeService::TYPE_KEY].eql?(k)
             if p[PrismeService::TYPE_TYPE].eql?(PrismeService::TYPE_PASSWORD)
               v = CipherSupport.instance.encrypt(unencrypted_string: v)
@@ -126,6 +128,7 @@ class ServicesController < ApplicationController
         end
         prop.key = k
         prop.value = v
+        prop.order_idx = order_idx
       end
     end
   end

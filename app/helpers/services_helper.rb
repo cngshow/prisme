@@ -2,7 +2,7 @@ module ServicesHelper
   PORT_RANGE = {min: 1, max: 9999, pattern: "\d*"}
   NO_SPACES = {pattern: '^[\w|\.]+$',title: 'No space allowed'}
 
-  def get_input_type(service_type, key)
+  def get_input_type(service_type, key, service_active_record = nil)
     hash = {}
     props = $SERVICE_TYPES[service_type][PrismeService::TYPE_PROPS]
     type = props.select {|t| t[PrismeService::TYPE_KEY].eql?(key)}.first[PrismeService::TYPE_TYPE]
@@ -12,7 +12,9 @@ module ServicesHelper
 
     case type
       when PrismeService::TYPE_PASSWORD
-      #   only type is needed
+        if (service_active_record)
+          hash[:value] = service_active_record.properties_hash[key]
+        end
       when PrismeService::TYPE_URL
       #   only type is needed
       when PrismeService::TYPE_NUMBER
