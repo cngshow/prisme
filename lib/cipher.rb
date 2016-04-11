@@ -4,12 +4,13 @@ class CipherSupport
   def encrypt(unencrypted_string:)
     init
     @encrypt.update(unencrypted_string)
-    @encrypt.final
+    @encrypt.final.bytes.to_s
   end
 
   def decrypt(encrypted_string:)
     init
-    @decrypt.update(encrypted_string)
+    b = eval encrypted_string
+    @decrypt.update( b.map(&:chr).join)
     @decrypt.final
   end
 
