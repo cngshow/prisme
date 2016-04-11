@@ -2,6 +2,7 @@ class Service < ActiveRecord::Base
   has_many :service_properties, :dependent => :destroy
 
   accepts_nested_attributes_for :service_properties, :reject_if => lambda { |a| a[:value].blank? }, :allow_destroy => true
+  validates_uniqueness_of :name
 
   class << self
     #put class methods here...
@@ -31,3 +32,9 @@ class Service < ActiveRecord::Base
   end
 
 end
+# a= Service.get_artifactory
+# p = a.service_properties
+# p[0].service
+# p[0].service.service_type
+# $SERVICE_TYPES[p[0].service.service_type]
+# $SERVICE_TYPES[p[0].service.service_type]['props'].reject do |e| !e['key'].eql?p[0].key end.first['type']
