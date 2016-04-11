@@ -1,5 +1,6 @@
 module ServicesHelper
   PORT_RANGE = {min: 1, max: 9999, pattern: "\d*"}
+  VALID_HOSTNAME = {pattern: '^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$',title: 'Please provide a valid hostname'}
   NO_SPACES = {pattern: '^[\w|\.]+$',title: 'No space allowed'}
 
   def get_input_type(service_type, key, service_active_record = nil)

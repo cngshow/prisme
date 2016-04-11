@@ -1,5 +1,16 @@
 module ApplicationHelper
 
+  def errors_to_flash(errors)
+    retval = []
+    errors.each {|attr,error_array|
+      error_array = [error_array] unless error_array.is_a? Array
+      formatted_attr = attr.to_s.gsub('_',' ').capitalize
+      retval << error_array.map {|elem|
+        formatted_attr += "\t" + elem.to_s
+      }
+    }
+    retval.flatten
+  end
 
   def self.convert_seconds_to_time(time)
     #    time = time.to_i

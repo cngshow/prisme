@@ -1,4 +1,3 @@
-require './lib/cipher'
 class ServicesController < ApplicationController
   before_action :set_service, only: [:show, :edit, :update, :destroy]
 
@@ -27,12 +26,14 @@ class ServicesController < ApplicationController
   def create
     @service = Service.new(service_params)
     prep_props_for_save
-
     respond_to do |format|
       if @service.save
         format.html { redirect_to @service, notice: 'Service was successfully created.' }
         format.json { render :show, status: :created, location: @service }
       else
+        messages = ["Save Failed!"]
+        messages << errors_to_flash(@service.errors)
+        flash.now[:error] = render_to_string(:partial => "bulleted_flash_single_header", :locals => {:messages => messages }) unless @service.errors.blank?
         format.html { render :new }
         format.json { render json: @service.errors, status: :unprocessable_entity }
       end
