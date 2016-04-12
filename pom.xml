@@ -254,6 +254,20 @@
           </execution>
         </executions>
       </plugin>
+      
+      <plugin>
+        <groupId>external.atlassian.jgitflow</groupId>
+        <artifactId>jgitflow-maven-plugin</artifactId>
+        <version>1.0-m5.1</version>
+        <configuration>
+          <pushReleases>true</pushReleases>
+          <autoVersionSubmodules>true</autoVersionSubmodules>
+          <scmCommentPrefix>[jgitflow-plugin]</scmCommentPrefix>
+          <enableSshAgent>true</enableSshAgent>
+          <allowSnapshots>false</allowSnapshots>
+          <enableFeatureVersions>true</enableFeatureVersions>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 </project>
