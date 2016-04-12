@@ -3,7 +3,6 @@ class CipherSupport
 
   def encrypt(unencrypted_string:)
     init
-    $log.info("Encrypt string " + unencrypted_string)
     @encrypt.update(unencrypted_string)
     @encrypt.final.bytes.to_s
   end
