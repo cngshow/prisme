@@ -8,45 +8,47 @@ class ArtifactDownloadJob < PrismeBaseJob
   # end
 
   def perform(*args)
-    url = args.shift
-    war_name = args.shift
-    tomcat_ar = args.shift
-    result = String.new
-    result << "Downloading from URL #{url}.\n"
-    result << "Fetching war #{war_name}.\n"
-    $log.debug("This job is doing URL " + url + ".")
-    $log.debug("This job is doing war " + war_name + ".")
-    response = get_nexus_connection('*/*').get(url,{})
-    file_name = "./tmp/#{war_name}"
-    File.open(file_name, 'wb') { |fp| fp.write(response.body) }
-    $log.debug("The file #{war_name} has completed the download!")
-    z = nil
     begin
-      z = Zip::File.open(file_name)
-    rescue => e
-      $log.error("#{file_name} is not a valid war file!")
-      $log.error(e.backtrace.join("\n"))
-      $log.error("Rethrowing: " + e.message)
-      raise e
+      url = args.shift
+      war_name = args.shift
+      tomcat_ar = args.shift
+      result = String.new
+      result << "Downloading from URL #{url}.\n"
+      result << "Fetching war #{war_name}.\n"
+      $log.debug("This job is doing URL " + url + ".")
+      $log.debug("This job is doing war " + war_name + ".")
+      response = get_nexus_connection('*/*').get(url, {})
+      file_name = "./tmp/#{war_name}"
+      File.open(file_name, 'wb') { |fp| fp.write(response.body) }
+      $log.debug("The file #{war_name} has completed the download!")
+      z = nil
+      begin
+        z = Zip::File.open(file_name)
+      rescue => e
+        $log.error("#{file_name} is not a valid war file!")
+        $log.error(e.backtrace.join("\n"))
+        $log.error("Rethrowing: " + e.message)
+        raise e
+      end
+      context = nil
+      begin
+        context = z.get_entry('context.txt').get_input_stream.read
+        $log.debug('The context root is ' + context)
+        result << "The war will be deployed to context root #{context}.\n"
+      rescue
+        $log.debug("No context.txt file found")
+        result << "The war will be deployed to the default context root.\n"
+        #not all wars have a context.txt, but if we do we use it
+      end
+      $log.debug("Kicking off next job (DeployWar) #{file_name} #{context}")
+      #activeRecord instantiate new job
+      DeployWarJob.perform_later(file_name, context, tomcat_ar) #, pass in parent id and my ID
+    ensure
+      active_record = lookup
+      active_record.result= result
+      active_record.save!
     end
-    context = nil
-    begin
-      context = z.get_entry('context.txt').get_input_stream.read
-      $log.debug('The context root is ' + context)
-      result << "The war will be deployed to context root #{context}.\n"
-    rescue
-      $log.debug("No context.txt file found")
-      result << "The war will be deployed to the default context root.\n"
-      #not all wars have a context.txt, but if we do we use it
-    end
-    $log.debug("Kicking off next job (DeployWar) #{file_name} #{context}")
-    #activeRecord instantiate new job
-    DeployWarJob.perform_later(file_name,context,tomcat_ar)#, pass in parent id and my ID
-    active_record = lookup
-    active_record.result= result
-    active_record.save!
   end
-
 end
 # ArtifactDownloadJob.set(wait_until: 5.seconds.from_now).perform_later
 #  include NexusConcern

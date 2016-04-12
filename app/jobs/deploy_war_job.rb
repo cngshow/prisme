@@ -5,45 +5,52 @@ class DeployWarJob < PrismeBaseJob
   @@mutex = Mutex.new
 
   def perform(*args)
-    logger = CargoSupport::CargoLogger.new
-    file_name = args.shift
-    context = args.shift
-    tomcat_ar = args.shift
+    begin
+      logger = CargoSupport::CargoLogger.new
+      file_name = args.shift
+      context = args.shift
+      tomcat_ar = args.shift
 
-    factory = JCargo::DefaultContainerFactory.new
-    type = JCargo::ContainerType::REMOTE
-    runtime_config = JCargo::TomcatRuntimeConfiguration.new
-    tom_container = factory.createContainer("tomcat8x", type, runtime_config)
-    deployable_type = JCargo::DeployableType::WAR
-    deployer_factory = JCargo::DefaultDeployableFactory.new
-    remote_container = JCargo::Tomcat8xRemoteContainer.new(runtime_config)
-    deployer = JCargo::Tomcat8xRemoteDeployer.new(remote_container)
-    deployer.setLogger(logger)
-    #to_do: pull string below from ActiveRecord
-    #url.registerListener(DeployListener.new)
-    war = deployer_factory.createDeployable(tom_container.getId(), file_name, deployable_type);
-    #to_do -- switch to undeploy/redeploy
-    @@mutex.synchronize do
-      $log.info("About to deploy #{file_name}")
-      #only allow one deployment at a time.
-      #The user will see their job as running, but, since cargo was engineered for maven and communicates via props
-      #we cannot have a user selecting a different tomcat motivating deployment to the wrong server.
-      props = tomcat_ar.properties_hash
-      url = JCargo::URLDeployableMonitor.new(java.net.URL.new(props[PrismeService::CARGO_REMOTE_URL]))#("http://vadev.mantech.com:4848/"))
-      url.setLogger(logger)
-      props.each_pair do |k,v|
-        java.lang.System.getProperties.put(k, v)
-        $log.debug("Added #{k} -- #{v} to java's system props")
+      factory = JCargo::DefaultContainerFactory.new
+      type = JCargo::ContainerType::REMOTE
+      runtime_config = JCargo::TomcatRuntimeConfiguration.new
+      tom_container = factory.createContainer("tomcat8x", type, runtime_config)
+      deployable_type = JCargo::DeployableType::WAR
+      deployer_factory = JCargo::DefaultDeployableFactory.new
+      remote_container = JCargo::Tomcat8xRemoteContainer.new(runtime_config)
+      deployer = JCargo::Tomcat8xRemoteDeployer.new(remote_container)
+      deployer.setLogger(logger)
+      #to_do: pull string below from ActiveRecord
+      #url.registerListener(DeployListener.new)
+      war = deployer_factory.createDeployable(tom_container.getId(), file_name, deployable_type);
+      #to_do -- switch to undeploy/redeploy
+      @@mutex.synchronize do
+        $log.info("About to deploy #{file_name}")
+        #only allow one deployment at a time.
+        #The user will see their job as running, but, since cargo was engineered for maven and communicates via props
+        #we cannot have a user selecting a different tomcat motivating deployment to the wrong server.
+        props = tomcat_ar.properties_hash
+        url = JCargo::URLDeployableMonitor.new(java.net.URL.new(props[PrismeService::CARGO_REMOTE_URL])) #("http://vadev.mantech.com:4848/"))
+        url.setLogger(logger)
+        props.each_pair do |k, v|
+          java.lang.System.getProperties.put(k, v)
+          #$log.debug("Added #{k} -- #{v} to java's system props")
+        end
+        deployer.redeploy(war, url)
       end
-      deployer.redeploy(war, url)
-    end
 
-    results = logger.results
-    results << "Deployed #{file_name}\n"
-    active_record = lookup
-    active_record.result= results
-    active_record.save!
-    $log.info("Deployed #{file_name}")
+      $log.info("Deployed #{file_name}")
+    rescue => ex
+      $log.error("A Java Exception was thrown: " + ex.message)
+      $log.error(ex.backtrace.join("\n"))
+      raise CargoSupport::CargoError.new(ex.message)
+    ensure
+      results = logger.results
+      results << "Deployed #{file_name}\n"
+      active_record = lookup
+      active_record.result= results
+      active_record.save!
+    end
   end
 end
 #below moves to active record later (service libraries)
