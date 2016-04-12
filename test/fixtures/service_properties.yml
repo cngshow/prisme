@@ -30,6 +30,34 @@ five:
   value: vadev.mantech.com
   order_idx: 4
 
+# tomcat service properties
+one_l:
+  service: tomcat_localhost
+  key: cargo.remote.username
+  value: devtest
+  order_idx: 0
+two_l:
+  service: tomcat_localhost
+  key: cargo.remote.password
+  value: '[79, 155, 44, 205, 82, 218, 80, 35, 26, 10, 173, 105, 31, 126, 237, 251]'
+  order_idx: 1
+three_l:
+  service: tomcat_localhost
+  key: cargo.tomcat.manager.url
+  value: http://localhost:8080/manager
+  order_idx: 2
+four_l:
+  service: tomcat_localhost
+  key: cargo.servlet.port
+  value: 8080
+  order_idx: 3
+five_l:
+  service: tomcat_localhost
+  key: cargo.hostname
+  value: localhost
+  order_idx: 4
+
+
 # nexus service properties
 six:
   service: nexus
