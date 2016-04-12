@@ -10,11 +10,8 @@ class CipherSupport
 
   def decrypt(encrypted_string:)
     init
-    $log.info("Decrypt string " + encrypted_string)
     b = eval encrypted_string
-    $log.info("Decrypt array " + b.inspect)
     decrypt_me = b.map(&:chr).join
-    $log.info("dddd " + decrypt_me)
     @decrypt.update( decrypt_me)
     @decrypt.final
   end
