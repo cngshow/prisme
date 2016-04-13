@@ -1,0 +1,91 @@
+/******************************** flash styles *****************************/
+
+.argInputError {
+  border: 2px solid red;
+  background-color: #f0f0f0;
+}
+
+div.field_with_errors label {
+  font-style: italic;
+  padding: 5px;
+  background-color: #c00;
+  color: white;
+  display: table;
+  border-radius: 5px;
+}
+
+.fieldWithErrors {
+  padding: 2px;
+  background-color: #c00;
+  display: table;
+}
+
+#errorExplanation, #error_explanation, #flash_alert {
+  width: 400px;
+  border: 2px solid red;
+  padding: 7px;
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+  background-color: #f0f0f0;
+}
+
+#flash_notice {
+  width: 400px;
+  border: 2px solid green;
+  padding: 7px;
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+  background-color: #f0f0f0;
+}
+
+#flash_error, #flash_error h2 {
+  text-align: left;
+  font-weight: bold;
+  padding: 5px 5px 5px 15px;
+  font-size: 12px;
+  margin: -7px;
+  background-color: #c00;
+  color: #fff;
+}
+
+#flash_error, #flash_error p {
+  color: #333;
+  margin-bottom: 0;
+  padding: 5px;
+}
+
+#flash_error, #flash_error ul li {
+  font-size: 12px;
+  list-style: square;
+  font-weight: normal;
+}
+
+#flash_error {
+  width: 400px;
+  border: 2px solid red;
+  padding: 7px;
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+  background-color: #f0f0f0;
+}
+
+#errorExplanation, #error_explanation h2 {
+  text-align: left;
+  font-weight: bold;
+  padding: 5px 5px 5px 15px;
+  font-size: 12px;
+  margin: -7px;
+  background-color: #c00;
+  color: #fff;
+}
+
+#errorExplanation, #error_explanation p {
+  color: #333;
+  margin-bottom: 0;
+  padding: 5px;
+}
+
+#errorExplanation, #error_explanation ul li {
+  font-size: 12px;
+  list-style: square;
+}
