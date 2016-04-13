@@ -1,273 +1,233 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <!-- in order to get your jars run this -->
-  <!-- mvn clean dependency:copy-dependencies -->
+	<modelVersion>4.0.0</modelVersion>
+	<!-- in order to get your jars and rails_common run this -->
+	<!-- mvn initialize -->
 
-  <parent>
-    <groupId>gov.vha.isaac.ochre</groupId>
-    <artifactId>isaac-parent</artifactId>
-    <version>3.01</version>
-  </parent>
+	<parent>
+		<groupId>gov.vha.isaac.ochre</groupId>
+		<artifactId>isaac-parent</artifactId>
+		<version>3.02-SNAPSHOT</version>
+	</parent>
 
-  <groupId>gov.vha.isaac.gui.rails</groupId>
-  <artifactId>rails_prisme</artifactId>
-  <version>1.4-SNAPSHOT</version>
-  <packaging>pom</packaging>
+	<groupId>gov.vha.isaac.gui.rails</groupId>
+	<artifactId>rails_prisme</artifactId>
+	<version>1.4-SNAPSHOT</version>
+	<packaging>pom</packaging>
 
-  <name>ISAAC Rails PRISME</name>
+	<name>ISAAC Rails PRISME</name>
 
-  <description>
-    This project is the Ruby on Rails web GUI for PRISME
-  </description>
+	<description>
+		This project is the Ruby on Rails web GUI for PRISME
+	</description>
 
-  <properties>
-    <rails_common.version>1.0</rails_common.version>
-    <!-- railsMode is automatically set to 'test' or 'production' - 'test' if the version number ends with '-SNAPSHOT'
-    or 'production' otherwise.  See ant execution below-->
-  </properties>
+	<properties>
+		<rails_common.version>1.0</rails_common.version>
+		<!-- railsMode is automatically set to 'test' or 'production' - 'test' if the version number ends with '-SNAPSHOT'
+		or 'production' otherwise.	See ant execution below-->
+	</properties>
 
-  <scm>
-    <url>https://github.com/VA-CTT/rails_prisme.git</url>
-  </scm>
+	<scm>
+		<url>https://github.com/VA-CTT/rails_prisme.git</url>
+	</scm>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.jruby</groupId>
-      <artifactId>jruby-complete</artifactId>
-      <version>9.0.4.0</version>
-    </dependency>
-    <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>rake</artifactId>
-      <version>10.4.2</version>
-      <type>gem</type>
-    </dependency>
-    <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>bundler</artifactId>
-      <version>1.11.2</version>
-      <type>gem</type>
-    </dependency>
-    <dependency>
-      <groupId>gov.vha.isaac.gui.rails</groupId>
-      <artifactId>rails_common</artifactId>
-      <version>${rails_common.version}</version>
-      <type>zip</type>
-      <optional>true</optional> <!-- Not needed at runtime / transitively -->
-    </dependency>
-    <dependency>
-      <groupId>com.offbytwo.jenkins</groupId>
-      <artifactId>jenkins-client</artifactId>
-      <version>0.3.3</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.cargo</groupId>
-      <artifactId>cargo-core-uberjar</artifactId>
-      <version>1.4.19</version>
-    </dependency>
-  </dependencies>
+	<dependencies>
+		<dependency>
+			<groupId>org.jruby</groupId>
+			<artifactId>jruby-complete</artifactId>
+			<version>9.0.4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>rubygems</groupId>
+			<artifactId>rake</artifactId>
+			<version>10.4.2</version>
+			<type>gem</type>
+		</dependency>
+		<dependency>
+			<groupId>rubygems</groupId>
+			<artifactId>bundler</artifactId>
+			<version>1.11.2</version>
+			<type>gem</type>
+		</dependency>
+		<dependency>
+			<groupId>gov.vha.isaac.gui.rails</groupId>
+			<artifactId>rails_common</artifactId>
+			<version>${rails_common.version}</version>
+			<type>zip</type>
+			<optional>true</optional> <!-- Not needed at runtime / transitively -->
+		</dependency>
+		<dependency>
+			<groupId>com.offbytwo.jenkins</groupId>
+			<artifactId>jenkins-client</artifactId>
+			<version>0.3.3</version>
+			<optional>true</optional><!-- Not needed at runtime / transitively -->
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.cargo</groupId>
+			<artifactId>cargo-core-uberjar</artifactId>
+			<version>1.4.19</version>
+			<optional>true</optional><!-- Not needed at runtime / transitively -->
+			</dependency>
+	</dependencies>
 
-  <build>
-    <plugins>
+	<build>
+		<plugins>
 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <configuration>
-          <artifactItems>
-            <artifactItem>
-              <artifactId>cargo-core-uberjar</artifactId>
-              <overWrite>true</overWrite>
-              <type>jar</type>
-            </artifactItem>
-            <artifactItem>
-              <artifactId>jenkins-client</artifactId>
-              <overWrite>true</overWrite>
-              <type>jar</type>
-            </artifactItem>
+			<!-- Extract the rails_common code into the correct place here, overwriting any existing version -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>extract-rails_common</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>unpack-dependencies</goal>
+						</goals>
+						<configuration>
+							<includeArtifactIds>rails_common</includeArtifactIds>
+							<outputDirectory>${basedir}/lib/</outputDirectory>
+							<overWriteReleases>true</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+						</configuration>
+					</execution>
+					
+					<execution>
+						<id>place-jars</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<!-- We really just want jenkins-client, cargo, and their transitive dependencies. -->
+							<excludeArtifactIds>jruby-complete,rake,bundler,rails_common,junit,log4j-core,log4j-api,slf4j-api,log4j-slf4j-impl,log4j-jul,hamcrest-core,</excludeArtifactIds>
+							<overWriteReleases>true</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+							<stripVersion>true</stripVersion>
+							<outputDirectory>${basedir}/lib/jars/</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 
-          </artifactItems>
-          <outputDirectory>./lib/jars/</outputDirectory>
-        </configuration>
-      </plugin>
+			<plugin>
+				<groupId>org.torquebox.mojo</groupId>
+				<artifactId>jruby9-exec-maven-plugin</artifactId>
+				<version>0.3.1</version>
+				<executions>
+					<execution>
+						<id>bundle install</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<jrubyVerbose>true</jrubyVerbose>
+							<command>bundle</command>
+							<args>install</args>
+						</configuration>
+					</execution>
+					<!--Dan how do I do a conditional execution?	The next two should only be run in test mode.-->
+					<execution>
+						<id>run migration for test db</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<jrubyVerbose>true</jrubyVerbose>
+							<command>rake</command>
+							<args>db:migrate RAILS_ENV=test</args>
+						</configuration>
+					</execution>
 
-      <!-- Extract the rails_common code into the correct place here, overwriting any existing version -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>extract-rails_common</id>
-            <phase>initialize</phase>
-            <goals>
-              <goal>unpack-dependencies</goal>
-            </goals>
-            <configuration>
-              <includeArtifactIds>rails_common</includeArtifactIds>
-              <outputDirectory>${basedir}/lib/</outputDirectory>
-              <overWriteReleases>true</overWriteReleases>
-              <overWriteSnapshots>true</overWriteSnapshots>
-            </configuration>
-          </execution>
-          
-          <!-- Attempt 1 - but this isn't transitive... likely wont work. -->
-          <!--execution>
-            <id>place-jenkins_client</id>
-            <phase>initialize</phase>
-            <goals>
-              <goal>copy</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <artifactId>jenkins-client</artifactId>
-                  <groupId>com.offbytwo.jenkins</groupId>
-                  <outputDirectory>${basedir}/lib/jars/jenkins_client</outputDirectory>
-                  <destFileName>jenkins-client.jar</destFileName>
-                  <overWrite>true</overWrite>
-                </artifactItem>
-              </artifactItems>
-            </configuration>
-          </execution-->
-          <execution>
-            <id>place-jenkins_client</id>
-            <phase>initialize</phase>
-            <goals>
-              <goal>copy-dependencies</goal>
-            </goals>
-            <configuration>
-              <!-- We really just want jenkins-client, cargo, and their transitive dependencies. -->
-              <excludeArtifactIds>jruby-complete,rake,bundler,rails_common,junit,log4j-core,log4j-api,slf4j-api,log4j-slf4j-impl,log4j-jul,hamcrest-core,</excludeArtifactIds>
-              <overWriteReleases>true</overWriteReleases>
-              <overWriteSnapshots>true</overWriteSnapshots>
-              <stripVersion>true</stripVersion>
-              <outputDirectory>${basedir}/lib/jars/</outputDirectory>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
+					<execution>
+						<id>run tests</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<jrubyVerbose>true</jrubyVerbose>
+							<command>rake</command>
+							<args>test:units</args>
+						</configuration>
+					</execution>
 
-      <plugin>
-        <groupId>org.torquebox.mojo</groupId>
-        <artifactId>jruby9-exec-maven-plugin</artifactId>
-        <version>0.3.1</version>
-        <executions>
-          <execution>
-            <id>bundle install</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <jrubyVerbose>true</jrubyVerbose>
-              <command>bundle</command>
-              <args>install</args>
-            </configuration>
-          </execution>
-          <!--Dan how do I do a conditional execution?  The next two should only be run in test mode.-->
-          <execution>
-            <id>run migration for test db</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <jrubyVerbose>true</jrubyVerbose>
-              <command>rake</command>
-              <args>db:migrate RAILS_ENV=test</args>
-            </configuration>
-          </execution>
+					<execution>
+						<id>build war</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<jrubyVerbose>true</jrubyVerbose>
+							<execArgs>RAILS_ENV=${railsMode} RAILS_RELATIVE_URL_ROOT=rails_prisme</execArgs>
+							<command>rake</command>
+							<args>devops:build_war</args>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 
-          <execution>
-            <id>run tests</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <jrubyVerbose>true</jrubyVerbose>
-              <command>rake</command>
-              <args>test:units</args>
-            </configuration>
-          </execution>
+			<!-- Set a variable for the rails runtime mode based on whether we are building SNAPSHOT or not -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>config</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<exportAntProperties>true</exportAntProperties>
+							<target name="set-build-type">
+								<condition property="railsMode" value="test" else="production">
+									<matches string="${project.version}" pattern=".*-SNAPSHOT" />
+								</condition>
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 
-          <!-- Build two instances of the war for now - one with a relative path of _a, one with _b, so we can deploy twice on the same server -->
-          <execution>
-            <id>build war b</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <jrubyVerbose>true</jrubyVerbose>
-              <execArgs>RAILS_ENV=${railsMode} RAILS_RELATIVE_URL_ROOT=rails_prisme</execArgs>
-              <command>rake</command>
-              <args>devops:build_war</args>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <!-- Set a variable for the rails runtime mode based on whether we are building SNAPSHOT or not -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>config</id>
-            <phase>initialize</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <exportAntProperties>true</exportAntProperties>
-              <target name="set-build-type">
-                <condition property="railsMode" value="test" else="production">
-                  <matches string="${project.version}" pattern=".*-SNAPSHOT" />
-                </condition>
-              </target>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <!-- Attach both wars -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>attach-artifacts</id>
-            <phase>package</phase>
-            <goals>
-              <goal>attach-artifact</goal>
-            </goals>
-            <configuration>
-              <artifacts>
-                <artifact>
-                  <file>${project.build.directory}/rails_prisme.war</file>
-                  <type>war</type>
-                </artifact>
-              </artifacts>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      
-      <plugin>
-        <groupId>external.atlassian.jgitflow</groupId>
-        <artifactId>jgitflow-maven-plugin</artifactId>
-        <version>1.0-m5.1</version>
-        <configuration>
-          <pushReleases>true</pushReleases>
-          <autoVersionSubmodules>true</autoVersionSubmodules>
-          <scmCommentPrefix>[jgitflow-plugin]</scmCommentPrefix>
-          <enableSshAgent>true</enableSshAgent>
-          <allowSnapshots>false</allowSnapshots>
-          <enableFeatureVersions>true</enableFeatureVersions>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+			<!-- Attach the war -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-artifacts</id>
+						<phase>package</phase>
+						<goals>
+							<goal>attach-artifact</goal>
+						</goals>
+						<configuration>
+							<artifacts>
+								<artifact>
+									<file>${project.build.directory}/rails_prisme.war</file>
+									<type>war</type>
+								</artifact>
+							</artifacts>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<plugin>
+				<groupId>external.atlassian.jgitflow</groupId>
+				<artifactId>jgitflow-maven-plugin</artifactId>
+				<version>1.0-m4.3</version>
+				<dependencies>
+					<dependency>
+						<groupId>xerces</groupId>  <!-- workaround jgitflow https://ecosystem.atlassian.net/browse/MJF-251 -->
+						<artifactId>xercesImpl</artifactId>
+						<version>2.11.0</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+		</plugins>
+	</build>
 </project>
