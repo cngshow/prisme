@@ -26,15 +26,17 @@ class ServicesController < ApplicationController
   def create
     @service = Service.new(service_params)
     prep_props_for_save
+
     respond_to do |format|
       if @service.save
         format.html { redirect_to @service, notice: 'Service was successfully created.' }
         format.json { render :show, status: :created, location: @service }
       else
-        messages = ["Save Failed!"]
+        messages = ['Create Failed!']
         messages << errors_to_flash(@service.errors)
-        flash.now[:error] = render_to_string(:partial => "bulleted_flash_single_header", :locals => {:messages => messages }) unless @service.errors.blank?
-        format.html { render :new }
+        flash.now[:error] = render_to_string(:partial => 'application/bulleted_flash_single_header', :locals => {:messages => messages }) unless @service.errors.blank?
+        @service_type = @service.service_type
+        format.html { render :new, locals: {failure: true} }
         format.json { render json: @service.errors, status: :unprocessable_entity }
       end
     end
@@ -50,6 +52,9 @@ class ServicesController < ApplicationController
         format.html { redirect_to @service, notice: 'Service was successfully updated.' }
         format.json { render :show, status: :ok, location: @service }
       else
+        messages = ['Update Failed!']
+        messages << errors_to_flash(@service.errors)
+        flash.now[:error] = render_to_string(:partial => 'application/bulleted_flash_single_header', :locals => {:messages => messages }) unless @service.errors.blank?
         format.html { render :edit }
         format.json { render json: @service.errors, status: :unprocessable_entity }
       end
@@ -68,7 +73,7 @@ class ServicesController < ApplicationController
 
   def render_props
     @service_type = params[:service_type]
-    render partial: 'services/render_props'
+    render partial: services_render_props_path
   end
 
   private
@@ -111,7 +116,6 @@ class ServicesController < ApplicationController
       props = params[PrismeService::TYPE_PROPS]
       order_idx = nil
       props.each_pair do |k, v|
-        v = v.first
         prop = @service.service_properties.build
 
         service_type_props.each do |p|

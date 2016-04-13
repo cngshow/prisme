@@ -1,3 +1,17 @@
-// Place all the styles related to the services controller here.
-// They will automatically be included in application.css.
-// You can use Sass (SCSS) here: http://sass-lang.com/
+table {
+  border-width: thin;
+  border: solid;
+}
+
+th {
+  text-align: center;
+  background-color: cornsilk;
+  color: navy;
+  border: solid;
+  border-width: thin;
+  padding: 5px;
+}
+
+td {
+  padding: 2px;
+}

@@ -1,6 +1,6 @@
 <h1>Provision a New Service</h1>
 
-<%= render 'form', mode: 'new' %>
+<%= render 'form', mode: (local_assigns[:failure].nil? ? 'new' : 'failure') %>
 <br>
 <br>
-<%= link_to 'Back', services_path, class: 'btn btn-primary' %>
+<%= link_to 'List', services_path, class: 'btn btn-primary' %>
