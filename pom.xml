@@ -219,7 +219,7 @@
 			<plugin>
 				<groupId>external.atlassian.jgitflow</groupId>
 				<artifactId>jgitflow-maven-plugin</artifactId>
-				<version>>1.0-m4.3</version>
+				<version>1.0-m4.3</version>
 				<dependencies>
 					<dependency>
 						<groupId>xerces</groupId>  <!-- workaround jgitflow https://ecosystem.atlassian.net/browse/MJF-251 -->
