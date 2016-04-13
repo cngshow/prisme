@@ -52,6 +52,7 @@ gem 'ci_reporter_test_unit'
 #gem 'activerecord-jdbcderby-adapter'
 #gem 'activerecord-jdbc-adapter'
 gem 'sucker_punch', '~> 2.0.0'
+gem 'devise'
 
 group :development do
   gem 'jdbc-sqlite3'
