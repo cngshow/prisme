@@ -41,7 +41,7 @@ module ActiveJob
 end
 
 
-unless($rake)
+unless($rake || defined?(Rails::Generators))
 # update any uncompleted jobs that are in the PrismeJobs table to failure status
   params = [PrismeJobConstants::Status::STATUS_HASH[:COMPLETED],
             PrismeJobConstants::Status::STATUS_HASH[:FAILED],]
