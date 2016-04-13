@@ -22,3 +22,6 @@ rails_prisme.war
 /.project
 /.idea
 .repository/
+context.txt
+/db/schema.rb
+/db/data/*
