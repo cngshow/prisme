@@ -21,3 +21,7 @@ rails_prisme.war
 /lib/jars/
 /.project
 /.idea
+.repository/
+context.txt
+/db/schema.rb
+/db/data/*

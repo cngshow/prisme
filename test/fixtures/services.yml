@@ -9,6 +9,12 @@ tomcat:
   description: Tomcat Application Server
   service_type: tomcat
 
+tomcat_localhost:
+  name: Tomcat localhost
+  description: Tomcat Application Server
+  service_type: tomcat
+
+
 # nexus service data
 nexus:
   name: Nexus

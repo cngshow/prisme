@@ -50,4 +50,8 @@ module CargoSupport
     end
 
   end
+
+  class CargoError < StandardError
+
+  end
 end

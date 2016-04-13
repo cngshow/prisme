@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+
   match 'services/render_props' => 'services#render_props', :as => :services_render_props, via: [:get]
   resources :services
   get 'prisme_job_queue/list'
