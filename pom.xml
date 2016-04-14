@@ -143,7 +143,7 @@
 					</execution>
 					
 					<execution>
-						<id>run migration for test db</id>
+						<id>run migration for production db</id>
 						<phase>compile</phase>
 						<goals>
 							<goal>exec</goal>
