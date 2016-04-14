@@ -1,6 +1,9 @@
 include NexusConcern
 
 class AppDeployerController < ApplicationController
+
+  before_action :auth_registered
+
   def index
     @komet_wars = get_komet_wars
     @tomcat_servers = []
