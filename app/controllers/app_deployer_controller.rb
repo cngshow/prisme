@@ -5,9 +5,10 @@ class AppDeployerController < ApplicationController
   before_action :auth_registered
 
   def index
-    @komet_wars = get_komet_wars
+    @komet_wars = get_nexus_wars(app: 'KOMET')
+    @isaac_wars = get_nexus_wars(app: 'ISAAC')
 
-    if @komet_wars.nil?
+    if @komet_wars.nil? || @isaac_wars.nil?
       render :file => 'public/nexus_not_available.html'
       return
     end
@@ -36,15 +37,17 @@ class AppDeployerController < ApplicationController
     p = {}
     tomcat_id = params[PrismeService::TOMCAT]
     tomcat_ar = Service.find_by(id: tomcat_id)
-    komet_war = KometWar.init_from_select_key(params['komet_war'])
-    war_name = komet_war.select_value
+    application = params['application']
+    war_param = application.eql?('KOMET') ? params['komet_war'] : params['isaac_war']
+    war_file = NexusWar.init_from_select_key(war_param)
+    war_name = war_file.select_value
 
-    war_info = params['komet_war'].split('|')
+    war_info = war_param.split('|')
     p[:g] = war_info[0]
     p[:a] = war_info[1]
     p[:v] = war_info[2]
     p[:r] = war_info[3]
-    p[:c] = war_info[4]
+    p[:c] = war_info[4] unless war_info[4].empty?
     p[:p] = war_info[5]
     url << '?' << p.to_query
     #ActiveRecord Job set to pending
@@ -53,10 +56,11 @@ class AppDeployerController < ApplicationController
   end
 
   private
-  def get_komet_wars
+  def get_nexus_wars(app:)
     url_string = $PROPS['ENDPOINT.nexus_lucene_search']
-    #'/nexus/service/local/lucene/search'
-    params = {g: 'gov.vha.isaac.gui.rails', a: 'rails_komet', repositoryId: 'releases', p: 'war'}
+    params_hash = {'KOMET' => {g: 'gov.vha.isaac.gui.rails', a: 'rails_komet', repositoryId: 'releases', p: 'war'},
+                   'ISAAC' => {g: 'gov.vha.isaac.rest', a: 'isaac-rest', repositoryId: 'releases', p: 'war'}}
+    params = params_hash[app]
     conn = NexusConcern.get_nexus_connection
     response = conn.get(url_string, params)
     json = nil
@@ -70,19 +74,25 @@ class AppDeployerController < ApplicationController
     end
 
     return nil if json.nil?
-
-    hits = json['data'].first
     ret = []
-    group_id = hits['groupId']
-    artifact_id = hits['artifactId']
-    version = hits['version']
-    hits = hits['artifactHits'].first
-    repo = hits['repositoryId']
-    hits = hits['artifactLinks']
 
-    # only include war files
-    hits.keep_if { |h| h['extension'] == 'war' }.each do |h|
-      ret << KometWar.new(groupId: group_id, artifactId: artifact_id, version: version, repo: repo, classifier: h['classifier'], package: h['extension'])
+    if (json['totalCount'].to_i > 0)
+      json['data'].each do |artifact|
+        g = artifact['groupId']
+        a = artifact['artifactId']
+        v = artifact['version']
+        lr = artifact['latestRelease'] # use this for styling??
+        hits = artifact['artifactHits'].first
+        repo = hits['repositoryId']
+        links = hits['artifactLinks']
+
+        # only include war files
+        links.keep_if { |h| h['extension'] == 'war' }.each do |h|
+          ret << NexusWar.new(groupId: g, artifactId: a, version: v, repo: repo, classifier: h['classifier'], package: h['extension'])
+        end
+      end
+    else
+      puts 'no war files found!!!'
     end
     ret
   end

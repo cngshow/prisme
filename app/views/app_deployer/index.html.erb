@@ -19,8 +19,14 @@ this style is for the more complex validation check
 
     <h3>WAR File to Deploy</h3>
     <%= field_set_tag 'Select the WAR file to deploy to Tomcat' do %>
-        <%= label_tag 'komet_war', 'KOMET Tooling', id: 'war_label' %><br>
-        <%= select_tag 'komet_war', options_from_collection_for_select(@komet_wars, 'select_key', 'select_value'), {:prompt => '-- Select a war to deploy --', :required => true} %>
+        <div id="komet_wars">
+          <%= label_tag 'komet_war', 'KOMET Tooling' %><br>
+          <%= select_tag 'komet_war', options_from_collection_for_select(@komet_wars, 'select_key', 'select_value'), {:prompt => '-- Select a war to deploy --'} %>
+        </div>
+        <div id="isaac_wars">
+          <%= label_tag 'isaac_war', 'ISAAC Rest' %><br>
+          <%= select_tag 'isaac_war', options_from_collection_for_select(@isaac_wars, 'select_key', 'select_value'), {:prompt => '-- Select a war to deploy --'} %>
+        </div>
     <% end %>
 
     <h3>Select the Tomcat Server for Deployment</h3>
@@ -48,6 +54,26 @@ this style is for the more complex validation check
         if (currentIndex > newIndex) {
           return true;
         }
+        if (newIndex === 1) {
+          //get the selected radio button for the application to deploy
+          var war_filter = $("input[name=application]:checked").val();
+
+          if (war_filter === 'KOMET') {
+            $('#komet_wars').show();
+            $('#isaac_wars').hide();
+            document.getElementById("komet_war").required = true;
+            document.getElementById("isaac_war").required = false;
+          }
+          else {
+            $('#komet_wars').hide();
+            $('#isaac_wars').show();
+            document.getElementById("komet_war").required = false;
+            document.getElementById("isaac_war").required = true;
+          }
+          document.getElementById("komet_war").value = '';
+          document.getElementById("isaac_war").value = '';
+        }
+
         // Forbid next action on "Warning" step if the user is to young
         /*
          if (newIndex === 1 && Number($("#age-2").val()) < 18) {
@@ -85,30 +111,30 @@ this style is for the more complex validation check
         form.submit();
       }
     }).validate({
-/*      errorPlacement: function(error, element) {
-        // Append error within linked label
-        $( element )
-            .closest( "form" )
-            .find( "label[for='" + element.attr( "id" ) + "']" )
-            .append( error );
-      },
-      errorElement: "span",
-      messages: {
-        komet_wars: {
-          required: " (required)",
-          minlength: " (must be at least 3 characters)"
-        }
-      }*/
+      /*      errorPlacement: function(error, element) {
+       // Append error within linked label
+       $( element )
+       .closest( "form" )
+       .find( "label[for='" + element.attr( "id" ) + "']" )
+       .append( error );
+       },
+       errorElement: "span",
+       messages: {
+       komet_wars: {
+       required: " (required)",
+       minlength: " (must be at least 3 characters)"
+       }
+       }*/
       errorPlacement: function errorPlacement(error, element) {
         element.after(error);
       }
-/*
-      rules: {
-        confirm: {
-          equalTo: "#password-2"
-        }
-      }
-*/
+      /*
+       rules: {
+       confirm: {
+       equalTo: "#password-2"
+       }
+       }
+       */
     });
   });
 </script>
