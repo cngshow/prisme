@@ -16,12 +16,16 @@ class ApplicationController < ActionController::Base
     $log.error(e.message)
     $log.error request.fullpath
     $log.error(e.backtrace.join("\n"))
-    if (e.is_a?(Pundit::AuthorizationNotPerformedError) || e.is_a?(Pundit::NotAuthorizedError))
-      render :file => "public/not_authorized.html", status: 401
 
-      #Faraday::ConnectionFailed  Is thrown if Nexus is down.
+    if (e.is_a?(Pundit::AuthorizationNotPerformedError) || e.is_a?(Pundit::NotAuthorizedError))
+      render :file => 'public/not_authorized.html'
+      return
+    elsif e.is_a? Faraday::ConnectionFailed
+      # thrown if Nexus is down.
+      render :file => 'public/nexus_not_available.html'
       return
     end
+
     raise e
   end
 

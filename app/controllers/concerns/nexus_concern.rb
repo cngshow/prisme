@@ -74,10 +74,10 @@ class KometWar
   end
 
   def select_value
-    ret = "#{artifactId}_#{classifier}.#{package}"
+    ret = "#{artifactId}-#{version}-#{classifier}.#{package}"
 
     if (classifier.nil? || classifier.length == 0)
-      ret = "#{artifactId}.#{package}"
+      ret = "#{artifactId}-#{version}.#{package}"
     end
     ret
   end

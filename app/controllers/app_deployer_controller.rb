@@ -6,6 +6,12 @@ class AppDeployerController < ApplicationController
 
   def index
     @komet_wars = get_komet_wars
+
+    if @komet_wars.nil?
+      render :file => 'public/nexus_not_available.html'
+      return
+    end
+
     @tomcat_servers = []
     Service.where(service_type: PrismeService::TOMCAT).each do |active_record|
       active_record.define_singleton_method(:select_value) do
@@ -25,7 +31,7 @@ class AppDeployerController < ApplicationController
   def deploy_app
     nexus_props = Service.get_artifactory_props
     url = nexus_props[PrismeService::NEXUS_ROOT] + $PROPS['ENDPOINT.nexus_maven_content']
-    # Should look sometyhing like this: url = 'http://vadev.mantech.com:8081/nexus/service/local/artifact/maven/content'
+    # Should look something like this: url = 'http://vadev.mantech.com:8081/nexus/service/local/artifact/maven/content'
     # g a v r c p
     p = {}
     tomcat_id = params[PrismeService::TOMCAT]
@@ -50,7 +56,7 @@ class AppDeployerController < ApplicationController
   def get_komet_wars
     url_string = $PROPS['ENDPOINT.nexus_lucene_search']
     #'/nexus/service/local/lucene/search'
-    params = {g: 'gov.vha.isaac.gui.rails', a: 'rails_komet'}
+    params = {g: 'gov.vha.isaac.gui.rails', a: 'rails_komet', repositoryId: 'releases', p: 'war'}
     conn = NexusConcern.get_nexus_connection
     response = conn.get(url_string, params)
     json = nil
@@ -62,6 +68,8 @@ class AppDeployerController < ApplicationController
         return response.body
       end
     end
+
+    return nil if json.nil?
 
     hits = json['data'].first
     ret = []
