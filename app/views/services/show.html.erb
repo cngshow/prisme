@@ -1,6 +1,4 @@
 <h1>Show Service</h1>
-<p id="notice"><%#= notice %></p>
-
 <p>
   <strong>Name:</strong><br>
   <%= @service.name %>
@@ -25,7 +23,6 @@
         </p>
     <% end %>
 <% end %>
-<br>
-<br>
+<hr>
 <%= link_to 'Edit', edit_service_path(@service), class: 'btn btn-primary' %>
 <%= link_to 'List', services_path, class: 'btn btn-primary' %>
