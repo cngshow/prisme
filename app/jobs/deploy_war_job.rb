@@ -1,4 +1,5 @@
 require './lib/cargo'
+require 'fileutils'
 
 class DeployWarJob < PrismeBaseJob
 
@@ -10,6 +11,14 @@ class DeployWarJob < PrismeBaseJob
       file_name = args.shift
       context = args.shift
       tomcat_ar = args.shift
+
+      unless (context.nil?)
+        file_type = File.extname(file_name)
+        file_dir = File.dirname(file_name)
+        new_file = file_dir + context + file_type
+        FileUtils.cp(file_name,new_file)
+        file_name = new_file
+      end
 
       factory = JCargo::DefaultContainerFactory.new
       type = JCargo::ContainerType::REMOTE
