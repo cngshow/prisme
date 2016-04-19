@@ -5,21 +5,21 @@
   <div>
     <ul class="nav navbar-nav">
       <li>
-        <a href="<%= root_path %>"><span class="glyphicon glyphicon-home" onclick="checkPolling('welcome');"></span></a>
+        <a href="<%= root_path %>"><span class="glyphicon glyphicon-home" onclick="polling.checkPolling('welcome');"></span></a>
       </li>
-      <li><a href="<%= terminology_converter_path %>" onclick="checkPolling('converter');">Terminology Converter</a>
+      <li><a href="<%= terminology_converter_path %>" onclick="polling.checkPolling('converter');">Terminology Converter</a>
       </li>
       <% if policy(:navigation).registered? %>
-          <li><a href="<%= app_deployer_path %>" onclick="checkPolling('deployer');">App Deployer</a></li>
+          <li><a href="<%= app_deployer_path %>" onclick="polling.checkPolling('deployer');">App Deployer</a></li>
       <% end %>
       <li><a href="#" onclick="checkPolling('db_builder');">DB Builder</a></li>
-      <li><a href="<%= prisme_job_queue_list_path %>" onclick="checkPolling('job_queue');">Job Queue Listing</a></li>
+      <li><a href="<%= prisme_job_queue_list_path %>" onclick="polling.checkPolling('job_queue');">Job Queue Listing</a></li>
       <% if policy(:navigation).admin? %>
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administration
               <span class="caret"></span></a>
             <ul class="dropdown-menu">
-              <li><a href="<%= services_path %>" onclick="checkPolling('services');">Service Provisioning</a></li>
+              <li><a href="<%= services_path %>" onclick="polling.checkPolling('services');">Service Provisioning</a></li>
               <li role="separator" class="divider"></li>
               <li class="dropdown-header">Nav header</li>
               <li><a href="#">Separated link</a></li>
@@ -30,9 +30,9 @@
 
       <li>
         <% if current_user.nil? %>
-            <a href="<%= new_user_session_path %>">Log in</a>
+            <a href="<%= new_user_session_path %>" onclick="polling.checkPolling('logIn');">Log in</a>
         <% else %>
-            <a href="<%= destroy_user_session_path %>">Log out</a>
+            <a href="<%= destroy_user_session_path %>" onclick="polling.checkPolling('logOut');">Log out</a>
         <% end %>
       </li>
     </ul>

@@ -56,7 +56,6 @@
     poll();
 
     //register for polling
-    //var pollster = setInterval(poll, 5000);
-    //register_polling('welcome', pollster);
+    polling.registerController('welcome', poll, 5000);
   });
 </script>
