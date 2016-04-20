@@ -1,0 +1,46 @@
+<h1>PRISME - Job Queue</h1>
+<button id="btn-update">Update List -- remove me!</button><br><br>
+
+<div id="queue_list_div" style="height: 100%;" class="ag-fresh"></div>
+
+<script>
+  var columnDefs = [
+    {headerName: "Job ID", field: "job_id", width: 150},
+    {headerName: "Job Name", field: "job_name", width: 150},
+    {headerName: "Status", field: "status", width: 60},
+    {headerName: "Scheduled At", field: "scheduled_at", width: 90},
+    {headerName: "Enqueued At", field: "enqueued_at", width: 90},
+    {headerName: "Started At", field: "started_at", width: 90},
+    {headerName: "Completed At", field: "completed_at", width: 90},
+    {headerName: "Elapsed Time", field: "elapsed_time", width: 90},
+    {headerName: "User", field: "user", width: 110},
+    {headerName: "Last Error", field: "last_error", width: 100},
+    {headerName: "Result", field: "result", width: 100}
+  ];
+
+  var gridOptions = {
+    columnDefs: columnDefs,
+    rowData: null
+  };
+
+  $('#btn-update').click(function (e) {
+    $.ajax({
+      url: '/prisme_job_queue/reload_job_queue_list',
+      type: 'GET',
+      data: {add_test_job: true},
+      dataType: "json",
+      success: function (data) {
+        gridOptions.api.setRowData(data);
+      }
+    })
+  });
+
+  function poll() {
+    console.log('calling poll');
+
+    //load data via ajax
+    $.getJSON('/prisme_job_queue/reload_job_queue_list', {}, function (data) {
+      gridOptions.api.setRowData(data);
+    });
+  }
+</script>
