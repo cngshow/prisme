@@ -4,16 +4,23 @@ require 'erb'
 include NexusConcern
 
 class TerminologyConverterController < ApplicationController
+  # skip_after_action :verify_authorized, :wizard
+  before_action :auth_admin
+
+  def wizard
+    @options = []
+    @options << {value: 'https://github.com/VA-CTT/ISAAC-term-convert-rf2.git', key: 'ISAAC-term-convert-rf2'}
+    @options << {value: 'https://github.com/VA-CTT/ISAAC-term-convert-vhat.git', key: 'ISAAC-term-convert-vhat'}
+    @options << {value: 'https://github.com/VA-CTT/ISAAC-term-convert-loinc.git', key: 'ISAAC-term-convert-loinc'}
+
+    # @options = load_source_content
+  end
+
   def setup_last
     @options = load_source_content
-    render 'terminology_converter/wizard'
   end
 
-  def setup
-    @options = load_source_content
-  end
-
-  def process_form
+  def process_form2
     term_source = params[:terminology_source]
     source = TermSource.init_from_select_key(term_source) unless term_source.nil?
     base_dir = './tmp/vhat-ibdf/'
@@ -25,7 +32,7 @@ class TerminologyConverterController < ApplicationController
     pom_result = ERB.new(File.open("#{base_dir}/#{erb}", 'r') { |file| file.read }).result(binding)
 
     # write the new pom file out
-    File.open("#{base_dir}/pom.xml", 'w') {|f| f.write(pom_result) }
+    File.open("#{base_dir}/pom.xml", 'w') { |f| f.write(pom_result) }
 
     # delete the pom.xml.erb file
     File.delete("#{base_dir}/#{erb}")
@@ -41,11 +48,29 @@ class TerminologyConverterController < ApplicationController
 
   end
 
+  def process_form
+    term_source = params[:terminology_source]
+
+    # local variables referenced in the erb via binding
+    git_url = term_source
+    development = Rails.env.development?
+
+    # file to render
+    erb = './config/service/jenkins_job_config.xml.erb'
+    props = File.open(erb, 'r') { |file| file.read }
+
+    # you MUST pass binding in order to have the erb process local variables
+    config_xml = ERB.new(props).result(binding)
+
+    @pom = config_xml
+
+  end
+
   def get_repo_zip
     # 'http://localhost:8081/nexus/service/local/artifact/maven/content?g=vhat_ibdf&a=converter&v=LATEST&r=vhat_ibdf&c=vhat_ibdf_converters&e=zip'
     url_string = '/nexus/service/local/artifact/maven/content'
     params = {g: 'vhat_ibdf', a: 'converter', v: 'LATEST', r: 'vhat_ibdf', c: 'vhat_ibdf_converters', e: 'zip'}
-    File.open('./tmp/vhat_ibdf.zip', 'w') {|f| f.write(get_nexus_connection.get(url_string, params)) }
+    File.open('./tmp/vhat_ibdf.zip', 'w') { |f| f.write(get_nexus_connection.get(url_string, params)) }
 
   end
 

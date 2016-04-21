@@ -19,7 +19,7 @@ Rails.application.routes.draw do
   get 'app_deployer' => 'app_deployer#index'
   post 'app_deployer/deploy_app'
 
-  get 'terminology_converter' => 'terminology_converter#setup'
+  get 'terminology_converter' => 'terminology_converter#wizard'
   post 'terminology_converter/process_form'
 
   root 'welcome#index'

@@ -7,9 +7,8 @@
       <li>
         <a href="<%= root_path %>"><span class="glyphicon glyphicon-home" onclick="polling.checkPolling('welcome');"></span></a>
       </li>
-      <li><a href="<%= terminology_converter_path %>" onclick="polling.checkPolling('converter');">Terminology Converter</a>
-      </li>
       <% if policy(:navigation).registered? %>
+          <li><a href="<%= terminology_converter_path %>" onclick="polling.checkPolling('converter');">Terminology Converter</a></li>
           <li><a href="<%= app_deployer_path %>" onclick="polling.checkPolling('deployer');">App Deployer</a></li>
       <% end %>
       <li><a href="#" onclick="checkPolling('db_builder');">DB Builder</a></li>
