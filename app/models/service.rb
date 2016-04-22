@@ -14,6 +14,14 @@ class Service < ActiveRecord::Base
       Service.find_by!(service_type: PrismeService::NEXUS) #ActiveRecordNotFound Will be raised if a Nexus is not configured
     end
 
+    def get_build_server_props
+      get_build_server.properties_hash
+    end
+
+    def get_build_server
+      Service.find_by!(service_type: PrismeService::JENKINS)
+    end
+
     def get_application_servers
       Service.where(service_type: PrismeService::TOMCAT)
     end
