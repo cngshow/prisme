@@ -1,5 +1,8 @@
 require './app/jobs/prisme_base_job'
+Dir['./app/jobs/*.rb'].each {|file| require file }
+
 require 'sucker_punch/async_syntax'
+
 SuckerPunch.logger = $log
 
 java_import 'java.util.Timer' do |p, c|

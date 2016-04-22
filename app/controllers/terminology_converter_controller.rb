@@ -5,7 +5,7 @@ include NexusConcern
 
 class TerminologyConverterController < ApplicationController
   # skip_after_action :verify_authorized, :wizard
-  before_action :auth_admin
+  before_action :auth_registered
 
   def wizard
     @options = []
@@ -56,14 +56,17 @@ class TerminologyConverterController < ApplicationController
     development = Rails.env.development?
 
     # file to render
-    erb = './config/service/jenkins_job_config.xml.erb'
-    props = File.open(erb, 'r') { |file| file.read }
-
+    props = Service.get_build_server_props
+    j_xml = PrismeService::JENKINS_XML
+    url = props[PrismeService::JENKINS_ROOT]
+    user = props[PrismeService::JENKINS_USER]
+    password = props[PrismeService::JENKINS_PWD]
     # you MUST pass binding in order to have the erb process local variables
-    config_xml = ERB.new(props).result(binding)
-
-    @pom = config_xml
-
+    @job_xml = ERB.new(File.open(j_xml, 'r') { |file| file.read }).result(binding)
+    wizard
+    name = @options.select do |h| git_url.eql?(h[:value]) end.first[:key]
+    t_s = Time.now.strftime('%Y_%m_%dT%H_%M_%S')
+    JenkinsStartBuild.perform_later(JenkinsStartBuild::PRISME_NAME_PREFIX + name + "_#{t_s}", @job_xml, url, user, password)
   end
 
   def get_repo_zip
