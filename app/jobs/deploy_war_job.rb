@@ -56,9 +56,7 @@ class DeployWarJob < PrismeBaseJob
     ensure
       results = logger.results
       results << "Deployed #{file_name}\n"
-      active_record = lookup
-      active_record.result= results
-      active_record.save!
+      save_result results
     end
   end
 end

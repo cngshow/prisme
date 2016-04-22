@@ -44,9 +44,7 @@ class ArtifactDownloadJob < PrismeBaseJob
       #activeRecord instantiate new job
       DeployWarJob.perform_later(file_name, context, tomcat_ar) #, pass in parent id and my ID
     ensure
-      active_record = lookup
-      active_record.result= result
-      active_record.save!
+      save_result result
     end
   end
 end

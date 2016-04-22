@@ -32,6 +32,12 @@ class PrismeBaseJob < ActiveJob::Base
     active_record
   end
 
+  def save_result(results)
+    active_record = lookup
+    active_record.result= results
+    active_record.save!
+  end
+
   before_enqueue do |job|
     #this lifecycle is skipped on job.perform_now
     $log.debug("Preparing to enqueue job #{job}")
