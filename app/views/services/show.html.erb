@@ -1,4 +1,5 @@
 <h1>Show Service</h1>
+<%= field_set_tag (@service.name) do %>
 <p>
   <strong>Name:</strong><br>
   <%= @service.name %>
@@ -13,8 +14,10 @@
   <strong>Service Type:</strong><br>
   <%= @service.service_type %>
 </p>
+<% end %>
+
 <br>
-<%= field_set_tag (@service.description + ' Properties') do %>
+<%= field_set_tag (@service.name + ' - Properties') do %>
     <% @service.service_properties.ordered_props.each do |prop| %>
         <p>
           <strong><%= get_label(@service.service_type, prop.key) + ':' %></strong><br>
