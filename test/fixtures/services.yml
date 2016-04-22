@@ -20,3 +20,9 @@ nexus:
   name: Nexus
   description: Nexus Artifactory
   service_type: nexus
+
+# jenkins service data
+jenkins:
+  name: Jenkins
+  description: Jenkins CI Server
+  service_type: jenkins

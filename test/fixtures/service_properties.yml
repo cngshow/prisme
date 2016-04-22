@@ -57,7 +57,6 @@ five_l:
   value: localhost
   order_idx: 4
 
-
 # nexus service properties
 six:
   service: nexus
@@ -72,5 +71,22 @@ seven:
 eight:
   service: nexus
   key: nexus_pwd
+  value: '[79, 155, 44, 205, 82, 218, 80, 35, 26, 10, 173, 105, 31, 126, 237, 251]'
+  order_idx: 2
+
+# jenkins service properties
+nine:
+  service: jenkins
+  key: jenkins_root
+  value: http://vadev.mantech.com:8080
+  order_idx: 0
+ten:
+  service: jenkins
+  key: jenkins_user
+  value: devtest
+  order_idx: 1
+eleven:
+  service: jenkins
+  key: jenkins_pwd
   value: '[79, 155, 44, 205, 82, 218, 80, 35, 26, 10, 173, 105, 31, 126, 237, 251]'
   order_idx: 2
