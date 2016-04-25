@@ -67,6 +67,8 @@ class PrismeBaseJob < ActiveJob::Base
     $log.debug("Performed job #{job}")
     active_record.status = PrismeJobConstants::Status::STATUS_HASH[:COMPLETED]
     active_record.completed_at = Time.now
+    parent = parent_id
+    active_record.parent_id = parent unless parent.nil? #greg bowman
     active_record.save!
   end
 
@@ -91,6 +93,19 @@ class PrismeBaseJob < ActiveJob::Base
 
   def to_s
     "Job: " + self.class.to_s + " , ID: " + self.job_id.to_s
+  end
+
+  def track_parent(job)
+    @@job_map ||= {}
+    @@job_map[job.job_id] = job_id
+  end
+
+  def parent_id(clean = true)
+    @@job_map ||= {}
+    parent = nil
+    parent = @@job_map[job_id]
+    @@job_map.delete(job_id) if clean
+    parent
   end
 
 end
