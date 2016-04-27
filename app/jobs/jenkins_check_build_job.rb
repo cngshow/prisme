@@ -33,7 +33,6 @@ class JenkinsCheckBuild < PrismeBaseJob
     attempt_number = args.shift
     max_attempts = $PROPS['JENKINS.max_health_checks'].to_i
     $log.info("checking stats for #{name}")
-    attempt_number = args.shift
     time = $PROPS['JENKINS.build_check_seconds'].to_i.seconds
     jenkins, jenkins_job, build, details, build_result = nil
     result = String.new
