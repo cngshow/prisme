@@ -90,13 +90,8 @@ class PrismeBaseJob < ActiveJob::Base
     $log.debug("Performed job #{job}")
     active_record.status = PrismeJobConstants::Status::STATUS_HASH[:COMPLETED]
     active_record.completed_at = Time.now
-    active_record.save!
     #OK I am a child job, spun off by parent parent_job_id.  My parent is no longer a leaf
-    if (active_record.parent_job)
-      parent_ar = active_record.parent_job
-      parent_ar.leaf = false
-      parent_ar.save!
-    end
+    update_parent_leaf_and_save(active_record)
   end
 
   rescue_from(StandardError) do |exception|
@@ -107,7 +102,7 @@ class PrismeBaseJob < ActiveJob::Base
       $log.error(exception.backtrace.join("\n"))
       active_record.status = PrismeJobConstants::Status::STATUS_HASH[:FAILED]
       active_record.completed_at = Time.now
-      active_record.save!
+      update_parent_leaf_and_save(active_record)
     rescue => e
       $log.error(self.to_s + ' failed to rescue from an exception.  The error is ' + e.message)
       $log.error(e.backtrace.join("\n"))
@@ -124,6 +119,19 @@ class PrismeBaseJob < ActiveJob::Base
 
   def track_child_job
     {parent_job_id: job_id, root_job_id: lookup.root_job_id}
+  end
+
+  private
+  def update_parent_leaf_and_save(active_record)
+    PrismeJob.transaction do
+      parent_ar = active_record.parent_job
+      if (parent_ar)
+        parent_ar.leaf = false
+        parent_ar.save!
+      end
+      active_record.save!
+    end
+
   end
 end
 
