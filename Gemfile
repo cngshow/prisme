@@ -54,6 +54,7 @@ gem 'ci_reporter_test_unit'
 gem 'sucker_punch', '~> 2.0.0'
 gem 'devise'
 gem 'pundit'
+gem 'jdbc-h2', '1.4.181'
 
 group :development do
   gem 'jdbc-sqlite3'
