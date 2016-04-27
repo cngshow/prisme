@@ -57,7 +57,8 @@ class PrismeBaseJob < ActiveJob::Base
   end
 
   def self.result_hash(ar)
-    return JSON.parse ar.json_data unless ar.nil?
+    json = ar.json_data
+    return JSON.parse json unless json.nil?
     {}
   end
 
