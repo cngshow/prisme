@@ -57,7 +57,8 @@ class PrismeBaseJob < ActiveJob::Base
   end
 
   def self.result_hash(ar)
-    JSON.parse ar.json_data
+    return JSON.parse ar.json_data unless ar.nil?
+    {}
   end
 
   before_enqueue do |job|
