@@ -110,6 +110,17 @@ class PrismeBaseJob < ActiveJob::Base
   def to_s
     'Job: ' + self.class.to_s + ' , ID: ' + self.job_id.to_s
   end
+
+  def track_child_job
+    if (@track_child_job_called.nil?)
+      ar = lookup
+      ar.leaf = false
+      ar.save!
+    else
+      @track_child_job_called = true
+    end
+    {parent_job_id: job_id, root_job_id: lookup.root_job_id}
+  end
 end
 
 # load('./app/jobs/prisme_base_job.rb')
