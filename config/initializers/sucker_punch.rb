@@ -51,6 +51,6 @@ unless($rake || defined?(Rails::Generators))
   update_hash = {status: PrismeJobConstants::Status::STATUS_HASH[:FAILED], last_error: 'System Failure - Uncompleted job were updated to Failed in initializer!'}
   PrismeJob.where(['status != ? and status != ?', *params]).update_all(update_hash)
 
-# schedule the CleanJobQueueJob to run soon
-  CleanJobQueueJob.perform_later
+# schedule the PrismeCleanupJob to run soon
+  PrismeCleanupJob.perform_later
 end
