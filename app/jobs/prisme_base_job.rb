@@ -49,10 +49,15 @@ class PrismeBaseJob < ActiveJob::Base
     prisme_job
   end
 
-  def save_result(results)
+  def save_result(results, results_hash = nil)
     active_record = lookup
     active_record.result= results
+    active_record.json_data = results_hash.to_json
     active_record.save!
+  end
+
+  def self.result_hash(ar)
+    JSON.parse ar.json_data
   end
 
   before_enqueue do |job|
@@ -86,6 +91,12 @@ class PrismeBaseJob < ActiveJob::Base
     active_record.status = PrismeJobConstants::Status::STATUS_HASH[:COMPLETED]
     active_record.completed_at = Time.now
     active_record.save!
+    #OK I am a child job, spun off by parent parent_job_id.  My parent is no longer a leaf
+    if (active_record.parent_job)
+      parent_ar = active_record.parent_job
+      parent_ar.leaf = false
+      parent_ar.save!
+    end
   end
 
   rescue_from(StandardError) do |exception|
@@ -112,13 +123,6 @@ class PrismeBaseJob < ActiveJob::Base
   end
 
   def track_child_job
-    if (@track_child_job_called.nil?)
-      ar = lookup
-      ar.leaf = false
-      ar.save!
-    else
-      @track_child_job_called = true
-    end
     {parent_job_id: job_id, root_job_id: lookup.root_job_id}
   end
 end

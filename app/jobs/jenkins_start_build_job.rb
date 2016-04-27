@@ -29,7 +29,7 @@ class JenkinsStartBuild < PrismeBaseJob
       $log.debug("#{name} build started")
       result << "Jenkins build started."
       time = $PROPS['JENKINS.build_check_seconds'].to_i.seconds
-      JenkinsCheckBuild.set(wait: time).perform_later(jenkins_config, name, 1)
+      JenkinsCheckBuild.set(wait: time).perform_later(jenkins_config, name, 1,track_child_job)
       $log.debug("Build kicked off!")
     rescue JException => ex
       $log.error("Jenkins Client libraries threw an exception! #{ex}")

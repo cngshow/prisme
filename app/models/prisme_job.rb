@@ -17,7 +17,7 @@ class PrismeJob < ActiveRecord::Base
     self.parent_job.nil?
   end
 
-  def all_children
+  def descendants
     PrismeJob.where(root_job_id: self.job_id)
   end
 end
