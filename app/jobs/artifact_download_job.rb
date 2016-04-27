@@ -15,8 +15,8 @@ class ArtifactDownloadJob < PrismeBaseJob
       result = String.new
       result << "Downloading from URL #{url}.\n"
       result << "Fetching war #{war_name}.\n"
-      $log.debug("This job is doing URL " + url + ".")
-      $log.debug("This job is doing war " + war_name + ".")
+      $log.debug("This job is doing URL #{url}.")
+      $log.debug("This job is doing war #{war_name}.")
       response = get_nexus_connection('*/*').get(url, {})
       file_name = "./tmp/#{war_name}"
       File.open(file_name, 'wb') { |fp| fp.write(response.body) }
@@ -27,7 +27,7 @@ class ArtifactDownloadJob < PrismeBaseJob
       rescue => e
         $log.error("#{file_name} is not a valid war file!")
         $log.error(e.backtrace.join("\n"))
-        $log.error("Rethrowing: " + e.message)
+        $log.error('Rethrowing: ' + e.message)
         raise e
       end
       context = nil
@@ -36,7 +36,7 @@ class ArtifactDownloadJob < PrismeBaseJob
         $log.debug('The context root is ' + context)
         result << "The war will be deployed to context root #{context}.\n"
       rescue
-        $log.debug("No context.txt file found")
+        $log.debug('No context.txt file found')
         result << "The war will be deployed to the default context root.\n"
         #not all wars have a context.txt, but if we do we use it
       end

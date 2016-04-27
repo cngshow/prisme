@@ -50,7 +50,7 @@ class DeployWarJob < PrismeBaseJob
 
       $log.info("Deployed #{file_name}")
     rescue => ex
-      $log.error("A Java Exception was thrown: " + ex.message)
+      $log.error("A Java Exception was thrown: #{ex.message}")
       $log.error(ex.backtrace.join("\n"))
       raise CargoSupport::CargoError.new(ex.message)
     ensure
