@@ -32,19 +32,19 @@ class PrismeJob < ActiveRecord::Base
     s = ar.status
     case s
       when PrismeJobConstants::Status::STATUS_HASH[:NOT_QUEUED]
-        "NOT QUEUED"
+        'NOT QUEUED'
       when  PrismeJobConstants::Status::STATUS_HASH[:QUEUED]
-        "QUEUED"
+        'QUEUED'
       when  PrismeJobConstants::Status::STATUS_HASH[:RUNNING]
-        "RUNNING"
+        'RUNNING'
       when  PrismeJobConstants::Status::STATUS_HASH[:ORPHANED]
-        "ORPHANED"
+        'ORPHANED'
       when  PrismeJobConstants::Status::STATUS_HASH[:FAILED]
-        "FAILED"
+        'FAILED'
       when  PrismeJobConstants::Status::STATUS_HASH[:COMPLETED]
-        "COMPLETED"
+        'COMPLETED'
       else
-        raise ArgumentError.new("This method needs to be updated!.")
+        raise ArgumentError.new('This method needs to be updated!.')
     end
   end
 
@@ -64,3 +64,12 @@ class PrismeJob < ActiveRecord::Base
     end
   end
 end
+=begin
+
+orphans.each do |o|
+  unless o.is_root?
+    o.parent_job.leaf = false
+    o.parent_job.save!
+  end
+end
+=end

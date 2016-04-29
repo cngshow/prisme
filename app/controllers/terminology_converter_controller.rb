@@ -113,14 +113,15 @@ class TerminologyConverterController < ApplicationController
     data.each do |jsb|
       row_data = JSON.parse(jsb.to_json)
       leaf_data = {}
+      has_orphan = jsb.descendants.orphan(true).first
 
       leaf = jsb.descendants.completed(true).orphan(false).leaves.first
-      leaf_data['jenkins_check_job_id'] = leaf ? leaf.job_id : JenkinsCheckBuild::BuildResult::UNKNOWN
-      leaf_data['jenkins_job_deleted'] = leaf ? JenkinsCheckBuild.jenkins_job_deleted(leaf) : JenkinsCheckBuild::BuildResult::UNKNOWN
-      leaf_data['jenkins_job_name'] = leaf ? JenkinsCheckBuild.jenkins_job_name(leaf) : JenkinsCheckBuild::BuildResult::IN_PROCESS
-      leaf_data['jenkins_attempt_number'] = leaf ? JenkinsCheckBuild.attempt_number(leaf) : JenkinsCheckBuild::BuildResult::IN_PROCESS
-      leaf_data['jenkins_build_result'] = leaf ? JenkinsCheckBuild.build_result(leaf) : JenkinsCheckBuild::BuildResult::IN_PROCESS
-      leaf_data['completed_at'] = leaf ? leaf.completed_at : JenkinsCheckBuild::BuildResult::IN_PROCESS
+      leaf_data['jenkins_check_job_id'] = leaf ? leaf.job_id : (has_orphan ? JenkinsCheckBuild::BuildResult::SERVER_ERROR : JenkinsCheckBuild::BuildResult::UNKNOWN)
+      leaf_data['jenkins_job_deleted'] = leaf ? JenkinsCheckBuild.jenkins_job_deleted(leaf) : (has_orphan ? JenkinsCheckBuild::BuildResult::SERVER_ERROR : JenkinsCheckBuild::BuildResult::IN_PROCESS)
+      leaf_data['jenkins_job_name'] = leaf ? JenkinsCheckBuild.jenkins_job_name(leaf) : (has_orphan ? JenkinsCheckBuild::BuildResult::SERVER_ERROR : JenkinsCheckBuild::BuildResult::IN_PROCESS)
+      leaf_data['jenkins_attempt_number'] = leaf ? JenkinsCheckBuild.attempt_number(leaf) : (has_orphan ? JenkinsCheckBuild::BuildResult::SERVER_ERROR : JenkinsCheckBuild::BuildResult::IN_PROCESS)
+      leaf_data['jenkins_build_result'] = leaf ? JenkinsCheckBuild.build_result(leaf) : (has_orphan ? JenkinsCheckBuild::BuildResult::SERVER_ERROR : JenkinsCheckBuild::BuildResult::IN_PROCESS)
+      leaf_data['completed_at'] = leaf ? leaf.completed_at : (has_orphan ? JenkinsCheckBuild::BuildResult::SERVER_ERROR : JenkinsCheckBuild::BuildResult::IN_PROCESS)
       row_data['leaf_data'] = leaf_data
       ret << row_data
     end
