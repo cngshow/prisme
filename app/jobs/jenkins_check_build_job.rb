@@ -10,9 +10,9 @@ end
 
 class JenkinsCheckBuild < PrismeBaseJob
   class Deleted
-    UNKNOWN = 'unknown'
-    YES = 'yes'
-    NO = 'no'
+    UNKNOWN = 'UNKNOWN'
+    YES = 'YES'
+    NO = 'NO'
   end
   class BuildResult
     INQUEUE = "INQUEUE"
