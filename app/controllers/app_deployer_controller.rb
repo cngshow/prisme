@@ -30,11 +30,9 @@ class AppDeployerController < ApplicationController
   end
 
   def deploy_app
-    nexus_props = Service.get_artifactory_props
-    url = nexus_props[PrismeService::NEXUS_ROOT] + $PROPS['ENDPOINT.nexus_maven_content']
     # Should look something like this: url = 'http://vadev.mantech.com:8081/nexus/service/local/artifact/maven/content'
-    # g a v r c p
-    p = {}
+    # g a v r c nexus_params
+    nexus_params = {}
     tomcat_id = params[PrismeService::TOMCAT]
     tomcat_ar = Service.find_by(id: tomcat_id)
     application = params['application']
@@ -43,15 +41,15 @@ class AppDeployerController < ApplicationController
     war_name = war_file.select_value
 
     war_info = war_param.split('|')
-    p[:g] = war_info[0]
-    p[:a] = war_info[1]
-    p[:v] = war_info[2]
-    p[:r] = war_info[3]
-    p[:c] = war_info[4] unless war_info[4].empty?
-    p[:p] = war_info[5]
-    url << '?' << p.to_query
+    nexus_params[:g] = war_info[0]
+    nexus_params[:a] = war_info[1]
+    nexus_params[:v] = war_info[2]
+    nexus_params[:r] = war_info[3]
+    nexus_params[:c] = war_info[4] unless war_info[4].empty?
+    nexus_params[:p] = war_info[5]
+
     #ActiveRecord Job set to pending
-    ArtifactDownloadJob.perform_later(url, war_name, tomcat_ar)
+    ArtifactDownloadJob.perform_later(nexus_params, war_name, tomcat_ar)
     redirect_to prisme_job_queue_list_path
   end
 
