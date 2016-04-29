@@ -114,7 +114,7 @@ class TerminologyConverterController < ApplicationController
       row_data = JSON.parse(jsb.to_json)
       leaf_data = {}
 
-      leaf = jsb.descendants.completed(true).leaves.first
+      leaf = jsb.descendants.completed(true).orphan(false).leaves.first
       leaf_data['jenkins_check_job_id'] = leaf ? leaf.job_id : JenkinsCheckBuild::BuildResult::UNKNOWN
       leaf_data['jenkins_job_deleted'] = leaf ? JenkinsCheckBuild.jenkins_job_deleted(leaf) : JenkinsCheckBuild::BuildResult::UNKNOWN
       leaf_data['jenkins_job_name'] = leaf ? JenkinsCheckBuild.jenkins_job_name(leaf) : JenkinsCheckBuild::BuildResult::IN_PROCESS
