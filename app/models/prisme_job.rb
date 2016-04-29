@@ -54,7 +54,7 @@ class PrismeJob < ActiveRecord::Base
     orphans.each do |orphan|
       $log.debug("Orphaning a #{orphan.job_name} with id #{orphan.job_id} and status " + status_string(orphan))
       orphan.status = PrismeJobConstants::Status::STATUS_HASH[:ORPHANED]
-      parent = PrismeJob.find_by(job_id: orphan.parent_job_id)
+      parent = orphan.parent_job
       parent.leaf = false
       PrismeJob.transaction do
         parent.save!
