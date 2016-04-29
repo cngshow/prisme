@@ -20,6 +20,8 @@ Rails.application.routes.draw do
   post 'app_deployer/deploy_app'
 
   get 'terminology_converter' => 'terminology_converter#wizard'
+  get 'terminology_converter/load_build_data' => 'terminology_converter#ajax_load_build_data'
+  get 'terminology_converter/check_polling' => 'terminology_converter#ajax_check_polling'
   post 'terminology_converter/process_form'
 
   root 'welcome#index'

@@ -1,7 +1,7 @@
 ##
-# Do common initilization tasks in prisme
+# Do common initialization tasks in prisme
 #
-jars = Dir.glob("./lib/jars/*.jar")
+jars = Dir.glob('./lib/jars/*.jar')
 jars.each do |jar|
   require jar
 end
@@ -15,5 +15,5 @@ require './lib/jenkin_client'
 
 #System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
 props = java.lang.System.getProperties
-props.put("java.util.logging.manager", $PROPS['PRISME.log_manager'])
+props.put('java.util.logging.manager', $PROPS['PRISME.log_manager'])
 $SERVICE_TYPES = YAML.load_file('./config/service/service_types.yml').freeze

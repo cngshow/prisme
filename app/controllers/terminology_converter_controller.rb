@@ -64,7 +64,9 @@ class TerminologyConverterController < ApplicationController
     # you MUST pass binding in order to have the erb process local variables
     @job_xml = ERB.new(File.open(j_xml, 'r') { |file| file.read }).result(binding)
     wizard
-    name = @options.select do |h| git_url.eql?(h[:value]) end.first[:key]
+    name = @options.select do |h|
+      git_url.eql?(h[:value])
+    end.first[:key]
     t_s = Time.now.strftime('%Y_%m_%dT%H_%M_%S')
     JenkinsStartBuild.perform_later(JenkinsStartBuild::PRISME_NAME_PREFIX + name + "_#{t_s}", @job_xml, url, user, password)
   end
@@ -102,5 +104,31 @@ class TerminologyConverterController < ApplicationController
     hits = json['data']
     data = hits.map { |i| TermSource.new(repoUrl: repo_url, groupId: i['groupId'], artifactId: i['artifactId'], version: i['version']) }.sort_by { |e| [e.get_key] }
     data
+  end
+
+  def ajax_load_build_data
+    data = PrismeJob.job_name('JenkinsStartBuild').order(completed_at: :desc)
+    ret = []
+
+    data.each do |jsb|
+      row_data = JSON.parse(jsb.to_json)
+      leaf_data = {}
+
+      leaf = jsb.descendants.completed(true).leaves.first
+      leaf_data['jenkins_check_job_id'] = leaf ? leaf.job_id : JenkinsCheckBuild::BuildResult::UNKNOWN
+      leaf_data['jenkins_job_deleted'] = leaf ? JenkinsCheckBuild.jenkins_job_deleted(leaf) : JenkinsCheckBuild::BuildResult::UNKNOWN
+      leaf_data['jenkins_job_name'] = leaf ? JenkinsCheckBuild.jenkins_job_name(leaf) : JenkinsCheckBuild::BuildResult::IN_PROCESS
+      leaf_data['jenkins_attempt_number'] = leaf ? JenkinsCheckBuild.attempt_number(leaf) : JenkinsCheckBuild::BuildResult::IN_PROCESS
+      leaf_data['jenkins_build_result'] = leaf ? JenkinsCheckBuild.build_result(leaf) : JenkinsCheckBuild::BuildResult::IN_PROCESS
+      leaf_data['completed_at'] = leaf ? leaf.completed_at : JenkinsCheckBuild::BuildResult::IN_PROCESS
+      row_data['leaf_data'] = leaf_data
+      ret << row_data
+    end
+
+    render json: ret
+  end
+
+  def ajax_check_polling
+    render json: {poll: PrismeJob.has_running_jobs?('JenkinsCheckBuild')}
   end
 end

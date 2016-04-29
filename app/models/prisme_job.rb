@@ -11,6 +11,10 @@ class PrismeJob < ActiveRecord::Base
   scope :orphan, -> (bool) {where("status #{bool ? '=' : '!='} #{PrismeJobConstants::Status::STATUS_HASH[:ORPHANED]} ")}
   scope :completed, -> (bool) {where("status #{bool ? '>=' : '<'} #{PrismeJobConstants::Status::STATUS_HASH[:FAILED]}")}
 
+  def self.has_running_jobs?(job_name)
+    PrismeJob.job_name(job_name).completed(false).orphan(false).count > 0
+  end
+
   def is_leaf?
     child_jobs.count == 0
   end

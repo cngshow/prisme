@@ -15,8 +15,8 @@ class JenkinsCheckBuild < PrismeBaseJob
     NO = 'NO'
   end
   class BuildResult
-    INQUEUE = "INQUEUE"
-    BUILDING = JBuildResult::BUILDING.to_s
+    INQUEUE = 'INQUEUE'
+    IN_PROCESS = 'In Process...'
     FAILURE = JBuildResult::FAILURE.to_s
     UNSTABLE = JBuildResult::UNSTABLE.to_s
     REBUILDING = JBuildResult::REBUILDING.to_s
@@ -28,7 +28,7 @@ class JenkinsCheckBuild < PrismeBaseJob
   end
 
   def perform(*args)
-    $log.info("Check build starting")
+    $log.info('Check build starting')
     jenkins_config = args.shift
     name = args.shift
     attempt_number = args.shift
@@ -83,7 +83,7 @@ class JenkinsCheckBuild < PrismeBaseJob
               #https://github.com/RisingOak/jenkins-client/issues/154
               #we just log this.  Cleanup Job will take a second crack at it if needed
               $log.warn("Deletion of Jenkins job named #{name} may have failed.")
-              $log.warn("Error message is: " + ex.message)
+              $log.warn('Error message is: ' + ex.message)
             end
           end
         end
