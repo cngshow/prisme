@@ -1,4 +1,5 @@
 require 'zip'
+require 'digest'
 require './app/controllers/concerns/nexus_concern'
 class ArtifactDownloadJob < PrismeBaseJob
   include NexusConcern
@@ -25,7 +26,6 @@ class ArtifactDownloadJob < PrismeBaseJob
       file_name = "./tmp/#{war_name}"
       File.open(file_name, 'wb') { |fp| fp.write(response.body) }
       $log.debug("The file #{war_name} has completed the download!")
-
       # read and log the sha1 and md5 files associated with this download
       p_clone = params.clone
       p_clone[:p] = params[:p] + '.sha1'
@@ -35,13 +35,23 @@ class ArtifactDownloadJob < PrismeBaseJob
       p_clone[:p] = params[:p] + '.md5'
       md5url = "#{baseurl}?#{p_clone.to_query}"
       md5 = get_nexus_connection('*/*').get("#{md5url}", {}).body
-
-      $log.debug('-----------------------------------------------------')
-      $log.debug('--------- SHA1 for ' + war_name + ' is: ' + sha1)
-      $log.debug('-----------------------------------------------------')
-      $log.debug('--------- MD5 for ' + war_name + ' is: ' + md5)
-      $log.debug('-----------------------------------------------------')
-
+      $log.debug('SHA1 for ' + war_name + ' is: ' + sha1)
+      $log.debug('MD5 for ' + war_name + ' is: ' + md5)
+      #file_name = 'c:/temp/dan.yml'
+      actual_sha1 = Digest::SHA1.file(file_name).to_s
+      actual_md5 = Digest::MD5.file(file_name).to_s
+      $log.debug("Actual SHA1 for #{war_name} is #{actual_sha1}.")
+      $log.debug("Actual MD5 for #{war_name} is #{actual_md5}.")
+      sha1_match = actual_sha1.eql? sha1
+      md5_match = actual_md5.eql? md5
+      if (!(sha1_match && md5_match))
+        #come here if the file is not a match
+        error_msg = ""
+        error_msg << "SHA1 mismatch " unless sha1_match
+        error_msg << "MD5 mismatch" unless md5_match
+        $log.error("Checksum mismatch for #{war_name}. #{error_msg} ")
+        raise StandardError, error_msg
+      end
       z = nil
       begin
         z = Zip::File.open(file_name)
