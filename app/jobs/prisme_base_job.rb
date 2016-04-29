@@ -4,8 +4,9 @@ module PrismeJobConstants
         NOT_QUEUED: 0,
         QUEUED: 1,
         RUNNING: 2,
-        FAILED: 3,
-        COMPLETED: 4,
+        ORPHANED: 3,
+        FAILED: 4,
+        COMPLETED: 5,
     }
   end
 

@@ -7,6 +7,8 @@ class PrismeJob < ActiveRecord::Base
 
   scope :job_name, -> (job_name) {where(job_name: job_name)}
   scope :leaves, -> () {where(leaf: true)}
+  scope :job_ids_in, -> (ids,include) {where("job_id #{include ? 'IN' : 'NOT IN'} (#{ids.map do |e| "'#{e}'" end.join(',')})")}
+  scope :orphan, -> (bool) {where("status #{bool ? '=' : '!='} #{PrismeJobConstants::Status::STATUS_HASH[:ORPHANED]} ")}
   scope :completed, -> (bool) {where("status #{bool ? '>=' : '<'} #{PrismeJobConstants::Status::STATUS_HASH[:FAILED]}")}
 
   def is_leaf?
@@ -19,5 +21,37 @@ class PrismeJob < ActiveRecord::Base
 
   def descendants
     PrismeJob.where(root_job_id: self.job_id)
+  end
+
+  def self.status_string(ar)
+    return nil unless ar.is_a? PrismeJob
+    s = ar.status
+    case s
+      when PrismeJobConstants::Status::STATUS_HASH[:NOT_QUEUED]
+        "NOT QUEUED"
+      when  PrismeJobConstants::Status::STATUS_HASH[:QUEUED]
+        "QUEUED"
+      when  PrismeJobConstants::Status::STATUS_HASH[:RUNNING]
+        "RUNNING"
+      when  PrismeJobConstants::Status::STATUS_HASH[:ORPHANED]
+        "ORPHANED"
+      when  PrismeJobConstants::Status::STATUS_HASH[:FAILED]
+        "FAILED"
+      when  PrismeJobConstants::Status::STATUS_HASH[:COMPLETED]
+        "COMPLETED"
+      else
+        raise ArgumentError.new("This method needs to be updated!.")
+    end
+  end
+
+  #should only be called via an initializer on startup.
+  def self.tag_orphans(current_job_id)
+    orphans = PrismeJob.completed(false).orphan(false).job_ids_in([current_job_id], false)
+    orphans.each do |orphan|
+      $log.debug("Orphaning a #{orphan.job_name} with id #{orphan.job_id} and status " + status_string(orphan))
+      orphan.status = PrismeJobConstants::Status::STATUS_HASH[:ORPHANED]
+      orphan.save!
+      $log.debug("Done orphaning a #{orphan.job_name} with id #{orphan.job_id} and status " + status_string(orphan))
+    end
   end
 end

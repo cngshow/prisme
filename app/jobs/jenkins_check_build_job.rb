@@ -7,6 +7,7 @@ java_import 'com.offbytwo.jenkins.model.BuildResult' do |p, c|
 end
 
 
+
 class JenkinsCheckBuild < PrismeBaseJob
   class Deleted
     UNKNOWN = 'unknown'
@@ -94,7 +95,7 @@ class JenkinsCheckBuild < PrismeBaseJob
       result_hash[:attempt_number] = attempt_number
       if (attempt_number <= max_attempts)
         $log.info("Attempting to gain the status of #{name} again.")
-        JenkinsCheckBuild.set(wait: time).perform_later(jenkins_config, name, attempt_number)
+        JenkinsCheckBuild.set(wait: time).perform_later(jenkins_config, name, attempt_number,track_child_job)
         raise JenkinsClient::JenkinsJavaError, ex
       end
     ensure
