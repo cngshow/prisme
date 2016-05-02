@@ -36,7 +36,7 @@
             <% if (is_edit) %>
                 <%= f.text_field :service_type, {readonly: true} %>
             <% else %>
-                <%= f.select :service_type, options_for_select([['-- Pick a service type --', ''], fetch_types], @service.service_type), {}, {onchange: 'serviceTypeChange(this.value)'} %>
+                <%= f.select :service_type, fetch_types, {prompt: "Pick a service type"}, onchange: 'serviceTypeChange(this.value)'%>
             <% end %>
           </div>
       <% end %>

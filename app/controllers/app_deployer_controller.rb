@@ -3,6 +3,7 @@ include NexusConcern
 class AppDeployerController < ApplicationController
 
   before_action :auth_registered
+  before_action :ensure_services_configured
 
   def index
     @komet_wars = get_nexus_wars(app: 'KOMET')

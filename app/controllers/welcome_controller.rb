@@ -3,6 +3,7 @@ require 'uri'
 class WelcomeController < ApplicationController
   include TomcatConcern
 
+  before_action :ensure_services_configured, except: [:toggle_admin]
   skip_after_action :verify_authorized, :index
 
   def index
@@ -27,7 +28,6 @@ class WelcomeController < ApplicationController
         tomcat_deployments[{url: url, service_name: tomcat.name}] = data_hash
         @deployments = format_deployments_table_data(tomcat_deployments)
       rescue
-
       end
       $log.debug("tomcat_deployments are #{@deployments}")
     end
@@ -37,6 +37,7 @@ class WelcomeController < ApplicationController
   def toggle_admin
     User.all.each do |u|
       u.administrator = !u.administrator
+      $log.debug("Setting admin for #{u.email} to #{u.administrator}")
       u.save!
     end
     redirect_to root_path

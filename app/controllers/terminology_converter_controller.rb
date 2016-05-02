@@ -6,6 +6,7 @@ include NexusConcern
 class TerminologyConverterController < ApplicationController
   # skip_after_action :verify_authorized, :wizard
   before_action :auth_registered
+  before_action :ensure_services_configured
 
   def wizard
     @options = []

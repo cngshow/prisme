@@ -46,4 +46,12 @@ class ApplicationController < ActionController::Base
     authorize :navigation, :admin?
   end
 
+  def ensure_services_configured
+    artifactory_configured = Service.service_exists? PrismeService::NEXUS
+    build_server_configured = Service.service_exists? PrismeService::JENKINS
+    application_server_configured = Service.service_exists? PrismeService::TOMCAT
+    render :file => 'public/not_configured.html' unless (application_server_configured && artifactory_configured  && build_server_configured)
+    return
+  end
+
 end

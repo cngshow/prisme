@@ -26,6 +26,12 @@ class Service < ActiveRecord::Base
       Service.where(service_type: PrismeService::TOMCAT)
     end
 
+    def service_exists?(service_type)
+      @@exists_hash ||= {}
+      @@exists_hash[service_type] = Service.exists?(service_type: service_type ) unless @@exists_hash[service_type] #once you exist you always exist (or we have a big bug)
+      @@exists_hash[service_type]
+    end
+
   end
 
   #if property is encrypted it is decrypted

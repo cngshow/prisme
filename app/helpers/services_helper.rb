@@ -32,7 +32,8 @@ module ServicesHelper
     valid_types = []
     types.each do |type|
       if ($SERVICE_TYPES[type]['singleton'])
-        valid_types << type unless Service.exists?(service_type: type)
+        service_exists = Service.exists?(service_type: type)
+        valid_types << type unless service_exists
       else
         valid_types << type
       end
