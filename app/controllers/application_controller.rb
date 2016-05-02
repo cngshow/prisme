@@ -21,11 +21,11 @@ class ApplicationController < ActionController::Base
     $log.error(e.backtrace.join("\n"))
 
     if (e.is_a?(Pundit::AuthorizationNotPerformedError) || e.is_a?(Pundit::NotAuthorizedError))
-      render :file => 'public/not_authorized.html'
+      redirect_to "#{root_path}not_authorized.html"
       return
     elsif e.is_a? Faraday::ConnectionFailed
       # thrown if Nexus is down.
-      render :file => 'public/nexus_not_available.html'
+      redirect_to "#{root_path}nexus_not_available.html"
       return
     end
 
@@ -50,7 +50,7 @@ class ApplicationController < ActionController::Base
     artifactory_configured = Service.service_exists? PrismeService::NEXUS
     build_server_configured = Service.service_exists? PrismeService::JENKINS
     application_server_configured = Service.service_exists? PrismeService::TOMCAT
-    render :file => 'public/not_configured.html' unless (application_server_configured && artifactory_configured  && build_server_configured)
+    redirect_to "#{root_path}not_configured.html" unless (application_server_configured && artifactory_configured  && build_server_configured)
     return
   end
 
