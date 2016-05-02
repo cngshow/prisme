@@ -33,6 +33,15 @@ class WelcomeController < ApplicationController
     end
   end
 
+  #delete this before single sign on
+  def toggle_admin
+    User.all.each do |u|
+      u.administrator = !u.administrator
+      u.save!
+    end
+    redirect_to root_path
+  end
+
   private
   def format_deployments_table_data(tomcat_deployments)
     ret = []
