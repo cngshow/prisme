@@ -1,5 +1,8 @@
 require './app/jobs/prisme_base_job'
+Dir['./app/jobs/*.rb'].each {|file| require file }
+
 require 'sucker_punch/async_syntax'
+
 SuckerPunch.logger = $log
 
 java_import 'java.util.Timer' do |p, c|
@@ -41,13 +44,7 @@ module ActiveJob
 end
 
 
-unless($rake)
-# update any uncompleted jobs that are in the PrismeJobs table to failure status
-  params = [PrismeJobConstants::Status::STATUS_HASH[:COMPLETED],
-            PrismeJobConstants::Status::STATUS_HASH[:FAILED],]
-  update_hash = {status: PrismeJobConstants::Status::STATUS_HASH[:FAILED], last_error: 'System Failure - Uncompleted job were updated to Failed in initializer!'}
-  PrismeJob.where(['status != ? and status != ?', *params]).update_all(update_hash)
-
-# schedule the CleanJobQueueJob to run soon
-  CleanJobQueueJob.perform_later
+unless($rake || defined?(Rails::Generators))
+  #schedule the PrismeCleanupJob to run now, synchronously in the current thread.
+  PrismeCleanupJob.perform_now(true)
 end

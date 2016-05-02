@@ -1,6 +1,5 @@
 <h1>Show Service</h1>
-<p id="notice"><%#= notice %></p>
-
+<%= field_set_tag (@service.name) do %>
 <p>
   <strong>Name:</strong><br>
   <%= @service.name %>
@@ -15,8 +14,10 @@
   <strong>Service Type:</strong><br>
   <%= @service.service_type %>
 </p>
+<% end %>
+
 <br>
-<%= field_set_tag (@service.description + ' Properties') do %>
+<%= field_set_tag (@service.name + ' - Properties') do %>
     <% @service.service_properties.ordered_props.each do |prop| %>
         <p>
           <strong><%= get_label(@service.service_type, prop.key) + ':' %></strong><br>
@@ -25,7 +26,6 @@
         </p>
     <% end %>
 <% end %>
-<br>
-<br>
+<hr>
 <%= link_to 'Edit', edit_service_path(@service), class: 'btn btn-primary' %>
-<%= link_to 'Back', services_path, class: 'btn btn-primary' %>
+<%= link_to 'List', services_path, class: 'btn btn-primary' %>

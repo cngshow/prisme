@@ -31,8 +31,14 @@ Copyright Notice
   <%= render 'layouts/navigation' %>
 </header>
 <main role="main" class="container-fluid">
-  <%= render 'layouts/messages' %>
-  <%= yield %>
+  <div class="row">
+    <div class="col-lg-1"></div>
+    <div class="col-lg-10">
+      <%= render 'layouts/messages' %>
+      <%= yield %>
+    </div>
+    <div class="col-lg-1"></div>
+  </div>
 </main>
 </body>
 </html>

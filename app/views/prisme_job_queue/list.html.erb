@@ -83,6 +83,10 @@
     });
 
     $('#btn-update').click(function (e) {
+      reload();
+    });
+
+    function reload() {
       $.ajax({
         url: '/prisme_job_queue/reload_job_queue_list',
         type: "GET",
@@ -91,7 +95,9 @@
           loadTable('data-table', fields, data);
         }
       })
-    });
+    }
+/*
+
     function poll() {
       $.ajax({
         url: '/prisme_job_queue/reload_job_queue_list',
@@ -107,6 +113,8 @@
       })
     }
 
-    poll();
+ poll();
+*/
+    reload();
   });
 </script>

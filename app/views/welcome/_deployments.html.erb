@@ -1,0 +1,62 @@
+<h1>Application Deployments (Tomcat)</h1>
+<style>
+  html, body {
+    padding: 5px;
+  }
+
+  .data-table {
+    font-family: calibri, arial;
+    width: 100%;
+  }
+
+  tr:hover {
+    cursor: pointer
+  }
+
+  .data-table thead td {
+    background-color: #8CCCF1;
+    font-weight: bold;
+  }
+
+  .data-table td {
+    border: 1px solid #466E85;
+    width: 136px;
+    padding: 7px;
+  }
+</style>
+
+<% @deployments.each do |deployment| %>
+    <h3><%= deployment[:service_name] %></h3>
+    <table class="table data-table table-striped table-hover">
+      <thead>
+      <tr>
+        <td>Application (war file)</td>
+        <td>State</td>
+        <td>Session Count</td>
+      </tr>
+      </thead>
+      <tbody>
+      <% if deployment[:rows].empty? %>
+        <tr>
+          <td colspan="3" style="color: red">Failed to connect to Tomcat server. Either the server is unavailable or is misconfigured.</td>
+        </tr>
+      <% else %>
+          <% deployment[:rows].each do |row| %>
+              <tr data-href="<%= row[:link] %>">
+                <td><%= row[:war_name] %></td>
+                <td><%= row[:state] %></td>
+                <td><%= row[:session_count] %></td>
+              </tr>
+          <% end %>
+      <% end %>
+      </tbody>
+    </table>
+    <br>
+<% end %>
+<script>
+  $(document).ready(function(){
+    $('tr[data-href]').on("click", function() {
+      window.open($(this).data('href'));
+    });
+  });
+</script>

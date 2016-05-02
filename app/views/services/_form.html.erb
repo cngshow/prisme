@@ -1,38 +1,50 @@
+<script>
+  function serviceTypeChange(service_type) {
+    if (service_type === '') {
+      $('#submit_div').hide();
+      $('#service_props').empty();
+    } else {
+      $.get('<%= services_render_props_path %>', {service_type: service_type}, function (data) {
+        $('#service_props').html(data);
+      });
+
+      $('#submit_div').show();
+    }
+  }
+</script>
+<% # modes
+   is_new = 'new'.eql?(mode)
+   is_edit = 'edit'.eql?(mode)
+   is_failure = 'failure'.eql?(mode)
+%>
+
 <%= form_for(@service) do |f| %>
-    <!--
-    <%# if @service.errors.any? %>
-            <div id="error_explanation">
-              <h2><%#= pluralize(@service.errors.count, "error") %> prohibited this service from being saved:</h2>
-
-              <ul>
-                <%# @service.errors.full_messages.each do |message| %>
-                    <li><%#= message %></li>
-                <%# end %>
-              </ul>
-            </div>
-        <%# end %>
-    -->
-
-    <div class="field">
-      <%= f.label :name %><br>
-      <%= f.text_field :name, required: true, title: "Please enter a service name" %>
-    </div>
-    <div class="field">
-      <%= f.label :description %><br>
-      <%= f.text_area :description, required: true %>
-    </div>
-    <div class="field">
-      <%= f.label :service_type %><br>
-      <% if ('edit'.eql?(mode)) %>
-          <%= f.text_field :service_type, {readonly: true} %>
-      <% else %>
-          <%= f.select :service_type, fetch_types, {prompt: "Pick a service type"}, onchange: 'serviceTypeChange(this)' %>
+    <div class="field" id="service">
+      <%= field_set_tag (@service.id.nil? ? 'New Service' : @service.name) do %>
+          <div>
+            <%= f.label :name %><br>
+            <%= f.text_field :name, required: true, title: 'Please enter a service name', maxlength: 255, size: 75 %>
+          </div>
+          <br>
+          <div>
+            <%= f.label :description %><br>
+            <%= f.text_area :description, required: true, rows: 3, cols: 75 %>
+          </div>
+          <br>
+          <div>
+            <%= f.label :service_type %><br>
+            <% if (is_edit) %>
+                <%= f.text_field :service_type, {readonly: true} %>
+            <% else %>
+                <%= f.select :service_type, options_for_select([['-- Pick a service type --', ''], fetch_types], @service.service_type), {}, {onchange: 'serviceTypeChange(this.value)'} %>
+            <% end %>
+          </div>
       <% end %>
     </div>
     <br><br>
     <div class="field" id="service_props">
-      <% if ('edit'.eql?(mode)) %>
-          <%= field_set_tag (@service.description + ' Properties') do %>
+      <% if (is_edit) %>
+          <%= field_set_tag (@service.name + ' - Properties') do %>
               <%= f.fields_for :service_properties, @service.service_properties.ordered_props do |ff| %>
                   <div>
                     <%= ff.label :value, get_label(@service.service_type, ff.object.key) %><br>
@@ -40,29 +52,18 @@
                   </div>
               <% end %>
           <% end %>
+      <% elsif is_failure %>
+          <%= render partial: services_render_props_path %>
       <% end %>
     </div>
     <div class="actions" id="submit_div">
-      <%= f.submit %>
+      <%= f.submit class: 'btn btn-primary' %>
     </div>
 <% end %>
 <script>
   $(document).ready(function () {
-    <% unless (mode) %>
+    <% if (is_new) %>
     $('#submit_div').hide();
     <% end %>
   });
-
-  function serviceTypeChange(elem) {
-    if (elem.value === '') {
-      $('#submit_div').hide();
-      $('#service_props').empty();
-    } else {
-      $.get('<%=services_render_props_path%>', {service_type: elem.value}, function (data) {
-        $('#service_props').html(data);
-      });
-
-      $('#submit_div').show();
-    }
-  }
 </script>

@@ -4,13 +4,14 @@ module PrismeJobConstants
         NOT_QUEUED: 0,
         QUEUED: 1,
         RUNNING: 2,
-        FAILED: 3,
-        COMPLETED: 4,
+        ORPHANED: 3,
+        FAILED: 4,
+        COMPLETED: 5,
     }
   end
 
   module User
-    SYSTEM = :"Prisme System"
+    SYSTEM = :'Prisme System'
   end
 end
 
@@ -18,23 +19,54 @@ class PrismeBaseJob < ActiveJob::Base
   queue_as :default
 
   def lookup
-    active_record = PrismeJob.find_by(job_id: self.job_id)
-    if (active_record.nil?)
-      active_record = PrismeJob.new
-      active_record.user = default_user if self.respond_to? :default_user
-      active_record.job_id = self.job_id
-      active_record.scheduled_at = Time.at(self.scheduled_at) unless self.scheduled_at.nil?
-      active_record.scheduled_at = Time.now if self.scheduled_at.nil?
-      active_record.queue = self.queue_name
-      active_record.job_name = self.class.to_s
-      active_record.status = PrismeJobConstants::Status::STATUS_HASH[:NOT_QUEUED]
+    prisme_job = PrismeJob.find_by(job_id: self.job_id)
+
+    unless prisme_job
+      prisme_job = PrismeJob.new
+      prisme_job.user = default_user if self.respond_to? :default_user
+      prisme_job.job_id = self.job_id
+      prisme_job.scheduled_at = Time.at(self.scheduled_at) unless self.scheduled_at.nil?
+      prisme_job.scheduled_at = Time.now if self.scheduled_at.nil?
+      prisme_job.queue = self.queue_name
+      prisme_job.job_name = self.class.to_s
+      prisme_job.status = PrismeJobConstants::Status::STATUS_HASH[:NOT_QUEUED]
+
+      if arguments && arguments.last.is_a?(Hash)
+        hash_args = arguments.last
+
+        if hash_args.has_key?(:parent_job_id)
+          parent_job_id = hash_args[:parent_job_id]
+          $log.debug('------------- setting the parent_job_id for ' + self.job_id + ' to ' + parent_job_id)
+          prisme_job.parent_job_id = parent_job_id
+        end
+
+        if hash_args.has_key?(:root_job_id)
+          root_job_id = hash_args[:root_job_id].nil? ? hash_args[:parent_job_id] : hash_args[:root_job_id]
+          $log.debug('------------- setting the root_job_id for ' + self.job_id + ' to ' + root_job_id)
+          prisme_job.root_job_id = root_job_id
+        end
+      end
     end
-    active_record
+    prisme_job
+  end
+
+  def save_result(results, results_hash = nil)
+    active_record = lookup
+    active_record.result= results
+    active_record.json_data = results_hash.to_json
+    active_record.save!
+  end
+
+  def self.result_hash(ar)
+    json = ar.json_data
+    return JSON.parse json unless json.nil?
+    {}
   end
 
   before_enqueue do |job|
     #this lifecycle is skipped on job.perform_now
     $log.debug("Preparing to enqueue job #{job}")
+    $log.debug("job arguments = #{job.arguments}")
     lookup.save!
   end
 
@@ -61,33 +93,51 @@ class PrismeBaseJob < ActiveJob::Base
     $log.debug("Performed job #{job}")
     active_record.status = PrismeJobConstants::Status::STATUS_HASH[:COMPLETED]
     active_record.completed_at = Time.now
-    active_record.save!
+    #OK I am a child job, spun off by parent parent_job_id.  My parent is no longer a leaf
+    update_parent_leaf_and_save(active_record)
   end
 
   rescue_from(StandardError) do |exception|
     begin
       active_record = lookup
       active_record.last_error = exception.message
-      $log.error("Job failed: " + self.to_s + ". Error message is: " + exception.message)
+      $log.error('Job failed: ' + self.to_s + '. Error message is: ' + exception.message)
       $log.error(exception.backtrace.join("\n"))
       active_record.status = PrismeJobConstants::Status::STATUS_HASH[:FAILED]
       active_record.completed_at = Time.now
-      active_record.save!
+      update_parent_leaf_and_save(active_record)
     rescue => e
-      $log.error(self.to_s + " failed to rescue from an exception.  The error is " + e.message)
+      $log.error(self.to_s + ' failed to rescue from an exception.  The error is ' + e.message)
       $log.error(e.backtrace.join("\n"))
     end
   end
 
   def perform(*args)
-    raise NotImplementedError.new("Please implement this in your base class!")
+    raise NotImplementedError.new('Please implement this in your base class!')
   end
 
   def to_s
-    "Job: " + self.class.to_s + " , ID: " + self.job_id.to_s
+    'Job: ' + self.class.to_s + ' , ID: ' + self.job_id.to_s
   end
 
+  def track_child_job
+    {parent_job_id: job_id, root_job_id: lookup.root_job_id}
+  end
+
+  private
+  def update_parent_leaf_and_save(active_record)
+    PrismeJob.transaction do
+      parent_ar = active_record.parent_job
+      if (parent_ar)
+        parent_ar.leaf = false
+        parent_ar.save!
+      end
+      active_record.save!
+    end
+
+  end
 end
+
 # load('./app/jobs/prisme_base_job.rb')
 # job = TestJob.set(wait_until: 5.seconds.from_now).perform_later
 # job = TestJob.set(wait: 1.days).perform_later

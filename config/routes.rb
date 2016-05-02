@@ -1,4 +1,15 @@
 Rails.application.routes.draw do
+
+  devise_for :users
+
+  #
+  # devise_for :users, :controllers => { :registrations => "registrations", :sessions => "sessions" }
+  # devise_scope :user do get '/users/sign_out' => 'sessions#destroy' end
+  # #devise_scope :user do match "/delete_users" => "registrations#delete_users", :as => 'delete_users' end
+  # #match '/users/:id/edit' => 'admin_user_edit#edit', :as => :admin_user_edit
+  # match '/users/update' => 'admin_user_edit#update', :as => :admin_user_update
+  # match '/users/:id/list' => 'admin_user_edit#list', :as => :admin_user_list
+
   match 'services/render_props' => 'services#render_props', :as => :services_render_props, via: [:get]
   resources :services
   get 'prisme_job_queue/list'
@@ -8,10 +19,13 @@ Rails.application.routes.draw do
   get 'app_deployer' => 'app_deployer#index'
   post 'app_deployer/deploy_app'
 
-  get 'terminology_converter' => 'terminology_converter#setup'
+  get 'terminology_converter' => 'terminology_converter#wizard'
+  get 'terminology_converter/load_build_data' => 'terminology_converter#ajax_load_build_data'
+  get 'terminology_converter/check_polling' => 'terminology_converter#ajax_check_polling'
   post 'terminology_converter/process_form'
 
   root 'welcome#index'
+  #root 'devise/sessions#new'
 
   # match 'logic_graph/chronology/:id' => 'logic_graph#chronology', :as => :logic_graph_chronology, via: [:get]
 
