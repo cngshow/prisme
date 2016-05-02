@@ -24,4 +24,5 @@ rails_prisme.war
 .repository/
 context.txt
 /db/schema.rb
+db/schema.rb
 /db/data/*
