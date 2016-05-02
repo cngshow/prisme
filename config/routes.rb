@@ -16,6 +16,8 @@ Rails.application.routes.draw do
   get 'prisme_job_queue/reload_job_queue_list'
 
   get 'welcome/index'
+  #get 'welcome/toggle_admin'
+  match '/toggle_admin' => 'welcome#toggle_admin', :as => :toggle_admin, via: [:get]
   get 'app_deployer' => 'app_deployer#index'
   post 'app_deployer/deploy_app'
 
