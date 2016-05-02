@@ -67,12 +67,12 @@
 
   function poll() {
     console.log('calling poll');
-    $.getJSON('/terminology_converter/load_build_data', {}, function (data) {
+    $.getJSON(gon.routes.terminology_converter_load_build_data_path, {}, function (data) {
       gridOptions.api.setRowData(data);
       gridOptions.api.sizeColumnsToFit();
     });
     <% if Rails.env.development? %>
-    $.getJSON('/terminology_converter/check_polling', {}, function (data) {
+    $.getJSON(gon.routes.terminology_converter_check_polling_path, {}, function (data) {
       console.log(JSON.stringify(data));
       if (data.poll === false) {
         polling.unregisterController('terminology_converter');
