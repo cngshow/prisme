@@ -17,6 +17,15 @@ class TerminologyConverterController < ApplicationController
     # @options = load_source_content
   end
 
+  def index
+    @options = []
+    @options << {value: 'https://github.com/VA-CTT/ISAAC-term-convert-rf2.git', key: 'ISAAC-term-convert-rf2'}
+    @options << {value: 'https://github.com/VA-CTT/ISAAC-term-convert-vhat.git', key: 'ISAAC-term-convert-vhat'}
+    @options << {value: 'https://github.com/VA-CTT/ISAAC-term-convert-loinc.git', key: 'ISAAC-term-convert-loinc'}
+
+    # @options = load_source_content
+  end
+
   def setup_last
     @options = load_source_content
   end
@@ -70,6 +79,30 @@ class TerminologyConverterController < ApplicationController
     end.first[:key]
     t_s = Time.now.strftime('%Y_%m_%dT%H_%M_%S')
     JenkinsStartBuild.perform_later(JenkinsStartBuild::PRISME_NAME_PREFIX + name + "_#{t_s}", @job_xml, url, user, password)
+  end
+
+  def request_build
+    term_source = params[:terminology_source]
+
+    # local variables referenced in the erb via binding
+    git_url = term_source
+    development = Rails.env.development?
+
+    # file to render
+    props = Service.get_build_server_props
+    j_xml = PrismeService::JENKINS_XML
+    url = props[PrismeService::JENKINS_ROOT]
+    user = props[PrismeService::JENKINS_USER]
+    password = props[PrismeService::JENKINS_PWD]
+    # you MUST pass binding in order to have the erb process local variables
+    @job_xml = ERB.new(File.open(j_xml, 'r') { |file| file.read }).result(binding)
+    index
+    name = @options.select do |h|
+      git_url.eql?(h[:value])
+    end.first[:key]
+    t_s = Time.now.strftime('%Y_%m_%dT%H_%M_%S')
+    JenkinsStartBuild.perform_later(JenkinsStartBuild::PRISME_NAME_PREFIX + name + "_#{t_s}", @job_xml, url, user, password)
+    redirect_to action: 'index'
   end
 
   def get_repo_zip
@@ -131,6 +164,7 @@ class TerminologyConverterController < ApplicationController
   end
 
   def ajax_check_polling
-    render json: {poll: PrismeJob.has_running_jobs?('JenkinsCheckBuild')}
+    prisme_job_has_running_jobs = PrismeJob.has_running_jobs?('JenkinsCheckBuild')
+    render json: {poll: prisme_job_has_running_jobs}
   end
 end
