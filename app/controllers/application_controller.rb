@@ -1,8 +1,11 @@
 require './app/policies/navigation_policy'
+require './lib/rails_common/util/controller_helpers'
 
 class ApplicationController < ActionController::Base
   include ApplicationHelper
   include Pundit
+  include CommonController
+
   after_action :verify_authorized, unless: :devise_controller?
 
   # Prevent CSRF attacks by raising an exception.
@@ -31,7 +34,9 @@ class ApplicationController < ActionController::Base
 
   def setup_gon
     gon.job_status_constants = PrismeJobConstants::Status::STATUS_HASH.invert
+    setup_routes
   end
+
 
   def auth_registered
     authorize :navigation, :registered?

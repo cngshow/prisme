@@ -25,7 +25,7 @@
 
   $('#btn-update').click(function (e) {
     $.ajax({
-      url: '/prisme_job_queue/reload_job_queue_list',
+      url: gon.routes.prisme_job_queue_reload_job_queue_list_path,
       type: 'GET',
       data: {add_test_job: true},
       dataType: "json",
@@ -39,7 +39,7 @@
     console.log('calling poll');
 
     //load data via ajax
-    $.getJSON('/prisme_job_queue/reload_job_queue_list', {}, function (data) {
+    $.getJSON(gon.routes.prisme_job_queue_reload_job_queue_list_path, {}, function (data) {
       gridOptions.api.setRowData(data);
     });
   }

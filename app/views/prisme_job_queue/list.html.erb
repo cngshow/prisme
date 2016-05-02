@@ -72,7 +72,7 @@
 
     $('#btn-test').click(function (e) {
       $.ajax({
-        url: '/prisme_job_queue/reload_job_queue_list',
+        url: gon.routes.prisme_job_queue_reload_job_queue_list_path,
         type: "GET",
         data: {add_test_job: true},
         dataType: "json",
@@ -88,7 +88,7 @@
 
     function reload() {
       $.ajax({
-        url: '/prisme_job_queue/reload_job_queue_list',
+        url: gon.routes.prisme_job_queue_reload_job_queue_list_path,
         type: "GET",
         dataType: "json",
         success: function (data) {
