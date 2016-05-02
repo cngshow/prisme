@@ -21,10 +21,10 @@ Rails.application.routes.draw do
   get 'app_deployer' => 'app_deployer#index'
   post 'app_deployer/deploy_app'
 
-  get 'terminology_converter' => 'terminology_converter#wizard'
+  get 'terminology_converter' => 'terminology_converter#index'
   get 'terminology_converter/load_build_data' => 'terminology_converter#ajax_load_build_data'
   get 'terminology_converter/check_polling' => 'terminology_converter#ajax_check_polling'
-  post 'terminology_converter/process_form'
+  post 'terminology_converter/request_build'
 
   root 'welcome#index'
   #root 'devise/sessions#new'
