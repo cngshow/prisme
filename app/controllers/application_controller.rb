@@ -7,7 +7,6 @@ class ApplicationController < ActionController::Base
   include CommonController
 
   after_action :verify_authorized, unless: :devise_controller?
-
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
@@ -21,11 +20,12 @@ class ApplicationController < ActionController::Base
     $log.error(e.backtrace.join("\n"))
 
     if (e.is_a?(Pundit::AuthorizationNotPerformedError) || e.is_a?(Pundit::NotAuthorizedError))
-      render :file => 'public/not_authorized.html'
+      #When warbler warbles it puts static html one level above Rails Root!
+      render :file => (trinidad? ? 'public/not_authorized.html' :  "#{Rails.root}/../not_authorized.html")
       return
     elsif e.is_a? Faraday::ConnectionFailed
       # thrown if Nexus is down.
-      render :file => 'public/nexus_not_available.html'
+      render :file => (trinidad? ? 'public/nexus_not_available.html' :  "#{Rails.root}/../nexus_not_available.html")
       return
     end
 
@@ -44,6 +44,19 @@ class ApplicationController < ActionController::Base
 
   def auth_admin
     authorize :navigation, :admin?
+  end
+
+  def ensure_services_configured
+    artifactory_configured = Service.service_exists? PrismeService::NEXUS
+    build_server_configured = Service.service_exists? PrismeService::JENKINS
+    application_server_configured = Service.service_exists? PrismeService::TOMCAT
+    render :file => (trinidad? ? 'public/not_configured.html' :  "#{Rails.root}/../not_configured.html")  unless (application_server_configured && artifactory_configured  && build_server_configured)
+    return
+  end
+
+  private
+  def trinidad?
+    root_path.to_s.eql?('/')
   end
 
 end

@@ -74,7 +74,8 @@ class ServicesController < ApplicationController
 
   def render_props
     @service_type = params[:service_type]
-    render partial: services_render_props_path
+    #render partial: services_render_props_path #WTF??!!??  This doesn't work when a context is set (in a war file)
+    render partial: 'services/render_props'
   end
 
   private

@@ -1,5 +1,6 @@
 class PrismeJobQueueController < ApplicationController
 
+  before_action :ensure_services_configured
   skip_after_action :verify_authorized
 
   def list
