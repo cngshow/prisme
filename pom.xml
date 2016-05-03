@@ -176,7 +176,7 @@
 						</goals>
 						<configuration>
 							<jrubyVerbose>true</jrubyVerbose>
-							<execArgs>RAILS_ENV=${railsMode} RAILS_RELATIVE_URL_ROOT=rails_prisme</execArgs>
+							<execArgs>RAILS_ENV=${railsMode} RAILS_RELATIVE_URL_ROOT=/rails_prisme</execArgs>
 							<command>rake</command>
 							<args>devops:build_war</args>
 						</configuration>
