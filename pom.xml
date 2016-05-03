@@ -138,7 +138,7 @@
 						<configuration>
 							<jrubyVerbose>true</jrubyVerbose>
 							<command>rake</command>
-							<args>db:migrate RAILS_ENV=test</args>
+							<args>db:reset RAILS_ENV=test</args>
 						</configuration>
 					</execution>
 					
@@ -151,7 +151,7 @@
 						<configuration>
 							<jrubyVerbose>true</jrubyVerbose>
 							<command>rake</command>
-							<args>db:migrate RAILS_ENV=production</args>
+							<args>db:reset RAILS_ENV=production</args>
 						</configuration>
 					</execution>
 
