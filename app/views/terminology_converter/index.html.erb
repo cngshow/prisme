@@ -35,14 +35,62 @@
   function reset_form() {
     $('#terminology_source option[value=""]').prop('selected', 'selected').change();
   }
+
+  function build_status_renderer(params) {
+    var element = document.createElement("span");
+    var textNode = document.createTextNode(params.value);
+
+    switch (params.value) {
+      case '<%= JenkinsCheckBuild::BuildResult::INQUEUE %>':
+      case '<%= JenkinsCheckBuild::BuildResult::IN_PROCESS %>':
+      case '<%= JenkinsCheckBuild::BuildResult::REBUILDING %>':
+      case '<%= JenkinsCheckBuild::BuildResult::BUILDING %>':
+      default:
+        var imageElement = document.createElement("img");
+        imageElement.src = "ajax-loader.gif";
+        element.appendChild(imageElement);
+        break;
+      case '<%= JenkinsCheckBuild::BuildResult::SUCCESS %>':
+        element.style.color = 'green';
+        break;
+      case '<%= JenkinsCheckBuild::BuildResult::SERVER_ERROR %>':
+      case '<%= JenkinsCheckBuild::BuildResult::FAILURE %>':
+      case '<%= JenkinsCheckBuild::BuildResult::ABORTED %>':
+      case '<%= JenkinsCheckBuild::BuildResult::UNKNOWN %>':
+      case '<%= JenkinsCheckBuild::BuildResult::UNSTABLE %>':
+        element.style.color = 'red';
+        break;
+    }
+
+    element.appendChild(textNode);
+    return element;
+  }
+  function format_epoch_in_local(params) {
+    var i = parseInt(params.value) * 1000;
+    return new Date(i).toLocaleString();
+  }
+
   var columnDefs = [
     {headerName: "Job Name", field: "job_name", width: 150},
-    {headerName: "Started At", field: "started_at", width: 215},
+    {headerName: "Started At", field: "started_at", width: 215,
+      cellRenderer: function (params) {
+        return format_epoch_in_local(params);
+      }
+    },
     {headerName: "User", field: "user", width: 110},
     {headerName: "Jenkins Build Name", field: "leaf_data.jenkins_job_name", width: 350},
     {headerName: "Attempts", field: "leaf_data.jenkins_attempt_number", width: 150},
-    {headerName: "Build Result", field: "leaf_data.jenkins_build_result", width: 100},
-    {headerName: "Completed At", field: "leaf_data.completed_at", width: 215},
+    {
+      headerName: "Build Result", field: "leaf_data.jenkins_build_result", width: 100,
+      cellRenderer: function (params) {      // Function cell renderer
+        return build_status_renderer(params);
+      }
+    },
+    {headerName: "Completed At", field: "leaf_data.completed_at", width: 215,
+      cellRenderer: function (params) {
+        return format_epoch_in_local(params);
+      }
+    },
     {headerName: "Jenkins Job Deleted?", field: "leaf_data.jenkins_job_deleted", width: 200}
   ];
   /*

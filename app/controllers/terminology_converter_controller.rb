@@ -146,6 +146,7 @@ class TerminologyConverterController < ApplicationController
 
     data.each do |jsb|
       row_data = JSON.parse(jsb.to_json)
+      row_data['started_at'] = DateTime.parse(row_data['started_at']).to_time.to_i
       leaf_data = {}
       has_orphan = jsb.descendants.orphan(true).first
 
@@ -155,7 +156,7 @@ class TerminologyConverterController < ApplicationController
       leaf_data['jenkins_job_name'] = leaf ? JenkinsCheckBuild.jenkins_job_name(leaf) : (has_orphan ? JenkinsCheckBuild::BuildResult::SERVER_ERROR : JenkinsCheckBuild::BuildResult::IN_PROCESS)
       leaf_data['jenkins_attempt_number'] = leaf ? JenkinsCheckBuild.attempt_number(leaf) : (has_orphan ? JenkinsCheckBuild::BuildResult::SERVER_ERROR : JenkinsCheckBuild::BuildResult::IN_PROCESS)
       leaf_data['jenkins_build_result'] = leaf ? JenkinsCheckBuild.build_result(leaf) : (has_orphan ? JenkinsCheckBuild::BuildResult::SERVER_ERROR : JenkinsCheckBuild::BuildResult::IN_PROCESS)
-      leaf_data['completed_at'] = leaf ? leaf.completed_at : (has_orphan ? JenkinsCheckBuild::BuildResult::SERVER_ERROR : JenkinsCheckBuild::BuildResult::IN_PROCESS)
+      leaf_data['completed_at'] = leaf ? leaf.completed_at.to_i : (has_orphan ? JenkinsCheckBuild::BuildResult::SERVER_ERROR : JenkinsCheckBuild::BuildResult::IN_PROCESS)
       row_data['leaf_data'] = leaf_data
       ret << row_data
     end
