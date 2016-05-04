@@ -66,8 +66,13 @@
     return element;
   }
   function format_epoch_in_local(params) {
-    var i = parseInt(params.value) * 1000;
-    return new Date(i).toLocaleString();
+    var ret = params.value;
+
+    if ($.isNumeric(params.value)) {
+      var i = parseInt(params.value) * 1000;
+      ret = new Date(i).toLocaleString();
+    }
+    return ret;
   }
 
   var columnDefs = [
@@ -113,15 +118,16 @@
     $.getJSON(gon.routes.terminology_converter_load_build_data_path, {}, function (data) {
       gridOptions.api.setRowData(data);
       gridOptions.api.sizeColumnsToFit();
+
+      <% if Rails.env.development? %>
+      $.getJSON(gon.routes.terminology_converter_check_polling_path, {}, function (data) {
+        console.log(JSON.stringify(data));
+        if (data.poll === false) {
+          polling.unregisterController('terminology_converter');
+        }
+      });
+      <% end %>
     });
-    <% if Rails.env.development? %>
-    $.getJSON(gon.routes.terminology_converter_check_polling_path, {}, function (data) {
-      console.log(JSON.stringify(data));
-      if (data.poll === false) {
-        polling.unregisterController('terminology_converter');
-      }
-    });
-    <% end %>
   }
 
   $(document).ready(function () {
