@@ -8,6 +8,16 @@ class ArtifactDownloadJob < PrismeBaseJob
   #   # do something with the exception
   # end
 
+  def cookie_war(war_path,cookie_file, hash)
+    $log.info("Adding cookie info to war file #{war_path} into file #{cookie_file}")
+    $log.info("Cookie data is " + hash.inspect)
+    z = Zip::File.open(war_path)  do |zip|
+      zip.get_output_stream(cookie_file) do |file_handle|
+        file_handle.puts(hash.keys.map do |e| "#{e}=#{hash[e]}" end.join("\n"))
+      end
+    end
+  end
+
   def perform(*args)
     begin
       nexus_props = Service.get_artifactory_props
@@ -70,6 +80,14 @@ class ArtifactDownloadJob < PrismeBaseJob
         $log.debug('No context.txt file found')
         result << "The war will be deployed to the default context root.\n"
         #not all wars have a context.txt, but if we do we use it
+      end
+      if (file_name =~ /.*isaac-rest.*/)
+        hash = {}
+        hash.merge!(params)
+        hash.merge!(nexus_props)
+        cookie_war(file_name,'WEB-INF/classes/prisme.properties',hash)
+      else
+        $log.debug("Not cookie-ing up #{file_name}")
       end
       $log.debug("Kicking off next job (DeployWar) #{file_name} #{context}")
       #activeRecord instantiate new job
