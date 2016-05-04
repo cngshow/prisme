@@ -20,7 +20,11 @@
 
   var gridOptions = {
     columnDefs: columnDefs,
-    rowData: null
+    rowData: null,
+    rowModelType: 'pagination',
+    enableColResize: true,
+    enableSorting: true,
+    allOfTheData: null,
   };
 
   $('#btn-update').click(function (e) {
@@ -30,17 +34,20 @@
       data: {add_test_job: true},
       dataType: "json",
       success: function (data) {
-        gridOptions.api.setRowData(data);
+       // gridOptions.api.setRowData(data);
+        myDataSource.allOfTheData = data;
+        gridOptions.api.setDatasource(myDataSource);
       }
     })
   });
 
-  function poll() {
+  function poll(div) {
     console.log('calling poll');
-
     //load data via ajax
     $.getJSON(gon.routes.prisme_job_queue_reload_job_queue_list_path, {}, function (data) {
-      gridOptions.api.setRowData(data);
+     // gridOptions.api.setRowData(data);
+      myDataSource.allOfTheData = data;
+      gridOptions.api.setDatasource(myDataSource);
     });
   }
 </script>
