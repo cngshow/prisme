@@ -60,7 +60,7 @@
 		<dependency>
 			<groupId>com.offbytwo.jenkins</groupId>
 			<artifactId>jenkins-client</artifactId>
-			<version>0.3.4</version>
+			<version>0.3.3</version>
 			<optional>true</optional><!-- Not needed at runtime / transitively -->
 		</dependency>
 		<dependency>
