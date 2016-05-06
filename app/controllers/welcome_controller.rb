@@ -36,9 +36,11 @@ class WelcomeController < ApplicationController
   #delete this before single sign on
   def toggle_admin
     User.all.each do |u|
+      $log.debug("Admin for #{u.email} is #{u.administrator}")
       u.administrator = !u.administrator
       $log.debug("Setting admin for #{u.email} to #{u.administrator}")
-      u.save!
+      saved = u.save!
+      $log.debug("Admin state saved is #{saved}.")
     end
     redirect_to root_path
   end

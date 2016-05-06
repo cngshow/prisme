@@ -7,7 +7,9 @@ class Service < ActiveRecord::Base
   class << self
     #put class methods here...
     def get_artifactory_props
-      get_artifactory.properties_hash
+      hash = get_artifactory.properties_hash
+      hash[PrismeService::NEXUS_ROOT] = URI(hash[PrismeService::NEXUS_REPOSITORY_URL]).base_url
+      hash
     end
 
     def get_artifactory

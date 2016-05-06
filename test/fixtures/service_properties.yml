@@ -60,8 +60,8 @@ five_l:
 # nexus service properties
 six:
   service: nexus
-  key: nexus_root
-  value: http://vadev.mantech.com:8081
+  key: nexus_repository_url
+  value: http://vadev.mantech.com:8081/nexus/content/groups/everything/
   order_idx: 0
 seven:
   service: nexus

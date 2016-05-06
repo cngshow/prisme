@@ -91,7 +91,7 @@ class AppDeployerController < ApplicationController
         end
       end
     else
-      puts 'no war files found!!!'
+      $log.info('no war files found!!!')
     end
     ret
   end

@@ -27,8 +27,8 @@ nexus:
   description: Nexus Artifactory Server
   singleton: true
   props:
-   - key: nexus_root
-     label: Root URL:port
+   - key: nexus_repository_url
+     label: Repository URL:port
      type: url
      order_idx: 0
    - key: nexus_user
