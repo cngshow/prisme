@@ -40,8 +40,8 @@
     $("#tabs").tabs();
 
     var gridDiv = document.querySelector("#queue_list_div");
-    var mainGrid =  new agGrid.Grid(div, gridOptions);
-    poll(gridDiv);
+    var mainGrid =  new agGrid.Grid(gridDiv, gridOptions);
+    poll();
 
     //register for polling
     polling.registerController('welcome', poll, 5000);

@@ -41,7 +41,7 @@
     })
   });
 
-  function poll(div) {
+  function poll() {
     console.log('calling poll');
     //load data via ajax
     $.getJSON(gon.routes.prisme_job_queue_reload_job_queue_list_path, {}, function (data) {

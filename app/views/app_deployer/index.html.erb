@@ -6,18 +6,18 @@ this style is for the more complex validation check
 -->
 <h1>Application Deployer</h1>
 <%= form_tag(app_deployer_deploy_app_path, :id => 'app_deployer_form') do |f| %>
-    <h3>Application Type</h3>
+    <h3>Select the Application Type</h3>
     <%= field_set_tag 'Select the Application Type' do %>
         <%= label_tag 'application_KOMET', class: 'radio-inline' do %>
-            <%= radio_button_tag 'application', 'KOMET', true %>KOMET Tooling
+            <%= radio_button_tag 'application', 'KOMET', true %>KOMET Tooling Deployment
         <% end %>
         <br/>
         <%= label_tag 'application_ISAAC', class: 'radio-inline' do %>
-            <%= radio_button_tag 'application', 'ISAAC' %>ISAAC
+            <%= radio_button_tag 'application', 'ISAAC' %>ISAAC Deployment
         <% end %>
     <% end %>
 
-    <h3>WAR File to Deploy</h3>
+    <h3>Select the Application Components</h3>
     <%= field_set_tag 'Select the WAR file to deploy to Tomcat' do %>
         <div id="komet_wars">
           <%= label_tag 'komet_war', 'KOMET Tooling' %><br>
@@ -26,22 +26,50 @@ this style is for the more complex validation check
         <div id="isaac_wars">
           <%= label_tag 'isaac_war', 'ISAAC Rest' %><br>
           <%= select_tag 'isaac_war', options_from_collection_for_select(@isaac_wars, 'select_key', 'select_value'), {:prompt => '-- Select a war to deploy --'} %>
+          <br>
+          <br>
+          <%= label_tag 'isaac_db', 'ISAAC Database' %><br>
+          <%= select_tag 'isaac_db', options_from_collection_for_select(@isaac_dbs, 'select_key', 'select_value'), {:prompt => '-- Select a terminology database --'} %>
         </div>
+        <br>
     <% end %>
 
-    <h3>Select the Tomcat Server for Deployment</h3>
+    <h3>Select the Tomcat Server</h3>
     <%= field_set_tag 'Select Tomcat Server' do %>
         <%= label_tag PrismeService::TOMCAT, 'Tomcat Server URL' %><br>
-        <%= select_tag PrismeService::TOMCAT, options_from_collection_for_select(@tomcat_servers, 'select_key', 'select_value'), {:prompt => '-- Select the Tomcat Server --'} %>
+        <%= select_tag PrismeService::TOMCAT, options_from_collection_for_select(@tomcat_servers, 'select_key', 'select_value'), {:prompt => '-- Select the Tomcat Server --', required: true} %>
     <% end %>
 
     <h3>Submit Deployment Request</h3>
     <%= field_set_tag 'Application Deployment Summary' do %>
-        <p>Please review the deployment summary and click the 'Finish' button to deploy the selected application.</p>
+        <p>Please review the deployment summary and click the 'Finish' button to deploy the selected application.
+        <br>
+          Application to Deploy:
+        <ul>
+          <li id="summary_application2"></li>
+        </ul>
+
+        <table cellpadding="2" cellspacing="5" width="950px">
+          <tr>
+            <td align="right" width="25%"><b>Application to deploy:</b></td>
+            <td width="75%"><span id="summary_application"></span></td>
+          </tr>
+          <tr>
+            <td align="right" width="25%"><b>Selected Components:</b></td>
+            <td  width="75%"><span id="summary_components"></span></td>
+          </tr>
+          <tr>
+            <td align="right" width="25%"><b>Tomcat Server:</b></td>
+            <td  width="75%"><span id="summary_tomcat"></span></td>
+          </tr>
+        </table>
+        </p>
     <% end %>
 <% end %>
 
 <script>
+  var selected_app_type = null;
+
   $(document).ready(function () {
     var form = $('#app_deployer_form');
     form.show();
@@ -56,22 +84,25 @@ this style is for the more complex validation check
         }
         if (newIndex === 1) {
           //get the selected radio button for the application to deploy
-          var war_filter = $("input[name=application]:checked").val();
+          selected_app_type = $("input[name=application]:checked").val();
 
-          if (war_filter === 'KOMET') {
+          if (selected_app_type === 'KOMET') {
             $('#komet_wars').show();
             $('#isaac_wars').hide();
             document.getElementById("komet_war").required = true;
             document.getElementById("isaac_war").required = false;
+            document.getElementById("isaac_db").required = false;
           }
           else {
             $('#komet_wars').hide();
             $('#isaac_wars').show();
             document.getElementById("komet_war").required = false;
             document.getElementById("isaac_war").required = true;
+            document.getElementById("isaac_db").required = true;
           }
           document.getElementById("komet_war").value = '';
           document.getElementById("isaac_war").value = '';
+          document.getElementById("isaac_db").value = '';
         }
 
         // Forbid next action on "Warning" step if the user is to young
@@ -92,21 +123,34 @@ this style is for the more complex validation check
         return form.valid();
       },
       onStepChanged: function (event, currentIndex, priorIndex) {
-        /*
-         // Used to skip the "Warning" step if the user is old enough.
-         if (currentIndex === 2 && Number($("#age-2").val()) >= 18) {
-         form.steps("next");
-         }
-         // Used to skip the "Warning" step if the user is old enough and wants to the previous step.
-         if (currentIndex === 2 && priorIndex === 3) {
-         form.steps("previous");
-         }
-         */
-      },
+        if (currentIndex === 1) {
+          //get the selected radio button for the application to deploy
+          var war_filter = $("input[name=application]:checked").val();
+          $('#summary_application').text(war_filter === 'KOMET' ? 'KOMET Tooling Deployment' : 'ISAAC Deployment');
+        }
+        if (currentIndex === 2) {
+          var components = 'kma bobo';
+
+          if (selected_app_type === 'KOMET') {
+
+          }
+          else {
+
+          }
+          $('#summary_components').text(components);
+        }
+
+        if (currentIndex === 3) {
+          var tomcat = document.getElementById("tomcat").value;
+          $('#summary_tomcat').text(tomcat);
+        }
+      }
+      ,
       onFinishing: function (event, currentIndex) {
         form.validate().settings.ignore = ":disabled";
         return form.valid();
-      },
+      }
+      ,
       onFinished: function (event, currentIndex) {
         form.submit();
       }
