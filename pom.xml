@@ -73,6 +73,22 @@
 
 	<build>
 		<plugins>
+		
+			<!-- Stomp any existing jar files in lib/jars to make sure an old version hanging around doesn't stomp us...-->
+			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>3.0.0</version>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>${basedir}/lib/jars/</directory>
+							<includes>
+								<include>**/*</include>
+							</includes>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
 
 			<!-- Extract the rails_common code into the correct place here, overwriting any existing version -->
 			<plugin>
