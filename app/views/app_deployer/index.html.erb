@@ -42,28 +42,14 @@ this style is for the more complex validation check
 
     <h3>Submit Deployment Request</h3>
     <%= field_set_tag 'Application Deployment Summary' do %>
-        <p>Please review the deployment summary and click the 'Finish' button to deploy the selected application.
-        <br>
-          Application to Deploy:
-        <ul>
-          <li id="summary_application2"></li>
-        </ul>
-
-        <table cellpadding="2" cellspacing="5" width="950px">
-          <tr>
-            <td align="right" width="25%"><b>Application to deploy:</b></td>
-            <td width="75%"><span id="summary_application"></span></td>
-          </tr>
-          <tr>
-            <td align="right" width="25%"><b>Selected Components:</b></td>
-            <td  width="75%"><span id="summary_components"></span></td>
-          </tr>
-          <tr>
-            <td align="right" width="25%"><b>Tomcat Server:</b></td>
-            <td  width="75%"><span id="summary_tomcat"></span></td>
-          </tr>
-        </table>
-        </p>
+        <p>Please review the information below before submitting the deployment request.</p>
+        <section>
+          <h4>Application to Deploy</h4><h5><span id="summary_application" style="font-weight: bold"></span></h5>
+          <br>
+          <h4>Application Components</h4><h5><span id="summary_component" style="font-weight: bold"></span></h5>
+          <br>
+          <h4>Tomcat Server</h4><h5><span id="summary_tomcat" style="font-weight: bold"></span></h5>
+        </section>
     <% end %>
 <% end %>
 
@@ -104,45 +90,34 @@ this style is for the more complex validation check
           document.getElementById("isaac_war").value = '';
           document.getElementById("isaac_db").value = '';
         }
-
-        // Forbid next action on "Warning" step if the user is to young
-        /*
-         if (newIndex === 1 && Number($("#age-2").val()) < 18) {
-         return false;
-         }
-         */
-        /*
-         // Needed in some cases if the user went back (clean up)
-         if (currentIndex < newIndex) {
-         // To remove error styles
-         form.find(".body:eq(" + newIndex + ") label.error").remove();
-         form.find(".body:eq(" + newIndex + ") .error").removeClass("error");
-         }
-         form.validate().settings.ignore = ":disabled,:hidden";
-         */
         return form.valid();
       },
       onStepChanged: function (event, currentIndex, priorIndex) {
         if (currentIndex === 1) {
-          //get the selected radio button for the application to deploy
-          var war_filter = $("input[name=application]:checked").val();
-          $('#summary_application').text(war_filter === 'KOMET' ? 'KOMET Tooling Deployment' : 'ISAAC Deployment');
+          var id = $("input[name=application]:checked").attr('id');
+          var application_type = $("label[for='"+ id +"']").text();
+          application_type = "<span class=\"glyphicon glyphicon-ok-sign\">" + application_type + "</\span>";
+          $("#summary_application").html(application_type);
         }
         if (currentIndex === 2) {
-          var components = 'kma bobo';
+          var components = null;
 
           if (selected_app_type === 'KOMET') {
-
+            components = $( "#komet_war").find("option:selected" ).text();
+            components = "<span class=\"glyphicon glyphicon-ok-sign\">&nbsp;" + components + "</\span><br>";
           }
           else {
-
+            var component1 = $( "#isaac_war").find("option:selected" ).text();
+            var component2 = $( "#isaac_db").find("option:selected" ).text();
+            components = "<span class=\"glyphicon glyphicon-ok-sign\">&nbsp;" + component1 + "</\span><br>";
+            components += "<span class=\"glyphicon glyphicon-ok-sign\">&nbsp;" + component2 + "</\span><br>";
           }
-          $('#summary_components').text(components);
+          $("#summary_component").html(components);
         }
-
         if (currentIndex === 3) {
-          var tomcat = document.getElementById("tomcat").value;
-          $('#summary_tomcat').text(tomcat);
+          var tomcat = $( "#tomcat").find("option:selected" ).text();
+          tomcat = "<span class=\"glyphicon glyphicon-ok-sign\">&nbsp;" + tomcat + "</\span>";
+          $("#summary_tomcat").html(tomcat);
         }
       }
       ,
@@ -172,13 +147,6 @@ this style is for the more complex validation check
       errorPlacement: function errorPlacement(error, element) {
         element.after(error);
       }
-      /*
-       rules: {
-       confirm: {
-       equalTo: "#password-2"
-       }
-       }
-       */
     });
   });
 </script>
