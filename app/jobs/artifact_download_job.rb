@@ -1,6 +1,20 @@
 require 'zip'
 require 'digest'
 require './app/controllers/concerns/nexus_concern'
+
+java_import 'de.schlichtherle.truezip.file.TFile' do |p,c|
+  'JTFile'
+end
+
+java_import 'de.schlichtherle.truezip.file.TFileWriter' do |p,c|
+  'JTFileWriter'
+end
+
+java_import 'de.schlichtherle.truezip.file.TVFS' do |p,c|
+  'JTVFS'
+end
+
+
 class ArtifactDownloadJob < PrismeBaseJob
   include NexusConcern
 
@@ -8,13 +22,33 @@ class ArtifactDownloadJob < PrismeBaseJob
   #   # do something with the exception
   # end
 
-  def cookie_war(war_path,cookie_file, hash)
+  def cookie_war(war_path, cookie_file, hash)
     $log.info("Adding cookie info to war file #{war_path} into file #{cookie_file}")
     $log.info("Cookie data is " + hash.inspect)
-    z = Zip::File.open(war_path)  do |zip|
+    Zip::File.open(war_path) do |zip|
       zip.get_output_stream(cookie_file) do |file_handle|
-        file_handle.puts(hash.keys.map do |e| "#{e}=#{hash[e]}" end.join("\n"))
+        file_handle.puts(hash.keys.map do |e|
+          "#{e}=#{hash[e]}"
+        end.join("\n"))
       end
+    end
+  end
+
+  def cookie_war_true_zip(war_path, cookie_file, hash)
+    $log.info("Adding cookie info to war file #{war_path} into file #{cookie_file}")
+    $log.info("Cookie data is " + hash.inspect)
+    path = war_path + '/' + cookie_file
+    begin
+      entry = JTFile.new(path)
+      writer = JTFileWriter.new(entry)
+      props = ''
+      hash.each_pair do |k,v|
+        props << "#{k}=#{v}\n"
+      end
+      writer.write(props)
+    ensure
+      writer.close unless writer.nil?
+      JTVFS.umount
     end
   end
 
@@ -86,7 +120,7 @@ class ArtifactDownloadJob < PrismeBaseJob
         hash = {}
         hash.merge!(war_cookie_params)
         hash.merge!(nexus_props)
-        cookie_war(file_name,'WEB-INF/classes/prisme.properties', hash)
+        cookie_war_true_zip(file_name, 'WEB-INF/classes/prisme.properties', hash)
       else
         $log.debug("Not cookie-ing up #{file_name}")
       end
@@ -104,3 +138,57 @@ end
 #job = ArtifactDownloadJob.set(wait_until: 5.years.from_now)
 # job.perform_later
 #ActiveJobStatus::JobStatus.get_status(job_id: job.job_id)
+=begin
+ZipFilePath = "./tmp/isaac-rest-1.0.war"
+fis = java.io.FileInputStream.new(ZipFilePath)
+b = java.io.BufferedInputStream.new fis
+zis = java.util.zip.ZipInputStream.new(b)
+e =zis.getNextEntry
+e= zis.getNextEntry
+e = zis.getNextEntry #bombs! Java::JavaUtilZip::ZipException: invalid entry size (expected 1928069120 but got 132 bytes)
+
+fixed in 9 :-(
+https://bugs.openjdk.java.net/browse/JDK-8044727
+
+fileOutStream = java.io.FileOutputStream.new(ZipFilePath, true)
+zipOutStream = java.util.zip.ZipOutputStream.new(fileOutStream)
+fileName = './tmp/foo.txt'
+fis = java.io.FileInputStream.new(fileName)
+entry = java.util.zip.ZipEntry.new fileName
+zipOutStream.putNextEntry(entry)
+foo = java.lang.String.new("Foo\nFaa\nFiddle\n").getBytes
+zipOutStream.write(foo,0,foo.length)
+
+zipOutStream.closeEntry
+zipOutStream.flush
+zipOutStream.finishexit
+zipOutStream.close
+fis.close
+fileOutStream.close
+
+java_import 'de.schlichtherle.truezip.file.TFile' do |p,c|
+'JTFile'
+end
+
+java_import 'de.schlichtherle.truezip.file.TFileWriter' do |p,c|
+'JTFileWriter'
+end
+
+java_import 'de.schlichtherle.truezip.file.TVFS' do |p,c|
+'JTVFS'
+end
+
+zipFilePath = "./tmp/isaac-rest-1.0.1.war"
+entry = JTFile.new(zipFilePath+'/WEB-INF/classes/foo3.txt')
+writer = JTFileWriter.new(entry)
+writer.write("This is too hard ****\n")
+JTVFS.umount
+
+
+<dependency>
+	<groupId>de.schlichtherle.truezip</groupId>
+	<artifactId>truezip</artifactId>
+	<version>7.7.9</version>
+</dependency>
+
+=end
