@@ -25,6 +25,7 @@
 
   <properties>
     <rails_common.version>1.2-SNAPSHOT</rails_common.version>
+    <isaac.version>3.03-SNAPSHOT</isaac.version>
     <!-- railsMode is automatically set to 'test' or 'production' - 'test' if the version number ends with '-SNAPSHOT'
     or 'production' otherwise.	See ant execution below-->
   </properties>
@@ -62,20 +63,22 @@
       <groupId>com.offbytwo.jenkins</groupId>
       <artifactId>jenkins-client</artifactId>
       <version>0.3.4</version>
-      <optional>true</optional><!-- Not needed at runtime / transitively -->
     </dependency>
     <dependency>
       <groupId>org.codehaus.cargo</groupId>
       <artifactId>cargo-core-uberjar</artifactId>
       <version>1.4.19</version>
-      <optional>true</optional><!-- Not needed at runtime / transitively -->
     </dependency>
     <dependency>
       <groupId>de.schlichtherle.truezip</groupId>
       <artifactId>truezip-file</artifactId>
       <version>7.7.9</version>
     </dependency>
-
+    <dependency>
+      <groupId>gov.vha.isaac.ochre.modules</groupId>
+      <artifactId>db-config-builder</artifactId>
+      <version>${isaac.version}</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -125,7 +128,7 @@
             <configuration>
               <!-- We really just want jenkins-client, cargo, and their transitive dependencies. -->
               <excludeArtifactIds>
-                jruby-complete,rake,bundler,rails_common,junit,log4j-core,log4j-api,slf4j-api,log4j-slf4j-impl,log4j-jul,hamcrest-core,
+                jruby-complete,rake,bundler,rails_common,junit,log4j-core,slf4j-api,log4j-slf4j-impl,log4j-jul,hamcrest-core,
               </excludeArtifactIds>
               <overWriteReleases>true</overWriteReleases>
               <overWriteSnapshots>true</overWriteSnapshots>
