@@ -84,6 +84,11 @@
         <artifactId>jaxb-core</artifactId>
         <version>2.2.11</version>
     </dependency>
+    <dependency> <!-- Route slf4j logging to jdk logging to rails can pick it up -->
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-jdk14</artifactId>
+        <version>1.7.13</version>
+    </dependency>
   </dependencies>
 
   <build>
