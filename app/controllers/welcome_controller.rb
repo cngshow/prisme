@@ -64,6 +64,8 @@ class WelcomeController < ApplicationController
         next if war.eql? :failed
         row_click_url = link.clone << d[:context]
         war_name = war
+        # filter to only display isaac and rails war files
+        next unless war =~ /^(isaac|rails).*/
         state = d[:state]
         session_count = d[:session_count].to_s
         current_row[:rows] << {war_name: war_name, state: state, session_count: session_count, link: row_click_url}
