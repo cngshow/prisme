@@ -79,6 +79,11 @@
       <artifactId>db-config-builder</artifactId>
       <version>${isaac.version}</version>
     </dependency>
+    <dependency>
+        <groupId>com.sun.xml.bind</groupId>
+        <artifactId>jaxb-core</artifactId>
+        <version>2.2.11</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -128,7 +133,7 @@
             <configuration>
               <!-- We really just want jenkins-client, cargo, and their transitive dependencies. -->
               <excludeArtifactIds>
-                jruby-complete,rake,bundler,rails_common,junit,log4j-core,slf4j-api,log4j-slf4j-impl,log4j-jul,hamcrest-core,
+                jruby-complete,rake,bundler,rails_common,junit,log4j-core,log4j-slf4j-impl,log4j-jul,hamcrest-core,
               </excludeArtifactIds>
               <overWriteReleases>true</overWriteReleases>
               <overWriteSnapshots>true</overWriteSnapshots>
