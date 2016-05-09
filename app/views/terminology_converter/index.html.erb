@@ -140,26 +140,30 @@
 
   function loadTable(tableId, fields, data) {
     var rows = '';
+    if (data.length > 0) {
+      $.each(data, function (index, row) {
+        var tr_data = '<tr>';
 
-    $.each(data, function (index, row) {
-      var tr_data = '<tr>';
-
-      $.each(fields, function (index, field) {
-        if (field === 'started_at') {
-          tr_data += '<td>' + format_epoch_in_local(row.started_at) + '</td>';
-        }
-        else if (field === 'leaf_data.jenkins_build_result') {
-          tr_data += '<td>' + build_status_renderer(row.leaf_data.jenkins_build_result) + '</td>';
-        }
-        else if (field === 'leaf_data.completed_at') {
-          tr_data += '<td>' + format_epoch_in_local(row.leaf_data.completed_at) + '</td>';
-        }
-        else {
-          tr_data += '<td>' + eval('row.' + field) + '</td>';
-        }
+        $.each(fields, function (index, field) {
+          if (field === 'started_at') {
+            tr_data += '<td>' + format_epoch_in_local(row.started_at) + '</td>';
+          }
+          else if (field === 'leaf_data.jenkins_build_result') {
+            tr_data += '<td>' + build_status_renderer(row.leaf_data.jenkins_build_result) + '</td>';
+          }
+          else if (field === 'leaf_data.completed_at') {
+            tr_data += '<td>' + format_epoch_in_local(row.leaf_data.completed_at) + '</td>';
+          }
+          else {
+            tr_data += '<td>' + eval('row.' + field) + '</td>';
+          }
+        });
+        rows += tr_data + '<tr>';
       });
-      rows += tr_data + '<tr>';
-    });
+    }
+    else {
+      rows = '<tr><td colspan="9" style="text-align:center">There are no items to list...</td></tr>'
+    }
     $('#' + tableId + ' tbody').html(rows);
   }
 
