@@ -71,7 +71,7 @@
     </dependency>
     <dependency>
       <groupId>de.schlichtherle.truezip</groupId>
-      <artifactId>truezip-file</artifactId>
+      <artifactId>truezip-samples</artifactId>
       <version>7.7.9</version>
     </dependency>
     <dependency>
