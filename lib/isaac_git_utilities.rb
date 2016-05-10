@@ -64,6 +64,13 @@ module IsaacConverter
   def self.create_content_converter(sdo_source_content:, converter_version:, additional_source_dependencies_sdo_j_a:, additional_source_dependencies_ibdf_j_a:, git_url:,git_user:, git_pass:)
     JIsaacGit::ContentConverterCreator.createContentConverter(sdo_source_content,converter_version,  additional_source_dependencies_sdo_j_a, additional_source_dependencies_ibdf_j_a, git_url, git_user, git_pass)
   end
+
+  # a = IsaacConverter::get_converter_for_source_artifact(artifactId: "vhat-src-data")
+  #a.artifact_id | a.group_id | a.artifact_id | a.version |a.classifier | a.has_classifier?
+  def self.get_converter_for_source_artifact(artifactId:)
+    JIsaacGit::ContentConverterCreator.getConverterForSourceArtifact(artifactId)
+  end
+
 end
 
 module IsaacDatabase

@@ -1,6 +1,5 @@
 require 'json'
 require 'erb'
-require './lib/isaac_git_utilities'
 include NexusConcern
 
 class TerminologyConverterController < ApplicationController

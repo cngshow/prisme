@@ -13,6 +13,8 @@ require './lib/prisme_service'
 require './lib/cipher'
 require './lib/jenkin_client'
 require './lib/rails_common/util/helpers'
+require './lib/isaac_git_utilities'
+
 #System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
 props = java.lang.System.getProperties
 props.put('java.util.logging.manager', $PROPS['PRISME.log_manager'])
