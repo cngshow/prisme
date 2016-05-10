@@ -121,6 +121,7 @@ class ArtifactDownloadJob < PrismeBaseJob
         hash.merge!(war_cookie_params)
         hash.merge!(nexus_props)
         cookie_war_true_zip(file_name, 'WEB-INF/classes/prisme.properties', hash)
+        context = "/isaac-rest" #to_do pull this from the database someday.
       else
         $log.debug("Not cookie-ing up #{file_name}")
       end
