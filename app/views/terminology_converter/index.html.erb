@@ -83,7 +83,7 @@
             <br>
             <br>
             <div class="modal-footer">
-              <%= submit_tag 'Submit', data: {disable_with: 'Please wait...'}, class: 'btn btn-primary', onclick: "$('#terminology_source').readonly(true); $('#converted_terminology').removeAttr('disabled');" %>
+              <%= submit_tag 'Submit', data: {disable_with: 'Please wait...'}, class: 'btn btn-primary', onclick: "$('#converted_terminology').removeAttr('disabled');" %>
               <%= button_tag 'Cancel', data: {dismiss: 'modal'}, class: 'btn btn-primary' %>
             </div>
         <% end %>
