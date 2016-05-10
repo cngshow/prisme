@@ -71,11 +71,20 @@
       <div class="modal-body">
         <%= form_tag(:controller => 'terminology_converter', :action => :request_build, remote: true) do |f| %>
             <%= label_tag 'terminology_source', 'Terminology Source' %><br>
-            <%= select_tag 'terminology_source', options_for_select(@options.collect { |o| [o[:key], o[:value]] }), :include_blank => '-- Select the Terminology Source --', required: true %>
+            <%= select_tag 'terminology_source', options_from_collection_for_select(@sources, :option_key, :option_value), :include_blank => '-- Select the Terminology Source --', required: true %>
+            <br>
+            <br>
+            <%= label_tag 'converter_version', 'Converter Version' %><br>
+            <%= text_field_tag 'converter_version', '3.1-SNAPSHOT', readonly: true, required: true %>
+            <br>
+            <br>
+            <%= label_tag 'converted_terminology', 'Converted Terminology Artifact' %><br>
+            <%= select_tag 'converted_terminology', options_from_collection_for_select(@converts, :option_key, :option_value, 'gov.vha.isaac.terminology.converted|rf2-ibdf-sct|20150731-loader-3.1-SNAPSHOT|Snapshot'), :include_blank => '-- Select the Converted Terminology Artifact --', required: true, disabled: true%>
             <br>
             <br>
             <div class="modal-footer">
-              <%= submit_tag 'Submit', data: {disable_with: 'Please wait...'}, class: 'btn btn-primary', onclick: "$('#terminology_source').readonly=true" %>
+              <%= submit_tag 'Submit', data: {disable_with: 'Please wait...'}, class: 'btn btn-primary', onclick: "$('#terminology_source').readonly(true); $('#converted_terminology').removeAttr('disabled');" %>
+              <%= button_tag 'Cancel', data: {dismiss: 'modal'}, class: 'btn btn-primary' %>
             </div>
         <% end %>
       </div>

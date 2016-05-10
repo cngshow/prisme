@@ -16,7 +16,7 @@
       <notOnThisProject>false</notOnThisProject>
     </org.jenkinsci.plugins.mavenrepocleaner.MavenRepoCleanerProperty>
     <% if development %>
-      <jenkins.plugins.slack.SlackNotifier_-SlackJobProperty plugin="slack@1.8.1"><!-- todo erb this line -->
+      <jenkins.plugins.slack.SlackNotifier_-SlackJobProperty plugin="slack@1.8.1">
         <teamDomain></teamDomain>
         <token></token>
         <room></room>
@@ -39,12 +39,12 @@
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
-        <url><%= git_url %></url><!--example: https://github.com/VA-CTT/ISAAC-term-convert-loinc.git-->
+        <url><%= git_url %></url>
       </hudson.plugins.git.UserRemoteConfig>
     </userRemoteConfigs>
     <branches>
       <hudson.plugins.git.BranchSpec>
-        <name>*/develop</name><!-- todo erb this line? -->
+        <name><%= tag_name %></name><!--pass the tag here! returned from method call e.g. "rf2-ibdf-us-extension/20150301-loader-3.1-SNAPSHOT" -->
       </hudson.plugins.git.BranchSpec>
     </branches>
     <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
@@ -56,17 +56,19 @@
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <triggers>
-    <com.cloudbees.jenkins.GitHubPushTrigger plugin="github@1.17.1"><!-- todo erb this line -->
+    <com.cloudbees.jenkins.GitHubPushTrigger plugin="github@1.17.1">
       <spec></spec>
     </com.cloudbees.jenkins.GitHubPushTrigger>
   </triggers>
   <concurrentBuild>false</concurrentBuild>
+<!--
   <rootModule>
-    <groupId>gov.vha.isaac.terminology.converted</groupId><!-- todo erb this line -->
-    <artifactId>loinc-ibdf-tech-preview</artifactId><!-- todo erb this line -->
+    <groupId>gov.vha.isaac.terminology.converted</groupId>
+    <artifactId><%#= artifact_id %></artifactId>
   </rootModule>
-  <rootPOM>loinc-ibdf/loinc-tech-preview/pom.xml</rootPOM><!-- todo erb this line -->
-  <goals>clean deploy -DaltDeploymentRepository=vadev::default::http://vadev.mantech.com:8081/nexus/content/repositories/termdatasnapshots</goals><!-- todo erb this line -->
+  <rootPOM><%#= root_pom %></rootPOM>
+  -->
+  <goals>clean deploy -DaltDeploymentRepository=vadev::default::http://vadev.mantech.com:8081/nexus/content/repositories/termdatasnapshots</goals>
   <aggregatorStyleBuild>true</aggregatorStyleBuild>
   <incrementalBuild>false</incrementalBuild>
   <ignoreUpstremChanges>false</ignoreUpstremChanges>
@@ -80,7 +82,7 @@
   <disableTriggerDownstreamProjects>false</disableTriggerDownstreamProjects>
   <blockTriggerWhenBuilding>true</blockTriggerWhenBuilding>
   <settings class="org.jenkinsci.plugins.configfiles.maven.job.MvnSettingsProvider" plugin="config-file-provider@2.10.0">
-    <settingsConfigId>37ea891c-8e56-4e66-b666-e183599fce3a</settingsConfigId><!-- todo erb this line? -->
+    <settingsConfigId>37ea891c-8e56-4e66-b666-e183599fce3a</settingsConfigId>
   </settings>
   <globalSettings class="jenkins.mvn.DefaultGlobalSettingsProvider"/>
   <reporters/>

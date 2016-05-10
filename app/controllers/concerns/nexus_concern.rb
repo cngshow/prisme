@@ -51,6 +51,36 @@ module NexusConcern
   end
 end
 
+class TermConvertOption
+  attr_reader :groupId, :artifactId, :version, :classifier
+
+  def initialize(groupId, artifactId, version, classifier = nil)
+    @groupId = groupId
+    @artifactId = artifactId
+    @version = version
+    @classifier = classifier
+  end
+
+  def option_key
+    "#{groupId}|#{artifactId}|#{version}|#{classifier}"
+    # "{g: '#{groupId}', a: '#{artifactId}', v: '#{version}', c: '#{classifier}'}"
+  end
+
+  def option_value
+    ret = "#{artifactId}-#{version}"
+
+    if (classifier)
+      ret += "-#{classifier}"
+    end
+
+    ret
+  end
+
+  def select_option
+    {key: option_key, value: option_value}
+  end
+end
+
 class NexusArtifactSelectOption
   attr_reader :groupId, :artifactId, :version, :repo, :classifier, :package
 
