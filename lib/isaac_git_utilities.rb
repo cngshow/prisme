@@ -15,7 +15,6 @@ module JIsaacGit
     clazz_string = args.pop
     array = []
     args.each do |hash|
-      p hash
       array << [hash[:group_id], hash[:artifact], hash[:version], hash[:classifier]] if hash[:classifier]
       array << [hash[:group_id], hash[:artifact], hash[:version]] unless hash[:classifier]
     end
