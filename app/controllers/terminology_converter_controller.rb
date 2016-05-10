@@ -1,16 +1,6 @@
 require 'json'
 require 'erb'
-
-java_import 'gov.vha.isaac.ochre.pombuilder.converter.ContentConverterCreator' do |p,c|
-  'JContentConverterCreator'
-end
-java_import 'gov.vha.isaac.ochre.pombuilder.artifacts.SDOSourceContent' do |p,c|
-  'JSDOSourceContent'
-end
-java_import 'gov.vha.isaac.ochre.pombuilder.artifacts.IBDFFile' do |p,c|
-  'Jibdf'
-end
-
+require './lib/isaac_git_utilities'
 include NexusConcern
 
 class TerminologyConverterController < ApplicationController
@@ -67,22 +57,20 @@ class TerminologyConverterController < ApplicationController
     c_artifact_id = c_args[1]
     c_version = c_args[2]
     c_classifier = c_args[3]
-
-    sdo_source_content = JSDOSourceContent.new(s_group_id, s_artifact_id, s_version)
-    # converter_version = "3.1-SNAPSHOT" #no f*ing clue how to get this
-    additional_source_dependencies = [].to_java(JSDOSourceContent)
+    sdo_source_content = JIsaacGit::get_sdo(group_id: s_group_id, artifact: s_artifact_id, version: s_version)
+    additional_source_dependencies = JIsaacGit::sdo_source_content_to_j_a()
 
     git_url = $PROPS['ISAAC_GIT.git_url']
     git_user = $PROPS['ISAAC_GIT.git_user']
     git_pass = $PROPS['ISAAC_GIT.git_pass']
-
-    ibdf = Jibdf.new(c_group_id, c_artifact_id, c_version, c_classifier)
-    ibdf_a = [ibdf].to_java(Jibdf)
-
+    ibdf_a = JIsaacGit::create_ibdf_sdo_java_array({group_id: c_group_id, artifact: c_artifact_id, version: c_version, classifier: c_classifier}, "IBDFFile")
+    git_failure = nil
     begin
-      tag_name = JContentConverterCreator.createContentConverter(sdo_source_content, converter_version, additional_source_dependencies, ibdf_a, git_url, git_user, git_pass)
+      tag_name = IsaacConverter::create_content_converter(sdo_source_content: sdo_source_content, converter_version: converter_version, additional_source_dependencies_sdo_j_a: additional_source_dependencies, additional_source_dependencies_ibdf_j_a: ibdf_a, git_url: git_url, git_user: git_user, git_pass: git_pass)
     rescue => ex
-      $log.debug(ex.to_s)
+      $log.error("Git call failed!  Message: " + ex.message)
+      $log.error(ex.backtrace.join("\n"))
+      raise JIsaacGit::GitFailureException.new(ex)
     end
 
     # # look up the replaceable parameters from the YAML file

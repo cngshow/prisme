@@ -191,4 +191,83 @@ JTVFS.umount
 	<version>7.7.9</version>
 </dependency>
 
+java_import 'gov.vha.isaac.ochre.pombuilder.artifacts.IBDFFile' do |p,c|
+ 'Jibdf'
+end
+
+java_import 'gov.vha.isaac.ochre.pombuilder.dbbuilder.DBConfigurationCreator' do |p,c|
+ 'JDBConfigCreator'
+end
+
+bdf = Jibdf.new("org.foo","loinc","5.0")
+ibdf_array_java = [bdf].to_java(Jibdf)
+JDBConfigCreator.createDBConfiguration("test","1.0", "Cris's test database", 'all', true,ibdf_array_java, "4", "https://github.com/VA-CTT/db_tests.git", "cshupp1","ki123alem")
+
+java_import 'gov.vha.isaac.ochre.pombuilder.converter.ContentConverterCreator' do |p,c|
+ 'JContentConverterCreator'
+end
+java_import 'gov.vha.isaac.ochre.pombuilder.artifacts.SDOSourceContent' do |p,c|
+ 'JSDOSourceContent'
+end
+java_import 'gov.vha.isaac.ochre.pombuilder.artifacts.IBDFFile' do |p,c|
+ 'Jibdf'
+end
+
+source_term = "gov.vha.isaac.terminology.source.rf2"
+s_artifact = "rf2-src-data-us-extension"
+s_version = "20150301"
+sdo_source_content = JSDOSourceContent.new(source_term, s_artifact, s_version)
+converter_version = "3.1-SNAPSHOT" #no f*ing clue how to get this
+additional_source_dependencies = [].to_java(JSDOSourceContent)
+converted_term = "gov.vha.isaac.terminology.converted"
+c_artifact = "rf2-ibdf-sct"
+c_version = "20150731-loader-3.1-SNAPSHOT"
+c_classifier = "Snapshot"
+git_url = "https://github.com/VA-CTT/db_tests.git"
+git_user =  "cshupp1"
+git_pass = "na"
+
+ibdf = Jibdf.new(converted_term, c_artifact, c_version, c_classifier)
+ibdf_a = [ibdf].to_java(Jibdf)
+
+JContentConverterCreator.createContentConverter(sdo_source_content, converter_version,  additional_source_dependencies, ibdf_a, git_url, git_user, git_pass)
+
+
+--end
+		ContentConverterCreator.createContentConverter(new SDOSourceContent("gov.vha.isaac.terminology.source.rf2", "rf2-src-data-us-extension", "20150301"),
+			"3.1-SNAPSHOT",
+			new SDOSourceContent[0],
+			new IBDFFile[] {new IBDFFile("gov.vha.isaac.terminology.converted", "rf2-ibdf-sct", "20150731-loader-3.1-SNAPSHOT", "Snapshot")},
+				"https://github.com/darmbrust/test.git", "", "");
+
+	public static String createContentConverter(SDOSourceContent sourceContent, String converterVersion, SDOSourceContent[] additionalSourceDependencies,
+		IBDFFile[] additionalIBDFDependencies, String gitRepositoryURL, String gitUsername, String gitPassword) throws Exception
+	{
+
+	/**
+	 * Create a source conversion project which is executable via maven.
+	 * @param sourceContent - The artifact information for the content to be converted.  The artifact information must follow known naming conventions - group id should
+	 * be gov.vha.isaac.terminology.source.  Currently supported artifactIds are 'loinc-src-data', 'loinc-src-data-tech-preview', 'rf2-src-data-*', 'vhat'
+	 * @param converterVersion - The version number of the content converter code to utilize.  The jar file for this converter must be available to the
+	 * maven execution environment at the time when the conversion is run.
+	 * @param additionalSourceDependencies - Some converters require additional data files to satisfy dependencies. See {@link #getSupportedConversions()}
+	 * for accurate dependencies for any given conversion type.
+	 * @param additionalIBDFDependencies - Some converters require additional data files to satisfy dependencies. See {@link #getSupportedConversions()}
+	 * for accurate dependencies for any given conversion type.
+	 * @param gitRepositoryURL - The URL to publish this built project to
+	 * @param gitUsername - The username to utilize to publish this project
+	 * @param gitPassword - the password to utilize to publish this project
+	 * @return the tag created in the repository that carries the created project
+	 * @throws Exception
+	 */
+	public static String createContentConverter(SDOSourceContent sourceContent, String converterVersion, SDOSourceContent[] additionalSourceDependencies,
+		IBDFFile[] additionalIBDFDependencies, String gitRepositoryURL, String gitUsername, String gitPassword) throws Exception
+	{
+
+SDOSourceContent is the same, classifier is optional
+	public IBDFFile(String groupId, String artifactId, String version, String classifier)
+	{
+		super(groupId, artifactId, version, classifier);
+	}
+
 =end
