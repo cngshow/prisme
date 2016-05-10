@@ -61,9 +61,21 @@ class TermConvertOption
     @classifier = classifier
   end
 
+  def self.arg_as_json(option_key)
+    ret = {}
+    args = [:g, :a, :v, :c]
+    unless (option_key.nil?)
+      option_key.split('|').each_with_index do |arg, idx|
+        ret[args[idx]] = arg
+      end
+    else
+      raise StandardError('option_key argument passed was nil.')
+    end
+    ret
+  end
+
   def option_key
     "#{groupId}|#{artifactId}|#{version}|#{classifier}"
-    # "{g: '#{groupId}', a: '#{artifactId}', v: '#{version}', c: '#{classifier}'}"
   end
 
   def option_value

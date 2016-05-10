@@ -5,7 +5,8 @@ include NexusConcern
 class TerminologyConverterController < ApplicationController
   before_action :auth_registered
   before_action :ensure_services_configured
-  TERM_GROUP_PARAMS = [{g: 'gov.vha.isaac.terminology.source.*'}, {g: 'gov.vha.isaac.terminology.converted'}]
+  TERM_GROUP_PARAMS = [{g: 'gov.vha.isaac.terminology.source.*'},
+                       {g: 'gov.vha.isaac.terminology.converted'}]
 
   def index
     TERM_GROUP_PARAMS.each_with_index do |p, idx|
@@ -37,6 +38,47 @@ class TerminologyConverterController < ApplicationController
     options.sort_by!(&:option_key)
     options
   end
+  # todo - consolidate code for loading the options...
+  def load_drop_down2(params)
+    url_string = '/nexus/service/local/lucene/search'
+    options = []
+    response = get_nexus_connection.get(url_string, params)
+    json = nil
+
+    begin
+      json = JSON.parse(response.body)
+    rescue JSON::ParserError => ex
+      if (response.status.eql?(200))
+        return response.body
+      end
+    end
+
+    json['data'].each do |artifact|
+      options << TermConvertOption.new(artifact['groupId'], artifact['artifactId'], artifact['version']) # todo CLASSIFIER?
+    end
+
+    options.sort_by!(&:option_key)
+    options
+  end
+
+  def ajax_term_source_change
+    source = params[:term_source]
+    locals = {terminology_source: source}
+    source_hash = TermConvertOption.arg_as_json(source)
+
+    # get converters based on the selected term source
+    isaac_converter = IsaacConverter::get_converter_for_source_artifact(artifactId: source_hash[:a])
+    arg = {g: isaac_converter.group_id, a: isaac_converter.artifact_id}
+    converters = load_drop_down2(arg).reject {|option| option.version =~ /SNAPSHOT/i}
+    locals[:converter_versions] = converters
+
+    # based on the term source determine if additional sources need to be included
+    # additionalSources = load_drop_down(1) #todo implement this!
+    # locals[:additionalSources] = additionalSources
+
+    # render the partial for the user to make their selections
+    render partial: 'terminology_converter/term_source_change_content', locals: locals
+  end
 
   def request_build
     term_source = params[:terminology_source]
@@ -44,42 +86,53 @@ class TerminologyConverterController < ApplicationController
     converted_terminology = params[:converted_terminology]
 
     # strip out the individual arguments for term source
-    # s_args = JSON.parse(term_source)
-    s_args = term_source.split('|')
-    s_group_id = s_args[0]
-    s_artifact_id = s_args[1]
-    s_version = s_args[2]
+    s_hash = TermConvertOption.arg_as_json(term_source)
+    s_group_id = s_hash[:g]
+    s_artifact_id = s_hash[:a]
+    s_version = s_hash[:v]
 
-    # strip out the individual arguments for converted_terminology
-    c_args = converted_terminology.split('|')
-    c_group_id = c_args[0]
-    c_artifact_id = c_args[1]
-    c_version = c_args[2]
-    c_classifier = c_args[3]
+    # strip out the version argument for converter_version
+    cv_hash = TermConvertOption.arg_as_json(converter_version)
+    converter_version = cv_hash[:v]
+
+    # initialize the SDOSourceContent based on the selected source
     sdo_source_content = JIsaacGit::get_sdo(group_id: s_group_id, artifact: s_artifact_id, version: s_version)
+
+    # todo what source is used determines if we give it an empty array - need conditional on this!
     additional_source_dependencies = JIsaacGit::sdo_source_content_to_j_a()
 
     git_url = $PROPS['ISAAC_GIT.git_url']
     git_user = $PROPS['ISAAC_GIT.git_user']
     git_pass = $PROPS['ISAAC_GIT.git_pass']
-    ibdf_a = JIsaacGit::create_ibdf_sdo_java_array({group_id: c_group_id, artifact: c_artifact_id, version: c_version, classifier: c_classifier}, "IBDFFile")
+
+    ibdf_a = JIsaacGit::ibdf_file_to_j_a()
+
+    if converted_terminology
+      # strip out the individual arguments for converted_terminology
+      c_hash = TermConvertOption.arg_as_json(converted_terminology)
+      c_group_id = c_hash[:g]
+      c_artifact_id = c_hash[:a]
+      c_version = c_hash[:v]
+      c_classifier = c_hash[:c]
+      ibdf_a = JIsaacGit::create_ibdf_sdo_java_array({group_id: c_group_id, artifact: c_artifact_id, version: c_version, classifier: c_classifier}, 'IBDFFile')
+    end
+
     git_failure = nil
+
     begin
-      tag_name = IsaacConverter::create_content_converter(sdo_source_content: sdo_source_content, converter_version: converter_version, additional_source_dependencies_sdo_j_a: additional_source_dependencies, additional_source_dependencies_ibdf_j_a: ibdf_a, git_url: git_url, git_user: git_user, git_pass: git_pass)
+      tag_name = IsaacConverter::create_content_converter(sdo_source_content: sdo_source_content,
+                                                          converter_version: converter_version,
+                                                          additional_source_dependencies_sdo_j_a: additional_source_dependencies,
+                                                          additional_source_dependencies_ibdf_j_a: ibdf_a,
+                                                          git_url: git_url,
+                                                          git_user: git_user,
+                                                          git_pass: git_pass)
     rescue => ex
-      $log.error("Git call failed!  Message: " + ex.message)
+      $log.error("Git call failed!  Message: #{ex.message}")
       $log.error(ex.backtrace.join("\n"))
       raise JIsaacGit::GitFailureException.new(ex)
     end
 
-    # # look up the replaceable parameters from the YAML file
-    # config = YAML.load_file('./config/service/term_convert_definitions.yml')
-    # args = config[term_source]
-    #
-    # # local variables referenced in the erb via binding
-    # git_url = args['git_url']
-    # root_pom = args['root_pom']
-    # artifact_id = args['artifact_id']
     development = Rails.env.development?
 
     # file to render
@@ -88,6 +141,7 @@ class TerminologyConverterController < ApplicationController
     url = props[PrismeService::JENKINS_ROOT]
     user = props[PrismeService::JENKINS_USER]
     password = props[PrismeService::JENKINS_PWD]
+
     # you MUST pass binding in order to have the erb process local variables
     @job_xml = ERB.new(File.open(j_xml, 'r') { |file| file.read }).result(binding)
     t_s = Time.now.strftime('%Y_%m_%dT%H_%M_%S')
