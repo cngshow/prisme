@@ -2,6 +2,7 @@
 default: &default
 #  adapter: hsqldb
   adapter: jdbch2
+  pool: 1000
 
 development:
   #adapter: sqlite3  #schema: prisme_development

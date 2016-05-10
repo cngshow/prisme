@@ -1,0 +1,12 @@
+<br>
+<br>
+<%= label_tag 'converter_version', 'Converter Version' %><br>
+<%= select_tag 'converter_version', options_from_collection_for_select(converter_versions, :option_key, :option_value), :include_blank => '-- Select the Converter Version --', required: true %>
+<br>
+<br>
+<% if (defined? additionalSources) %>
+    <%= label_tag 'converted_terminology', 'Converted Terminology Artifact' %><br>
+    <%= select_tag 'converted_terminology', options_from_collection_for_select(additionalSources, :option_key, :option_value), :include_blank => '-- Select the Converted Terminology Artifact --', required: true %>
+    <br>
+    <br>
+<% end %>

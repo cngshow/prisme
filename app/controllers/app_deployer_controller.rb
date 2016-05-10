@@ -8,6 +8,7 @@ class AppDeployerController < ApplicationController
   def index
     @komet_wars = get_nexus_wars(app: 'KOMET')
     @isaac_wars = get_nexus_wars(app: 'ISAAC')
+    @isaac_dbs = get_isaac_cradle_zips
 
     if @komet_wars.nil? || @isaac_wars.nil?
       render :file => 'public/nexus_not_available.html'
@@ -32,25 +33,42 @@ class AppDeployerController < ApplicationController
 
   def deploy_app
     # Should look something like this: url = 'http://vadev.mantech.com:8081/nexus/service/local/artifact/maven/content'
-    # g a v r c nexus_params
-    nexus_params = {}
+    # g a v r c war_cookie_params
     tomcat_id = params[PrismeService::TOMCAT]
     tomcat_ar = Service.find_by(id: tomcat_id)
     application = params['application']
     war_param = application.eql?('KOMET') ? params['komet_war'] : params['isaac_war']
-    war_file = NexusWar.init_from_select_key(war_param)
+    war_file = NexusArtifactSelectOption.init_from_select_key(war_param)
     war_name = war_file.select_value
+    war_cookie_params = {}
+    nexus_query_params = {}
 
-    war_info = war_param.split('|')
-    nexus_params[:g] = war_info[0]
-    nexus_params[:a] = war_info[1]
-    nexus_params[:v] = war_info[2]
-    nexus_params[:r] = war_info[3]
-    nexus_params[:c] = war_info[4] unless war_info[4].empty?
-    nexus_params[:p] = war_info[5]
+    nexus_query_params[:g] = war_file.groupId
+    nexus_query_params[:a] = war_file.artifactId
+    nexus_query_params[:v] = war_file.version
+    nexus_query_params[:r] = war_file.repo
+    nexus_query_params[:c] = war_file.classifier unless war_file.classifier.empty?
+    nexus_query_params[:p] = war_file.package
 
-    #ActiveRecord Job set to pending
-    ArtifactDownloadJob.perform_later(nexus_params, war_name, tomcat_ar)
+    war_cookie_params[:war_group_id] = war_file.groupId
+    war_cookie_params[:war_artifact_id] = war_file.artifactId
+    war_cookie_params[:war_version] = war_file.version
+    war_cookie_params[:war_repo] = war_file.repo
+    war_cookie_params[:war_classifier] = war_file.classifier unless war_file.classifier.empty?
+    war_cookie_params[:war_package] = war_file.package
+
+    isaac_db = params['isaac_db']
+    if (isaac_db)
+      zip_file = NexusArtifactSelectOption.init_from_select_key(isaac_db)
+      war_cookie_params[:db_group_id] = zip_file.groupId
+      war_cookie_params[:db_artifact_id] = zip_file.artifactId
+      war_cookie_params[:db_version] = zip_file.version
+      war_cookie_params[:db_repo] = zip_file.repo
+      war_cookie_params[:db_classifier] = zip_file.classifier
+      war_cookie_params[:db_package] = zip_file.package
+    end
+
+    ArtifactDownloadJob.perform_later(nexus_query_params, war_cookie_params, war_name, tomcat_ar)
     redirect_to prisme_job_queue_list_path
   end
 
@@ -87,11 +105,50 @@ class AppDeployerController < ApplicationController
 
         # only include war files
         links.keep_if { |h| h['extension'] == 'war' }.each do |h|
-          ret << NexusWar.new(groupId: g, artifactId: a, version: v, repo: repo, classifier: h['classifier'], package: h['extension'])
+          ret << NexusArtifactSelectOption.new(groupId: g, artifactId: a, version: v, repo: repo, classifier: h['classifier'], package: h['extension'])
         end
       end
     else
-      puts 'no war files found!!!'
+      $log.info('no war files found!!!')
+    end
+    ret
+  end
+
+  def get_isaac_cradle_zips
+    url_string = $PROPS['ENDPOINT.nexus_lucene_search']
+    params = {g: 'gov.vha.isaac.db', r: 'All', p: 'cradle.zip'}
+    conn = NexusConcern.get_nexus_connection
+    response = conn.get(url_string, params)
+    json = nil
+
+    begin
+      json = JSON.parse response.body
+    rescue JSON::ParserError => ex
+      if (response.status.eql?(200))
+        return response.body
+      end
+    end
+
+    return nil if json.nil?
+    ret = []
+
+    if (json['totalCount'].to_i > 0)
+      releases = json['data'].select { |ih| ih['version'] !~ /SNAPSHOT/ }
+
+      if (releases.length > 0)
+        releases.each do |artifact|
+          g = artifact['groupId']
+          a = artifact['artifactId']
+          v = artifact['version']
+          repo = artifact['latestReleaseRepositoryId']
+          c = artifact['artifactHits'].first['artifactLinks'].select { |al| al['extension'].eql?('cradle.zip') }.first['classifier']
+          ret << NexusArtifactSelectOption.new(groupId: g, artifactId: a, version: v, repo: repo, classifier: c, package: 'cradle.zip')
+        end
+      else
+        $log.info('no releases found!!')
+      end
+    else
+      $log.info('no ISAAC cradle zips found!!!')
     end
     ret
   end

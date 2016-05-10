@@ -12,6 +12,7 @@ module PrismeService
 
   # NEXUS
   NEXUS_ROOT = 'nexus_root'
+  NEXUS_REPOSITORY_URL = 'nexus_repository_url'
   NEXUS_USER = 'nexus_user'
   NEXUS_PWD = 'nexus_pwd'
 

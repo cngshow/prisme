@@ -55,6 +55,7 @@ gem 'sucker_punch', '~> 2.0.0'
 gem 'devise'
 gem 'pundit'
 gem 'jdbc-h2', '1.4.181'
+gem 'will_paginate'
 
 group :development do
   gem 'jdbc-sqlite3'

@@ -5,7 +5,7 @@ class PrismeJob < ActiveRecord::Base
   has_many :child_jobs, :class_name => 'PrismeJob', :foreign_key => 'parent_job_id'
   belongs_to :parent_job, :class_name => 'PrismeJob', :foreign_key => 'parent_job_id'
 
-  scope :job_name, -> (job_name) {where(job_name: job_name)}
+  scope :job_name, -> (job_name, exclude=false) {where("job_name #{exclude ? '!=' : '='} ?", job_name)}
   scope :leaves, -> () {where(leaf: true)}
   scope :job_ids_in, -> (ids,include) {where("job_id #{include ? 'IN' : 'NOT IN'} (#{ids.map do |e| "'#{e}'" end.join(',')})")}
   scope :orphan, -> (bool) {where("status #{bool ? '=' : '!='} #{PrismeJobConstants::Status::STATUS_HASH[:ORPHANED]} ")}

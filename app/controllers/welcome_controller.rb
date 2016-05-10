@@ -36,9 +36,11 @@ class WelcomeController < ApplicationController
   #delete this before single sign on
   def toggle_admin
     User.all.each do |u|
+      $log.debug("Admin for #{u.email} is #{u.administrator}")
       u.administrator = !u.administrator
       $log.debug("Setting admin for #{u.email} to #{u.administrator}")
-      u.save!
+      saved = u.save!
+      $log.debug("Admin state saved is #{saved}.")
     end
     redirect_to root_path
   end
@@ -62,6 +64,8 @@ class WelcomeController < ApplicationController
         next if war.eql? :failed
         row_click_url = link.clone << d[:context]
         war_name = war
+        # filter to only display isaac and rails war files
+        next unless war =~ /^(isaac|rails).*/
         state = d[:state]
         session_count = d[:session_count].to_s
         current_row[:rows] << {war_name: war_name, state: state, session_count: session_count, link: row_click_url}

@@ -26,7 +26,7 @@ module NexusConcern
     def self.init_from_select_key(key)
       vals = key.split('|')
       raise ArgumentError.new('String passed in from select input is blank!') if vals.length != 4
-      TermSource.new(repoUrl: vals[0],groupId: vals[1], artifactId: vals[2], version: vals[3])
+      TermSource.new(repoUrl: vals[0], groupId: vals[1], artifactId: vals[2], version: vals[3])
     end
 
     def get_full_path
@@ -51,8 +51,50 @@ module NexusConcern
   end
 end
 
-class NexusWar
-  attr_reader :groupId, :artifactId, :version, :repo, :package, :classifier
+class TermConvertOption
+  attr_reader :groupId, :artifactId, :version, :classifier
+
+  def initialize(groupId, artifactId, version, classifier = nil)
+    @groupId = groupId
+    @artifactId = artifactId
+    @version = version
+    @classifier = classifier
+  end
+
+  def self.arg_as_json(option_key)
+    ret = {}
+    args = [:g, :a, :v, :c]
+    unless (option_key.nil?)
+      option_key.split('|').each_with_index do |arg, idx|
+        ret[args[idx]] = arg
+      end
+    else
+      raise StandardError('option_key argument passed was nil.')
+    end
+    ret
+  end
+
+  def option_key
+    "#{groupId}|#{artifactId}|#{version}|#{classifier}"
+  end
+
+  def option_value
+    ret = "#{artifactId}-#{version}"
+
+    if (classifier)
+      ret += "-#{classifier}"
+    end
+
+    ret
+  end
+
+  def select_option
+    {key: option_key, value: option_value}
+  end
+end
+
+class NexusArtifactSelectOption
+  attr_reader :groupId, :artifactId, :version, :repo, :classifier, :package
 
   def initialize(groupId:, artifactId:, version:, repo:, classifier:, package:)
     @groupId = groupId
@@ -66,7 +108,7 @@ class NexusWar
   def self.init_from_select_key(key)
     vals = key.split('|')
     raise ArgumentError.new('String passed in from select input is blank!') if vals.length != 6
-    NexusWar.new(groupId: vals[0], artifactId: vals[1], version: vals[2], repo: vals[3], classifier: vals[4], package: vals[5])
+    NexusArtifactSelectOption.new(groupId: vals[0], artifactId: vals[1], version: vals[2], repo: vals[3], classifier: vals[4], package: vals[5])
   end
 
   def select_key
