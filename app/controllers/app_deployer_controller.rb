@@ -1,6 +1,6 @@
-include NexusConcern
-
 class AppDeployerController < ApplicationController
+  include NexusConcern
+  include TomcatConcern
 
   before_action :auth_registered
   before_action :ensure_services_configured
@@ -9,6 +9,19 @@ class AppDeployerController < ApplicationController
     @komet_wars = get_nexus_wars(app: 'KOMET')
     @isaac_wars = get_nexus_wars(app: 'ISAAC')
     @isaac_dbs = get_isaac_cradle_zips
+    @tomcat_isaac_rest = []
+
+    tomcat_server_deployments.each do |tsd|
+      service_name = tsd.first[:service_name]
+
+      tsd.last.each do |d|
+        if (d.first =~ /isaac-rest/i)
+          select_key = d.last[:link]
+          select_value = "#{service_name}::#{d.first}"
+          @tomcat_isaac_rest << {select_key: select_key, select_value: select_value}
+        end
+      end
+    end
 
     if @komet_wars.nil? || @isaac_wars.nil?
       render :file => 'public/nexus_not_available.html'
