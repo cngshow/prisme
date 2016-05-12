@@ -57,10 +57,11 @@ class WelcomeController < ApplicationController
       port = uri.port
       link = "#{scheme}://#{host}:#{port}"
       service_name = appserver[:service_name]
-      current_row = {service_name: service_name, rows: []}
+      current_row = {service_name: service_name, available: false, rows: []}
 
       # get all of the applications deployed at this appserver location
       tomcat_deployments[appserver].each_pair do |war, d|
+        current_row[:available] = true
         next if war.eql? :failed
         row_click_url = link.clone << d[:context]
         war_name = war
