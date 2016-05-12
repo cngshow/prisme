@@ -56,6 +56,23 @@ jenkins:
      type: password
      order_idx: 2
 
+git:
+  label: Git
+  description: Git Repository
+  singleton: true
+  props:
+   - key: git_repository_url
+     label: Repository URL:port
+     type: url
+     order_idx: 0
+   - key: git_user
+     label: User Name
+     order_idx: 1
+   - key: git_pwd
+     label: Password
+     type: password
+     order_idx: 2
+
    # java.lang.System.getProperties.put('cargo.remote.username','devtest')
    # java.lang.System.getProperties.put('cargo.remote.password','devtest')
    # java.lang.System.getProperties.put('cargo.tomcat.manager.url','http://vadev.mantech.com:4848/manager')

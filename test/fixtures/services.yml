@@ -26,3 +26,9 @@ jenkins:
   name: Jenkins
   description: Jenkins CI Server
   service_type: jenkins
+
+# jenkins service data
+git:
+  name: Git
+  description: Git Repository
+  service_type: git

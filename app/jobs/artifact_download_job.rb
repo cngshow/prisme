@@ -68,7 +68,7 @@ class ArtifactDownloadJob < PrismeBaseJob
       $log.debug("This job is doing URL #{warurl}.")
       $log.debug("This job is doing war #{war_name}.")
       response = get_nexus_connection('*/*').get(warurl, {})
-      file_name = "./tmp/#{war_name}"
+      file_name = "#{Rails.root}/tmp/#{war_name}"
       File.open(file_name, 'wb') { |fp| fp.write(response.body) }
       $log.debug("The file #{war_name} has completed the download!")
       # read and log the sha1 and md5 files associated with this download
