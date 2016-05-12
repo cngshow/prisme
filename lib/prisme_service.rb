@@ -36,6 +36,7 @@ module PrismeService
   TYPE_NUMBER = 'number'
   TYPE_TYPE = 'type'
   TYPE_KEY = 'key'
+  TYPE_TOOLTIP = 'tooltip'
   TYPE_VALUE = 'value'
   TYPE_ORDER_IDX = 'order_idx'
 end
