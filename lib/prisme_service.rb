@@ -2,6 +2,7 @@ module PrismeService
   TOMCAT = 'tomcat'
   NEXUS = 'nexus'
   JENKINS = 'jenkins'
+  GIT = 'git'
 
   # TOMCAT
   CARGO_REMOTE_URL = 'cargo.tomcat.manager.url'
