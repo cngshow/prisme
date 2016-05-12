@@ -22,6 +22,12 @@ module PrismeService
   JENKINS_PWD = 'jenkins_pwd'
   JENKINS_XML = './config/service/jenkins_job_config.xml.erb'
 
+  # git
+  GIT_ROOT = 'git_root'
+  GIT_REPOSITORY_URL = 'git_repository_url'
+  GIT_USER = 'git_user'
+  GIT_PWD = 'git_pwd'
+
   # SERVICE PROPS
   TYPE_PROPS = 'props'
   TYPE_PASSWORD = 'password'
