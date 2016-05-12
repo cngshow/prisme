@@ -101,9 +101,10 @@ class TerminologyConverterController < ApplicationController
     # todo what source is used determines if we give it an empty array - need conditional on this!
     additional_source_dependencies = JIsaacGit::sdo_source_content_to_j_a()
 
-    git_url = $PROPS['ISAAC_GIT.git_url']
-    git_user = $PROPS['ISAAC_GIT.git_user']
-    git_pass = $PROPS['ISAAC_GIT.git_pass']
+    git_props = Service.get_git_props
+    git_url = git_props[PrismeService::GIT_REPOSITORY_URL]
+    git_user = git_props[PrismeService::GIT_USER]
+    git_pass = git_props[PrismeService::GIT_PWD]
 
     ibdf_a = JIsaacGit::ibdf_file_to_j_a()
 

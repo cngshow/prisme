@@ -6,6 +6,17 @@ class Service < ActiveRecord::Base
 
   class << self
     #put class methods here...
+
+    def get_git
+      Service.find_by!(service_type: PrismeService::GIT)
+    end
+
+    def get_git_props
+      hash = get_git.properties_hash
+      hash[PrismeService::GIT_ROOT] = URI(hash[PrismeService::GIT_REPOSITORY_URL]).base_url
+      hash
+    end
+
     def get_artifactory_props
       hash = get_artifactory.properties_hash
       hash[PrismeService::NEXUS_ROOT] = URI(hash[PrismeService::NEXUS_REPOSITORY_URL]).base_url
