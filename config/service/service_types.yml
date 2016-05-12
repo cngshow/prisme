@@ -5,21 +5,26 @@ tomcat:
   singleton: false
   props:
    - key: cargo.remote.username
+     tooltip: Please enter the user name for logging on to the Tomcat Server
      label: User Name
      order_idx: 0
    - key: cargo.remote.password
+     tooltip: Enter the password for logging on to the Tomcat Server
      label: Password
      type: password
      order_idx: 1
    - key: cargo.tomcat.manager.url
-     label: URL
+     tooltip: Enter the URL and port for the Tomcat Manager (e.g. http://vadev.mantech.com:4848/manager)
+     label: Tomcat Manager URL
      type: url
      order_idx: 2
    - key: cargo.servlet.port
+     tooltip: Enter the port number for the Tomcat Server (e.g. 4848)
      label: Port
      type: number
      order_idx: 3
    - key: cargo.hostname
+     tooltip: Enter the hostname for the Tomcat Server (e.g. vadev.mantech.com)
      label: Hostname
      order_idx: 4
 nexus:
@@ -28,13 +33,16 @@ nexus:
   singleton: true
   props:
    - key: nexus_repository_url
-     label: Repository URL:port
+     tooltip: Enter the Nexus Repository URL for the Nexus Artifactory Server (e.g. http://vadev.mantech.com:8081/nexus/content/groups/everything/)
+     label: Nexus Repository URL
      type: url
      order_idx: 0
    - key: nexus_user
+     tooltip: Enter the user name to use for logging on to the Nexus Server
      label: User Name
      order_idx: 1
    - key: nexus_pwd
+     tooltip: Enter the password to use for logging on to the Nexus Server
      label: Password
      type: password
      order_idx: 2
@@ -45,13 +53,16 @@ jenkins:
   singleton: true
   props:
    - key: jenkins_root
+     tooltip: Enter the URL address and port for the Jenkins Server (e.g. http://server_path:port)
      label: Root URL:port
      type: url
      order_idx: 0
    - key: jenkins_user
+     tooltip: Enter the user name for logging onto the Jenkins Server
      label: User Name
      order_idx: 1
    - key: jenkins_pwd
+     tooltip: Enter the password for logging onto the Jenkins Server
      label: Password
      type: password
      order_idx: 2
@@ -62,13 +73,16 @@ git:
   singleton: true
   props:
    - key: git_repository_url
-     label: Repository URL:port
+     tooltip: Enter the URL address and port for the Git Server (e.g. http://server_path:port) 
+     label: Git Repository URL:port
      type: url
      order_idx: 0
    - key: git_user
+     tooltip: Enter the git user name for logging on to the Git Server
      label: User Name
      order_idx: 1
    - key: git_pwd
+     tooltip: Enter the git password for logging on to the Git Server
      label: Password
      type: password
      order_idx: 2
