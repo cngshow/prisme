@@ -38,7 +38,11 @@
       <tbody>
       <% if deployment[:rows].empty? %>
         <tr>
-          <td colspan="3" style="color: red">Failed to connect to Tomcat server. Either the server is unavailable or is misconfigured.</td>
+          <td colspan="3" style="color: <%= deployment[:available] ? 'green' : 'red'%>">
+            <%= (deployment[:available] ?
+                'No supported applications are currently deployed to this server' :
+                'Failed to connect to Tomcat server. Either the server is unavailable or is mis-configured.') %>
+          </td>
         </tr>
       <% else %>
           <% deployment[:rows].each do |row| %>

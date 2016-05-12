@@ -22,6 +22,10 @@ this style is for the more complex validation check
         <div id="komet_wars">
           <%= label_tag 'komet_war', 'KOMET Tooling' %><br>
           <%= select_tag 'komet_war', options_from_collection_for_select(@komet_wars, 'select_key', 'select_value'), {:prompt => '-- Select a war to deploy --'} %>
+          <br>
+          <br>
+          <%= label_tag 'tomcat_isaac_rest', 'ISAAC Rest Deployment to Use' %><br>
+          <%= select_tag 'tomcat_isaac_rest', options_for_select(@tomcat_isaac_rest.collect {|ir| [ir[:select_value], ir[:select_key] ] }), {:prompt => '-- Select an ISAAC Rest Instance --'} %>
         </div>
         <div id="isaac_wars">
           <%= label_tag 'isaac_war', 'ISAAC Rest' %><br>
@@ -76,6 +80,7 @@ this style is for the more complex validation check
             $('#komet_wars').show();
             $('#isaac_wars').hide();
             document.getElementById("komet_war").required = true;
+            document.getElementById("tomcat_isaac_rest").required = true;
             document.getElementById("isaac_war").required = false;
             document.getElementById("isaac_db").required = false;
           }
@@ -83,10 +88,12 @@ this style is for the more complex validation check
             $('#komet_wars').hide();
             $('#isaac_wars').show();
             document.getElementById("komet_war").required = false;
+            document.getElementById("tomcat_isaac_rest").required = false;
             document.getElementById("isaac_war").required = true;
             document.getElementById("isaac_db").required = true;
           }
           document.getElementById("komet_war").value = '';
+          document.getElementById("tomcat_isaac_rest").value = '';
           document.getElementById("isaac_war").value = '';
           document.getElementById("isaac_db").value = '';
         }
@@ -103,8 +110,11 @@ this style is for the more complex validation check
           var components = null;
 
           if (selected_app_type === 'KOMET') {
-            components = $( "#komet_war").find("option:selected" ).text();
-            components = "<span class=\"glyphicon glyphicon-ok-sign\">&nbsp;" + components + "</\span><br>";
+            component1 = $( "#komet_war").find("option:selected" ).text();
+            components = "<span class=\"glyphicon glyphicon-ok-sign\">&nbsp;" + component1 + "</\span><br>";
+
+            component2 = $( "#tomcat_isaac_rest").find("option:selected" ).text();
+            components += "<span class=\"glyphicon glyphicon-ok-sign\">&nbsp;" + component2 + "</\span><br>";
           }
           else {
             var component1 = $( "#isaac_war").find("option:selected" ).text();

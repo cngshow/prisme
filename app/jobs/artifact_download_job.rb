@@ -123,7 +123,8 @@ class ArtifactDownloadJob < PrismeBaseJob
         cookie_war_true_zip(file_name, 'WEB-INF/classes/prisme.properties', hash)
         context = "/isaac-rest" #to_do pull this from the database someday.
       else
-        $log.debug("Not cookie-ing up #{file_name}")
+        #we are Komet!
+        cookie_war_true_zip(file_name, 'WEB-INF/config/props/prisme.properties',war_cookie_params)
       end
       $log.debug("Kicking off next job (DeployWar) #{file_name} #{context}")
       #activeRecord instantiate new job

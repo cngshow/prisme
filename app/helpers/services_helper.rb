@@ -1,16 +1,18 @@
 module ServicesHelper
   PORT_RANGE = {min: 1, max: 9999, pattern: "\d*"}
-  VALID_HOSTNAME = {pattern: '^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$',title: 'Please provide a valid hostname'}
-  NO_SPACES = {pattern: '^[\w|\.]+$',title: 'No space allowed'}
+  VALID_HOSTNAME = {pattern: '^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$'}
+  NO_SPACES = {pattern: '^[\w|\.]+$'}
   URL_INPUT = {maxlength: 255, size: 75}
 
   def get_input_type(service_type, key, service_active_record = nil)
     hash = {}
     props = $SERVICE_TYPES[service_type][PrismeService::TYPE_PROPS]
     type = props.select {|t| t[PrismeService::TYPE_KEY].eql?(key)}.first[PrismeService::TYPE_TYPE]
+    tooltip = props.select {|t| t[PrismeService::TYPE_KEY].eql?(key)}.first[PrismeService::TYPE_TOOLTIP]
     type = type.nil? ? 'text' : type
     hash[:type] = type
     hash[:required] = true
+    hash[:title] = tooltip
 
     case type
       when PrismeService::TYPE_PASSWORD

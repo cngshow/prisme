@@ -28,7 +28,7 @@
           <br>
           <div>
             <%= f.label :description %><br>
-            <%= f.text_area :description, required: true, rows: 3, cols: 75 %>
+            <%= f.text_area :description, required: true, title: 'Please describe this service in detail.', rows: 3, cols: 75 %>
           </div>
           <br>
           <div>
@@ -36,7 +36,7 @@
             <% if (is_edit) %>
                 <%= f.text_field :service_type, {readonly: true} %>
             <% else %>
-                <%= f.select :service_type, fetch_types, {prompt: "Pick a service type"}, onchange: 'serviceTypeChange(this.value)'%>
+                <%= f.select :service_type, fetch_types, {prompt: 'Pick a service type'}, title: 'Choose the type of service you are provisioning (Tomcat, Nexus, etc.)', onchange: 'serviceTypeChange(this.value)'%>
             <% end %>
           </div>
       <% end %>

@@ -1,6 +1,6 @@
-include NexusConcern
-
 class AppDeployerController < ApplicationController
+  include TomcatConcern
+  include NexusConcern
 
   before_action :auth_registered
   before_action :ensure_services_configured
@@ -9,6 +9,19 @@ class AppDeployerController < ApplicationController
     @komet_wars = get_nexus_wars(app: 'KOMET')
     @isaac_wars = get_nexus_wars(app: 'ISAAC')
     @isaac_dbs = get_isaac_cradle_zips
+    @tomcat_isaac_rest = []
+
+    tomcat_server_deployments.each do |tsd|
+      service_name = tsd.first[:service_name]
+
+      tsd.last.each do |d|
+        if (d.first =~ /isaac-rest/i)
+          select_key = d.last[:link]
+          select_value = "#{service_name}::#{d.first}"
+          @tomcat_isaac_rest << {select_key: select_key, select_value: select_value}
+        end
+      end
+    end
 
     if @komet_wars.nil? || @isaac_wars.nil?
       render :file => 'public/nexus_not_available.html'
@@ -58,7 +71,7 @@ class AppDeployerController < ApplicationController
     war_cookie_params[:war_package] = war_file.package
 
     isaac_db = params['isaac_db']
-    if (isaac_db)
+    unless (isaac_db.nil? || isaac_db.empty?)
       zip_file = NexusArtifactSelectOption.init_from_select_key(isaac_db)
       war_cookie_params[:db_group_id] = zip_file.groupId
       war_cookie_params[:db_artifact_id] = zip_file.artifactId
@@ -66,6 +79,9 @@ class AppDeployerController < ApplicationController
       war_cookie_params[:db_repo] = zip_file.repo
       war_cookie_params[:db_classifier] = zip_file.classifier
       war_cookie_params[:db_package] = zip_file.package
+    else
+      #we komet!!
+      war_cookie_params[:isaac_root] =  params['tomcat_isaac_rest']
     end
 
     ArtifactDownloadJob.perform_later(nexus_query_params, war_cookie_params, war_name, tomcat_ar)
@@ -78,7 +94,7 @@ class AppDeployerController < ApplicationController
     params_hash = {'KOMET' => {g: 'gov.vha.isaac.gui.rails', a: 'rails_komet', repositoryId: 'releases', p: 'war'},
                    'ISAAC' => {g: 'gov.vha.isaac.rest', a: 'isaac-rest', repositoryId: 'releases', p: 'war'}}
     params = params_hash[app]
-    conn = NexusConcern.get_nexus_connection
+    conn = get_nexus_connection
     response = conn.get(url_string, params)
     json = nil
 
@@ -117,7 +133,7 @@ class AppDeployerController < ApplicationController
   def get_isaac_cradle_zips
     url_string = $PROPS['ENDPOINT.nexus_lucene_search']
     params = {g: 'gov.vha.isaac.db', r: 'All', p: 'cradle.zip'}
-    conn = NexusConcern.get_nexus_connection
+    conn = get_nexus_connection
     response = conn.get(url_string, params)
     json = nil
 
