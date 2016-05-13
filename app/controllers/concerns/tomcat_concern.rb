@@ -1,4 +1,5 @@
 require 'faraday'
+require 'uri'
 
 module TomcatConcern
   def get_deployments(url: url, username: username, pwd: pwd)
@@ -21,21 +22,6 @@ module TomcatConcern
     if (response.status.eql?(200))
       data = response.body
 
-      # Sample data format returned
-=begin
-      OK - Listed applications for virtual host localhost
-      /isaac-rest:running:0:isaac-rest
-      /:running:0:ROOT
-      /rails_komet-1.3-a:running:0:rails_komet-1.3-a
-      /rails_komet-1.3-b:stopped:0:rails_komet-1.3-b
-      /rails_komet_a:running:0:rails_komet_a
-      /host-manager:running:0:/usr/share/tomcat7-admin/host-manager
-      /cargo_deploy:running:0:cargo_deploy
-      /isaac-rest-1.0.1:running:0:isaac-rest-1.0.1
-      /manager:running:2:/usr/share/tomcat7-admin/manager
-      /isaac-rest-1.0:running:0:isaac-rest-1.0
-=end
-
       # parse the response body
       data = data.split("\n") # get each line
       data.shift # remove the OK line
@@ -53,5 +39,41 @@ module TomcatConcern
     else
       return {failed: response.body}
     end
+  end
+
+  def tomcat_server_deployments
+    # retrieve tomcat services
+    tomcats = Service.get_application_servers
+    tomcat_deployments = {}
+
+    # iterate and make faraday call to get the text/list
+    tomcats.each do |tomcat|
+      # get the properties hash for the tomcat service
+      service_props = tomcat.properties_hash
+      url = service_props[PrismeService::CARGO_REMOTE_URL]
+      username = service_props[PrismeService::CARGO_REMOTE_USERNAME]
+      password = service_props[PrismeService::CARGO_REMOTE_PASSWORD]
+      data_hash = get_deployments(url: url, username: username, pwd: password)
+
+      # build the url to the tomcat server
+      uri = URI.parse(url)
+      scheme = uri.scheme
+      host = uri.host
+      port = uri.port
+
+      # build the link for each deployment
+      if data_hash.has_key?(:failed)
+        tomcat_deployments[{url: url, service_name: tomcat.name}] = {}
+      else
+        data_hash.each do |d|
+          context = d.last[:context]
+          link = "#{scheme}://#{host}:#{port}#{context}"
+          d.last[:link] = link
+        end
+
+        tomcat_deployments[{url: url, service_name: tomcat.name}] = data_hash
+      end
+    end
+    tomcat_deployments
   end
 end

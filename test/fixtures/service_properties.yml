@@ -90,3 +90,20 @@ eleven:
   key: jenkins_pwd
   value: '[79, 155, 44, 205, 82, 218, 80, 35, 26, 10, 173, 105, 31, 126, 237, 251]'
   order_idx: 2
+
+# git service properties
+twelve:
+  service: git
+  key: git_repository_url
+  value: https://github.com/VA-CTT/db_tests.git
+  order_idx: 0
+thirteen:
+  service: git
+  key: git_user
+  value: devtest
+  order_idx: 1
+fourteen:
+  service: git
+  key: git_pwd
+  value: '[79, 155, 44, 205, 82, 218, 80, 35, 26, 10, 173, 105, 31, 126, 237, 251]'
+  order_idx: 2

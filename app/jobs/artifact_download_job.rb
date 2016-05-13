@@ -68,7 +68,7 @@ class ArtifactDownloadJob < PrismeBaseJob
       $log.debug("This job is doing URL #{warurl}.")
       $log.debug("This job is doing war #{war_name}.")
       response = get_nexus_connection('*/*').get(warurl, {})
-      file_name = "./tmp/#{war_name}"
+      file_name = "#{Rails.root}/tmp/#{war_name}"
       File.open(file_name, 'wb') { |fp| fp.write(response.body) }
       $log.debug("The file #{war_name} has completed the download!")
       # read and log the sha1 and md5 files associated with this download
@@ -123,7 +123,8 @@ class ArtifactDownloadJob < PrismeBaseJob
         cookie_war_true_zip(file_name, 'WEB-INF/classes/prisme.properties', hash)
         context = "/isaac-rest" #to_do pull this from the database someday.
       else
-        $log.debug("Not cookie-ing up #{file_name}")
+        #we are Komet!
+        cookie_war_true_zip(file_name, 'WEB-INF/config/props/prisme.properties',war_cookie_params)
       end
       $log.debug("Kicking off next job (DeployWar) #{file_name} #{context}")
       #activeRecord instantiate new job

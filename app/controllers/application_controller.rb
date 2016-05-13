@@ -56,9 +56,4 @@ class ApplicationController < ActionController::Base
     return
   end
 
-  private
-  def trinidad?
-    root_path.to_s.eql?('/')
-  end
-
 end
