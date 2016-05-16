@@ -52,7 +52,8 @@ class ApplicationController < ActionController::Base
     artifactory_configured = Service.service_exists? PrismeService::NEXUS
     build_server_configured = Service.service_exists? PrismeService::JENKINS
     application_server_configured = Service.service_exists? PrismeService::TOMCAT
-    render :file => (trinidad? ? 'public/not_configured.html' : "#{Rails.root}/../not_configured.html") unless (application_server_configured && artifactory_configured && build_server_configured)
+    git_server_configured = Service.service_exists? PrismeService::GIT
+    render :file => (trinidad? ? 'public/not_configured.html' : "#{Rails.root}/../not_configured.html") unless (application_server_configured && artifactory_configured && build_server_configured && git_server_configured)
     return
   end
 
