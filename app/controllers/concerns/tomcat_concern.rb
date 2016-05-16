@@ -2,14 +2,28 @@ require 'faraday'
 require 'uri'
 
 module TomcatConcern
-  def get_deployments(url: url, username: username, pwd: pwd)
-    conn = Faraday.new(url: url) do |faraday|
-      faraday.request :url_encoded # form-encode POST params
-      faraday.use Faraday::Response::Logger, $log
-      faraday.adapter :net_http # make requests with Net::HTTP
-      faraday.basic_auth(username, pwd)
-    end
 
+  STOP = :stop
+  UNDEPLOY = :undeploy
+  START = :start
+
+# change_state(url: "http://localhost:8080/",username: "devtest",pwd: "devtest", context: "rails_komet_b", state: STOP)
+  def change_state(url:, username:, pwd:, context:, state:)
+    context = '/' + context unless context[0].eql?('/')
+
+    conn = get_connection(url: url, username: username, pwd: pwd)
+    begin
+      response = conn.get("/manager/text/#{state}", {path: context})
+    rescue Faraday::ConnectionFailed => ex
+      $log.warn("Tomcat is unreachable! #{ex.message}")
+      return {failed: ex.message}
+    end
+    response.body
+  end
+
+  def get_deployments(url:, username:, pwd:)
+
+    conn = get_connection(url, username, pwd)
     # get the list of deployed applications
     response = nil
 
@@ -76,4 +90,17 @@ module TomcatConcern
     end
     tomcat_deployments
   end
+
+  private
+
+  def get_connection(url:, username:, pwd:)
+    conn = Faraday.new(url: url) do |faraday|
+      faraday.request :url_encoded # form-encode POST params
+      faraday.use Faraday::Response::Logger, $log
+      faraday.adapter :net_http # make requests with Net::HTTP
+      faraday.basic_auth(username, pwd)
+    end
+    conn
+  end
+
 end
