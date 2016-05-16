@@ -18,6 +18,7 @@ class ApplicationController < ActionController::Base
     $log.error(exception.message)
     $log.error request.fullpath
     $log.error(exception.backtrace.join("\n"))
+    @centered_flash = true
 
     case exception
       when Pundit::AuthorizationNotPerformedError
@@ -53,8 +54,8 @@ class ApplicationController < ActionController::Base
     build_server_configured = Service.service_exists? PrismeService::JENKINS
     application_server_configured = Service.service_exists? PrismeService::TOMCAT
     git_server_configured = Service.service_exists? PrismeService::GIT
+    @centered_flash = true
     render :file => (trinidad? ? 'public/not_configured.html' : "#{Rails.root}/../not_configured.html") unless (application_server_configured && artifactory_configured && build_server_configured && git_server_configured)
     return
   end
-
 end
