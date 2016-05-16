@@ -3,17 +3,13 @@ require 'uri'
 
 module TomcatConcern
 
-  STOP = :stop
-  UNDEPLOY = :undeploy
-  START = :start
-
-# change_state(url: "http://localhost:8080/",username: "devtest",pwd: "devtest", context: "rails_komet_b", state: STOP)
-  def change_state(url:, username:, pwd:, context:, state:)
+# change_state(url: "http://localhost:8080/",username: "devtest",pwd: "devtest", context: "rails_komet_b", path: 'start')
+  def change_state(url:, username:, pwd:, context:, path:)
     context = '/' + context unless context[0].eql?('/')
 
     conn = get_connection(url: url, username: username, pwd: pwd)
     begin
-      response = conn.get("/manager/text/#{state}", {path: context})
+      response = conn.get("/manager/text/#{path}", {path: path})
     rescue Faraday::ConnectionFailed => ex
       $log.warn("Tomcat is unreachable! #{ex.message}")
       return {failed: ex.message}
