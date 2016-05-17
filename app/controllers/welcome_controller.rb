@@ -39,9 +39,6 @@ class WelcomeController < ApplicationController
       tomcat_deployments[appserver].each_pair do |war, d|
         current_row[:available] = true
         next if war.eql? :failed
-
-        # filter to only display isaac and rails war files
-        next unless war =~ /^(isaac|rails).*/
         current_row[:rows] << {war_name: war, state: d[:state], session_count: d[:session_count].to_s, link: d[:link]}
       end
       ret << current_row
