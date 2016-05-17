@@ -1,4 +1,6 @@
-<h1>Application Deployments (Tomcat)</h1>
+<h2>Application Deployments</h2>
+<div id="flash_state"><%= @flash_state if @flash_state %></div>
+<hr>
 <style>
   html, body {
     padding: 5px;
@@ -23,44 +25,23 @@
     width: 136px;
     padding: 7px;
   }
+
+  #flash_state {
+    color: green;
+    font-weight: bold;
+  }
 </style>
+<br>
 
 <% @deployments.each do |deployment| %>
-    <h3><%= deployment[:service_name] %></h3>
-    <table class="table data-table table-striped table-hover">
-      <thead>
-      <tr>
-        <td>Application (war file)</td>
-        <td>State</td>
-        <td>Session Count</td>
-      </tr>
-      </thead>
-      <tbody>
-      <% if deployment[:rows].empty? %>
-        <tr>
-          <td colspan="3" style="color: <%= deployment[:available] ? 'green' : 'red'%>">
-            <%= (deployment[:available] ?
-                'No supported applications are currently deployed to this server' :
-                'Failed to connect to Tomcat server. Either the server is unavailable or is mis-configured.') %>
-          </td>
-        </tr>
-      <% else %>
-          <% deployment[:rows].each do |row| %>
-              <tr data-href="<%= row[:link] %>">
-                <td><%= row[:war_name] %></td>
-                <td><%= row[:state] %></td>
-                <td><%= row[:session_count] %></td>
-              </tr>
-          <% end %>
-      <% end %>
-      </tbody>
-    </table>
-    <br>
+    <%= render partial: 'app_deployment_table', locals: {deployment: deployment} %>
 <% end %>
 <script>
-  $(document).ready(function(){
-    $('tr[data-href]').on("click", function() {
+  $(document).ready(function () {
+    $('tr[data-href]').on("click", function () {
       window.open($(this).data('href'));
     });
+
+    $('#flash_state').fadeOut(7500);
   });
 </script>
