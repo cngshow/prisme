@@ -89,7 +89,7 @@ module TomcatConcern
     end
     if(war =~ /^isaac/)
       version = json['restVersion'].to_s
-      version = 'Jetty' if version.empty? #assume a local run
+      version = 'UNKNOWN' if version.empty? #assume a local run
     else
       version = json['version'].to_s
     end
