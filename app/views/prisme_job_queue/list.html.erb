@@ -46,7 +46,6 @@
 <br/>
 
 <button id="btn-update">Update List</button>
-<button id="btn-test">Test Job</button>
 
 <script>
   $(document).ready(function (e) {
@@ -69,18 +68,6 @@
     }
 
     var fields = ['job_id', 'job_name', 'status', 'scheduled_at', 'enqueued_at', 'started_at', 'completed_at', 'elapsed_time', 'user', 'last_error', 'result'];
-
-    $('#btn-test').click(function (e) {
-      $.ajax({
-        url: gon.routes.prisme_job_queue_reload_job_queue_list_path,
-        type: "GET",
-        data: {add_test_job: true},
-        dataType: "json",
-        success: function (data) {
-          loadTable('data-table', fields, data);
-        }
-      })
-    });
 
     $('#btn-update').click(function (e) {
       reload();
