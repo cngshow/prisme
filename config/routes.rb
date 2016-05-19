@@ -12,12 +12,19 @@ Rails.application.routes.draw do
 
   match 'services/render_props' => 'services#render_props', :as => :services_render_props, via: [:get]
   resources :services
+
   get 'prisme_job_queue/list'
   get 'prisme_job_queue/reload_job_queue_list'
 
-  get 'welcome/index'
-  #get 'welcome/toggle_admin'
-  match '/toggle_admin' => 'welcome#toggle_admin', :as => :toggle_admin, via: [:get]
+  # get 'welcome/index'
+  get 'welcome/tomcat_app_action' => 'welcome#tomcat_app_action'
+
+  # NOTE: ensure that the first string passed is a unique string and will not match an action in the controller because
+  # if Rails finds a match based on the name and based on the explicit mapping you use the action can get called TWICE!
+  #
+  # get '/toggle_admin' => 'welcome#toggle_admin' - THIS IS CALLED TWICE
+  match 'toggle-admin', to: 'welcome#toggle_admin', via: [:get]
+
   get 'app_deployer' => 'app_deployer#index'
   post 'app_deployer/deploy_app'
 

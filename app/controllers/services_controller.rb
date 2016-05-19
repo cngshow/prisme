@@ -112,7 +112,7 @@ class ServicesController < ApplicationController
             break
           end
         end
-        p[1][PrismeService::TYPE_VALUE] = value
+        p[1][PrismeService::TYPE_VALUE] = value.strip
       end
     else
       props = params[PrismeService::TYPE_PROPS]
@@ -133,8 +133,8 @@ class ServicesController < ApplicationController
             break
           end
         end
-        prop.key = k
-        prop.value = v
+        prop.key = k.strip
+        prop.value = v.strip
         prop.order_idx = order_idx
       end
     end

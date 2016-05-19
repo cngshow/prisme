@@ -2,7 +2,7 @@ require 'uri'
 
 class WelcomeController < ApplicationController
   include TomcatConcern
-
+  before_action :auth_admin, only: [:tomcat_app_action]
   before_action :ensure_services_configured, except: [:toggle_admin]
   skip_after_action :verify_authorized, :index
 
@@ -19,12 +19,25 @@ class WelcomeController < ApplicationController
   def toggle_admin
     User.all.each do |u|
       $log.debug("Admin for #{u.email} is #{u.administrator}")
-      u.administrator = !u.administrator
+      u.update(administrator: !u.administrator)
       $log.debug("Setting admin for #{u.email} to #{u.administrator}")
-      saved = u.save!
-      $log.debug("Admin state saved is #{saved}.")
     end
     redirect_to root_path
+  end
+
+  def tomcat_app_action
+    tomcat_service_id = params[:tomcat_service_id]
+    tomcat_app = params[:tomcat_app]
+    tomcat_action = params[:tomcat_action]
+
+    # call TomcatConcern to perform the specified action
+    @flash_state = change_state(tomcat_service_id: tomcat_service_id, context: tomcat_app, action: tomcat_action)
+
+    # reload the deployments
+    index
+
+    # render the deployments partial
+    render partial: 'welcome/deployments'
   end
 
   private
@@ -33,16 +46,13 @@ class WelcomeController < ApplicationController
 
     tomcat_deployments.keys.each do |appserver|
       service_name = appserver[:service_name]
-      current_row = {service_name: service_name, available: false, rows: []}
+      current_row = {service_id: appserver[:service_id], service_name: service_name, available: false, rows: []}
 
       # get all of the applications deployed at this appserver location
       tomcat_deployments[appserver].each_pair do |war, d|
         current_row[:available] = true
         next if war.eql? :failed
-
-        # filter to only display isaac and rails war files
-        next unless war =~ /^(isaac|rails).*/
-        current_row[:rows] << {war_name: war, state: d[:state], session_count: d[:session_count].to_s, link: d[:link]}
+        current_row[:rows] << {war_name: war, state: d[:state], version: d[:version], session_count: d[:session_count].to_s, link: d[:link]}
       end
       ret << current_row
     end

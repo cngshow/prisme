@@ -19,22 +19,20 @@ Copyright Notice
 <!DOCTYPE html>
 <html>
 <head>
-  <meta http-equiv="X-UA-Compatible" content="IE=Edge" >
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PRISME</title>
-  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
   <%= include_gon %>
 </head>
 <body class="<%= controller_name %> <%= action_name %>">
-<header>
-  <%= render 'layouts/navigation' %>
-</header>
 <main role="main" class="container-fluid">
   <div class="row">
     <div class="col-lg-1"></div>
     <div class="col-lg-10">
+      <%= render 'layouts/navigation' %>
       <%= render 'layouts/messages' %>
       <%= yield %>
     </div>

@@ -20,11 +20,19 @@ test:
 #  schema: prisme_test
 #  database: prisme_test
 #  url: jdbc:hsqldb:file:./db/data/prisme_test
+  <% if File.exists? '/u01/prismeData/h2_prisme_test.mv.db' %>
+  database: /u01/prismeData/h2_prisme_test
+  <% else %>
   database: db/data/h2_prisme_test
+  <% end %>
 
 production:
   <<: *default
+  <% if File.exists? '/u01/prismeData/h2_prisme_production.mv.db' %>
+  database: /u01/prismeData/h2_prisme_production
+  <% else %>
   database: db/data/h2_prisme_production
+  <% end %>
 
   #cleanup
 

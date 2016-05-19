@@ -2,7 +2,8 @@ module ServicesHelper
   PORT_RANGE = {min: 1, max: 9999, pattern: "\d*"}
   VALID_HOSTNAME = {pattern: '^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$'}
   NO_SPACES = {pattern: '^[a-z0-9_-\.]$'}
-  URL_INPUT = {maxlength: 255, size: 75}
+  URL_INPUT = {type: 'url', maxlength: 255, size: 75, placeholder: 'http://path_to_server:port'}
+
 
   def get_input_type(service_type, key, service_active_record = nil)
     hash = {}
