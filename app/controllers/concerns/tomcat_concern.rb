@@ -127,7 +127,7 @@ module TomcatConcern
       json['restVersion'] = "INVALID_JSON"
     end
     if(war =~ /^isaac/)
-      version = json['restVersion'].to_s
+      version = json['apiImplementationVersion'].to_s
       version = 'UNKNOWN' if version.empty? #assume a local run
     else
       version = json['version'].to_s
