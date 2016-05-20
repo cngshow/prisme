@@ -22,12 +22,12 @@
     <% else %>
         <% deployment[:rows].each do |row| %>
             <tr>
-              <td data-href="<%= row[:link] %>"><%= row[:war_name] %></td>
-              <td data-href="<%= row[:link] %>"><%= row[:state] %></td>
-              <td data-href="<%= row[:link] %>"><%= row[:session_count] %></td>
-              <td data-href="<%= row[:link] %>"><%= row[:version] %></td>
-              <td <%= raw(policy(:navigation).admin? ? '' : 'style="color: red; font-weight: bold"') %>>
-                <%= policy(:navigation).admin? ? action_button_bar(row, deployment[:service_id]) : 'Requires Administrator Privileges' %>
+              <td<%= raw(row[:state].eql?('running') ? " data-href='#{row[:link]}'" : '') %>><%= row[:war_name] %></td>
+              <td<%= raw(row[:state].eql?('running') ? " data-href='#{row[:link]}'" : '') %>><%= row[:state] %></td>
+              <td<%= raw(row[:state].eql?('running') ? " data-href='#{row[:link]}'" : '') %>><%= row[:session_count] %></td>
+              <td<%= raw(row[:state].eql?('running') ? " data-href='#{row[:link]}'" : '') %>><%= row[:version] %></td>
+              <td<%= raw(policy(:navigation).admin? ? '' : ' style="color: red; font-weight: bold"') %>>
+                <%= (policy(:navigation).admin?) ? action_button_bar(row, deployment[:service_id]) : 'Requires Administrator Privileges' %>
               </td>
             </tr>
         <% end %>
@@ -35,21 +35,3 @@
     </tbody>
   </table>
 </div>
-<script>
-  $(document).ready(function () {
-    $('td[data-href]').on("click", function () {
-      window.open($(this).data('href'));
-    });
-  });
-
-  function tomcat_app(tomcat_service_id, action, app) {
-    $.ajax({
-      url: gon.routes.welcome_tomcat_app_action_path,
-      type: 'GET',
-      data: {tomcat_service_id: tomcat_service_id, tomcat_action: action, tomcat_app: app},
-      success: function (data) {
-        $("#tp-deployments").html(data)
-      }
-    });
-  }
-</script>

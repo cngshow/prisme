@@ -1,11 +1,10 @@
 module ApplicationHelper
-
   def errors_to_flash(errors)
     retval = []
-    errors.each {|attr,error_array|
+    errors.each { |attr, error_array|
       error_array = [error_array] unless error_array.is_a? Array
-      formatted_attr = attr.to_s.gsub('_',' ').capitalize
-      retval << error_array.map {|elem|
+      formatted_attr = attr.to_s.gsub('_', ' ').capitalize
+      retval << error_array.map { |elem|
         formatted_attr += "\t" + elem.to_s
       }
     }
@@ -32,10 +31,10 @@ module ApplicationHelper
   end
 
   def self.display_time(time)
-    ret = ""
+    ret = ''
     if (!time.nil?)
       converted_time = time + session[:tzOffset].to_i.hours
-      ret = converted_time.strftime("%m / %d / %Y %H:%M:%S") << " " << TimeUtils.offset_to_zone(session[:tzOffset])
+      ret = converted_time.strftime("%m / %d / %Y %H:%M:%S") << ' ' << TimeUtils.offset_to_zone(session[:tzOffset])
     end
     ret
   end

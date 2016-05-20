@@ -30,8 +30,15 @@ class WelcomeController < ApplicationController
     tomcat_app = params[:tomcat_app]
     tomcat_action = params[:tomcat_action]
 
+    # get the Service name for displaying in the flash
+    service = Service.find(tomcat_service_id)
+    service_name = service.name
+
     # call TomcatConcern to perform the specified action
     @flash_state = change_state(tomcat_service_id: tomcat_service_id, context: tomcat_app, action: tomcat_action)
+    @flash_state = @flash_state.strip
+    @flash_state << " on #{service_name}"
+    ajax_flash(@flash_state, {type: 'success'})
 
     # reload the deployments
     index

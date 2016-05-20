@@ -57,6 +57,7 @@ gem 'devise'
 gem 'pundit'
 gem 'jdbc-h2', '1.4.181'
 gem 'will_paginate'
+gem 'bootstrap-growl-rails'
 
 group :development do
   gem 'jdbc-sqlite3'

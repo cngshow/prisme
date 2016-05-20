@@ -14,6 +14,14 @@ class ApplicationController < ActionController::Base
   before_action :setup_gon
   rescue_from Exception, :with => :internal_error
 
+  helper_method :ajax_flash
+
+  def ajax_flash(msg, **options)
+    @ajax_flash = {}
+    @ajax_flash[:msg] = msg
+    @ajax_flash.merge!(options)
+  end
+
   def internal_error(exception)
     $log.error(exception.message)
     $log.error request.fullpath

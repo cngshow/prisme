@@ -1,0 +1,13 @@
+// this partial uses the bootstrap-growl-rails gem for displaying a notification via javascript.
+// the @ajax_flash variable is set by calling the ajax_flash method in ApplicationController.
+// When making an ajax call you call the ajax_flash method in the controller and then call render '/ajax_flash.js' in your erb to display the flash
+<% if @ajax_flash %>
+$.notify({
+  // options
+  message: '<%= @ajax_flash[:msg] %>'
+},{
+  // settings
+  type: '<%= @ajax_flash[:type] %>' // need to output settings passed in...?
+});
+console.log('<%= raw @ajax_flash %>');
+<% end %>

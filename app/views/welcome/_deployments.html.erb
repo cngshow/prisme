@@ -1,6 +1,4 @@
 <h2>Application Deployments</h2>
-<div id="flash_state"><%= @flash_state if @flash_state %></div>
-<hr>
 <style>
   html, body {
     padding: 5px;
@@ -25,23 +23,37 @@
     width: 136px;
     padding: 7px;
   }
-
-  #flash_state {
-    color: green;
-    font-weight: bold;
-  }
 </style>
-<br>
 
 <% @deployments.each do |deployment| %>
     <%= render partial: 'app_deployment_table', locals: {deployment: deployment} %>
 <% end %>
 <script>
   $(document).ready(function () {
-    $('tr[data-href]').on("click", function () {
+    $('td[data-href]').on("click", function () {
       window.open($(this).data('href'));
     });
 
-    $('#flash_state').fadeOut(7500);
+    <%= render '/ajax_flash.js'  %>
   });
+
+  function tomcat_app(elem, tomcat_service_id, action, app) {
+    var btn = '#' + elem.id + ' > i';
+    if ($(btn).hasClass("fa-spin")) {
+      return false;
+    }
+
+    // change the icon to the spinner and make the ajax call
+    $(btn).removeClass();
+    $(btn).addClass('fa fa-cog fa-spin fa-fw');
+
+    $.ajax({
+      url: gon.routes.welcome_tomcat_app_action_path,
+      type: 'GET',
+      data: {tomcat_service_id: tomcat_service_id, tomcat_action: action, tomcat_app: app},
+      success: function (data) {
+        $("#tp-deployments").html(data);
+      }
+    });
+  }
 </script>
