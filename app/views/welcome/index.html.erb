@@ -1,3 +1,23 @@
+<style>
+  #tabs-nohdr {
+    padding: 0px;
+    background: none;
+    border-width: 0px;
+  }
+  #tabs-nohdr .ui-tabs-nav {
+    padding-left: 0px;
+    background: transparent;
+    border-width: 0px 0px 1px 0px;
+    -moz-border-radius: 0px;
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+  }
+  #tabs-nohdr .ui-tabs-panel {
+    background: #dcedf5;
+    border-width: 0px 1px 1px 1px;
+  }
+</style>
+
 <!--tabs-->
 <div id="tabs">
   <ul>
@@ -6,7 +26,6 @@
   </ul>
   <div id="tp-deployments">
     <%= render partial: 'deployments' %>
-
   </div>
   <div id="tp-job_queue">
     <%= render partial: 'job_queue' %>
@@ -43,6 +62,6 @@
     poll();
 
     //register for polling
-    polling.registerController('welcome', poll, 5000);
+    //polling.registerController('welcome', poll, 5000);
   });
 </script>

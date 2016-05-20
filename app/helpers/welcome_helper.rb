@@ -1,7 +1,7 @@
 module WelcomeHelper
   def action_button_bar(deployment, service_id)
     ret = %{
-<div style="display: inline-block">
+<div style="display: inline-block" id="SERVICE_ID-DEPLOYMENT_ID">
 <a id="SERVICE_ID-START_STOP_ACTION-DEPLOYMENT_ID" class="btn btn-default" role="button" onclick="tomcat_app(this, SERVICE_ID, 'START_STOP_ACTION', 'DEPLOYMENT');"><i class="fa START_STOP_ICON fa-fw" aria-hidden="true"></i>&nbsp;START_STOP_LABEL</a>
 <a id="SERVICE_ID-undeploy-DEPLOYMENT_ID" class="btn btn-default" role="button" onclick="tomcat_app(this, SERVICE_ID, 'undeploy', 'DEPLOYMENT');"><i class="fa fa-trash-o fa-fw" aria-hidden="true"></i>&nbsp;Undeploy</a>
 </div>
