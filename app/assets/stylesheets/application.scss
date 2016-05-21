@@ -14,7 +14,8 @@
  *= require jquery.steps-1.1.0/jquery.steps
  *= require ag-grid
  *= require jquery-ui
- * require toastr
+ * this is for styling of the ajax_flash notification code
+ *= require animate
  *= require_tree .
  *= require_self
  */

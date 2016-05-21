@@ -80,7 +80,7 @@ module TomcatConcern
       ret_hash = {}
 
       data.each do |line|
-        vars = line.split(':')
+        vars = line.strip.split(':')
         war = vars[3] #war is 'isaac_rest' or rails_komet_b or similar with version
         # filter to only display isaac and rails war files
         next unless war =~ /^(isaac|rails_k).*/
@@ -103,7 +103,7 @@ module TomcatConcern
   def get_version(war:, context:, tomcat_service:)
     conn = get_connection(service_or_id: tomcat_service)
     path = ''
-    version = "UNKNOWN"
+    version = 'UNKNOWN'
     response = nil
     if (war =~ /^isaac/)
       path = '/rest/1/system/systemInfo'
@@ -123,11 +123,11 @@ module TomcatConcern
     begin
       json = JSON.parse body
     rescue => ex
-      json['version'] = "INVALID_JSON"
-      json['restVersion'] = "INVALID_JSON"
+      json['version'] = 'INVALID_JSON'
+      json['restVersion'] = 'INVALID_JSON'
     end
     if(war =~ /^isaac/)
-      version = json['restVersion'].to_s
+      version = json['apiImplementationVersion'].to_s
       version = 'UNKNOWN' if version.empty? #assume a local run
     else
       version = json['version'].to_s

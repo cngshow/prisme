@@ -18,15 +18,6 @@ tomcat:
      label: Tomcat Manager URL
      type: url
      order_idx: 2
-   - key: cargo.servlet.port
-     tooltip: Enter the port number for the Tomcat Server (e.g. 4848)
-     label: Port
-     type: number
-     order_idx: 3
-   - key: cargo.hostname
-     tooltip: Enter the hostname for the Tomcat Server (e.g. vadev.mantech.com)
-     label: Hostname
-     order_idx: 4
 nexus:
   label: Nexus
   description: Nexus Artifactory Server

@@ -19,16 +19,6 @@ three:
   key: cargo.tomcat.manager.url
   value: http://vadev.mantech.com:4848/manager
   order_idx: 2
-four:
-  service: tomcat
-  key: cargo.servlet.port
-  value: 4848
-  order_idx: 3
-five:
-  service: tomcat
-  key: cargo.hostname
-  value: vadev.mantech.com
-  order_idx: 4
 
 # tomcat service properties
 one_l:
@@ -46,17 +36,6 @@ three_l:
   key: cargo.tomcat.manager.url
   value: http://localhost:8080/manager
   order_idx: 2
-four_l:
-  service: tomcat_localhost
-  key: cargo.servlet.port
-  value: 8080
-  order_idx: 3
-five_l:
-  service: tomcat_localhost
-  key: cargo.hostname
-  value: localhost
-  order_idx: 4
-
 # nexus service properties
 six:
   service: nexus
