@@ -380,3 +380,15 @@
 {
     display: list-item;
 }
+
+/* OVERRIDES */
+.wizard .content {
+    min-height: 100px;
+}
+.wizard .content > .body {
+    width: 100%;
+    height: auto;
+    padding: 30px;
+    position: relative;
+}
+

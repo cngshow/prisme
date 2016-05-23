@@ -59,7 +59,25 @@ class Service < ActiveRecord::Base
       end
       hash[key] = value unless (value.nil? || value.empty?)
     end
+    inferred_properties(hash)
     hash
+  end
+
+  private
+
+  # useful for adding inferred properties in non singleton Services.
+  def inferred_properties(hash)
+    service_type = self.service_type
+    case service_type
+      when PrismeService::TOMCAT
+        self.service_properties.each do |sp|
+          if (sp.key.eql?(PrismeService::CARGO_REMOTE_URL))
+            url = sp.value
+            hash[PrismeService::CARGO_HOSTNAME] = (URI url).host
+            hash[PrismeService::CARGO_SERVLET_PORT] = ((URI url).port).to_s
+          end
+        end
+    end
   end
 
 end
@@ -69,3 +87,5 @@ end
 # p[0].service.service_type
 # $SERVICE_TYPES[p[0].service.service_type]
 # $SERVICE_TYPES[p[0].service.service_type]['props'].reject do |e| !e['key'].eql?p[0].key end.first['type']
+# a = Service.get_application_servers
+#  a[0].properties_hash

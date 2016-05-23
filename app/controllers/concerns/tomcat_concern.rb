@@ -90,6 +90,11 @@ module TomcatConcern
         ret_hash[war][:session_count] = vars[2]
         ret_hash[war][:version] = get_version(war: war, context: vars[0], tomcat_service: tomcat_service)
       end
+
+      if (ret_hash.empty?)
+        ret_hash = {available: true}
+      end
+
       $log.debug("Returning #{ret_hash}")
       #      {"ROOT"=>{:context=>"/", :state=>"running", :session_count=>"0"}, "isaac-rest"=>{:context=>"/isaac-rest", :state=>"running
       # ", :session_count=>"0"}, "rails_komet_a"=>{:context=>"/rails_komet_a", :state=>"running", :session_count=>"0"}, "/usr/share/tomcat7-admin/host-manager"=>{:context=>"/host-manager", :state=>"running", :session_count=>"0"}, "rail
@@ -126,7 +131,7 @@ module TomcatConcern
       json['version'] = 'INVALID_JSON'
       json['restVersion'] = 'INVALID_JSON'
     end
-    if(war =~ /^isaac/)
+    if (war =~ /^isaac/)
       version = json['apiImplementationVersion'].to_s
       version = 'UNKNOWN' if version.empty? #assume a local run
     else
@@ -154,15 +159,20 @@ module TomcatConcern
       if data_hash.has_key?(:failed)
         tomcat_deployments[{url: url, service_name: tomcat.name}] = {}
       else
-        data_hash.each do |d|
-          context = d.last[:context]
-          link = "#{scheme}://#{host}:#{port}#{context}"
-          d.last[:link] = link
+        if data_hash.has_key? :available
+        #   the server is up and available but there are no rails or isaac deployments so we are just returrning that the server is available
+        else
+          data_hash.each do |d|
+            context = d.last[:context]
+            link = "#{scheme}://#{host}:#{port}#{context}"
+            d.last[:link] = link
+          end
         end
 
         tomcat_deployments[{url: url, service_name: tomcat.name, service_id: tomcat.id}] = data_hash
       end
     end
+
     tomcat_deployments
   end
 end

@@ -58,7 +58,7 @@ class WelcomeController < ApplicationController
       # get all of the applications deployed at this appserver location
       tomcat_deployments[appserver].each_pair do |war, d|
         current_row[:available] = true
-        next if war.eql? :failed
+        next if [:available, :failed].include?(war)
         current_row[:rows] << {war_name: war, state: d[:state], version: d[:version], session_count: d[:session_count].to_s, link: d[:link]}
       end
       ret << current_row

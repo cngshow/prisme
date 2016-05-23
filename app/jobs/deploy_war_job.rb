@@ -16,13 +16,20 @@ class DeployWarJob < PrismeBaseJob
         file_type = File.extname(file_name)
         file_dir = File.dirname(file_name)
         new_file = file_dir + context + file_type
-        FileUtils.cp(file_name,new_file)
+        FileUtils.cp(file_name, new_file)
         file_name = new_file
       end
 
       factory = JCargo::DefaultContainerFactory.new
       type = JCargo::ContainerType::REMOTE
       runtime_config = JCargo::TomcatRuntimeConfiguration.new
+      props = tomcat_ar.properties_hash
+      props.each_pair do |k, v|
+        #cargo.hostname = localhost everytime
+        #cargo.servlet.port = localhost everytime
+        runtime_config.setProperty(k, v)
+        $log.debug("Added #{k} -- #{v} to the runtime config.")
+      end
       tom_container = factory.createContainer("tomcat8x", type, runtime_config)
       deployable_type = JCargo::DeployableType::WAR
       deployer_factory = JCargo::DefaultDeployableFactory.new
@@ -33,21 +40,13 @@ class DeployWarJob < PrismeBaseJob
       #url.registerListener(DeployListener.new)
       war = deployer_factory.createDeployable(tom_container.getId(), file_name, deployable_type);
       #to_do -- switch to undeploy/redeploy
-      @@mutex.synchronize do
-        $log.info("About to deploy #{file_name}")
-        #only allow one deployment at a time.
-        #The user will see their job as running, but, since cargo was engineered for maven and communicates via props
-        #we cannot have a user selecting a different tomcat motivating deployment to the wrong server.
-        props = tomcat_ar.properties_hash
-        url = JCargo::URLDeployableMonitor.new(java.net.URL.new(props[PrismeService::CARGO_REMOTE_URL])) #("http://vadev.mantech.com:4848/"))
-        url.setLogger(logger)
-        props.each_pair do |k, v|
-          java.lang.System.getProperties.put(k, v)
-          #$log.debug("Added #{k} -- #{v} to java's system props")
-        end
-        deployer.redeploy(war, url)
-      end
-
+      $log.info("About to deploy #{file_name}")
+      #only allow one deployment at a time.TomcatRuntimeConfiguration
+      #The user will see their job as running, but, since cargo was engineered for maven and communicates via props
+      #we cannot have a user selecting a different tomcat motivating deployment to the wrong server.
+      url = JCargo::URLDeployableMonitor.new(java.net.URL.new(props[PrismeService::CARGO_REMOTE_URL])) #("http://vadev.mantech.com:4848/"))
+      url.setLogger(logger)
+      deployer.redeploy(war, url)
       $log.info("Deployed #{file_name}")
     rescue => ex
       $log.error("A Java Exception was thrown: #{ex.message}")
