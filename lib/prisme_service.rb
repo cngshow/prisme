@@ -8,6 +8,8 @@ module PrismeService
   CARGO_REMOTE_URL = 'cargo.tomcat.manager.url'
   CARGO_REMOTE_USERNAME = 'cargo.remote.username'
   CARGO_REMOTE_PASSWORD = 'cargo.remote.password'
+  CARGO_HOSTNAME = 'cargo.hostname'
+  CARGO_SERVLET_PORT = 'cargo.servlet.port'
 
   # NEXUS
   NEXUS_ROOT = 'nexus_root'
