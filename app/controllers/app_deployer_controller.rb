@@ -62,7 +62,7 @@ class AppDeployerController < ApplicationController
     nexus_query_params[:r] = war_file.repo
     nexus_query_params[:c] = war_file.classifier unless war_file.classifier.empty?
     nexus_query_params[:p] = war_file.package
-    war_cookie_params[:prisme_root] = request.original_url.split(request.fullpath).first
+    war_cookie_params[:prisme_root] = request.original_url.split(request.fullpath).first + root_path
     war_cookie_params[:war_group_id] = war_file.groupId
     war_cookie_params[:war_artifact_id] = war_file.artifactId
     war_cookie_params[:war_version] = war_file.version
