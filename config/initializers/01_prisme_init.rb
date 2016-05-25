@@ -5,10 +5,21 @@ jars = Dir.glob('./lib/jars/*.jar')
 jars.each do |jar|
   require jar
 end
-
+#from rails common
 require './lib/rails_common/props/prop_loader'
 require './lib/rails_common/logging/open_logging'
 require './lib/rails_common/logging/logging'
+#above from rails common
+begin
+  ActiveRecord::Base.logger = $log
+  ActiveRecord::Migrator.migrate "db/migrate"
+rescue => ex
+  $log.warn("Migration failed. #{ex.message}")
+ensure
+  #ActiveRecord::Base.logger = nil
+end
+$log.info("Migration complete!")
+
 require './lib/prisme_service'
 require './lib/cipher'
 require './lib/jenkin_client'
