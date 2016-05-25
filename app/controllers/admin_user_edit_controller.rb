@@ -34,12 +34,14 @@ class AdminUserEditController < ApplicationController
         messages = {}
         messages['Deletes failed!'] = failed_deletes unless failed_deletes.empty?
         messages['Update failed!'] = failed_updates unless failed_updates.empty?
-        flash[:error] = render_to_string(:partial => 'bulleted_flash', :locals => {:messages => messages})
+        msg = render_to_string(:partial => 'application/bulleted_flash_single_header', :locals => {:messages => messages})
+        ajax_flash(msg, {type: 'alert'})
       end
     rescue Exception => e
       messages = {}
       messages['Update failed!'] = e.to_s #or optionally [e.to_s]
-      flash[:error] = render_to_string(:partial => 'bulleted_flash', :locals => {:messages => messages})
+      msg = render_to_string(:partial => 'bulleted_flash', :locals => {:messages => messages})
+      ajax_flash(msg, {type: 'alert'})
     end
     redirect_to admin_user_edit_list_path
   end
