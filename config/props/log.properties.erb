@@ -22,11 +22,11 @@ caller_tracing = true
        #the presence of this will cause stdout logging to occur.
        env_hash[:append_stdout] = 'yes'
      when :test
-       env_hash[:level] = 'INFO'
+       env_hash[:level] = 'DEBUG'
        env_hash[:age] = 'daily'
        env_hash[:keep] = 7
      else #production
-       env_hash[:level] = 'WARN'
+       env_hash[:level] = 'DEBUG'
        env_hash[:age] = 'weekly'
        env_hash[:keep] = 12
    end
