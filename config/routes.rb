@@ -30,7 +30,7 @@ Rails.application.routes.draw do
   # if Rails finds a match based on the name and based on the explicit mapping you use the action can get called TWICE!
   #
   # get '/toggle_admin' => 'welcome#toggle_admin' - THIS IS CALLED TWICE
-  match 'toggle-admin', to: 'welcome#toggle_admin', via: [:get]
+  # match 'toggle-admin', to: 'welcome#toggle_admin', via: [:get]
 
   get 'app_deployer' => 'app_deployer#index'
   post 'app_deployer/deploy_app'
