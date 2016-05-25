@@ -12,7 +12,7 @@
     <option value="999999">All Rows</option>
   </select>
 </div>
-<table id="data-table" class="prisme-table table-hover">
+<table id="data-table" class="prisme-table table-striped table-hover">
   <thead>
   <tr>
     <th>Job Name</th>
@@ -137,32 +137,33 @@
   var fields = ['job_name', 'started_at', 'user', 'leaf_data.jenkins_job_name', 'leaf_data.jenkins_attempt_number', 'leaf_data.jenkins_build_result', 'leaf_data.completed_at', 'leaf_data.elapsed_time', 'leaf_data.jenkins_job_deleted'];
 
   function loadTable(tableId, fields, data) {
-    var rows = '';
+    $('#' + tableId + ' tbody').empty();
+
     if (data.length > 0) {
       $.each(data, function (index, row) {
-        var tr_data = '<tr>';
+        var tr_data = $('<tr>');
 
         $.each(fields, function (index, field) {
           if (field === 'started_at') {
-            tr_data += '<td>' + format_epoch_in_local(row.started_at) + '</td>';
+            tr_data.append($('<td>').text(format_epoch_in_local(row.started_at)));
           }
           else if (field === 'leaf_data.jenkins_build_result') {
-            tr_data += '<td>' + build_status_renderer(row.leaf_data.jenkins_build_result) + '</td>';
+            tr_data.append($('<td>').text(build_status_renderer(row.leaf_data.jenkins_build_result)));
           }
           else if (field === 'leaf_data.completed_at') {
-            tr_data += '<td>' + format_epoch_in_local(row.leaf_data.completed_at) + '</td>';
+            tr_data.append($('<td>').text(format_epoch_in_local(row.leaf_data.completed_at)));
           }
           else {
-            tr_data += '<td>' + eval('row.' + field) + '</td>';
+            tr_data.append($('<td>').text(eval('row.' + field)));
           }
         });
-        rows += tr_data + '<tr>';
+        $('#' + tableId + ' tbody').append(tr_data);
       });
     }
     else {
       rows = '<tr><td colspan="9" style="text-align:center">There are no items to list...</td></tr>'
+      $('#' + tableId + ' tbody').html(rows);
     }
-    $('#' + tableId + ' tbody').html(rows);
   }
 
   function poll() {

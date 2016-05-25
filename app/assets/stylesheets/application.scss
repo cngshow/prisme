@@ -33,7 +33,7 @@ html, body {
 }
 
 .prisme-table {
-  font-family: calibri, arial;
+  font-family: calibri, arial, sans-serif;
   width: 100%;
 }
 
@@ -54,6 +54,11 @@ html, body {
 .table-striped > tbody > tr:nth-of-type(odd) {
   background-color: #f2f2f2;
 }
+
+.table-striped > tbody > tr:nth-of-type(even) {
+  background: transparent;
+}
+
 
 /* line 125, C:/work/ETS/gem_home/gems/bootstrap-sass-3.3.6/assets/stylesheets/bootstrap/_tables.scss */
 .table-hover > tbody > tr:hover {

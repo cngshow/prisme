@@ -2,7 +2,7 @@
 <button id="btn-update" class="btn btn-primary btn-lg">Refresh List</button>
 <br>
 <hr>
-<table id="data-table" class="prisme-table table-hover">
+<table id="data-table" class="prisme-table table-striped table-hover">
   <thead>
   <tr>
     <th>Job ID</th>
@@ -20,7 +20,7 @@
   </thead>
   <tbody>
   <tr>
-    <td colspan="9" style="text-align:center">There are no items to list...</td>
+    <td colspan="11" style="text-align:center">There are no items to list...</td>
   </tr>
   </tbody>
 </table>
@@ -28,25 +28,24 @@
 
 <script>
   $(document).ready(function (e) {
+    var fields = ['job_id', 'job_name', 'status', 'scheduled_at', 'enqueued_at', 'started_at', 'completed_at', 'elapsed_time', 'user', 'last_error', 'result'];
+
     function loadTable(tableId, fields, data) {
-      //$('#' + tableId).empty(); //not really necessary
-      var rows = '';
+      $('#' + tableId + ' tbody').empty();
+
       $.each(data, function (index, item) {
-        var row = '<tr>';
+        var row = $('<tr>');
         $.each(fields, function (index, field) {
           if (field === 'status') {
-            row += '<td>' + gon.job_status_constants[item[field + '']] + '</td>';
+            row.append($('<td>').text(gon.job_status_constants[item[field + '']]));
           }
           else {
-            row += '<td>' + item[field + ''] + '</td>';
+            row.append($('<td>').text(item[field + '']));
           }
         });
-        rows += row + '<tr>';
+        $('#' + tableId + ' tbody').append(row);
       });
-      $('#' + tableId + ' tbody').html(rows);
     }
-
-    var fields = ['job_id', 'job_name', 'status', 'scheduled_at', 'enqueued_at', 'started_at', 'completed_at', 'elapsed_time', 'user', 'last_error', 'result'];
 
     $('#btn-update').click(function (e) {
       reload();
