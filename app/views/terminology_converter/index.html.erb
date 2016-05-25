@@ -113,7 +113,15 @@
 
     ret = ret.replace("COLOR", color);
     ret = ret.replace("IMG", img);
-    return ret;
+    var span = $('<span>').css('color', color);
+    if (img !== '') {
+      img = $('<i>').addClass("fa fa-cog fa-spin fa-fw");
+      span.html(img).append(params);
+    } else {
+      span.text(params);
+    }
+
+    return span;
   }
 
   function format_epoch_in_local(epoch) {
@@ -148,7 +156,7 @@
             tr_data.append($('<td>').text(format_epoch_in_local(row.started_at)));
           }
           else if (field === 'leaf_data.jenkins_build_result') {
-            tr_data.append($('<td>').text(build_status_renderer(row.leaf_data.jenkins_build_result)));
+            tr_data.append($('<td>').html(build_status_renderer(row.leaf_data.jenkins_build_result)));
           }
           else if (field === 'leaf_data.completed_at') {
             tr_data.append($('<td>').text(format_epoch_in_local(row.leaf_data.completed_at)));
