@@ -40,7 +40,7 @@ class AdminUserEditController < ApplicationController
     rescue Exception => e
       messages = {}
       messages['Update failed!'] = e.to_s #or optionally [e.to_s]
-      msg = render_to_string(:partial => 'bulleted_flash', :locals => {:messages => messages})
+      msg = render_to_string(:partial => 'application/bulleted_flash_single_header', :locals => {:messages => messages})
       ajax_flash(msg, {type: 'alert'})
     end
     redirect_to admin_user_edit_list_path
