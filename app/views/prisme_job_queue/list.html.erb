@@ -1,42 +1,21 @@
 <h1>PRISME Job Queue</h1>
-<style>
-  html, body {
-    padding: 5px;
-  }
-
-  #data-table {
-    font-family: calibri, arial;
-    width: 100%;
-  }
-
-  #data-table thead td {
-    background-color: #8CCCF1;
-    font-weight: bold;
-  }
-
-  #data-table td {
-    border: 1px solid #466E85;
-    width: 136px;
-    padding: 7px;
-  }
-</style>
-
-<button id="btn-update">Refresh List</button>
-
-<table id="data-table">
+<button id="btn-update" class="btn btn-primary btn-lg">Refresh List</button>
+<br>
+<hr>
+<table id="data-table" class="prisme-table table-hover">
   <thead>
   <tr>
-    <td>Job ID</td>
-    <td>Job Name</td>
-    <td>Status</td>
-    <td>Scheduled At</td>
-    <td>Enqueued At</td>
-    <td>Started At</td>
-    <td>Completed At</td>
-    <td>Elapsed Time</td>
-    <td>User</td>
-    <td>Last Error</td>
-    <td>Result</td>
+    <th>Job ID</th>
+    <th>Job Name</th>
+    <th>Status</th>
+    <th>Scheduled At</th>
+    <th>Enqueued At</th>
+    <th>Started At</th>
+    <th>Completed At</th>
+    <th>Elapsed Time</th>
+    <th>User</th>
+    <th>Last Error</th>
+    <th>Result</th>
   </tr>
   </thead>
   <tbody>

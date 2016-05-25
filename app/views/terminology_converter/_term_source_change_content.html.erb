@@ -1,5 +1,3 @@
-<br>
-<br>
 <%= label_tag 'converter_version', 'Converter Version' %><br>
 <%= select_tag 'converter_version', options_from_collection_for_select(converter_versions, :option_key, :option_value), :include_blank => '-- Select the Converter Version --', required: true %>
 <br>

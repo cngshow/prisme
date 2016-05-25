@@ -2,6 +2,7 @@
   function serviceTypeChange(service_type) {
     if (service_type === '') {
       $('#submit_div').hide();
+      $('#new_cancel').show();
       $('#service_props').empty();
     } else {
       $.get('<%= services_render_props_path %>', {service_type: service_type}, function (data) {
@@ -9,6 +10,7 @@
       });
 
       $('#submit_div').show();
+      $('#new_cancel').hide();
     }
   }
 </script>
@@ -57,7 +59,8 @@
       <% end %>
     </div>
     <div class="actions" id="submit_div">
-      <%= f.submit class: 'btn btn-primary' %>
+      <%= f.submit class: 'btn btn-primary btn-lg' %>
+      <%= link_to 'Cancel', services_path, class: 'btn btn-primary btn-lg' %>
     </div>
 <% end %>
 <script>

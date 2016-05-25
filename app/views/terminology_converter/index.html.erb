@@ -1,27 +1,3 @@
-<style>
-  html, body {
-    padding: 5px;
-  }
-
-  .ajax-table {
-    font-family: calibri, arial;
-    width: 100%;
-  }
-
-  .ajax-table thead td {
-    background-color: #8CCCF1;
-    font-weight: bold;
-    text-align: center;
-    vertical-align: bottom;
-  }
-
-  .ajax-table td {
-    border: 1px solid #466E85;
-    width: 136px;
-    padding: 7px;
-  }
-</style>
-
 <!-- Trigger the modal with a button -->
 <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal" onclick="reset_form();">Request New Build</button>
 
@@ -36,18 +12,18 @@
     <option value="999999">All Rows</option>
   </select>
 </div>
-<table id="data-table" class="ajax-table">
+<table id="data-table" class="prisme-table table-hover">
   <thead>
   <tr>
-    <td>Job Name</td>
-    <td>Started At</td>
-    <td>User Name</td>
-    <td>Jenkins Build Name</td>
-    <td>Attempts</td>
-    <td>Build Result</td>
-    <td>Last Check<br>Completed At</td>
-    <td>Elapsed Time</td>
-    <td>Jenkins Job<br>Deleted?</td>
+    <th>Job Name</th>
+    <th>Started At</th>
+    <th>User Name</th>
+    <th>Jenkins Build Name</th>
+    <th>Attempts</th>
+    <th>Build Result</th>
+    <th>Last Check<br>Completed At</th>
+    <th>Elapsed Time</th>
+    <th>Jenkins Job<br>Deleted?</th>
   </tr>
   </thead>
   <tbody>

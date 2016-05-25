@@ -18,29 +18,29 @@ this style is for the more complex validation check
     <% end %>
 
     <h3>Select the Application Components</h3>
-    <%= field_set_tag 'Select the WAR file to deploy to Tomcat' do %>
+    <%= field_set_tag 'Select the Application Components for Deployment to Tomcat' do %>
         <div id="komet_wars">
-          <%= label_tag 'komet_war', 'KOMET Tooling' %><br>
+          <%= label_tag 'komet_war', 'KOMET Tooling Version to Use' %><br>
           <%= select_tag 'komet_war', options_from_collection_for_select(@komet_wars, 'select_key', 'select_value'), {:prompt => '-- Select a war to deploy --'} %>
           <br>
           <br>
-          <%= label_tag 'tomcat_isaac_rest', 'ISAAC Rest Deployment to Use' %><br>
+          <%= label_tag 'tomcat_isaac_rest', 'ISAAC Rest Version to Use' %><br>
           <%= select_tag 'tomcat_isaac_rest', options_for_select(@tomcat_isaac_rest.collect {|ir| [ir[:select_value], ir[:select_key] ] }), {:prompt => '-- Select an ISAAC Rest Instance --'} %>
         </div>
         <div id="isaac_wars">
-          <%= label_tag 'isaac_war', 'ISAAC Rest' %><br>
+          <%= label_tag 'isaac_war', 'ISAAC Rest Version to Use' %><br>
           <%= select_tag 'isaac_war', options_from_collection_for_select(@isaac_wars, 'select_key', 'select_value'), {:prompt => '-- Select a war to deploy --'} %>
           <br>
           <br>
-          <%= label_tag 'isaac_db', 'ISAAC Database' %><br>
+          <%= label_tag 'isaac_db', 'ISAAC Database Version to Use' %><br>
           <%= select_tag 'isaac_db', options_from_collection_for_select(@isaac_dbs, 'select_key', 'select_value'), {:prompt => '-- Select a terminology database --'} %>
         </div>
         <br>
     <% end %>
 
     <h3>Select the Tomcat Server</h3>
-    <%= field_set_tag 'Select Tomcat Server' do %>
-        <%= label_tag PrismeService::TOMCAT, 'Tomcat Server URL' %><br>
+    <%= field_set_tag 'Select the Tomcat Server to Host this Deployment' do %>
+        <%= label_tag PrismeService::TOMCAT, 'Tomcat Server to Deploy to:' %><br>
         <%= select_tag PrismeService::TOMCAT, options_from_collection_for_select(@tomcat_servers, 'select_key', 'select_value'), {:prompt => '-- Select the Tomcat Server --', required: true} %>
     <% end %>
 
@@ -48,11 +48,9 @@ this style is for the more complex validation check
     <%= field_set_tag 'Application Deployment Summary' do %>
         <p>Please review the information below before submitting the deployment request.</p>
         <section>
-          <h4>Application to Deploy</h4><h5><span id="summary_application" style="font-weight: bold"></span></h5>
-          <br>
-          <h4>Application Components</h4><h5><span id="summary_component" style="font-weight: bold"></span></h5>
-          <br>
-          <h4>Tomcat Server</h4><h5><span id="summary_tomcat" style="font-weight: bold"></span></h5>
+          <h4 style="font-style: italic; text-decoration: underline;">Application to Deploy</h4><div id="summary_application" style="padding-left: 20px; padding-bottom: 20px; font-weight: bold;"></div>
+          <h4 style="font-style: italic; text-decoration: underline;">Application Components</h4><div id="summary_component" style="padding-left: 20px; padding-bottom: 20px; font-weight: bold;"></div>
+          <h4 style="font-style: italic; text-decoration: underline;">Tomcat Server</h4><div id="summary_tomcat"  style="padding-left: 20px; padding-bottom: 20px; font-weight: bold;"></div>
         </section>
     <% end %>
 <% end %>
@@ -100,34 +98,32 @@ this style is for the more complex validation check
         return form.valid();
       },
       onStepChanged: function (event, currentIndex, priorIndex) {
+        var step_ul = $('<ul>');
+        var component1 = '';
+        var component2 = '';
+
         if (currentIndex === 1) {
           var id = $("input[name=application]:checked").attr('id');
           var application_type = $("label[for='"+ id +"']").text();
-          application_type = "<span class=\"glyphicon glyphicon-ok-sign\">" + application_type + "</\span>";
-          $("#summary_application").html(application_type);
+          step_ul.append($('<li>').text(application_type));
+          $("#summary_application").html(step_ul);
         }
         if (currentIndex === 2) {
-          var components = null;
-
           if (selected_app_type === 'KOMET') {
             component1 = $( "#komet_war").find("option:selected" ).text();
-            components = "<span class=\"glyphicon glyphicon-ok-sign\">&nbsp;" + component1 + "</\span><br>";
-
             component2 = $( "#tomcat_isaac_rest").find("option:selected" ).text();
-            components += "<span class=\"glyphicon glyphicon-ok-sign\">&nbsp;" + component2 + "</\span><br>";
           }
           else {
-            var component1 = $( "#isaac_war").find("option:selected" ).text();
-            var component2 = $( "#isaac_db").find("option:selected" ).text();
-            components = "<span class=\"glyphicon glyphicon-ok-sign\">&nbsp;" + component1 + "</\span><br>";
-            components += "<span class=\"glyphicon glyphicon-ok-sign\">&nbsp;" + component2 + "</\span><br>";
+            component1 = $( "#isaac_war").find("option:selected" ).text();
+            component2 = $( "#isaac_db").find("option:selected" ).text();
           }
-          $("#summary_component").html(components);
+          step_ul.append($('<li>').text(component1)).append($('<li>').text(component2));
+          $("#summary_component").html(step_ul);
         }
         if (currentIndex === 3) {
           var tomcat = $( "#tomcat").find("option:selected" ).text();
-          tomcat = "<span class=\"glyphicon glyphicon-ok-sign\">&nbsp;" + tomcat + "</\span>";
-          $("#summary_tomcat").html(tomcat);
+          step_ul.append($('<li>').text(tomcat));
+          $("#summary_tomcat").html(step_ul);
         }
       }
       ,
