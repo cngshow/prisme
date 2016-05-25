@@ -28,8 +28,12 @@ module JenkinsClient
         result = " deleted."
         begin
           job = jenkins.getJob(name.strip) #the map doesn't have a job detail, re-fetch.
-          build = job.getLastBuild.details.getResult
-          dont_delete_me = (build.equals(JBuildResult::REBUILDING) || build.equals(JBuildResult::NOT_BUILT))
+          build = job.getLastBuild
+          dont_delete_me = false
+          unless build.nil?
+            build = build.details.getResult
+            dont_delete_me = (build.equals(JBuildResult::REBUILDING) || build.equals(JBuildResult::NOT_BUILT))
+          end
           unless dont_delete_me
             jenkins.deleteJob(name, false)
             $log.info("Deleted #{name}")
