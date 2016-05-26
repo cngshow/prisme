@@ -1,47 +1,26 @@
 <h1>PRISME Job Queue</h1>
-<style>
-  html, body {
-    padding: 5px;
-  }
-
-  #data-table {
-    font-family: calibri, arial;
-    width: 100%;
-  }
-
-  #data-table thead td {
-    background-color: #8CCCF1;
-    font-weight: bold;
-  }
-
-  #data-table td {
-    border: 1px solid #466E85;
-    width: 136px;
-    padding: 7px;
-  }
-</style>
-
-<button id="btn-update">Refresh List</button>
-
-<table id="data-table">
+<button id="btn-update" class="btn btn-primary btn-lg">Refresh List</button>
+<br>
+<hr>
+<table id="data-table" class="prisme-table table-striped table-hover">
   <thead>
   <tr>
-    <td>Job ID</td>
-    <td>Job Name</td>
-    <td>Status</td>
-    <td>Scheduled At</td>
-    <td>Enqueued At</td>
-    <td>Started At</td>
-    <td>Completed At</td>
-    <td>Elapsed Time</td>
-    <td>User</td>
-    <td>Last Error</td>
-    <td>Result</td>
+    <th>Job ID</th>
+    <th>Job Name</th>
+    <th>Status</th>
+    <th>Scheduled At</th>
+    <th>Enqueued At</th>
+    <th>Started At</th>
+    <th>Completed At</th>
+    <th>Elapsed Time</th>
+    <th>User</th>
+    <th>Last Error</th>
+    <th>Result</th>
   </tr>
   </thead>
   <tbody>
   <tr>
-    <td colspan="9" style="text-align:center">There are no items to list...</td>
+    <td colspan="11" style="text-align:center">There are no items to list...</td>
   </tr>
   </tbody>
 </table>
@@ -49,25 +28,24 @@
 
 <script>
   $(document).ready(function (e) {
+    var fields = ['job_id', 'job_name', 'status', 'scheduled_at', 'enqueued_at', 'started_at', 'completed_at', 'elapsed_time', 'user', 'last_error', 'result'];
+
     function loadTable(tableId, fields, data) {
-      //$('#' + tableId).empty(); //not really necessary
-      var rows = '';
+      $('#' + tableId + ' tbody').empty();
+
       $.each(data, function (index, item) {
-        var row = '<tr>';
+        var row = $('<tr>');
         $.each(fields, function (index, field) {
           if (field === 'status') {
-            row += '<td>' + gon.job_status_constants[item[field + '']] + '</td>';
+            row.append($('<td>').text(gon.job_status_constants[item[field + '']]));
           }
           else {
-            row += '<td>' + item[field + ''] + '</td>';
+            row.append($('<td>').text(item[field + '']));
           }
         });
-        rows += row + '<tr>';
+        $('#' + tableId + ' tbody').append(row);
       });
-      $('#' + tableId + ' tbody').html(rows);
     }
-
-    var fields = ['job_id', 'job_name', 'status', 'scheduled_at', 'enqueued_at', 'started_at', 'completed_at', 'elapsed_time', 'user', 'last_error', 'result'];
 
     $('#btn-update').click(function (e) {
       reload();

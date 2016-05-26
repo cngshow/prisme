@@ -7,7 +7,6 @@ java_import 'com.offbytwo.jenkins.model.BuildResult' do |p, c|
 end
 
 
-
 class JenkinsCheckBuild < PrismeBaseJob
   class Deleted
     UNKNOWN = 'UNKNOWN'
@@ -33,6 +32,7 @@ class JenkinsCheckBuild < PrismeBaseJob
     jenkins_config = args.shift
     name = args.shift
     attempt_number = args.shift
+    job_creation_exception_thrown = args.shift
     max_attempts = $PROPS['JENKINS.max_health_checks'].to_i
     $log.info("checking stats for #{name}")
     time = $PROPS['JENKINS.build_check_seconds'].to_i.seconds
@@ -43,48 +43,54 @@ class JenkinsCheckBuild < PrismeBaseJob
     result_hash[:attempt_number] = attempt_number
     result_hash[:deleted] = Deleted::NO
     begin
-      jenkins = JenkinsServer.new(java.net.URI.new(jenkins_config[:url]), jenkins_config[:user], jenkins_config[:password])
-      jenkins_job = jenkins.getJob(name.strip)
-      result << "Jenkins job #{name} was fetched from Jenkins.\n"
-      build = jenkins_job.getLastBuild()
-      if (build.nil?)
-        #we are still in the queue handle this
-        $log.info("#{name} is still in Jenkin's queue.")
-        result << "Jenkins job #{name} is in the build queue.\n"
-        result_hash[:build] = BuildResult::INQUEUE
-        JenkinsCheckBuild.set(wait: time).perform_later(jenkins_config, name, attempt_number, track_child_job)
+      if job_creation_exception_thrown
+        $log.warn("job_creation_exception_thrown")
+        result_hash[:deleted] = Deleted::UNKNOWN
+        result_hash[:build] = BuildResult::FAILURE
       else
-        details = build.details #can throw NPE even though build is not nil
-        if (details.isBuilding)
-          #we are building handle this
-          result_hash[:build] = BuildResult::BUILDING
-          result << "Jenkins job #{name} is still building.\n"
-          $log.info("#{name} is still being built by Jenkins.")
+        jenkins = JenkinsServer.new(java.net.URI.new(jenkins_config[:url]), jenkins_config[:user], jenkins_config[:password])
+        jenkins_job = jenkins.getJob(name.strip)
+        result << "Jenkins job #{name} was fetched from Jenkins.\n"
+        build = jenkins_job.getLastBuild()
+        if (build.nil?)
+          #we are still in the queue handle this
+          $log.info("#{name} is still in Jenkin's queue.")
+          result << "Jenkins job #{name} is in the build queue.\n"
+          result_hash[:build] = BuildResult::INQUEUE
           JenkinsCheckBuild.set(wait: time).perform_later(jenkins_config, name, attempt_number, track_child_job)
         else
-          #set the result
-          build_result = details.getResult
-          if (build_result == JBuildResult::REBUILDING)
-            result << "Jenkins job #{name} is rebuilding.\n"
-            result_hash[:build] = build_result.to_s
-            #do rebuilding
+          details = build.details #can throw NPE even though build is not nil
+          if (details.isBuilding)
+            #we are building handle this
+            result_hash[:build] = BuildResult::BUILDING
+            result << "Jenkins job #{name} is still building.\n"
+            $log.info("#{name} is still being built by Jenkins.")
             JenkinsCheckBuild.set(wait: time).perform_later(jenkins_config, name, attempt_number, track_child_job)
           else
-            #display the result and delete the job
-            result << "Jenkins job #{name} has a build result of " + build_result.to_s + ".\n"
-            $log.info "Jenkins job #{name} has a build result of " + build_result.to_s + ".\n"
-            result_hash[:build] = build_result.to_s
-            begin
-              result_hash[:deleted] = Deleted::UNKNOWN
-              jenkins.deleteJob(name.strip, false)
-              result_hash[:deleted] = Deleted::YES
-              result << " Jenkins job #{name} was deleted from Jenkins.\n"
-              $log.info " Jenkins job #{name} was deleted from Jenkins.\n"
-            rescue java.lang.Exception => ex
-              #https://github.com/RisingOak/jenkins-client/issues/154
-              #we just log this.  Cleanup Job will take a second crack at it if needed
-              $log.warn("Deletion of Jenkins job named #{name} may have failed.")
-              $log.warn('Error message is: ' + ex.message)
+            #set the result
+            build_result = details.getResult
+            if (build_result == JBuildResult::REBUILDING)
+              result << "Jenkins job #{name} is rebuilding.\n"
+              result_hash[:build] = build_result.to_s
+              #do rebuilding
+              JenkinsCheckBuild.set(wait: time).perform_later(jenkins_config, name, attempt_number, track_child_job)
+            else
+              #display the result and delete the job
+              result << "Jenkins job #{name} has a build result of " + build_result.to_s + ".\n"
+              $log.info "Jenkins job #{name} has a build result of " + build_result.to_s + ".\n"
+              result_hash[:build] = build_result.to_s
+              begin
+                result_hash[:deleted] = Deleted::UNKNOWN
+                jenkins.deleteJob(name.strip, false)
+                result_hash[:deleted] = Deleted::YES
+                result << " Jenkins job #{name} was deleted from Jenkins.\n"
+                $log.info " Jenkins job #{name} was deleted from Jenkins.\n"
+              rescue java.lang.Exception => ex
+                #https://github.com/RisingOak/jenkins-client/issues/154
+                #we just log this.  Cleanup Job will take a second crack at it if needed
+                $log.warn("Deletion of Jenkins job named #{name} may have failed.")
+                $log.warn('Error message is: ' + ex.message)
+              end
             end
           end
         end
@@ -96,7 +102,7 @@ class JenkinsCheckBuild < PrismeBaseJob
       result_hash[:attempt_number] = attempt_number
       if (attempt_number <= max_attempts)
         $log.info("Attempting to gain the status of #{name} again.")
-        JenkinsCheckBuild.set(wait: time).perform_later(jenkins_config, name, attempt_number,track_child_job)
+        JenkinsCheckBuild.set(wait: time).perform_later(jenkins_config, name, attempt_number, track_child_job)
         raise JenkinsClient::JenkinsJavaError, ex
       end
     ensure

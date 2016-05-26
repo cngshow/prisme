@@ -24,9 +24,41 @@
 @import "font-awesome-sprockets";
 @import "font-awesome";
 
+html, body {
+  padding: 5px;
+}
+
+.prisme-table tr:hover {
+  cursor: pointer;
+}
+
+.prisme-table {
+  font-family: calibri, arial, sans-serif;
+  width: 100%;
+}
+
+.prisme-table thead th {
+  background-color: #8CCCF1;
+  font-weight: bold;
+  text-align: center;
+  vertical-align: bottom;
+  border: 1px solid #466E85;
+  padding: 10px;
+}
+
+.prisme-table td {
+  border: 1px solid #466E85;
+  padding: 7px;
+}
+
 .table-striped > tbody > tr:nth-of-type(odd) {
   background-color: #f2f2f2;
 }
+
+.table-striped > tbody > tr:nth-of-type(even) {
+  background: transparent;
+}
+
 
 /* line 125, C:/work/ETS/gem_home/gems/bootstrap-sass-3.3.6/assets/stylesheets/bootstrap/_tables.scss */
 .table-hover > tbody > tr:hover {

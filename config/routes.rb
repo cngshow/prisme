@@ -10,6 +10,13 @@ Rails.application.routes.draw do
   # match '/users/update' => 'admin_user_edit#update', :as => :admin_user_update
   # match '/users/:id/list' => 'admin_user_edit#list', :as => :admin_user_list
 
+  # admin_user_edit routes
+  # match '/users/update' => 'admin_user_edit#update', :as => :admin_user_update
+  # match '/users/:id/list' => 'admin_user_edit#list', :as => :admin_user_list
+
+  get 'admin_user_edit/list'
+  post 'admin_user_edit/update'
+
   match 'services/render_props' => 'services#render_props', :as => :services_render_props, via: [:get]
   resources :services
 
@@ -23,7 +30,7 @@ Rails.application.routes.draw do
   # if Rails finds a match based on the name and based on the explicit mapping you use the action can get called TWICE!
   #
   # get '/toggle_admin' => 'welcome#toggle_admin' - THIS IS CALLED TWICE
-  match 'toggle-admin', to: 'welcome#toggle_admin', via: [:get]
+  # match 'toggle-admin', to: 'welcome#toggle_admin', via: [:get]
 
   get 'app_deployer' => 'app_deployer#index'
   post 'app_deployer/deploy_app'

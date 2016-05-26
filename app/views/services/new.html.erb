@@ -1,5 +1,6 @@
 <h1>Provision a New Service</h1>
-
 <%= render 'form', mode: (local_assigns[:failure].nil? ? 'new' : 'failure') %>
-<hr>
-<%= link_to 'List', services_path, class: 'btn btn-primary' %>
+<div id="new_cancel">
+  <hr>
+  <%= link_to 'Cancel', services_path, class: 'btn btn-primary btn-lg' %>
+</div>

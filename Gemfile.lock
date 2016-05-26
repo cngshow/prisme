@@ -151,6 +151,7 @@ GEM
     request_store (1.2.1)
     responders (2.1.2)
       railties (>= 4.2.0, < 5.1)
+    rolify (5.1.0)
     rubyzip (1.1.7)
     sass (3.4.19)
     sass-rails (5.0.4)
@@ -222,6 +223,7 @@ DEPENDENCIES
   logging (~> 2.0)
   pundit
   rails (= 4.2.5)
+  rolify
   sass-rails (~> 5.0)
   sdoc (~> 0.4.0)
   sucker_punch (~> 2.0.0)

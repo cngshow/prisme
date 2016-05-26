@@ -20,6 +20,7 @@ class ApplicationController < ActionController::Base
     @ajax_flash = {}
     @ajax_flash[:msg] = msg
     @ajax_flash.merge!(options)
+    session[:ajax_flash] = @ajax_flash.clone
   end
 
   def internal_error(exception)

@@ -4,13 +4,19 @@
 //
 // http://bootstrap-notify.remabledesigns.com/#growl-documentation
 // https://github.com/dennisbaskin/bootstrap-growl-rails
-<% if @ajax_flash %>
-$.notify({
-  // options
-  message: '<%= @ajax_flash[:msg] %>'
-},{
-  // settings
-  type: '<%= @ajax_flash[:type] %>' // need to output settings passed in...?
-});
-console.log('<%= raw @ajax_flash %>');
+<% if @ajax_flash || session.has_key?(:ajax_flash) %>
+  <% msg = @ajax_flash ? @ajax_flash[:msg] : session[:ajax_flash]['msg']%>
+  <% type = @ajax_flash ? @ajax_flash[:type] : session[:ajax_flash]['type'] %>
+
+  $.notify({
+    // options
+    message: '<%= msg %>'
+  },{
+    // settings
+    type: '<%= type %>' // need to output settings passed in...?
+  });
+<% end %>
+<!--clean up the session if a flash message is in there -->
+<% if session.has_key?(:ajax_flash) %>
+  <% session[:ajax_flash] = nil %>
 <% end %>
