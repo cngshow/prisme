@@ -17,7 +17,10 @@
           <tr valign="top">
             <td><%= h user.email %></td>
             <% is_me = current_user.eql?(user) %>
-            <td style="text-align: center"><%= check_box_tag 'admin_check_box-' + user.id.to_s, true, user.administrator, {:disabled => is_me} %>&nbsp;&nbsp;<%= user.administrator ? 'Yes' : 'No' %></td>
+            <td style="text-align: center">
+              <%= check_box_tag 'admin_check_box-' + user.id.to_s, true, user.administrator, {:disabled => is_me, onclick: "toggleText(this.id, this.checked);"} %>
+                &nbsp;&nbsp;<span id="<%= 'span_admin_check_box-' + user.id.to_s%>"><%= user.administrator ? 'Yes' : 'No' %></span>
+            </td>
             <td style="text-align: left">
               <% Role::KOMET_ROLES.each do |role| %>
                   <%= check_box_tag "cbx_role-#{user.id}-" + role.to_s, true, user.has_role?(role) %>&nbsp;&nbsp;<%= role.to_s %><br>
@@ -31,4 +34,8 @@
 <% end %>
 <script>
   <%= render '/ajax_flash.js'  %>
+
+  function toggleText(id, checked) {
+    $('#span_'+id).text(checked ? 'Yes' : 'No');
+  }
 </script>
