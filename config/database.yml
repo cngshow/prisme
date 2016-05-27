@@ -8,6 +8,8 @@ development:
   #adapter: sqlite3  #schema: prisme_development
   <<: *default
   database: db/data/h2_prisme_development
+  username: sa
+  password: sa
   #url: jdbc:hsqldb:file:./db/data/prisme_development
   #url: jdbc:derby:file:./db/data/prisme_development
   #database: db/data/prisme_development.sqlite3
