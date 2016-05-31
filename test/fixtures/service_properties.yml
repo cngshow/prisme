@@ -12,7 +12,7 @@ one:
 two:
   service: tomcat
   key: cargo.remote.password
-  value: '[79, 155, 44, 205, 82, 218, 80, 35, 26, 10, 173, 105, 31, 126, 237, 251]'
+  value:  '[\"jK\\x90\\xA1\\x1Fk\\x87\\xD7\\xC3\\xD8\\xA8\\x9A\\x18\\xD4fC\"]'
   order_idx: 1
 three:
   service: tomcat
@@ -29,7 +29,7 @@ one_l:
 two_l:
   service: tomcat_localhost
   key: cargo.remote.password
-  value: '[79, 155, 44, 205, 82, 218, 80, 35, 26, 10, 173, 105, 31, 126, 237, 251]'
+  value: '[\"jK\\x90\\xA1\\x1Fk\\x87\\xD7\\xC3\\xD8\\xA8\\x9A\\x18\\xD4fC\"]'
   order_idx: 1
 three_l:
   service: tomcat_localhost
@@ -50,7 +50,7 @@ seven:
 eight:
   service: nexus
   key: nexus_pwd
-  value: '[79, 155, 44, 205, 82, 218, 80, 35, 26, 10, 173, 105, 31, 126, 237, 251]'
+  value: '[\"jK\\x90\\xA1\\x1Fk\\x87\\xD7\\xC3\\xD8\\xA8\\x9A\\x18\\xD4fC\"]'
   order_idx: 2
 
 # jenkins service properties
@@ -67,7 +67,7 @@ ten:
 eleven:
   service: jenkins
   key: jenkins_pwd
-  value: '[79, 155, 44, 205, 82, 218, 80, 35, 26, 10, 173, 105, 31, 126, 237, 251]'
+  value: '[\"jK\\x90\\xA1\\x1Fk\\x87\\xD7\\xC3\\xD8\\xA8\\x9A\\x18\\xD4fC\"]'
   order_idx: 2
 
 # git service properties
@@ -84,5 +84,5 @@ thirteen:
 fourteen:
   service: git
   key: git_pwd
-  value: '[79, 155, 44, 205, 82, 218, 80, 35, 26, 10, 173, 105, 31, 126, 237, 251]'
+  value: '[\"jK\\x90\\xA1\\x1Fk\\x87\\xD7\\xC3\\xD8\\xA8\\x9A\\x18\\xD4fC\"]'
   order_idx: 2
