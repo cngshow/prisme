@@ -81,10 +81,16 @@ class JenkinsCheckBuild < PrismeBaseJob
               result_hash[:build] = build_result.to_s
               begin
                 result_hash[:deleted] = Deleted::UNKNOWN
-                jenkins.deleteJob(name.strip, false)
-                result_hash[:deleted] = Deleted::YES
-                result << " Jenkins job #{name} was deleted from Jenkins.\n"
-                $log.info " Jenkins job #{name} was deleted from Jenkins.\n"
+                if (boolean($PROPS['PRISME.delete_jenkins_jobs']))
+                  jenkins.deleteJob(name.strip, false)
+                  result_hash[:deleted] = Deleted::YES
+                  result << " Jenkins job #{name} was deleted from Jenkins.\n"
+                  $log.info " Jenkins job #{name} was deleted from Jenkins.\n"
+                else
+                  result_hash[:deleted] = Deleted::NO
+                  result << " Jenkins job #{name} was not deleted from Jenkins.\n"
+                  $log.info " Jenkins job #{name} was not deleted from Jenkins(See prisme.properties).\n"
+                end
               rescue java.lang.Exception => ex
                 #https://github.com/RisingOak/jenkins-client/issues/154
                 #we just log this.  Cleanup Job will take a second crack at it if needed

@@ -10,15 +10,6 @@ require './lib/rails_common/props/prop_loader'
 require './lib/rails_common/logging/open_logging'
 require './lib/rails_common/logging/logging'
 #above from rails common
-begin
-  ActiveRecord::Base.logger = $log
-  ActiveRecord::Migrator.migrate "db/migrate"
-rescue => ex
-  $log.warn("Migration failed. #{ex.message}")
-ensure
-  #ActiveRecord::Base.logger = nil
-end
-$log.info("Migration complete!")
 
 require './lib/prisme_service'
 require './lib/cipher'
@@ -33,6 +24,17 @@ props.put('java.util.logging.manager', $PROPS['PRISME.log_manager'])
 $SERVICE_TYPES = YAML.load_file('./config/service/service_types.yml').freeze
 
 unless ($rake || defined?(Rails::Generators))
+
+  begin
+    ActiveRecord::Base.logger = $log if (boolean($PROPS['PRISME.log_active_record']))
+    ActiveRecord::Migrator.migrate "db/migrate"
+  rescue => ex
+    $log.warn("Migration failed. #{ex.message}")
+  ensure
+    #ActiveRecord::Base.logger = nil
+  end
+  $log.info("Migration complete!")
+
   at_exit do
     #do cleanup
     begin
