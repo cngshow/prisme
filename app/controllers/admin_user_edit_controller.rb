@@ -47,6 +47,28 @@ class AdminUserEditController < ApplicationController
   end
 
   def list
+    # todo sort the listing and add filtering
     @user_list = User.all
+  end
+
+  def update_user_roles
+    user_id = params[:user_id]
+    user = User.find(user_id)
+
+    Roles::ALL_ROLES.each do |role|
+      params["cbx_#{role.to_s}"].nil? ? user.remove_role(role) : user.add_role(role)
+    end
+    redirect_to admin_user_edit_list_path
+  end
+
+  def delete_user
+    user_id = params[:user_id]
+    u = User.find(user_id)
+
+    # do not allow user to delete the last user or themselves
+    if User.count == 1
+      ajax_flash('You cannot delete the last user!', {type: 'success'})
+    end
+    redirect_to admin_user_edit_list_path
   end
 end

@@ -1,41 +1,202 @@
-<h1>Edit User Permissions</h1>
-<a class="btn btn-primary btn-lg" onclick="document.forms['admin_user_update'].submit()">Update</a>
-<br>
-<hr>
-<%= form_tag admin_user_edit_update_path, :name => 'admin_user_update' do %>
-    <table class="prisme-table table-striped table-hover">
-      <thead>
-      <tr>
-        <th width="40%">E-Mail Address</th>
-        <th width="20%" style="text-align: center">PRISME<br>Administrator</th>
-        <th width="30%">KOMET Roles</th>
-        <th width="10%" style="text-align: center">Delete<br>User</th>
-      </tr>
-      </thead>
-      <tbody>
-      <% @user_list.each do |user| %>
-          <tr valign="top">
-            <td><%= h user.email %></td>
-            <% is_me = current_user.eql?(user) %>
-            <td style="text-align: center">
-              <%= check_box_tag 'admin_check_box-' + user.id.to_s, true, user.administrator, {:disabled => is_me, onclick: "toggleText(this.id, this.checked);"} %>
-                &nbsp;&nbsp;<span id="<%= 'span_admin_check_box-' + user.id.to_s%>"><%= user.administrator ? 'Yes' : 'No' %></span>
-            </td>
-            <td style="text-align: left">
-              <% Role::KOMET_ROLES.each do |role| %>
-                  <%= check_box_tag "cbx_role-#{user.id}-" + role.to_s, true, user.has_role?(role) %>&nbsp;&nbsp;<%= role.to_s %><br>
-              <% end %>
-            </td>
-            <td style="text-align: center"><%= check_box_tag 'delete_check_box-' + user.id.to_s, true, false, :disabled => is_me %></td>
-          </tr>
-      <% end %>
-      </tbody>
-    </table>
-<% end %>
+<div id="user_list_div">
+  <h1>Edit User Permissions</h1>
+  <br>
+  <hr>
+  <table class="prisme-table table-striped table-hover">
+    <thead>
+    <tr>
+      <th width="30%">E-Mail Address</th>
+      <th width="45%">Assigned Roles</th>
+      <th width="25%">Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% @user_list.each do |user| %>
+        <tr valign="top">
+          <td id="email_text_<%= user.id %>"><%= h user.email %></td>
+          <%
+            user_roles = []
+            role_text = ''
+            Roles::ALL_ROLES.each do |role|
+              user_roles << role if user.has_role?(role)
+              role_text = role_text + "#{role.to_s.split('_').map(&:capitalize).join(' ')}, " if user.has_role?(role)
+            end
+          %>
+          <td style="text-align: left"><%= raw role_text.empty? ? 'No Roles Assigned' : role_text.chop.chop %></td>
+          <td style="text-align: left">
+            <a data-toggle="modal" data-target="#editModal" class="btn btn-primary" role="button" onclick='edit_user_roles("<%=user.id%>", <%= raw JSON.parse(user_roles.to_json) %>);'>
+              <i class="fa fa-edit fa-fw" aria-hidden="true"></i>&nbsp;Edit User Roles</a>
+            <a class="btn btn-danger" role="button" onclick='delete_user("<%=user.id%>");'>
+              <i class="fa fa-trash fa-fw" aria-hidden="true"></i>&nbsp;Delete User</a>
+          </td>
+        </tr>
+    <% end %>
+    </tbody>
+  </table>
+
+  <!-- Modal -->
+  <div id="editModal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="document.forms[0].submit();">Update User Roles</button>
+        </div>
+        <div class="modal-body">
+          <%= form_tag(:controller => 'admin_user_edit', :action => :update_user_roles, remote: true) do %>
+              <input type="hidden" name="user_id" id="user_id"/>
+              <h4>User E-Mail:&nbsp;<strong><span id="user_email"></span></strong></h4>
+              <table class="prisme-table table-striped">
+                <tbody>
+                <tr>
+                  <td width="30%">
+                    <input type="checkbox" name="cbx_<%= Roles::SUPER_USER.to_s %>" id="cbx_<%= Roles::SUPER_USER.to_s %>" value="true"/>&nbsp;&nbsp;<label for="cbx_<%= Roles::SUPER_USER.to_s %>">Super
+                    User</label>
+                  </td>
+                  <td width="70%">
+                    <p>The <strong>Super User</strong> role allows full access to all features in both PRISME and KOMET.</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td width="30%">
+                    <input type="checkbox" name="cbx_<%= Roles::ADMINISTRATOR.to_s %>" id="cbx_<%= Roles::ADMINISTRATOR.to_s %>" value="true"/>&nbsp;&nbsp;<label for="cbx_<%= Roles::ADMINISTRATOR.to_s %>">Administrator</label>
+                  </td>
+                  <td width="70%">
+                    <p>The <strong>Administrator</strong> role provides the following functionality:<br>
+                    <ul>
+                      <li>Create/Modify User Roles</li>
+                      <li>Import/Export Terminology Content</li>
+                      <li>Create, Deploy and Configure KOMET</li>
+                      <li>Manage Workflow - Track and Modify the Current State in Workflow</li>
+                      <li>Monitor and Run Standardized Reports</li>
+                      <li>Review All User In-boxes</li>
+                      <li>Reassign Tasks to Other Users</li>
+                    </ul>
+                  </td>
+                </tr>
+                <tr>
+                  <td width="30%">
+                    <input type="checkbox" name="cbx_<%= Roles::READ_ONLY.to_s %>" id="cbx_<%= Roles::READ_ONLY.to_s %>" value="true"/>&nbsp;&nbsp;<label for="cbx_<%= Roles::READ_ONLY.to_s %>">Read
+                    Only</label>
+                  </td>
+                  <td width="70%">
+                    <p>The <strong>Read Only</strong> role provides the following:<br>
+                    <ul>
+                      <li>Search Terminology, Concepts, and Refsets</li>
+                      <li>Run Standardized Reports</li>
+                      <li>Track the Current State in a Workflow</li>
+                    </ul>
+                  </td>
+                </tr>
+                <tr>
+                  <td width="30%">
+                    <input type="checkbox" name="cbx_<%= Roles::EDITOR.to_s %>" id="cbx_<%= Roles::EDITOR.to_s %>" value="true"/>&nbsp;&nbsp;<label for="cbx_<%= Roles::EDITOR.to_s %>">Editor</label>
+                  </td>
+                  <td width="70%">
+                    <p>The <strong>Editor</strong> role provides additional functionality to the Read Only role including:<br>
+                    <ul>
+                      <li>Edit/Add/Retire Terminology, Concepts, and Refsets</li>
+                      <li>Send Changes to Reviewer</li>
+                      <li>Add Comments</li>
+                    </ul>
+                  </td>
+                </tr>
+                <tr>
+                  <td width="30%">
+                    <input type="checkbox" name="cbx_<%= Roles::REVIEWER.to_s %>" id="cbx_<%= Roles::REVIEWER.to_s %>" value="true"/>&nbsp;&nbsp;<label for="cbx_<%= Roles::REVIEWER.to_s %>">Reviewer</label>
+                  </td>
+                  <td width="70%">
+                    <p>The <strong>Reviewer</strong> role provides additional functionality to the Read Only role including:<br>
+                    <ul>
+                      <li>Send Changes to Approver</li>
+                      <li>Add Comments</li>
+                    </ul>
+                  </td>
+                </tr>
+                <tr>
+                  <td width="30%">
+                    <input type="checkbox" name="cbx_<%= Roles::APPROVER.to_s %>" id="cbx_<%= Roles::APPROVER.to_s %>" value="true"/>&nbsp;&nbsp;<label for="cbx_<%= Roles::APPROVER.to_s %>">Approver</label>
+                  </td>
+                  <td width="70%">
+                    <p>The <strong>Approver</strong> role provides additional functionality to the Read Only role including:<br>
+                    <ul>
+                      <li>Approve New/Modified Terminology, Concepts, and Refsets</li>
+                      <li>Reject New/Modified Terminology, Concepts, and Refsets</li>
+                      <li>Add Comments to a Rejected Task</li>
+                      <li>Update Request Status</li>
+                      <li>Publish Approved Request</li>
+                    </ul>
+                  </td>
+                </tr>
+                <tr>
+                  <td width="30%">
+                    <input type="checkbox" name="cbx_<%= Roles::FINAL_APPROVER.to_s %>" id="cbx_<%= Roles::FINAL_APPROVER.to_s %>" value="true"/>&nbsp;&nbsp;<label for="cbx_<%= Roles::FINAL_APPROVER.to_s %>">Final
+                    Approver</label>
+                  </td>
+                  <td width="70%">
+                    <p>The <strong>Final Approver</strong> role provides additional functionality to the Read Only role including:<br>
+                    <ul>
+                      <li>Reject New/Modified Terminology, Concepts, and Refsets</li>
+                      <li>Add Comments to a Rejected Task</li>
+                      <li>Update Request Status</li>
+                      <li>Give Final Approval for New/Modified terminology, Concepts, and Refsets</li>
+                    </ul>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <script>
-  <%= render '/ajax_flash.js'  %>
+  $(document).ready(function(){
+    <%= render '/ajax_flash.js'  %>
+  });
 
   function toggleText(id, checked) {
-    $('#span_'+id).text(checked ? 'Yes' : 'No');
+    $('#span_' + id).text(checked ? 'Yes' : 'No');
+  }
+
+  function edit_user_roles(edit_user_id, edit_user_current_roles) {
+    // update the modal div with the user's current roles for form submission
+    $('#user_id').val(edit_user_id);
+    $('span#user_email').text($('td#email_text_' + edit_user_id).text());
+
+    // set the user's current roles for display on the modal window
+    $.each(edit_user_current_roles, function (index, value) {
+      $("#cbx_" + value).attr('checked', true);
+      if (value === '<%= Roles::SUPER_USER %>') {
+        var current_user_id = '<%= current_user.id %>';
+        if (current_user_id === edit_user_id) {
+          $('#cbx_' + value).on('click', function (data) {
+            return false;
+          });
+        }
+      }
+    });
+    <% unless (current_user.has_role?(Roles::SUPER_USER)) %>
+    // only allow super users to change other super users
+    $('#cbx_<%= Roles::SUPER_USER %>').on('click', function (data) {
+      return false;
+    });
+    <% end %>
+  }
+
+  function delete_user(user_id) {
+    alert('fu');
+    $.ajax({
+      url: gon.routes.admin_user_edit_delete_user_path,
+      type: "GET",
+//      dataType: "json",
+      data: {user_id: user_id},
+      success: function (data) {
+        alert(data);
+        $('#user_list_div').html(data);
+      }
+    });
   }
 </script>
