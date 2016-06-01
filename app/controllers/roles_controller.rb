@@ -2,7 +2,7 @@ class RolesController < ApplicationController
 
   skip_after_action :verify_authorized
   skip_before_action :verify_authenticity_token
-  force_ssl if: :ssl_configured?
+  force_ssl if: :ssl_configured_delegator? #,port: 8443
 
 
   def get_roles
@@ -23,8 +23,13 @@ class RolesController < ApplicationController
 
   private
 
-  def ssl_configured?
+  def ssl_configured_delegator?
+    RolesController.ssl_configured?
+  end
+
+  def self.ssl_configured?
     false
+    #!Rails.env.development?
   end
 
 end

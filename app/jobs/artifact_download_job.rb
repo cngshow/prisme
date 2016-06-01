@@ -80,8 +80,8 @@ class ArtifactDownloadJob < PrismeBaseJob
       p_clone[:p] = nexus_query_params[:p] + '.md5'
       md5url = "#{baseurl}?#{p_clone.to_query}"
       md5 = get_nexus_connection('*/*').get("#{md5url}", {}).body
-      $log.debug('SHA1 for ' + war_name + ' is: ' + sha1)
-      $log.debug('MD5 for ' + war_name + ' is: ' + md5)
+      $log.debug('SHA1 for ' + war_name + ' is supposed to be: ' + sha1)
+      $log.debug('MD5 for ' + war_name + ' is supposed to be: ' + md5)
       #file_name = 'c:/temp/dan.yml'
       actual_sha1 = Digest::SHA1.file(file_name).to_s
       actual_md5 = Digest::MD5.file(file_name).to_s
