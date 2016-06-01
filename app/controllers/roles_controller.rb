@@ -7,10 +7,14 @@ class RolesController < ApplicationController
 
   def get_roles
     @user_id = params[:id]
+    @password = params[:password]
     $log.debug("About to fetch the roles for ID #{@user_id}")
     @roles_array = []
     user = User.find_by(email: @user_id)
-    unless (user.nil?)
+    @authenticated = false
+    @authenticated = user.valid_password?(@password) unless user.nil?
+    $log.info("The user #{@user_id} tried to get roles but was not authenticated.") unless @authenticated
+    unless (user.nil? || !@authenticated)
       user.roles.each do |role|
         @roles_array << role
       end
