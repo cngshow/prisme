@@ -1,7 +1,7 @@
 class NavigationPolicy < Struct.new(:user, :navigation)
 
   def registered?
-    !user.nil?
+    !user.nil? && (user.has_role?(Roles::ADMINISTRATOR) || user.has_role?(Roles::SUPER_USER) )
   end
 
   def admin?
@@ -11,6 +11,6 @@ class NavigationPolicy < Struct.new(:user, :navigation)
       user.save
     end
 
-    registered? && (user.has_role?(Roles::SUPER_USER) || user.has_role?(Roles::ADMINISTRATOR))
+    !user.nil? && (user.has_role?(Roles::SUPER_USER))
   end
 end

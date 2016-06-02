@@ -13,7 +13,7 @@ class AdminUserEditController < ApplicationController
     Roles::ALL_ROLES.each do |role|
       params["cbx_#{role.to_s}"].nil? ? user.remove_role(role) : user.add_role(role)
     end
-    ajax_flash('Successfully updated the user roles!', {type: 'success'})
+    ajax_flash('Successfully updated the user roles!  These changes may take up to five minutes to propagate through the system.', {type: 'success'})
     redirect_to list_users_path
   end
 

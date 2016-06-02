@@ -28,7 +28,7 @@
               <td<%= raw(row[:state].eql?('running') ? " data-href='#{row[:link]}'" : '') %>><%= row[:session_count] %></td>
               <td<%= raw(row[:state].eql?('running') ? " data-href='#{row[:link]}'" : '') %>><%= row[:version] %></td>
               <td<%= raw(policy(:navigation).admin? ? '' : ' style="color: red; font-weight: bold"') %>>
-                <%= (policy(:navigation).admin?) ? action_button_bar(row, deployment[:service_id]) : 'Requires Administrator Privileges' %>
+                <%= (policy(:navigation).admin?) ? action_button_bar(row, deployment[:service_id]) : 'Requires Super User Privileges' %>
               </td>
             </tr>
         <% end %>
