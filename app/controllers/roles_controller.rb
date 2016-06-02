@@ -32,7 +32,12 @@ class RolesController < ApplicationController
   end
 
   def self.ssl_configured?
+    #When changing the impl of this method below, rethink these lines in app_deployer_controller.rb
+    #war_cookie_params[:prisme_roles_url] = URI(roles_get_roles_url).to_https if RolesController.ssl_configured?
+    #war_cookie_params[:prisme_roles_url] = roles_get_roles_url unless RolesController.ssl_configured?
     false
+    #true
+    #java.lang.getSystemProperties.get("catilina.ssl_port")
     #!Rails.env.development?
   end
 
