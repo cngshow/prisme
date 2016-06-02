@@ -17,7 +17,7 @@
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administration <span class="caret"></span></a>
             <ul class="dropdown-menu">
-              <li><a href="<%= admin_user_edit_list_path %>" onclick="polling.checkPolling('admin_user_edit');">Edit User Permissions</a></li>
+              <li><a href="<%= list_users_path %>" onclick="polling.checkPolling('admin_user_edit');">Edit User Permissions</a></li>
               <li role="separator" class="divider"></li>
               <li><a href="<%= services_path %>" onclick="polling.checkPolling('deployer');">Service Provisioning</a></li>
             </ul>
@@ -31,5 +31,8 @@
         <% end %>
       </li>
     </ul>
+    <div style="float:right; padding-top: 15px; padding-right: 15px">
+      <%= raw (current_user.nil? ? '' : "<Strong>Current User:</strong>&nbsp;#{current_user.email}") %>
+    </div>
   </div>
 </nav>

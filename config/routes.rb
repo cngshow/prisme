@@ -14,9 +14,9 @@ Rails.application.routes.draw do
   # match '/users/update' => 'admin_user_edit#update', :as => :admin_user_update
   # match '/users/:id/list' => 'admin_user_edit#list', :as => :admin_user_list
 
-  get 'admin_user_edit/list'
-  get 'admin_user_edit/delete_user'
+  get 'list_users' => 'admin_user_edit#list'
   post 'admin_user_edit/update_user_roles'
+  match 'delete_user/:id' => 'admin_user_edit#delete_user', as: 'delete_user', via: [:get]
 
   match 'services/render_props' => 'services#render_props', :as => :services_render_props, via: [:get]
   resources :services

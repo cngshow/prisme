@@ -1,51 +1,6 @@
 class AdminUserEditController < ApplicationController
   before_action :auth_admin
 
-  def update
-    begin
-      users = User.all
-      failed_deletes = []
-      failed_updates = []
-      users.each do |user|
-        id = user.id
-        delete_cbx = !params["delete_check_box-#{id}"].nil?
-        admin_cbx = user.eql?(current_user) || !params["admin_check_box-#{id}"].nil?
-
-        if (delete_cbx)
-          user.destroy
-          failed_deletes << user.email unless user.destroyed?
-        else
-          user.administrator = admin_cbx
-          updated = user.save
-
-          # iterate all of the roles and check the params
-          Role::KOMET_ROLES.each do |role|
-            params["cbx_role-#{id}-#{role.to_s}"].nil? ? user.remove_role(role) : user.add_role(role)
-          end
-          failed_updates << user.email unless updated
-        end
-      end
-
-      if (failed_deletes.empty? and failed_updates.empty?)
-        # call TomcatConcern to perform the specified action
-        msg = 'Successfully updated the user listing!'
-        ajax_flash(msg, {type: 'success'})
-      else
-        messages = {}
-        messages['Deletes failed!'] = failed_deletes unless failed_deletes.empty?
-        messages['Update failed!'] = failed_updates unless failed_updates.empty?
-        msg = render_to_string(:partial => 'application/bulleted_flash_single_header', :locals => {:messages => messages})
-        ajax_flash(msg, {type: 'alert'})
-      end
-    rescue Exception => e
-      messages = {}
-      messages['Update failed!'] = e.to_s #or optionally [e.to_s]
-      msg = render_to_string(:partial => 'application/bulleted_flash_single_header', :locals => {:messages => messages})
-      ajax_flash(msg, {type: 'alert'})
-    end
-    redirect_to admin_user_edit_list_path
-  end
-
   def list
     # todo sort the listing and add filtering
     @user_list = User.all
@@ -58,17 +13,31 @@ class AdminUserEditController < ApplicationController
     Roles::ALL_ROLES.each do |role|
       params["cbx_#{role.to_s}"].nil? ? user.remove_role(role) : user.add_role(role)
     end
-    redirect_to admin_user_edit_list_path
+    ajax_flash('Successfully updated the user roles!', {type: 'success'})
+    redirect_to list_users_path
   end
 
   def delete_user
-    user_id = params[:user_id]
+    ret = {remove_row: true, flash_options: {message: 'The user was deleted previously!'}, flash_settings: {type: 'success'}}
+    user_id = params[:id]
     u = User.find(user_id)
 
-    # do not allow user to delete the last user or themselves
-    if User.count == 1
-      ajax_flash('You cannot delete the last user!', {type: 'success'})
+    # if user is not looked up then another user has deleted them already
+    if (u)
+      ret = {remove_row: true, flash_options: {message: "User with email #{u.email} has been successfully deleted!"}, flash_settings: {type: 'success'}}
+      # do not allow user to delete the last user or themselves
+      if User.count == 1
+        ret = {remove_row: false, flash_options: {message: 'You cannot delete the last user!'}, flash_settings: {type: 'warning'}}
+      elsif (current_user.id == user_id.to_i)
+        # the user cannot delete themselves
+        ret = {remove_row: false, flash_options: {message: 'You cannot delete yourself!'}, flash_settings: {type: 'warning'}}
+      end
+      # delete the user if we are removing the row
+      if (ret[:remove_row])
+        u.destroy
+      end
     end
-    redirect_to admin_user_edit_list_path
+    # return the results to the ajax call as json
+    render json: ret
   end
 end
