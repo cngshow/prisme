@@ -124,6 +124,12 @@ class PrismeBaseJob < ActiveJob::Base
     {parent_job_id: job_id, root_job_id: lookup.root_job_id}
   end
 
+  def self.save_user(job_id:, user:)
+    prisme_job = PrismeJob.find_by(job_id: self.job_id)
+    prisme_job.user = user
+    save!
+  end
+
   private
   def update_parent_leaf_and_save(active_record)
     PrismeJob.transaction do
