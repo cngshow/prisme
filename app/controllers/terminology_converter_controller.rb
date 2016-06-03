@@ -193,9 +193,9 @@ class TerminologyConverterController < ApplicationController
     data.each do |jsb|
       row_data = JSON.parse(jsb.to_json)
       row_data['started_at'] = DateTime.parse(row_data['started_at']).to_time.to_i # todo nil check!!!
+      row_data['user'] = JenkinsStartBuild.prisme_user(jsb)
       leaf_data = {}
       has_orphan = jsb.descendants.orphan(true).first
-
       leaf = jsb.descendants.completed(true).orphan(false).leaves.first
       leaf_data['jenkins_check_job_id'] = leaf ? leaf.job_id : (has_orphan ? JenkinsCheckBuild::BuildResult::SERVER_ERROR : JenkinsCheckBuild::BuildResult::UNKNOWN)
       leaf_data['jenkins_job_deleted'] = leaf ? JenkinsCheckBuild.jenkins_job_deleted(leaf) : (has_orphan ? JenkinsCheckBuild::BuildResult::SERVER_ERROR : JenkinsCheckBuild::BuildResult::IN_PROCESS)
