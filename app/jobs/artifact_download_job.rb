@@ -128,7 +128,7 @@ class ArtifactDownloadJob < PrismeBaseJob
       end
       $log.debug("Kicking off next job (DeployWar) #{file_name} #{context}")
       #activeRecord instantiate new job
-      DeployWarJob.perform_later(file_name, context, tomcat_ar) #, pass in parent id and my ID
+      DeployWarJob.perform_later(file_name, context, tomcat_ar, track_child_job)
     ensure
       save_result result
     end

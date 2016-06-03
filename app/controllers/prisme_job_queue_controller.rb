@@ -13,6 +13,8 @@ class PrismeJobQueueController < ApplicationController
     json.each do |j|
       if (!j['started_at'].nil? && !j['completed_at'].nil?)
         j[:elapsed_time] = ApplicationHelper.convert_seconds_to_time(Time.parse(j['completed_at']) - Time.parse(j['started_at']))
+      else
+        j[:elapsed_time] = 'N/A'
       end
     end
     render json: json

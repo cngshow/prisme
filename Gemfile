@@ -59,11 +59,4 @@ gem 'rolify'
 gem 'jdbc-h2', '1.4.181'
 gem 'will_paginate'
 gem 'bootstrap-growl-rails'
-
-group :development do
-  gem 'jdbc-sqlite3'
-  gem 'activerecord-jdbcsqlite3-adapter'
-end
-group :test, :production do
-  gem 'activerecord-jdbch2-adapter'
-end
+gem 'activerecord-jdbch2-adapter'

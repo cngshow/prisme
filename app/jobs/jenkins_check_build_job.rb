@@ -44,7 +44,7 @@ class JenkinsCheckBuild < PrismeBaseJob
     result_hash[:deleted] = Deleted::NO
     begin
       if job_creation_exception_thrown
-        $log.warn("job_creation_exception_thrown")
+        $log.warn('job_creation_exception_thrown')
         result_hash[:deleted] = Deleted::UNKNOWN
         result_hash[:build] = BuildResult::FAILURE
       else
@@ -112,7 +112,7 @@ class JenkinsCheckBuild < PrismeBaseJob
         raise JenkinsClient::JenkinsJavaError, ex
       end
     ensure
-      save_result result, result_hash
+      save_result(result, result_hash)
     end
   end
 
