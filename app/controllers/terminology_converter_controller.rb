@@ -146,7 +146,8 @@ class TerminologyConverterController < ApplicationController
     # you MUST pass binding in order to have the erb process local variables
     @job_xml = ERB.new(File.open(j_xml, 'r') { |file| file.read }).result(binding)
     t_s = Time.now.strftime('%Y_%m_%dT%H_%M_%S')
-    job = JenkinsStartBuild.new(self).perform_later("#{JenkinsStartBuild::PRISME_NAME_PREFIX}#{s_artifact_id}_#{t_s}", @job_xml, url, user, password, current_user)
+    job = JenkinsStartBuild.perform_later("#{JenkinsStartBuild::PRISME_NAME_PREFIX}#{s_artifact_id}_#{t_s}", @job_xml, url, user, password)
+    PrismeBaseJob.save_user(job_id: job.job_id, user: current_user.email)
     redirect_to action: 'index'
   end
 
@@ -192,7 +193,6 @@ class TerminologyConverterController < ApplicationController
     data.each do |jsb|
       row_data = JSON.parse(jsb.to_json)
       row_data['started_at'] = DateTime.parse(row_data['started_at']).to_time.to_i # todo nil check!!!
-      row_data['user'] = JenkinsStartBuild.prisme_user(jsb)
       leaf_data = {}
       has_orphan = jsb.descendants.orphan(true).first
       leaf = jsb.descendants.completed(true).orphan(false).leaves.first
