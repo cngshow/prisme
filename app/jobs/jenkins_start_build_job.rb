@@ -13,14 +13,17 @@ class JenkinsStartBuild < PrismeBaseJob
   def perform(*args)
     name = args.shift
     xml = args.shift
-    url = args.shift
-    user = args.shift
-    password = args.shift
-    jenkins_config = {url: url, user: user, password: password}
-    $log.debug("About to start build #{name} against build server #{url}!")
+    jenkins_url = args.shift
+    jenkins_user = args.shift
+    jenkins_password = args.shift
+    prisme_user = args.shift
+    result_hash = {}
+    result_hash[:prisme_user] = prisme_user.email
+    jenkins_config = {url: jenkins_url, user: jenkins_user, password: jenkins_password}
+    $log.debug("About to start build #{name} against build server #{jenkins_url}!")
     result = ""
     begin
-      jenkins = JenkinsServer.new(java.net.URI.new(url), user, password)
+      jenkins = JenkinsServer.new(java.net.URI.new(jenkins_url), jenkins_user, jenkins_password)
       result << "Jenkins server created."
       jenkins.createJob(name, xml, false)
       job = jenkins.getJob(name.strip)
@@ -37,8 +40,12 @@ class JenkinsStartBuild < PrismeBaseJob
       JenkinsCheckBuild.perform_later(jenkins_config, ex.to_s, 1,true,track_child_job)
       raise JenkinsClient::JenkinsJavaError, ex
     ensure
-      save_result result
+      save_result result, result_hash
     end
+  end
+
+  def self.prisme_user(ar)
+    result_hash(ar)[:prisme_user.to_s]
   end
 
 end
