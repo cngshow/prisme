@@ -1,53 +1,107 @@
-<h1>PRISME - Job Queue</h1>
-<button id="btn-update">Update List -- remove me!</button><br><br>
-
-<div id="queue_list_div" style="height: 100%;" class="ag-fresh"></div>
+<h1>PRISME Job Queue</h1>
+<button id="btn-update" class="btn btn-primary btn-lg">Refresh List</button>
+<br>
+<hr>
+<table id="data-table" class="prisme-table table-striped table-hover">
+  <thead>
+  <tr>
+    <th>Job Name</th>
+    <th>Status</th>
+    <th colspan="2" width="25%">Job Execution Times</th>
+    <th>Elapsed Time</th>
+    <th>User</th>
+    <th>Last Error</th>
+    <th>Result</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td colspan="8" style="text-align:center">There are no items to list...</td>
+  </tr>
+  </tbody>
+</table>
+<br/>
 
 <script>
-  var columnDefs = [
-    {headerName: "Job ID", field: "job_id", width: 150},
-    {headerName: "Job Name", field: "job_name", width: 150},
-    {headerName: "Status", field: "status", width: 60},
-    {headerName: "Scheduled At", field: "scheduled_at", width: 90},
-    {headerName: "Enqueued At", field: "enqueued_at", width: 90},
-    {headerName: "Started At", field: "started_at", width: 90},
-    {headerName: "Completed At", field: "completed_at", width: 90},
-    {headerName: "Elapsed Time", field: "elapsed_time", width: 90},
-    {headerName: "User", field: "user", width: 110},
-    {headerName: "Last Error", field: "last_error", width: 100},
-    {headerName: "Result", field: "result", width: 100}
-  ];
+  $(document).ready(function (e) {
+    var fields = ['job_name', 'status', 'execution_times', 'elapsed_time', 'user', 'last_error', 'result'];
 
-  var gridOptions = {
-    columnDefs: columnDefs,
-    rowData: null,
-    rowModelType: 'pagination',
-    enableColResize: true,
-    enableSorting: true,
-    allOfTheData: null,
-  };
+    function loadTable(tableId, fields, data) {
+      $('#' + tableId + ' tbody').empty();
 
-  $('#btn-update').click(function (e) {
-    $.ajax({
-      url: gon.routes.prisme_job_queue_reload_job_queue_list_path,
-      type: 'GET',
-      data: {add_test_job: true},
-      dataType: "json",
-      success: function (data) {
-       // gridOptions.api.setRowData(data);
-        myDataSource.allOfTheData = data;
-        gridOptions.api.setDatasource(myDataSource);
-      }
-    })
-  });
+      $.each(data, function (index, item) {
+        // create the row adding a data-job_id attribute
+        var row = $('<tr>').data('job_id', item['job_id']);
 
-  function poll() {
-    console.log('calling poll');
-    //load data via ajax
-    $.getJSON(gon.routes.prisme_job_queue_reload_job_queue_list_path, {}, function (data) {
-     // gridOptions.api.setRowData(data);
-      myDataSource.allOfTheData = data;
-      gridOptions.api.setDatasource(myDataSource);
+        $.each(fields, function (index, field) {
+          if (field === 'status') {
+            row.append($('<td>').text(gon.job_status_constants[item[field + '']]));
+          } else if (field === 'execution_times') {
+            //'scheduled_at', 'enqueued_at', 'started_at', 'completed_at',
+            row.append($('<td>').css('text-align','right').html("Scheduled At:<br>Enqueued At:<br>Started At:<br>Completed At:"));
+            // times formatted with  <br>s
+            var times = moment(item['scheduled_at']).format('YYYY-MM-DD [at] HH:mm:ss') + '<br>';
+
+            if (item['enqueued_at'] !== '') {
+              times += moment(item['enqueued_at']).format('YYYY-MM-DD [at] HH:mm:ss') + '<br>';
+            } else {
+              times += 'Not In Queue<br>'
+            }
+
+            if (item['started_at'] !== '') {
+              times += moment(item['started_at']).format('YYYY-MM-DD [at] HH:mm:ss') + '<br>';
+            } else {
+              times += 'Not Yet Started<br>'
+            }
+
+            if (item['completed_at'] !== '') {
+              times += moment(item['completed_at']).format('YYYY-MM-DD [at] HH:mm:ss') + '<br>';
+            } else {
+              times += 'Not Yet Completed<br>'
+            }
+            row.append($('<td>').html(times));
+          }
+          else {
+            row.append($('<td>').text(item[field + '']));
+          }
+        });
+        $('#' + tableId + ' tbody').append(row);
+      });
+    }
+
+    $('#btn-update').click(function (e) {
+      reload();
     });
-  }
+
+    function reload() {
+      $.ajax({
+        url: gon.routes.prisme_job_queue_reload_job_queue_list_path,
+        type: "GET",
+        dataType: "json",
+        success: function (data) {
+          loadTable('data-table', fields, data);
+        }
+      })
+    }
+    /*
+
+     function poll() {
+     $.ajax({
+     url: '/prisme_job_queue/reload_job_queue_list',
+     type: "GET",
+     success: function (data) {
+     loadTable('data-table', fields, data);
+     },
+     dataType: "json",
+     complete: setTimeout(function () {
+     poll()
+     }, 3000),
+     timeout: 2000
+     })
+     }
+
+     poll();
+     */
+    reload();
+  });
 </script>

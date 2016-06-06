@@ -54,8 +54,8 @@
             <br>
             <br>
             <div id="term_source_details_div"></div>
-            <div class="modal-footer">
-              <%= submit_tag 'Submit', data: {disable_with: 'Please wait...'}, class: 'btn btn-primary' %>
+            <div id="term_source_actions_div" class="modal-footer">
+              <%= submit_tag 'Submit', data: {disable_with: 'Processing Request...'}, class: 'btn btn-primary' %>
               <%= button_tag 'Cancel', data: {dismiss: 'modal'}, class: 'btn btn-primary' %>
             </div>
         <% end %>
@@ -67,7 +67,7 @@
 <script>
   function term_source_change(val) {
     if (val.length === 0) {
-      $('#term_source_details_div').html('');
+      reset_form(true);
       return false;
     }
 
@@ -77,13 +77,17 @@
       data: {term_source: val},
       success: function (data) {
         $('#term_source_details_div').html(data);
+        $('#term_source_actions_div').fadeIn(800);
       }
     });
   }
 
-  function reset_form() {
-    $('#terminology_source').find('option[value=""]').prop('selected', 'selected').change();
+  function reset_form(term_source_change) {
+    if (term_source_change !== true) {
+      $('#terminology_source').find('option[value=""]').prop('selected', 'selected').change();
+    }
     $('#term_source_details_div').html('');
+    $('#term_source_actions_div').hide();
   }
 
   function build_status_renderer(params) {
