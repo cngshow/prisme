@@ -117,3 +117,92 @@ warble
 You will have a war file named rails_prisme.war.  Deploy it to GlassFish!!
 
 http://localhost:4848/common/index.jsf
+
+<hr>
+<a href="#roles">Roles</a>
+<h1>Fetching roles from PRISME</h1>
+
+Prisme can easily display the roles for all users registered with the system.
+
+For example,  hitting the following url:
+```
+http://localhost:3000/roles/get_roles?id=cshupp@gmail.com&password=cshupp@gmail.com
+```
+
+Will show the roles in html format.  We note that only two cgi parameters are required (id, and password).
+
+To get them in JSON format we can do the following (note the .json):
+```
+http://localhost:3000/roles/get_roles.json?id=cshupp@gmail.com&password=cshupp@gmail.com
+```
+
+Or (note the additional format cgi parameter):
+```
+http://localhost:3000/roles/get_roles?format=json&id=cshupp@gmail.com&password=cshupp@gmail.com
+```
+
+Modifying the request header to 'application/json' will also work.
+
+Below is a sample java application which shows how to parse the json.  The results might look like:
+
+http://localhost:3000/roles/get_roles.json?id=cshupp%40gmail.com&password=cshupp%40gmail.com<br>
+Role 0 is super_user<br>
+Role 1 is read_only<br>
+Role 2 is editor<br>
+Role 3 is reviewer<br>
+
+```
+package examples.prisme.roles.json;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+public class RoleFetchSample {
+	
+	private static final String JSON_ROLES = "http://localhost:3000/roles/get_roles.json";
+	
+	public String fetchJSON(String user, String password) throws Exception {
+		String userEncoded = URLEncoder.encode(user, "UTF-8");
+		String passwordEncoded = URLEncoder.encode(password, "UTF-8");
+		String urlString = JSON_ROLES + "?id=" + userEncoded + "&password=" + passwordEncoded;
+		System.out.println(urlString);
+		URL prismeRolesUrl = new URL(urlString);
+		HttpURLConnection urlConnection = null;
+		StringBuilder result = new StringBuilder();
+		try {
+			urlConnection = (HttpURLConnection) prismeRolesUrl.openConnection();
+			BufferedReader r = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+			String line = null;
+			while ((line = r.readLine()) != null) {
+				result.append(line);
+			}
+		} finally {
+			urlConnection.disconnect();
+		}
+		return result.toString();
+	}
+	
+	public void parseRoleJSON(String jsonString) throws JSONException {
+        JSONArray rolesArray = new JSONArray(jsonString);
+        int length = rolesArray.length();
+        for (int i = 0; i < length; i++) {
+        	JSONObject obj = rolesArray.getJSONObject(i);
+        	String role = obj.getString("name");
+        	System.out.println("Role " + i + " is " + role);
+        }
+	}
+	
+	public static void main(String[] args) throws Exception{
+		RoleFetchSample r = new RoleFetchSample();
+		r.parseRoleJSON(r.fetchJSON("cshupp@gmail.com", "cshupp@gmail.com"));
+	}
+
+}
+
+```
