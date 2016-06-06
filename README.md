@@ -119,6 +119,7 @@ You will have a war file named rails_prisme.war.  Deploy it to GlassFish!!
 http://localhost:4848/common/index.jsf
 
 <hr>
+<a href="#anchor">Roles</a>
 <h1>Fetching roles from PRISME</h1>
 
 Prisme can easily display the roles for all users registered with the system.
