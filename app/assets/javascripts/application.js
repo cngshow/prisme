@@ -15,10 +15,11 @@
 //= require jquery-ui
 //= require bootstrap
 //= require turbolinks
-//= require ag-grid/ag-grid
+// require ag-grid/ag-grid
 // require jquery.smartWizard/jquery.smartWizard
 //= require jquery.steps-1.1.0/jquery.steps
 //= require jquery-validation/jquery.validate.min
+//= require moment/moment
 // this is for ajax_flash notifications
 //= require bootstrap-notify
-// = require_tree .
+//= require_tree .
