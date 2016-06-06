@@ -145,11 +145,11 @@ Modifying the request header to 'application/json' will also work.
 
 Below is a sample java application which shows how to parse the json.  Te results might look like:
 
-http://localhost:3000/roles/get_roles.json?id=cshupp%40gmail.com&password=cshupp%40gmail.com
-Role 0 is super_user
-Role 1 is read_only
-Role 2 is editor
-Role 3 is reviewer
+http://localhost:3000/roles/get_roles.json?id=cshupp%40gmail.com&password=cshupp%40gmail.com<br>
+Role 0 is super_user<br>
+Role 1 is read_only<br>
+Role 2 is editor<br>
+Role 3 is reviewer<br>
 
 ```
 package examples.prisme.roles.json;
