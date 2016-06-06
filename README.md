@@ -143,7 +143,7 @@ http://localhost:3000/roles/get_roles?format=json&id=cshupp@gmail.com&password=c
 
 Modifying the request header to 'application/json' will also work.
 
-Below is a sample java application which shows how to parse the json.  Te results might look like:
+Below is a sample java application which shows how to parse the json.  The results might look like:
 
 http://localhost:3000/roles/get_roles.json?id=cshupp%40gmail.com&password=cshupp%40gmail.com<br>
 Role 0 is super_user<br>
