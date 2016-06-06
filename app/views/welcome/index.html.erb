@@ -33,8 +33,11 @@
 </div>
 
 <script>
-  // setup the grid after the page has finished loading
   $(document).ready(function () {
     $("#tabs").tabs();
+    <% if session[:select_tabpage] %>
+      $("#tabs").tabs("option", "active", <%= session[:select_tabpage] %>);
+      <% session.delete(:select_tabpage) %>
+    <% end %>
   });
 </script>
