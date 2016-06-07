@@ -75,7 +75,8 @@
               </tr>
               <tr>
                 <td width="30%">
-                  <%= role_checkbox(Roles::READ_ONLY) %>
+                  <%= role_checkbox(Roles::READ_ONLY) %><br>
+                  * All users have Read Only access. This cannot be removed.
                 </td>
                 <td width="70%">
                   <p>The <strong>Read Only</strong> role provides the following:<br>
@@ -238,6 +239,9 @@
     });
     $('#cbx_<%= Roles::ADMINISTRATOR %>').on('click', function () {
       return check_admin_click(this);
+    });
+    $('#cbx_<%= Roles::READ_ONLY%>').on('click', function () {
+      return false;
     });
   });
 </script>
