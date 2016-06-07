@@ -70,6 +70,31 @@ module IsaacConverter
     JIsaacGit::ContentConverterCreator.getConverterForSourceArtifact(artifactId)
   end
 
+#  [#<struct type="LOINC", artifact_dependency="", ibdf_dependency="">, #<struct type="LOINC_TECH_PREVIEW", artifact_dependency="loinc-src-data", ibdf_dependency="rf2-ibdf-sct">, #<struct type="SCT", artifact_dependency="", ibd
+ #a.length     f_dependency="">, #<struct type="SCT_EXTENSION", artifact_dependency="", ibdf_dependency="rf2-ibdf-sct">, #<struct type="VHAT", artifact_dependency="", ibdf_dependency="">]
+  def self.get_supported_conversions
+    converterType = Struct.new(:type,:artifact_id,:artifact_dependency, :ibdf_dependency)
+    r_val = []
+    JIsaacGit::ContentConverterCreator.getSupportedConversions.map do |supportedConverterType|
+      #CHDR, if CHDR was real, may motivate the replacement of the call to 'first' to be replaced with the actual arrays
+      r_val << converterType.new(supportedConverterType.to_s,supportedConverterType.getArtifactId.to_s, supportedConverterType.getArtifactDependencies.first.to_s, supportedConverterType.getIBDFDependencies.first.to_s)
+      #When chdr comes use this.
+      #r_val << converterType.new(supportedConverterType.to_s, supportedConverterType.getArtifactDependencies.map(&:to_s), supportedConverterType.getIBDFDependencies.map(&:to_s))
+    end
+    r_val
+  end
+
+  def self.get_supported_conversion(artifact_id:)
+    get_supported_conversions.each do |converterType|
+      if(artifact_id.eql? converterType.artifact_id)
+        return converterType
+      elsif (artifact_id =~ /^rf2-src-data-.*-extension$/ && converterType.artifact_id.eql?("rf2-src-data-*-extension"))
+        return converterType
+      end
+    end
+    nil
+  end
+
 end
 
 module IsaacDatabase
