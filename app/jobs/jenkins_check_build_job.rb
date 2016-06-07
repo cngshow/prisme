@@ -81,7 +81,7 @@ class JenkinsCheckBuild < PrismeBaseJob
               result_hash[:build] = build_result.to_s
               begin
                 result_hash[:deleted] = Deleted::UNKNOWN
-                if (boolean($PROPS['PRISME.delete_jenkins_jobs']))
+                if (boolean($PROPS['JENKINS.delete_jenkins_jobs']))
                   jenkins.deleteJob(name.strip, false)
                   result_hash[:deleted] = Deleted::YES
                   result << " Jenkins job #{name} was deleted from Jenkins.\n"
