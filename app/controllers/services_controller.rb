@@ -105,6 +105,9 @@ class ServicesController < ApplicationController
             if (prop[PrismeService::TYPE_TYPE].eql?(PrismeService::TYPE_PASSWORD))
               value = CipherSupport.instance.encrypt(unencrypted_string: value)
             elsif prop[PrismeService::TYPE_TYPE].eql?(PrismeService::TYPE_URL)
+              # ensure that there are no spaces
+              value = value.split.first
+              #remove all trailing slashes
               while (value[-1].eql?('/')) do
                 value = value.chop
               end
