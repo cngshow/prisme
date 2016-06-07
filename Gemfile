@@ -40,7 +40,6 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'bootstrap-sass', '~> 3.3.6'
 gem 'font-awesome-sass', '~> 4.6.2'
 gem 'trinidad', require: nil
-gem 'yard'
 gem 'jquery-ui-rails'
 gem 'logging', '~> 2.0'
 gem 'gon'
@@ -60,3 +59,7 @@ gem 'jdbc-h2', '1.4.181'
 gem 'will_paginate'
 gem 'bootstrap-growl-rails'
 gem 'activerecord-jdbch2-adapter'
+
+group :development do
+  gem 'yard'
+end
