@@ -92,7 +92,7 @@ class TerminologyConverterController < ApplicationController
       src_artifact_id = src_hash[:a]
       src_version = src_hash[:v]
       src_classifier = src_hash[:c]
-      addl_src = JIsaacGit::get_sdo({group_id: src_group_id, artifact: src_artifact_id, version: src_version, classifier: src_classifier})
+      addl_src = JIsaacGit::sdo_source_content_to_j_a([src_group_id,src_artifact_id,src_version,src_classifier])
     end
 
     git_failure = nil
