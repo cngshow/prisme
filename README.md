@@ -136,7 +136,7 @@ To get them in JSON format we can do the following (note the .json):
 http://localhost:3000/roles/get_roles.json?id=cshupp@gmail.com&password=cshupp@gmail.com
 ```
 
-Or (note the additional format cgi parameter):
+Or (note the additional 'format' cgi parameter):
 ```
 http://localhost:3000/roles/get_roles?format=json&id=cshupp@gmail.com&password=cshupp@gmail.com
 ```
