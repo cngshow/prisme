@@ -31,7 +31,7 @@ module JIsaacGit
     build(group_id: group_id, artifact: artifact, version: version, classifier: classifier, clazz: SDOSourceContent)
   end
 
-  # JIsaacGit::get_sdo(group_id:converted_term, artifact: c_artifact, version: c_version, classifier: c_classifier)
+  # JIsaacGit::get_ibdf(group_id:converted_term, artifact: c_artifact, version: c_version, classifier: c_classifier)
   def self.get_ibdf
     build(group_id: group_id, artifact: artifact, version: version, classifier: classifier, clazz: IBDFFile)
   end
@@ -47,7 +47,7 @@ module JIsaacGit
     a = []
     return [].to_java(clazz) if args.length == 0
     args.each do |e|
-      raise "Invalid argument length" unless ((e.length == 3) || (e.length == 4))
+      raise 'Invalid argument length' unless ((e.length == 3) || (e.length == 4))
       type = clazz.new(e[0],e[1],e[2]) if e.length == 3
       type = clazz.new(e[0],e[1],e[2],e[3]) if e.length == 4
       a << type

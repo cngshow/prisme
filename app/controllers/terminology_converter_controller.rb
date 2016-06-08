@@ -46,41 +46,53 @@ class TerminologyConverterController < ApplicationController
   end
 
   def request_build
-    term_source = params[:terminology_source]
-    converter_version = params[:converter_version]
-    converted_terminology = params[:converted_terminology]
-
     # strip out the individual arguments for term source
+    term_source = params[:terminology_source]
     s_hash = TermConvertOption.arg_as_json(term_source)
     s_group_id = s_hash[:g]
     s_artifact_id = s_hash[:a]
     s_version = s_hash[:v]
 
     # strip out the version argument for converter_version
+    converter_version = params[:converter_version]
     cv_hash = TermConvertOption.arg_as_json(converter_version)
     converter_version = cv_hash[:v]
 
     # initialize the SDOSourceContent based on the selected source
     sdo_source_content = JIsaacGit::get_sdo(group_id: s_group_id, artifact: s_artifact_id, version: s_version)
 
-    # todo what source is used determines if we give it an empty array - need conditional on this!
-    additional_source_dependencies = JIsaacGit::sdo_source_content_to_j_a()
-
+    # pull out the git authentication information
     git_props = Service.get_git_props
     git_url = git_props[PrismeService::GIT_REPOSITORY_URL]
     git_user = git_props[PrismeService::GIT_USER]
     git_pass = git_props[PrismeService::GIT_PWD]
 
-    ibdf_a = JIsaacGit::ibdf_file_to_j_a()
+    # set the default (empty array) ibdf file dependency and populate it if we have a param passed
+    addl_ibdf_dependency = params[:addl_ibdf_dependency]
+    addl_ibdf = JIsaacGit::ibdf_file_to_j_a()
 
-    if converted_terminology
-      # strip out the individual arguments for converted_terminology
-      c_hash = TermConvertOption.arg_as_json(converted_terminology)
-      c_group_id = c_hash[:g]
-      c_artifact_id = c_hash[:a]
-      c_version = c_hash[:v]
-      c_classifier = c_hash[:c]
-      ibdf_a = JIsaacGit::create_ibdf_sdo_java_array({group_id: c_group_id, artifact: c_artifact_id, version: c_version, classifier: c_classifier}, 'IBDFFile')
+    if addl_ibdf_dependency
+      # strip out the individual arguments for addl_ibdf_dependency
+      ibdf_hash = TermConvertOption.arg_as_json(addl_ibdf_dependency)
+      ibdf_group_id = ibdf_hash[:g]
+      ibdf_artifact_id = ibdf_hash[:a]
+      ibdf_version = ibdf_hash[:v]
+      ibdf_classifier = ibdf_hash[:c]
+      addl_ibdf = JIsaacGit::create_ibdf_sdo_java_array({group_id: ibdf_group_id, artifact: ibdf_artifact_id, version: ibdf_version, classifier: ibdf_classifier}, 'IBDFFile')
+    end
+
+    # set the default (empty array) source file dependency and populate it if we have a param passed todo
+    addl_source_dependency = params[:addl_source_dependency]
+    addl_src = JIsaacGit::sdo_source_content_to_j_a()
+
+    if addl_source_dependency
+      # strip out the individual arguments for addl_source_dependency
+      src_hash = TermConvertOption.arg_as_json(addl_source_dependency)
+      src_group_id = src_hash[:g]
+      src_artifact_id = src_hash[:a]
+      src_version = src_hash[:v]
+      src_classifier = src_hash[:c]
+      addl_src = JIsaacGit::get_sdo({group_id: src_group_id, artifact: src_artifact_id, version: src_version, classifier: src_classifier})
     end
 
     git_failure = nil
@@ -88,8 +100,8 @@ class TerminologyConverterController < ApplicationController
     begin
       tag_name = IsaacConverter::create_content_converter(sdo_source_content: sdo_source_content,
                                                           converter_version: converter_version,
-                                                          additional_source_dependencies_sdo_j_a: additional_source_dependencies,
-                                                          additional_source_dependencies_ibdf_j_a: ibdf_a,
+                                                          additional_source_dependencies_sdo_j_a: addl_src,
+                                                          additional_source_dependencies_ibdf_j_a: addl_ibdf,
                                                           git_url: git_url,
                                                           git_user: git_user,
                                                           git_pass: git_pass)
