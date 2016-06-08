@@ -2,9 +2,15 @@
 <%= select_tag 'converter_version', options_from_collection_for_select(converter_versions, :option_key, :option_value), :include_blank => '-- Select the Converter Version --', required: true %>
 <br>
 <br>
-<% if (defined? additionalSources) %>
-    <%= label_tag 'converted_terminology', 'Converted Terminology Artifact' %><br>
-    <%= select_tag 'converted_terminology', options_from_collection_for_select(additionalSources, :option_key, :option_value), :include_blank => '-- Select the Converted Terminology Artifact --', required: true %>
+<% if (! addl_source_dependency.empty?) %>
+    <%= label_tag 'addl_source_dependency', 'Additional Source Dependency' %><br>
+    <%= select_tag 'addl_source_dependency', options_from_collection_for_select(addl_source_dependency, :option_key, :option_value), :include_blank => '-- Select the Additional Source Artifact --', required: true %>
+    <br>
+    <br>
+<% end %>
+<% if (! addl_ibdf_dependency.empty?) %>
+    <%= label_tag 'addl_ibdf_dependency', 'Additional IBDF Dependency' %><br>
+    <%= select_tag 'addl_ibdf_dependency', options_from_collection_for_select(addl_ibdf_dependency, :option_key, :option_value), :include_blank => '-- Select the Additional IBDF Artifact --', required: true %>
     <br>
     <br>
 <% end %>

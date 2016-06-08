@@ -1,64 +1,13 @@
 require 'json'
 require 'erb'
-include NexusConcern
 
 class TerminologyConverterController < ApplicationController
   before_action :auth_registered
   before_action :ensure_services_configured
-  TERM_GROUP_PARAMS = [{g: 'gov.vha.isaac.terminology.source.*'},
-                       {g: 'gov.vha.isaac.terminology.converted'}]
+  include TerminologyConverterHelper
 
   def index
-    TERM_GROUP_PARAMS.each_with_index do |p, idx|
-      opts = load_drop_down(idx)
-      @sources= opts if idx == 0
-      @converts = opts unless idx == 0
-    end
-
-  end
-
-  def load_drop_down(idx)
-    url_string = '/nexus/service/local/lucene/search'
-    group_id_param = TERM_GROUP_PARAMS[idx]
-    options = []
-    response = get_nexus_connection.get(url_string, group_id_param)
-    json = nil
-
-    begin
-      json = JSON.parse(response.body)
-    rescue JSON::ParserError => ex
-      if (response.status.eql?(200))
-        return response.body
-      end
-    end
-
-    json['data'].each do |artifact|
-      options << TermConvertOption.new(artifact['groupId'], artifact['artifactId'], artifact['version'], (idx == 0 ? nil : 'Snapshot')) # todo change this
-    end
-    options.sort_by!(&:option_key)
-    options
-  end
-  # todo - consolidate code for loading the options...
-  def load_drop_down2(params)
-    url_string = '/nexus/service/local/lucene/search'
-    options = []
-    response = get_nexus_connection.get(url_string, params)
-    json = nil
-
-    begin
-      json = JSON.parse(response.body)
-    rescue JSON::ParserError => ex
-      if (response.status.eql?(200))
-        return response.body
-      end
-    end
-
-    json['data'].each do |artifact|
-      options << TermConvertOption.new(artifact['groupId'], artifact['artifactId'], artifact['version']) # todo CLASSIFIER?
-    end
-
-    options.sort_by!(&:option_key)
-    options
+    @sources = load_drop_down(nexus_params: {g: 'gov.vha.isaac.terminology.source.*'}).reverse!
   end
 
   def ajax_term_source_change
@@ -67,14 +16,30 @@ class TerminologyConverterController < ApplicationController
     source_hash = TermConvertOption.arg_as_json(source)
 
     # get converters based on the selected term source
-    isaac_converter = IsaacConverter::get_converter_for_source_artifact(artifactId: source_hash[:a])
+    source_artifact_id = source_hash[:a]
+    isaac_converter = IsaacConverter::get_converter_for_source_artifact(artifactId: source_artifact_id)
     arg = {g: isaac_converter.group_id, a: isaac_converter.artifact_id}
-    converters = load_drop_down2(arg).reject {|option| option.version =~ /SNAPSHOT/i}
-    locals[:converter_versions] = converters
+    converters = load_drop_down(nexus_params: arg).reject { |option| option.version =~ /SNAPSHOT/i }
+    locals[:converter_versions] = converters.sort_by! { |obj| obj.version.downcase }.reverse!
+    locals[:addl_source_dependency] = []
+    locals[:addl_ibdf_dependency] = []
 
-    # based on the term source determine if additional sources need to be included
-    # additionalSources = load_drop_down(1) #todo implement this!
-    # locals[:additionalSources] = additionalSources
+    # check if we need additional dependencies
+    dependency = IsaacConverter.get_supported_conversion(artifact_id: source_artifact_id)
+
+    unless (dependency.artifact_dependency.empty?)
+      arg = {g: 'gov.vha.isaac.terminology.source.*', a: dependency.artifact_dependency}
+      addlSources = load_drop_down(nexus_params: arg)
+      addlSources.reject! { |option| option.version =~ /SNAPSHOT/i }
+      locals[:addl_source_dependency] = addlSources
+    end
+
+    unless (dependency.ibdf_dependency.empty?)
+      arg = {g: 'gov.vha.isaac.terminology.converted', a: dependency.ibdf_dependency}
+      addlSources = load_drop_down(nexus_params: arg)
+      addlSources.reject! { |option| option.version =~ /SNAPSHOT/i }
+      locals[:addl_ibdf_dependency] = addlSources
+    end
 
     # render the partial for the user to make their selections
     render partial: 'terminology_converter/term_source_change_content', locals: locals
@@ -151,45 +116,20 @@ class TerminologyConverterController < ApplicationController
     redirect_to action: 'index'
   end
 
+=begin
   def get_repo_zip
     # 'http://localhost:8081/nexus/service/local/artifact/maven/content?g=vhat_ibdf&a=converter&v=LATEST&r=vhat_ibdf&c=vhat_ibdf_converters&e=zip'
     url_string = '/nexus/service/local/artifact/maven/content'
     params = {g: 'vhat_ibdf', a: 'converter', v: 'LATEST', r: 'vhat_ibdf', c: 'vhat_ibdf_converters', e: 'zip'}
     File.open('./tmp/vhat_ibdf.zip', 'w') { |f| f.write(get_nexus_connection.get(url_string, params)) }
-
   end
-
-##################################################################################
-# load the source content from nexus using a lucene search based on the group name
-##################################################################################
-  def load_source_content
-    url_string = '/nexus/service/local/lucene/search'
-    params = {g: 'gov.vha.isaac.terminology.source.*'}
-    response = get_nexus_connection.get(url_string, params)
-    json = nil
-
-    begin
-      json = JSON.parse(response.body)
-    rescue JSON::ParserError => ex
-      if (response.status.eql?(200))
-        return response.body
-      end
-    end
-
-    repo_url = json['repoDetails'].first['repositoryURL']
-    # todo what do we do about this gsub!? is this always the case?
-    repo_url.gsub!('service/local', 'content')
-
-    # iterate over the results building the sorted TermSource Struct
-    hits = json['data']
-    data = hits.map { |i| TermSource.new(repoUrl: repo_url, groupId: i['groupId'], artifactId: i['artifactId'], version: i['version']) }.sort_by { |e| [e.get_key] }
-    data
-  end
+=end
 
   def ajax_load_build_data
     row_limit = params[:row_limit]
     data = PrismeJob.job_name('JenkinsStartBuild').order(completed_at: :desc).limit(row_limit)
     ret = []
+
     data.each do |jsb|
       row_data = JSON.parse(jsb.to_json)
       row_data['started_at'] = DateTime.parse(row_data['started_at']).to_time.to_i # todo nil check!!!
@@ -222,35 +162,3 @@ class TerminologyConverterController < ApplicationController
   end
 
 end
-
-
-=begin
-def process_form2
-  term_source = params[:terminology_source]
-  source = TermSource.init_from_select_key(term_source) unless term_source.nil?
-  base_dir = './tmp/vhat-ibdf/'
-  source_version = source.version
-  loader_version = 'SNAPSHOT-LOADER-VERSION-KMA'
-  erb = 'pom.xml.erb'
-
-  # use 'binding' (method in Kernel) which binds the current block for erb so that the local variables are visible to the pom.xml.erb
-  pom_result = ERB.new(File.open("#{base_dir}/#{erb}", 'r') { |file| file.read }).result(binding)
-
-  # write the new pom file out
-  File.open("#{base_dir}/pom.xml", 'w') { |f| f.write(pom_result) }
-
-  # delete the pom.xml.erb file
-  File.delete("#{base_dir}/#{erb}")
-
-  # move zip to nexus
-  # download from nexus to temp
-  # unzip in temp
-
-
-  url_string = source.artifact('pom')
-  @pom = get_nexus_connection.get(url_string, {}).body
-  @pom = pom_result
-
-end
-
-=end
