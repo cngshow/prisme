@@ -66,6 +66,7 @@
 
 <script>
   function term_source_change(val) {
+    $('#term_source_actions_div').hide();
     if (val.length === 0) {
       reset_form(true);
       return false;
@@ -77,7 +78,6 @@
       data: {term_source: val},
       success: function (data) {
         $('#term_source_details_div').html(data);
-        $('#term_source_actions_div').fadeIn(800);
       }
     });
   }
@@ -90,7 +90,38 @@
     $('#term_source_actions_div').hide();
   }
 
-  function build_status_renderer(params) {
+  function ibdf_change(val) {
+    if (val === '') {
+      $('#addl_ibdf_classifier').text('Additional Classifier may be Required');
+      $('#term_source_actions_div').hide();
+    } else {
+      $.ajax({
+        url: gon.routes.terminology_converter_ibdf_change_path,
+        type: "GET",
+        data: {ibdf_selection: val},
+        success: function (data) {
+          // if data is empty then no classifiers were found
+          if (data['classifiers'].length == 0) {
+            $('#addl_ibdf_classifier').text('No additional classifier is required');
+          } else {
+            //otherwise we build the drop down for classifiers to display to the user
+            var dd = $('<select>').attr("name", "ibdf_classifier").attr("id", "ibdf_classifier").attr("required", true);
+            dd.append($('<option>').text('-- Select the Additional IBDF Classifier --').attr('value', ''));
+
+            $.each(data['classifiers'], function(i, value) {
+              dd.append($('<option>').text(value).attr('value', value));
+            });
+            $('#addl_ibdf_classifier').html(dd);
+          }
+
+          //show the submit action
+          $('#term_source_actions_div').fadeIn(800);
+        }
+      });
+    }
+  }
+
+function build_status_renderer(params) {
     var ret = "\<span style=\"color: COLOR\"\>IMG" + params + "\<\/span\>";
     var img = '';
     var color = 'black';
@@ -173,7 +204,7 @@
       });
     }
     else {
-      rows = '<tr><td colspan="9" style="text-align:center">There are no items to list...</td></tr>'
+      rows = '<tr><td colspan="9" style="text-align:center">There are no items to list...</td></tr>';
       $('#' + tableId + ' tbody').html(rows);
     }
   }

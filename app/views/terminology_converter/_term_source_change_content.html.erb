@@ -1,16 +1,34 @@
 <%= label_tag 'converter_version', 'Converter Version' %><br>
-<%= select_tag 'converter_version', options_from_collection_for_select(converter_versions, :option_key, :option_value), :include_blank => '-- Select the Converter Version --', required: true %>
+<%= select_tag 'converter_version', options_from_collection_for_select(converter_versions, :option_key, :option_value),
+               :include_blank => '-- Select the Converter Version --',
+               required: true %>
 <br>
 <br>
 <% if (! addl_source_dependency.empty?) %>
     <%= label_tag 'addl_source_dependency', 'Additional Source Dependency' %><br>
-    <%= select_tag 'addl_source_dependency', options_from_collection_for_select(addl_source_dependency, :option_key, :option_value), :include_blank => '-- Select the Additional Source Artifact --', required: true %>
+    <%= select_tag 'addl_source_dependency',
+                   options_from_collection_for_select(addl_source_dependency, :option_key, :option_value),
+                   :include_blank => '-- Select the Additional Source Artifact --',
+                   required: true %>
     <br>
     <br>
 <% end %>
 <% if (! addl_ibdf_dependency.empty?) %>
     <%= label_tag 'addl_ibdf_dependency', 'Additional IBDF Dependency' %><br>
-    <%= select_tag 'addl_ibdf_dependency', options_from_collection_for_select(addl_ibdf_dependency, :option_key, :option_value), :include_blank => '-- Select the Additional IBDF Artifact --', required: true %>
+    <%= select_tag 'addl_ibdf_dependency',
+                   options_from_collection_for_select(addl_ibdf_dependency, :option_key, :option_value),
+                   :include_blank => '-- Select the Additional IBDF Artifact --',
+                   :onchange => 'ibdf_change(this.value)',
+                   required: true %>
     <br>
     <br>
+    <%= label_tag 'addl_ibdf_classifier', 'Additional IBDF Classifier' %><br>
+    <div id="addl_ibdf_classifier">Additional Classifier may be Required</div>
+    <br>
+    <br>
+<% end %>
+<% if (addl_ibdf_dependency.empty?) %>
+<script>
+  $('#term_source_actions_div').fadeIn(800);
+</script>
 <% end %>
