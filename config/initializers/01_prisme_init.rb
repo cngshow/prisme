@@ -26,7 +26,7 @@ $SERVICE_TYPES = YAML.load_file('./config/service/service_types.yml').freeze
 unless ($rake || defined?(Rails::Generators))
 
   begin
-    ActiveRecord::Base.logger = $log if (boolean($PROPS['PRISME.log_active_record']))
+    ActiveRecord::Base.logger = $log_rails
     ActiveRecord::Migrator.migrate "db/migrate"
   rescue => ex
     $log.warn("Migration failed. #{ex.message}")
