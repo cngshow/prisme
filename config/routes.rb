@@ -45,6 +45,7 @@ Rails.application.routes.draw do
   get 'terminology_converter/load_build_data' => 'terminology_converter#ajax_load_build_data'
   get 'terminology_converter/check_polling' => 'terminology_converter#ajax_check_polling'
   get 'terminology_converter/term_source_change' => 'terminology_converter#ajax_term_source_change'
+  get 'terminology_converter/ibdf_change' => 'terminology_converter#ajax_ibdf_change'
   post 'terminology_converter/request_build'
 
   root 'welcome#index'

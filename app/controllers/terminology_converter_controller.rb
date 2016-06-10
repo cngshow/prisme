@@ -19,7 +19,8 @@ class TerminologyConverterController < ApplicationController
     source_artifact_id = source_hash[:a]
     isaac_converter = IsaacConverter::get_converter_for_source_artifact(artifactId: source_artifact_id)
     arg = {g: isaac_converter.group_id, a: isaac_converter.artifact_id}
-    converters = load_drop_down(nexus_params: arg).reject { |option| option.version =~ /SNAPSHOT/i }
+    converters = load_drop_down(nexus_params: arg)
+    # converters.reject! { |option| option.version =~ /SNAPSHOT/i } # todo add this back in later
     locals[:converter_versions] = converters.sort_by! { |obj| obj.version.downcase }.reverse!
     locals[:addl_source_dependency] = []
     locals[:addl_ibdf_dependency] = []
@@ -77,7 +78,7 @@ class TerminologyConverterController < ApplicationController
       ibdf_group_id = ibdf_hash[:g]
       ibdf_artifact_id = ibdf_hash[:a]
       ibdf_version = ibdf_hash[:v]
-      ibdf_classifier = ibdf_hash[:c]
+      ibdf_classifier = params[:ibdf_classifier]
       addl_ibdf = JIsaacGit::create_ibdf_sdo_java_array({group_id: ibdf_group_id, artifact: ibdf_artifact_id, version: ibdf_version, classifier: ibdf_classifier}, 'IBDFFile')
     end
 
@@ -92,7 +93,7 @@ class TerminologyConverterController < ApplicationController
       src_artifact_id = src_hash[:a]
       src_version = src_hash[:v]
       src_classifier = src_hash[:c]
-      addl_src = JIsaacGit::sdo_source_content_to_j_a([src_group_id,src_artifact_id,src_version,src_classifier])
+      addl_src = JIsaacGit::sdo_source_content_to_j_a([src_group_id, src_artifact_id, src_version, src_classifier])
     end
 
     git_failure = nil
@@ -173,4 +174,11 @@ class TerminologyConverterController < ApplicationController
     render json: {poll: prisme_job_has_running_jobs}
   end
 
+  def ajax_ibdf_change
+    idbf_selection = params[:ibdf_selection]
+    args = idbf_selection.split('|')
+    arg = {g: args[0], a: args[1], v: args[2]}
+    classifiers = load_ibdf_classifiers(nexus_params: arg)
+    render json: {classifiers: classifiers}
+  end
 end

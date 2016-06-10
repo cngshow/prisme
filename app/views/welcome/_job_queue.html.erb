@@ -91,6 +91,7 @@
     });
 
     function reload() {
+      console.log('calling reload!');
       $.ajax({
         url: gon.routes.prisme_job_queue_reload_job_queue_list_path,
         type: "GET",
@@ -100,25 +101,11 @@
         }
       })
     }
-    /*
 
-     function poll() {
-     $.ajax({
-     url: '/prisme_job_queue/reload_job_queue_list',
-     type: "GET",
-     success: function (data) {
-     loadTable('data-table', fields, data);
-     },
-     dataType: "json",
-     complete: setTimeout(function () {
-     poll()
-     }, 3000),
-     timeout: 2000
-     })
-     }
-
-     poll();
-     */
     reload();
+
+    //register for polling
+    polling.registerController('welcome_job_queue', reload, 5000);
+
   });
 </script>
