@@ -1,5 +1,5 @@
 module JIsaacGit
-  include_package 'gov.vha.isaac.ochre.pombuilder.artifacts'#IBDFFile, SDOSourceContent
+  include_package 'gov.vha.isaac.ochre.pombuilder.artifacts'#IBDFFile, SDOSourceContent, Converter, Artifact
   include_package 'gov.vha.isaac.ochre.pombuilder.dbbuilder'#DBConfigurationCreator
   include_package 'gov.vha.isaac.ochre.pombuilder.converter'#ContentConverterCreator, SupportedConverterTypes
 
@@ -60,7 +60,22 @@ end
 
 module IsaacConverter
 
+  class ConverterArtifact < JIsaacGit::Converter
+    attr_reader :group_id, :artifact_id, :version
+    def initialize(group_id:, artifact_id:, version:)
+      super(group_id, artifact_id, version)
+      @group_id = group_id
+      @artifact_id = artifact_id
+      @version = version
+    end
+  end
+
+  def self.get_converter_options(converter:, repository_url:, repository_username:, repository_password:)
+    JIsaacGit::ContentConverterCreator.getConverterOptions(converter,repository_url, repository_username, repository_password)
+  end
+
   def self.create_content_converter(sdo_source_content:, converter_version:, additional_source_dependencies_sdo_j_a:, additional_source_dependencies_ibdf_j_a:, git_url:,git_user:, git_pass:)
+    #to_do add in additional paramter  Map<ConverterOptionParam, Set<String>> converterOptionValues before git url
     JIsaacGit::ContentConverterCreator.createContentConverter(sdo_source_content,converter_version,  additional_source_dependencies_sdo_j_a, additional_source_dependencies_ibdf_j_a, git_url, git_user, git_pass)
   end
 
@@ -146,3 +161,6 @@ tag = IsaacConverter::create_content_converter(sdo_source_content: sdo_source_co
 #
 # class SDOSourceContent < Artifact
 # end
+# group_id = gov.vha.isaac.terminology.converters
+# artifact_id = loinc-mojo
+# version = 5.3-SNAPSHOT|

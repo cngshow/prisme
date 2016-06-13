@@ -17,7 +17,12 @@ class TerminologyConverterController < ApplicationController
 
     # get converters based on the selected term source
     source_artifact_id = source_hash[:a]
-    isaac_converter = IsaacConverter::get_converter_for_source_artifact(artifactId: source_artifact_id)
+    isaac_converter = IsaacConverter.get_converter_for_source_artifact(artifactId: source_artifact_id)
+    #isaac_converter_new_for_greg = IsaacConverter::ConverterArtifact.new(group_id: "gov.vha.isaac.terminology.converters", artifact_id: "rf2-mojo", version: "3.3-SNAPSHOT")
+    #props = Service.get_artifactory_props
+    #converter_options = IsaacConverter.get_converter_options(converter: isaac_converter_new_for_greg, repository_url: props[PrismeService::NEXUS_REPOSITORY_URL], repository_username: props[PrismeService::NEXUS_USER], repository_password: props[PrismeService::NEXUS_PWD])
+    #converter_options.map do |co| [co.display_name, co.description, co.internal_name, co.allow_multi_select?, co.allow_no_selection?, co.suggested_pick_list_values]end
+    #converter_options.first.suggested_pick_list_values.map do |suggested|[suggested.value, suggested.description] end
     arg = {g: isaac_converter.group_id, a: isaac_converter.artifact_id}
     converters = load_drop_down(nexus_params: arg)
     # converters.reject! { |option| option.version =~ /SNAPSHOT/i } # todo add this back in later
@@ -99,6 +104,7 @@ class TerminologyConverterController < ApplicationController
     git_failure = nil
 
     begin
+      #to_do add in additional paramter  Map<ConverterOptionParam, Set<String>> converterOptionValues before git url
       tag_name = IsaacConverter::create_content_converter(sdo_source_content: sdo_source_content,
                                                           converter_version: converter_version,
                                                           additional_source_dependencies_sdo_j_a: addl_src,
