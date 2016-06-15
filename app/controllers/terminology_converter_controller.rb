@@ -58,7 +58,7 @@ class TerminologyConverterController < ApplicationController
     s_group_id = s_hash[:g]
     s_artifact_id = s_hash[:a]
     s_version = s_hash[:v]
-
+    converter_options = fetch_converter_options
     # strip out the version argument for converter_version
     converter_version = params[:converter_version]
     cv_hash = TermConvertOption.arg_as_json(converter_version)
@@ -104,11 +104,13 @@ class TerminologyConverterController < ApplicationController
     git_failure = nil
 
     begin
-      #to_do add in additional paramter  Map<ConverterOptionParam, Set<String>> converterOptionValues before git url
+      converter_option_keys = params.keys.select { |key| key.starts_with?(CONVERTER_OPTION_PREFIX) }
+      converter_option_param_hash = converter_option_values(converter_option_keys: converter_option_keys)
       tag_name = IsaacConverter::create_content_converter(sdo_source_content: sdo_source_content,
                                                           converter_version: converter_version,
                                                           additional_source_dependencies_sdo_j_a: addl_src,
                                                           additional_source_dependencies_ibdf_j_a: addl_ibdf,
+                                                          converter_option_values: converter_option_param_hash,
                                                           git_url: git_url,
                                                           git_user: git_user,
                                                           git_pass: git_pass)
@@ -181,14 +183,15 @@ class TerminologyConverterController < ApplicationController
 =end
 
   def ajax_converter_version_change
-    converter_version = params[:converter_version]
-    args = converter_version.split('|')
-    isaac_converter = IsaacConverter::ConverterArtifact.new(group_id: args[0], artifact_id: args[1], version: args[2])
-    props = Service.get_artifactory_props
-    converter_options = IsaacConverter.get_converter_options(converter: isaac_converter, repository_url: props[PrismeService::NEXUS_REPOSITORY_URL], repository_username: props[PrismeService::NEXUS_USER], repository_password: props[PrismeService::NEXUS_PWD])
-    json = converter_options.map do |co| {display_name: co.display_name, description: co.description, internal_name: co.internal_name, allow_multi_select: co.allow_multi_select?, allow_no_selection: co.allow_no_selection?,
-                                          suggested_pick_list_values: co.suggested_pick_list_values.map do |suggested| {suggested_value: suggested.value, suggested_description: suggested.description} end} end
-    render  partial: 'terminology_converter/ajax_converter_options', locals: {converter_options: json}
+
+    converter_options = fetch_converter_options
+    json = converter_options.map do |co|
+      {display_name: co.display_name, description: co.description, internal_name: co.internal_name, allow_multi_select: co.allow_multi_select?, allow_no_selection: co.allow_no_selection?,
+       suggested_pick_list_values: co.suggested_pick_list_values.map do |suggested|
+         {suggested_value: suggested.value, suggested_description: suggested.description}
+       end}
+    end
+    render partial: 'terminology_converter/ajax_converter_options', locals: {converter_options: json}
   end
 
   def ajax_load_build_data
@@ -233,5 +236,31 @@ class TerminologyConverterController < ApplicationController
     arg = {g: args[0], a: args[1], v: args[2]}
     classifiers = load_ibdf_classifiers(nexus_params: arg)
     render json: {classifiers: classifiers}
+  end
+
+  private
+
+  def fetch_converter_options
+    converter_version = params[:converter_version]
+    args = converter_version.split('|')
+    isaac_converter = IsaacConverter::ConverterArtifact.new(group_id: args[0], artifact_id: args[1], version: args[2])
+    props = Service.get_artifactory_props
+    converter_options = IsaacConverter.get_converter_options(converter: isaac_converter, repository_url: props[PrismeService::NEXUS_REPOSITORY_URL], repository_username: props[PrismeService::NEXUS_USER], repository_password: props[PrismeService::NEXUS_PWD])
+    converter_options
+  end
+
+  def converter_option_values(converter_option_keys:)
+    r_val = {}
+    converter_options = fetch_converter_options
+    internal_name_to_value_hash = {}
+    values = converter_option_keys.each do |elem|
+      key = elem.split(CONVERTER_OPTION_PREFIX).last
+      value = elem
+      internal_name_to_value_hash[key] = value
+    end
+    converter_options.each do |pojo_converter_option|
+      r_val[pojo_converter_option] = params[internal_name_to_value_hash[pojo_converter_option.internal_name]]
+    end
+    r_val
   end
 end

@@ -1,5 +1,6 @@
 module TerminologyConverterHelper
   include NexusConcern
+  CONVERTER_OPTION_PREFIX = "converter_option_param_"
 
   def load_drop_down(nexus_params: nexus_params)
     url_string = '/nexus/service/local/lucene/search'

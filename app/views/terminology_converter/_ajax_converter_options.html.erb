@@ -14,7 +14,7 @@
       <%= dd[:display_name] %>
     </label><br>
     <select id="<%= dd[:internal_name] %>"
-            name="<%= dd[:internal_name] %>"
+            name="<%= TerminologyConverterHelper::CONVERTER_OPTION_PREFIX + dd[:internal_name] %>[]"
             title="<%= dd[:description] %>"
             <%= dd[:allow_multi_select] ? ' multiple' : '' %>
             <%= dd[:allow_no_selection] ? '' : ' required' %> >

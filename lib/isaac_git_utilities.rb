@@ -74,9 +74,12 @@ module IsaacConverter
     JIsaacGit::ContentConverterCreator.getConverterOptions(converter,repository_url, repository_username, repository_password)
   end
 
-  def self.create_content_converter(sdo_source_content:, converter_version:, additional_source_dependencies_sdo_j_a:, additional_source_dependencies_ibdf_j_a:, git_url:,git_user:, git_pass:)
-    #to_do add in additional paramter  Map<ConverterOptionParam, Set<String>> converterOptionValues before git url
-    JIsaacGit::ContentConverterCreator.createContentConverter(sdo_source_content,converter_version,  additional_source_dependencies_sdo_j_a, additional_source_dependencies_ibdf_j_a, git_url, git_user, git_pass)
+  def self.create_content_converter(sdo_source_content:, converter_version:, additional_source_dependencies_sdo_j_a:, additional_source_dependencies_ibdf_j_a:,converter_option_values:, git_url:,git_user:, git_pass:)
+    hash = {}
+    converter_option_values.each_pair do |k,v|
+      hash[k] = java.util.HashSet.new(v)
+    end
+    JIsaacGit::ContentConverterCreator.createContentConverter(sdo_source_content,converter_version,  additional_source_dependencies_sdo_j_a, additional_source_dependencies_ibdf_j_a,hash, git_url, git_user, git_pass)
   end
 
   # a = IsaacConverter::get_converter_for_source_artifact(artifactId: "vhat-src-data")
@@ -109,10 +112,6 @@ module IsaacConverter
     end
     nil
   end
-
-end
-
-module IsaacDatabase
 
 end
 
