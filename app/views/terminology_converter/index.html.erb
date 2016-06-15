@@ -47,9 +47,16 @@
       <div class="modal-body">
         <%= form_tag(:controller => 'terminology_converter', :action => :request_build, remote: true) do |f| %>
             <%= label_tag 'terminology_source', 'Terminology Source' %><br>
-            <%= select_tag 'terminology_source', options_from_collection_for_select(@sources, :option_key, :option_value),
-                           :include_blank => '-- Select the Terminology Source --', required: true,
-                           :onchange => 'term_source_change(this.value)'
+            <%= select_tag 'terminology_source',
+                           options_from_collection_for_select(@sources, :option_key, :option_value),
+                           :class => 'select2-prisme',
+                           :include_blank => true,
+                           :data => {ph: 'Select the Terminology Source',
+                                     w: '500px',
+                                     single_select: true
+                           },
+                           :onchange => 'term_source_change(this.value)',
+                           required: true
             %>
             <br>
             <br>
@@ -90,38 +97,7 @@
     $('#term_source_actions_div').hide();
   }
 
-  function ibdf_change(val) {
-    if (val === '') {
-      $('#addl_ibdf_classifier').text('Additional Classifier may be Required');
-      $('#term_source_actions_div').hide();
-    } else {
-      $.ajax({
-        url: gon.routes.terminology_converter_ibdf_change_path,
-        type: "GET",
-        data: {ibdf_selection: val},
-        success: function (data) {
-          // if data is empty then no classifiers were found
-          if (data['classifiers'].length == 0) {
-            $('#addl_ibdf_classifier').text('No additional classifier is required');
-          } else {
-            //otherwise we build the drop down for classifiers to display to the user
-            var dd = $('<select>').attr("name", "ibdf_classifier").attr("id", "ibdf_classifier").attr("required", true);
-            dd.append($('<option>').text('-- Select the Additional IBDF Classifier --').attr('value', ''));
-
-            $.each(data['classifiers'], function(i, value) {
-              dd.append($('<option>').text(value).attr('value', value));
-            });
-            $('#addl_ibdf_classifier').html(dd);
-          }
-
-          //show the submit action
-          $('#term_source_actions_div').fadeIn(800);
-        }
-      });
-    }
-  }
-
-function build_status_renderer(params) {
+  function build_status_renderer(params) {
     var ret = "\<span style=\"color: COLOR\"\>IMG" + params + "\<\/span\>";
     var img = '';
     var color = 'black';
@@ -237,5 +213,35 @@ function build_status_renderer(params) {
 
     //register for polling
     polling.registerController('terminology_converter', poll, 5000);
+
+    // call init_select2 to initialize all select inputs to use the select2 js library
+    init_select2();
   });
+
+
+
+  //
+  ////    build a drop down
+  //    var dd = $('<select>').attr('name', 'kma').attr('id', 'kma').attr('multiple', true);
+  //    dd.data('placeholder', 'enter something');
+  ////    dd.append($('<option>').text('').attr('value', ''));
+  //    dd.append($('<option>').text('first').attr('value', 1).attr('title', 'this is the first one bobo'));
+  //    dd.append($('<option>').text('second').attr('value', 2).attr('title', 'this is the second item !'));
+  //    dd.append($('<option>').text('third').attr('value', 3));
+  ////    dd.addClass('chosen');
+  //    $("#kma_div").html(dd);
+  //    $( "#kma" ).select2({
+  //      theme: "bootstrap",
+  //      width: '500px',
+  //      tags: true
+  //    });
+  //    $(".chosen").chosen({
+  //      'no_results_text' :'Oops, nothing found!',
+  //      'width'           :'700px',
+  //      'search_contains' : true,
+  //      'placeholder_text_multiple':'Please choose something ...',
+  //      'display_selected_options':false
+  //    });
+
+  //    dd.chosen({});
 </script>

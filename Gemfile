@@ -59,6 +59,7 @@ gem 'jdbc-h2', '1.4.181'
 gem 'will_paginate'
 gem 'bootstrap-growl-rails'
 gem 'activerecord-jdbch2-adapter'
+gem 'select2-rails'
 
 group :development do
   gem 'yard'

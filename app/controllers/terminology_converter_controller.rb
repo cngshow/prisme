@@ -142,7 +142,54 @@ class TerminologyConverterController < ApplicationController
     params = {g: 'vhat_ibdf', a: 'converter', v: 'LATEST', r: 'vhat_ibdf', c: 'vhat_ibdf_converters', e: 'zip'}
     File.open('./tmp/vhat_ibdf.zip', 'w') { |f| f.write(get_nexus_connection.get(url_string, params)) }
   end
+
+  def ajax_term_source_change2
+    source = params[:term_source]
+    locals = {terminology_source: source}
+    source_hash = TermConvertOption.arg_as_json(source)
+
+    # get converters based on the selected term source
+    source_artifact_id = source_hash[:a]
+    isaac_converter = IsaacConverter::get_converter_for_source_artifact(artifactId: source_artifact_id)
+    arg = {g: isaac_converter.group_id, a: isaac_converter.artifact_id}
+    converters = load_drop_down(nexus_params: arg)
+    # converters.reject! { |option| option.version =~ /SNAPSHOT/i } # todo add this back in later
+    locals[:converter_versions] = converters.sort_by! { |obj| obj.version.downcase }.reverse!
+    locals[:addl_source_dependency] = []
+    locals[:addl_ibdf_dependency] = []
+
+    # check if we need additional dependencies
+    dependency = IsaacConverter.get_supported_conversion(artifact_id: source_artifact_id)
+
+    unless (dependency.artifact_dependency.empty?)
+      arg = {g: 'gov.vha.isaac.terminology.source.*', a: dependency.artifact_dependency}
+      addlSources = load_drop_down(nexus_params: arg)
+      addlSources.reject! { |option| option.version =~ /SNAPSHOT/i }
+      locals[:addl_source_dependency] = addlSources
+    end
+
+    unless (dependency.ibdf_dependency.empty?)
+      arg = {g: 'gov.vha.isaac.terminology.converted', a: dependency.ibdf_dependency}
+      addlSources = load_drop_down(nexus_params: arg)
+      addlSources.reject! { |option| option.version =~ /SNAPSHOT/i }
+      locals[:addl_ibdf_dependency] = addlSources
+    end
+
+    # render the partial for the user to make their selections
+    render partial: 'terminology_converter/term_source_change_content', locals: locals
+  end
 =end
+
+  def ajax_converter_version_change
+    converter_version = params[:converter_version]
+    args = converter_version.split('|')
+    isaac_converter = IsaacConverter::ConverterArtifact.new(group_id: args[0], artifact_id: args[1], version: args[2])
+    props = Service.get_artifactory_props
+    converter_options = IsaacConverter.get_converter_options(converter: isaac_converter, repository_url: props[PrismeService::NEXUS_REPOSITORY_URL], repository_username: props[PrismeService::NEXUS_USER], repository_password: props[PrismeService::NEXUS_PWD])
+    json = converter_options.map do |co| {display_name: co.display_name, description: co.description, internal_name: co.internal_name, allow_multi_select: co.allow_multi_select?, allow_no_selection: co.allow_no_selection?,
+                                          suggested_pick_list_values: co.suggested_pick_list_values.map do |suggested| {suggested_value: suggested.value, suggested_description: suggested.description} end} end
+    render  partial: 'terminology_converter/ajax_converter_options', locals: {converter_options: json}
+  end
 
   def ajax_load_build_data
     row_limit = params[:row_limit]

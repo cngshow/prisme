@@ -1,34 +1,111 @@
+<script>
+  function converter_version_change(val) {
+    if (val === '') {
+      $('#converter_version_options_div').fadeOut(800);
+    } else {
+      $('#term_source_actions_div').fadeOut(800);
+      $.ajax({
+        url: gon.routes.terminology_converter_converter_version_change_path,
+        type: "GET",
+        data: {converter_version: val},
+        success: function (data) {
+          if (data.trim() !== '') {
+            $('#converter_version_options_div').html(data).show();
+          }
+          $('#term_source_actions_div').fadeIn(800);
+        }
+      });
+    }
+  }
+
+  function ibdf_change(val) {
+    if (val === '') {
+      $('#addl_ibdf_classifier_div').fadeOut(800);
+      $('#term_source_actions_div').fadeOut(800);
+    } else {
+      $.ajax({
+        url: gon.routes.terminology_converter_ibdf_change_path,
+        type: "GET",
+        data: {ibdf_selection: val},
+        success: function (data) {
+          // if data is empty then no classifiers were found
+          if (data['classifiers'].length > 0) {
+            // we build the drop down for classifiers to display to the user
+            var dd = $('<select>').attr("name", "ibdf_classifier").attr("id", "ibdf_classifier").attr("required", true).addClass('select2-prisme');
+            dd.attr('data-ph', 'Select the Additional IBDF Classifier');
+            dd.attr('data-single_select', true);
+            dd.attr('data-w', '350px');
+            dd.append($('<option>').text('').attr('value', ''));
+
+            $.each(data['classifiers'], function (i, value) {
+              dd.append($('<option>').text(value).attr('value', value));
+            });
+
+            $('#addl_ibdf_classifier_selection_div').html(dd);
+            init_select2();
+            $('#addl_ibdf_classifier_div').fadeIn(800);
+          }
+
+          //show the submit action
+          $('#term_source_actions_div').fadeIn(800);
+        }
+      });
+    }
+  }
+</script>
 <%= label_tag 'converter_version', 'Converter Version' %><br>
-<%= select_tag 'converter_version', options_from_collection_for_select(converter_versions, :option_key, :option_value),
-               :include_blank => '-- Select the Converter Version --',
+<%= select_tag 'converter_version',
+               options_from_collection_for_select(converter_versions, :option_key, :option_value),
+               :class => 'select2-prisme',
+               :include_blank => true,
+               :data => {ph: 'Select the Converter Version',
+                         w: '500px',
+                         single_select: true
+               },
+               :onchange => 'converter_version_change(this.value)',
                required: true %>
+<div id="converter_version_options_div" style="display: none"></div>
 <br>
 <br>
-<% if (! addl_source_dependency.empty?) %>
+<% if (!addl_source_dependency.empty?) %>
     <%= label_tag 'addl_source_dependency', 'Additional Source Dependency' %><br>
     <%= select_tag 'addl_source_dependency',
                    options_from_collection_for_select(addl_source_dependency, :option_key, :option_value),
-                   :include_blank => '-- Select the Additional Source Artifact --',
+                   :class => 'select2-prisme',
+                   :include_blank => true,
+                   :data => {ph: 'Select the Additional Source Artifact',
+                             w: '500px',
+                             single_select: true
+                   },
                    required: true %>
     <br>
     <br>
 <% end %>
-<% if (! addl_ibdf_dependency.empty?) %>
+<% if (!addl_ibdf_dependency.empty?) %>
     <%= label_tag 'addl_ibdf_dependency', 'Additional IBDF Dependency' %><br>
     <%= select_tag 'addl_ibdf_dependency',
                    options_from_collection_for_select(addl_ibdf_dependency, :option_key, :option_value),
-                   :include_blank => '-- Select the Additional IBDF Artifact --',
+                   :class => 'select2-prisme',
+                   :include_blank => true,
+                   :data => {ph: 'Select the Additional IBDF Artifact',
+                             w: '500px',
+                             single_select: true
+                   },
                    :onchange => 'ibdf_change(this.value)',
                    required: true %>
     <br>
     <br>
-    <%= label_tag 'addl_ibdf_classifier', 'Additional IBDF Classifier' %><br>
-    <div id="addl_ibdf_classifier">Additional Classifier may be Required</div>
+    <div id="addl_ibdf_classifier_div" style="display: none">
+      <%= label_tag 'addl_ibdf_classifier', 'Additional IBDF Classifier' %>
+      <div id="addl_ibdf_classifier_selection_div"></div>
+    </div>
     <br>
     <br>
+<% else %>
+    <script>
+      $('#term_source_actions_div').fadeIn(800);
+    </script>
 <% end %>
-<% if (addl_ibdf_dependency.empty?) %>
 <script>
-  $('#term_source_actions_div').fadeIn(800);
+  init_select2();
 </script>
-<% end %>

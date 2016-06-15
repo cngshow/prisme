@@ -15,6 +15,8 @@
 //= require jquery-ui
 //= require bootstrap
 //= require turbolinks
+// select2 drop down js library
+//= require select2
 // require ag-grid/ag-grid
 // require jquery.smartWizard/jquery.smartWizard
 //= require jquery.steps-1.1.0/jquery.steps
@@ -23,3 +25,28 @@
 // this is for ajax_flash notifications
 //= require bootstrap-notify
 //= require_tree .
+
+function init_select2() {
+    $('.select2-prisme').each(function (index, element) {
+        var options = {
+            theme: "bootstrap",
+            allowClear: true
+        };
+        var dataset = element.dataset;
+        $.each(Object.keys(dataset), function (index, value) {
+            switch (value) {
+                case 'single_select':
+                case 'singleSelect':
+                    options['minimumResultsForSearch'] = Infinity;
+                    break;
+                case 'ph':
+                    options['placeholder'] = dataset[value];
+                    break;
+                case 'w':
+                    options['width'] = dataset[value];
+                    break;
+            }
+        });
+        $(element).select2(options);
+    });
+}
