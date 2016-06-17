@@ -56,6 +56,10 @@ GEM
     ci_reporter_test_unit (1.0.0)
       ci_reporter (~> 2.0)
       test-unit (~> 2.5.5)
+    climate_control (0.0.3)
+      activesupport (>= 3.0)
+    cocaine (0.5.8)
+      climate_control (>= 0.0.3, < 1.0)
     coffee-rails (4.1.1)
       coffee-script (>= 2.2.0)
       railties (>= 4.0.0, < 5.1.x)
@@ -107,11 +111,18 @@ GEM
     mail (2.6.3)
       mime-types (>= 1.16, < 3)
     mime-types (2.99)
+    mimemagic (0.3.0)
     minitest (5.8.3)
     multi_json (1.11.2)
     multipart-post (2.0.0)
     nokogiri (1.6.7-java)
     orm_adapter (0.5.0)
+    paperclip (4.3.6)
+      activemodel (>= 3.2.0)
+      activesupport (>= 3.2.0)
+      cocaine (~> 0.5.5)
+      mime-types
+      mimemagic (= 0.3.0)
     pundit (1.1.0)
       activesupport (>= 3.0.0)
     rack (1.6.4)
@@ -217,6 +228,7 @@ DEPENDENCIES
   jquery-rails (~> 4.1, >= 4.1.1)
   jquery-ui-rails
   logging (~> 2.0)
+  paperclip
   pundit
   rails (= 4.2.5)
   rolify
