@@ -1,11 +1,5 @@
 <% return if converter_options.empty? %>
 
-<script>
-  function set_options(_id, options) {
-    $('#' + _id).select2(options);
-  }
-</script>
-
 <% converter_options.each do |dd| %>
     <br>
     <br>
@@ -16,23 +10,26 @@
     <select id="<%= dd[:internal_name] %>"
             name="<%= TerminologyConverterHelper::CONVERTER_OPTION_PREFIX + dd[:internal_name] %>[]"
             title="<%= dd[:description] %>"
-            <%= dd[:allow_multi_select] ? ' multiple' : '' %>
-            <%= dd[:allow_no_selection] ? '' : ' required' %> >
-      <option value=''></option>
-
-      <% dd[:suggested_pick_list_values].each do |option| %>
-          <option title="<%= option[:suggested_description] %>" value="<%= option[:suggested_value] %>"><%= option[:suggested_description] %></option>
+            data-placeholder="<%= dd[:display_name]%>. This is <%= dd[:allow_no_selection] ? 'not' : ''%> required."
+    >
+      <% unless (dd[:allow_multi_select]) %>
+          <option value=''></option>
       <% end %>
-      <script>
-        var options = {
-          theme: "bootstrap",
-          width: '500px',
-          placeholder: "<%= dd[:display_name]%>. This is <%= dd[:allow_no_selection] ? 'not' : ''%> required.",
-          multiple: <%= dd[:allow_multi_select] %>,
-          tags: true,
-          allowClear: true
-        };
-        set_options('<%= dd[:internal_name]%>', options)
-      </script>
+      <% dd[:suggested_pick_list_values].each do |option| %>
+          <option value='<%= option[:suggested_value] %>'><%= option[:suggested_description] %></option>
+      <% end %>
     </select>
+    <script>
+      var options = {
+        theme: "bootstrap",
+        width: '500px',
+        multiple: <%= dd[:allow_multi_select] %>,
+        required: <%= ! dd[:allow_no_selection] %>,
+        <% unless dd[:allow_multi_select] %>
+        allowClear: true,
+        <% end %>
+        tags: true
+      };
+      $('#<%= dd[:internal_name]%>').select2(options);
+    </script>
 <% end %>
