@@ -60,7 +60,7 @@ gem 'will_paginate'
 gem 'bootstrap-growl-rails'
 gem 'activerecord-jdbch2-adapter'
 gem 'select2-rails'
-
+gem "paperclip"
 group :development do
   gem 'yard'
 end

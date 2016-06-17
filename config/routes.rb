@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+  resources :terminology_source_contents
   get 'roles/get_roles'
   #ids like cshupp@gmail.com aren't valid in a URL :-(
   #match 'roles/get_roles/:id' => 'roles#get_roles', :as => :get_roles, via: [:get]
