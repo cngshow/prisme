@@ -65,7 +65,7 @@ class TerminologyConverterController < ApplicationController
     converter_version = cv_hash[:v]
 
     # initialize the SDOSourceContent based on the selected source
-    sdo_source_content = JIsaacGit::get_sdo(group_id: s_group_id, artifact: s_artifact_id, version: s_version)
+    sdo_source_content = JIsaacLibrary::get_sdo(group_id: s_group_id, artifact: s_artifact_id, version: s_version)
 
     # pull out the git authentication information
     git_props = Service.get_git_props
@@ -75,7 +75,7 @@ class TerminologyConverterController < ApplicationController
 
     # set the default (empty array) ibdf file dependency and populate it if we have a param passed
     addl_ibdf_dependency = params[:addl_ibdf_dependency]
-    addl_ibdf = JIsaacGit::ibdf_file_to_j_a()
+    addl_ibdf = JIsaacLibrary::ibdf_file_to_j_a()
 
     if addl_ibdf_dependency
       # strip out the individual arguments for addl_ibdf_dependency
@@ -84,12 +84,12 @@ class TerminologyConverterController < ApplicationController
       ibdf_artifact_id = ibdf_hash[:a]
       ibdf_version = ibdf_hash[:v]
       ibdf_classifier = params[:ibdf_classifier]
-      addl_ibdf = JIsaacGit::create_ibdf_sdo_java_array({group_id: ibdf_group_id, artifact: ibdf_artifact_id, version: ibdf_version, classifier: ibdf_classifier}, 'IBDFFile')
+      addl_ibdf = JIsaacLibrary::create_ibdf_sdo_java_array({group_id: ibdf_group_id, artifact: ibdf_artifact_id, version: ibdf_version, classifier: ibdf_classifier}, 'IBDFFile')
     end
 
     # set the default (empty array) source file dependency and populate it if we have a param passed todo
     addl_source_dependency = params[:addl_source_dependency]
-    addl_src = JIsaacGit::sdo_source_content_to_j_a()
+    addl_src = JIsaacLibrary::sdo_source_content_to_j_a()
 
     if addl_source_dependency
       # strip out the individual arguments for addl_source_dependency
@@ -98,7 +98,7 @@ class TerminologyConverterController < ApplicationController
       src_artifact_id = src_hash[:a]
       src_version = src_hash[:v]
       src_classifier = src_hash[:c]
-      addl_src = JIsaacGit::sdo_source_content_to_j_a([src_group_id, src_artifact_id, src_version, src_classifier])
+      addl_src = JIsaacLibrary::sdo_source_content_to_j_a([src_group_id, src_artifact_id, src_version, src_classifier])
     end
 
     git_failure = nil
@@ -117,7 +117,7 @@ class TerminologyConverterController < ApplicationController
     rescue => ex
       $log.error("Git call failed!  Message: #{ex.message}")
       $log.error(ex.backtrace.join("\n"))
-      raise JIsaacGit::GitFailureException.new(ex)
+      raise JIsaacLibrary::GitFailureException.new(ex)
     end
 
     development = Rails.env.development?

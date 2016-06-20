@@ -1,12 +1,12 @@
-module JIsaacGit
+module JIsaacLibrary
   include_package 'gov.vha.isaac.ochre.pombuilder.artifacts'#IBDFFile, SDOSourceContent, Converter, Artifact
   include_package 'gov.vha.isaac.ochre.pombuilder.dbbuilder'#DBConfigurationCreator
-  include_package 'gov.vha.isaac.ochre.pombuilder.converter'#ContentConverterCreator, SupportedConverterTypes
+  include_package 'gov.vha.isaac.ochre.pombuilder.converter'#ContentConverterCreator, SupportedConverterTypes, UploadFileInfo, SrcUploadCreator
 
     #invoke as follows:
   #ibdf_file_to_j_a(["org.foo","loinc","5.0"],["org.foo","loinc","3.0","some_classifier"],...)
-  #JIsaacGit::ibdf_file_to_j_a(["org.foo","loinc","5.0"],["org.foo","loinc","3.0","some_classifier"])
-  #JIsaacGit::ibdf_file_to_j_a([]) #for no additional args
+    #JIsaacLibrary::ibdf_file_to_j_a(["org.foo","loinc","5.0"],["org.foo","loinc","3.0","some_classifier"])
+    #JIsaacLibrary::ibdf_file_to_j_a([]) #for no additional args
   def self.ibdf_file_to_j_a(*args)
     build_a(args,IBDFFile)
   end
@@ -21,7 +21,7 @@ module JIsaacGit
     build_a(array, const_get(clazz_string))
   end
 
-  #JIsaacGit::sdo_source_content_to_j_a(["org.foo","loinc","5.0"],["org.foo","loinc","3.0","some_classifier"])
+    #JIsaacLibrary::sdo_source_content_to_j_a(["org.foo","loinc","5.0"],["org.foo","loinc","3.0","some_classifier"])
   def self.sdo_source_content_to_j_a(*args)
     build_a(args,SDOSourceContent)
   end
@@ -60,7 +60,7 @@ end
 
 module IsaacConverter
 
-  class ConverterArtifact < JIsaacGit::Converter
+  class ConverterArtifact < JIsaacLibrary::Converter
     attr_reader :group_id, :artifact_id, :version
     def initialize(group_id:, artifact_id:, version:)
       super(group_id, artifact_id, version)
@@ -71,7 +71,7 @@ module IsaacConverter
   end
 
   def self.get_converter_options(converter:, repository_url:, repository_username:, repository_password:)
-    JIsaacGit::ContentConverterCreator.getConverterOptions(converter,repository_url, repository_username, repository_password)
+    JIsaacLibrary::ContentConverterCreator.getConverterOptions(converter, repository_url, repository_username, repository_password)
   end
 
   def self.create_content_converter(sdo_source_content:, converter_version:, additional_source_dependencies_sdo_j_a:, additional_source_dependencies_ibdf_j_a:,converter_option_values:, git_url:,git_user:, git_pass:)
@@ -79,13 +79,13 @@ module IsaacConverter
     converter_option_values.each_pair do |k,v|
       hash[k] = java.util.HashSet.new(v)
     end
-    JIsaacGit::ContentConverterCreator.createContentConverter(sdo_source_content,converter_version,  additional_source_dependencies_sdo_j_a, additional_source_dependencies_ibdf_j_a,hash, git_url, git_user, git_pass)
+    JIsaacLibrary::ContentConverterCreator.createContentConverter(sdo_source_content, converter_version, additional_source_dependencies_sdo_j_a, additional_source_dependencies_ibdf_j_a, hash, git_url, git_user, git_pass)
   end
 
   # a = IsaacConverter::get_converter_for_source_artifact(artifactId: "vhat-src-data")
   #a.artifact_id | a.group_id | a.artifact_id | a.version |a.classifier | a.has_classifier?
   def self.get_converter_for_source_artifact(artifactId:)
-    JIsaacGit::ContentConverterCreator.getConverterForSourceArtifact(artifactId)
+    JIsaacLibrary::ContentConverterCreator.getConverterForSourceArtifact(artifactId)
   end
 
 #  [#<struct type="LOINC", artifact_dependency="", ibdf_dependency="">, #<struct type="LOINC_TECH_PREVIEW", artifact_dependency="loinc-src-data", ibdf_dependency="rf2-ibdf-sct">, #<struct type="SCT", artifact_dependency="", ibd
@@ -93,7 +93,7 @@ module IsaacConverter
   def self.get_supported_conversions
     converterType = Struct.new(:type,:artifact_id,:artifact_dependency, :ibdf_dependency)
     r_val = []
-    JIsaacGit::ContentConverterCreator.getSupportedConversions.map do |supportedConverterType|
+    JIsaacLibrary::ContentConverterCreator.getSupportedConversions.map do |supportedConverterType|
       #CHDR, if CHDR was real, may motivate the replacement of the call to 'first' to be replaced with the actual arrays
       r_val << converterType.new(supportedConverterType.to_s,supportedConverterType.getArtifactId.to_s, supportedConverterType.getArtifactDependencies.first.to_s, supportedConverterType.getIBDFDependencies.first.to_s)
       #When chdr comes use this.

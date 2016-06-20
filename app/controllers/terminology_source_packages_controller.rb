@@ -3,7 +3,6 @@ class TerminologySourcePackagesController < ApplicationController
 
   def new
     @package = TerminologySourcePackage.new
-    @package.user = current_user.email
     2.times { @package.terminology_source_contents.build }
   end
 
@@ -11,6 +10,7 @@ class TerminologySourcePackagesController < ApplicationController
   # POST /terminology_package.json
   def create
     @package = TerminologySourcePackage.new(terminology_source_package_params)
+    @package.user = current_user.email
 
     respond_to do |format|
       if @package.save

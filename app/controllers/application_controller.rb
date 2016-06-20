@@ -37,7 +37,7 @@ class ApplicationController < ActionController::Base
       when Faraday::ConnectionFailed
         render :file => (trinidad? ? 'public/nexus_not_available.html' : "#{Rails.root}/../nexus_not_available.html")
         return
-      when JIsaacGit::GitFailureException
+      when JIsaacLibrary::GitFailureException
         render :file => (trinidad? ? 'public/git_not_available.html' : "#{Rails.root}/../git_not_available.html")
         return
     end
