@@ -15,7 +15,7 @@ require './lib/prisme_service'
 require './lib/cipher'
 require './lib/jenkin_client'
 require './lib/rails_common/util/helpers'
-require './lib/isaac_git_utilities'
+require './lib/isaac_utilities'
 require './lib/rails_common/roles/roles'
 
 #System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
