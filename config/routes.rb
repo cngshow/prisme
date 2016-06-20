@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+  resources :terminology_source_packages
   resources :terminology_source_contents
   get 'roles/get_roles'
   #ids like cshupp@gmail.com aren't valid in a URL :-(
