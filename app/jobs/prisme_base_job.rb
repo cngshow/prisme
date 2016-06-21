@@ -101,6 +101,7 @@ class PrismeBaseJob < ActiveJob::Base
     active_record.completed_at = Time.now
     #OK I am a child job, spun off by parent parent_job_id.  My parent is no longer a leaf
     update_parent_leaf_and_save(active_record)
+    finalize if self.respond_to? :finalize
   end
 
   rescue_from(StandardError) do |exception|
