@@ -2,6 +2,8 @@ module JIsaacLibrary
   include_package 'gov.vha.isaac.ochre.pombuilder.artifacts'#IBDFFile, SDOSourceContent, Converter, Artifact
   include_package 'gov.vha.isaac.ochre.pombuilder.dbbuilder'#DBConfigurationCreator
   include_package 'gov.vha.isaac.ochre.pombuilder.converter'#ContentConverterCreator, SupportedConverterTypes, UploadFileInfo, SrcUploadCreator
+  include_package 'gov.vha.isaac.ochre.pombuilder.upload'#UploadFileInfo, SrcUploadCreator
+  include_package 'gov.vha.isaac.ochre.api.util'#WorkExecutors
 
     #invoke as follows:
   #ibdf_file_to_j_a(["org.foo","loinc","5.0"],["org.foo","loinc","3.0","some_classifier"],...)
@@ -55,6 +57,62 @@ module JIsaacLibrary
     a.to_java(clazz)
   end
   class GitFailureException < StandardError
+  end
+end
+
+module IsaacUploader
+  #Conveniance constants
+  LOINC = JIsaacLibrary::SupportedConverterTypes::LOINC
+  LOINC_TECH_PREVIEW = JIsaacLibrary::SupportedConverterTypes::LOINC_TECH_PREVIEW
+  SCT = JIsaacLibrary::SupportedConverterTypes::SCT
+  SCT_EXTENSION = JIsaacLibrary::SupportedConverterTypes::SCT_EXTENSION
+  VHAT = JIsaacLibrary::SupportedConverterTypes::VHAT
+  RXNORM = JIsaacLibrary::SupportedConverterTypes::RXNORM
+  RXNORM_SOLOR = JIsaacLibrary::SupportedConverterTypes::RXNORM_SOLOR
+  ALL_SUPPORTED_CONVERTER_TYPES = [LOINC,LOINC_TECH_PREVIEW, SCT, SCT_EXTENSION, VHAT, RXNORM, RXNORM_SOLOR]
+
+  def self.create_src_upload_configuration (supported_converter_type:, version:, extension_name:, files_to_upload:,
+      git_url:, git_username:, git_password:,  artifact_repository_url:, repository_username:, repository_password:)
+    files_to_upload.map! do |file_as_string| java.io.File.new(file_as_string) end
+    begin
+      return JIsaacLibrary::SrcUploadCreator.createSrcUploadConfiguration(supported_converter_type, version, extension_name, files_to_upload, git_url, git_username, git_password, artifact_repository_url, repository_username, repository_password)
+    rescue java.lang.Throwable => ex
+      $log.error("Failed to upload files! " + ex.to_s)
+      raise UploadException.new(ex)
+    end
+  end
+
+  def self.start_work(task: )
+    JIsaacLibrary::WorkExecutors.safeExecute(task)
+  end
+
+  class UploadObserver
+    include javafx.beans.value.ChangeListener
+    attr_reader :old_value, :new_value
+    def changed(observable_task, oldValue, newValue)
+      $log.debug{"#{observable_task}:: oldValue = #{oldValue}, newValue = #{newValue}"}
+      @old_value = oldValue
+      @new_value = newValue
+    end
+  end
+
+  class TaskHolder
+    include Singleton
+    def put(k,v)
+      @job_map ||= {}
+      @job_map[k] = v
+    end
+
+    def get(k)
+      @job_map[k]
+    end
+
+    def delete(k)
+      @job_map.delete(k)
+    end
+  end
+
+  class UploadException < StandardError
   end
 end
 
