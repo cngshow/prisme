@@ -11,12 +11,12 @@ class TerminologyUploadTracker < PrismeBaseJob
     @package_id = package_ar.id
     result_hash[:package_id] = @package_id
     result_hash[:progress] = progress_observer.new_value.to_s
-    result_hash[:state] = state_observer.new_value.to_s
     result = result_hash[:state]
     @done = false
     begin
       IsaacUploader.start_work(task: task) if start_work
       state  = state_observer.new_value
+      result_hash[:state] = state.to_s #might be nil
       $log.info("The current upload for user #{package_ar.user} is #{progress_observer.new_value}, The current state is #{state_observer.new_value}")
       if ((state == javafx.concurrent.Worker::State::SUCCEEDED) || (state == javafx.concurrent.Worker::State::CANCELLED) || (state == javafx.concurrent.Worker::State::FAILED))
         @done = true
@@ -49,10 +49,12 @@ class TerminologyUploadTracker < PrismeBaseJob
     result_hash(ar)[:package_id.to_s]
   end
 
+  #called after all metadata related to this job is saved to the database
   def finalize
     if @done
       $log.debug {"Finalize called on #{@package_id}"}
       IsaacUploader::TaskHolder.instance.delete(@package_id)  #no memory leaks, no race conditions!
+      #this relinquishes all handles to our tasks.  There should be no memory leaks.
     end
   end
 
