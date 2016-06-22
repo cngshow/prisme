@@ -73,7 +73,7 @@ module IsaacUploader
 
   def self.create_src_upload_configuration (supported_converter_type:, version:, extension_name:, files_to_upload:,
       git_url:, git_username:, git_password:,  artifact_repository_url:, repository_username:, repository_password:)
-    files_to_upload.map! do |file_as_string| java.io.File.new(file_as_string) end
+    files_to_upload = files_to_upload.map do |file_as_string| java.io.File.new(file_as_string) end
     begin
       return JIsaacLibrary::SrcUploadCreator.createSrcUploadConfiguration(supported_converter_type, version, extension_name, files_to_upload, git_url, git_username, git_password, artifact_repository_url, repository_username, repository_password)
     rescue java.lang.Throwable => ex
@@ -98,17 +98,89 @@ module IsaacUploader
 
   class TaskHolder
     include Singleton
+
     def put(k,v)
-      @job_map ||= {}
       @job_map[k] = v
     end
 
     def get(k)
       @job_map[k]
+      #if above is nil, find job leaf with this ID and get state.
+    end
+
+    def current_progress(id)
+      h = get(id)
+      progress = nil
+      if (h.nil?)
+        ar = fetch_leaf id
+        progress = TerminologyUploadTracker.progress ar
+        state = TerminologyUploadTracker.state ar
+        done = ((TerminologyUploadTracker.done? state) || (PrismeJob.orphan? ar))
+        $log.error("I am expecting to always be done if I am pulling data from the job active record! Done is #{done}") unless done
+        $log.debug("Progress (from the DB) is #{progress}")
+        progress = 1 if done
+      else
+        progress = h[:progress_observer].new_value
+        state = h[:state_observer].new_value
+        done = TerminologyUploadTracker.done? state
+        $log.debug("Progress (from the Observer) is #{progress}")
+        progress = 1 if done
+      end
+      progress
+    end
+
+
+    def current_state(id)
+      h = get(id)
+      state = nil
+      if (h.nil?)
+        ar = fetch_leaf id
+        state = TerminologyUploadTracker.state ar
+        state = PrismeJobConstants::Status::STATUS_HASH[:ORPHANED] if PrismeJob.orphan? ar
+        $log.debug("State (from the DB) is #{state}")
+      else
+        state = h[:state_observer].new_value
+        $log.debug("State (from the Observer) is #{state}")
+      end
+      state
+    end
+
+
+    def current_result(id)
+      h = get(id)
+      result = nil
+      if (h.nil?)
+        ar = fetch_leaf id
+        result = ar.result
+        result = "Server reboot during upload." if PrismeJob.orphan? ar
+        $log.debug("Result (from the DB) is #{result}")
+      else
+        result = "Uploading..."
+        state = h[:state_observer].new_value
+        done = TerminologyUploadTracker.done? state
+        result = "Finished..." if done
+        $log.debug("Result (from the Observer) is #{result}")
+      end
+      result
     end
 
     def delete(k)
       @job_map.delete(k)
+    end
+
+# IsaacUploader::TaskHolder.instance.current_progress 377
+# load './lib/isaac_utilities.rb'
+
+    private
+    def fetch_leaf(id)
+      upload_jobs = PrismeJob.job_name('TerminologyUploadTracker').completed_by(3.days.ago).leaves
+      upload_jobs = upload_jobs.select do |j|  id.to_s.eql?(TerminologyUploadTracker.package_id(j).to_s) end
+      $log.error ("I expect only 1 upload job! I got #{upload_jobs.length}") if (upload_jobs.length > 1)
+      upload_jobs.first
+    end
+
+    def initialize
+      @job_map ||= {}
     end
   end
 

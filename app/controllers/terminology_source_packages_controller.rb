@@ -59,7 +59,7 @@ class TerminologySourcePackagesController < ApplicationController
       IsaacUploader::TaskHolder.instance.put(id, {task: task, progress_observer: progress_observer, state_observer: state_observer})
 
       #kick off the job
-      TerminologyUploadTracker.perform_later(package, true)
+      TerminologyUploadTracker.perform_later(package, files)
     rescue IsaacUploader::UploadException => ex
       #log and redirect
       $log.error {"Upload exception! " + ex.to_s}

@@ -2,7 +2,7 @@ class TerminologyUploadTracker < PrismeBaseJob
 
   def perform(*args)
     package_ar = args.shift
-    start_work = args.shift
+    files = args.shift
     task_hash = IsaacUploader::TaskHolder.instance.get(package_ar.id)
     task = task_hash[:task]
     progress_observer = task_hash[:progress_observer]
@@ -11,14 +11,15 @@ class TerminologyUploadTracker < PrismeBaseJob
     @package_id = package_ar.id
     result_hash[:package_id] = @package_id
     result_hash[:progress] = progress_observer.new_value.to_s
+    result_hash[:files] = files
     result = result_hash[:state]
     @done = false
     begin
-      IsaacUploader.start_work(task: task) if start_work
+      IsaacUploader.start_work(task: task) if files #start the upload
       state  = state_observer.new_value
       result_hash[:state] = state.to_s #might be nil
       $log.info("The current upload for user #{package_ar.user} is #{progress_observer.new_value}, The current state is #{state_observer.new_value}")
-      if ((state == javafx.concurrent.Worker::State::SUCCEEDED) || (state == javafx.concurrent.Worker::State::CANCELLED) || (state == javafx.concurrent.Worker::State::FAILED))
+      if TerminologyUploadTracker.done? state
         @done = true
         $log.info("Deleting the files!  We are done!  Finished in state #{state}")
         result = state.to_s
@@ -28,6 +29,10 @@ class TerminologyUploadTracker < PrismeBaseJob
       else
         TerminologyUploadTracker.set(wait_until: $PROPS['TERMINOLOGY_UPLOAD.upload_check'].to_i.seconds.from_now).perform_later(package_ar, false, track_child_job)
       end
+      progress = IsaacUploader::TaskHolder.instance.current_progress @package_id
+      state = IsaacUploader::TaskHolder.instance.current_state @package_id
+      result = IsaacUploader::TaskHolder.instance.current_result @package_id
+      $log.debug("[#{progress}, #{state}, #{result}]")
     rescue => ex
         $log.error("Failed to complete terminology upload tracking! #{ex}")
         result = ex.to_s
@@ -45,8 +50,16 @@ class TerminologyUploadTracker < PrismeBaseJob
     result_hash(ar)[:progress.to_s]
   end
 
+  def self.uploaded_files
+    result_hash(ar)[:files.to_s]
+  end
+
   def self.package_id(ar)
     result_hash(ar)[:package_id.to_s]
+  end
+
+  def self.done?(state)
+    ((state.to_s == javafx.concurrent.Worker::State::SUCCEEDED.to_s) || (state.to_s == javafx.concurrent.Worker::State::CANCELLED.to_s) || (state.to_s == javafx.concurrent.Worker::State::FAILED.to_s))
   end
 
   #called after all metadata related to this job is saved to the database
