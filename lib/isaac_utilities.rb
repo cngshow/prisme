@@ -168,16 +168,17 @@ module IsaacUploader
       @job_map.delete(k)
     end
 
-# IsaacUploader::TaskHolder.instance.current_progress 377
-# load './lib/isaac_utilities.rb'
-
-    private
     def fetch_leaf(id)
       upload_jobs = PrismeJob.job_name('TerminologyUploadTracker').completed_by(3.days.ago).leaves
       upload_jobs = upload_jobs.select do |j|  id.to_s.eql?(TerminologyUploadTracker.package_id(j).to_s) end
       $log.error ("I expect only 1 upload job! I got #{upload_jobs.length}") if (upload_jobs.length > 1)
       upload_jobs.first
     end
+
+# IsaacUploader::TaskHolder.instance.current_progress 377
+# load './lib/isaac_utilities.rb'
+
+    private
 
     def initialize
       @job_map ||= {}
