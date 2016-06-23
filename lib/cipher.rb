@@ -27,9 +27,17 @@ class CipherSupport
     result
   end
 
+  def stringify_token(s)
+    s.gsub(', ','#!#')
+  end
+
+  def jsonize_token(s)
+    s.gsub('#!#',', ')
+  end
+
   private
   def init
-    #128 bit AES Cipher Block Chaining encryption
+    #128 bit AES Cipher Feedback (CFB)
     @encrypt = OpenSSL::Cipher::AES.new(128, :CFB)
     @decrypt = OpenSSL::Cipher::AES.new(128, :CFB)
    # @encrypt.padding=256

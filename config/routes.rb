@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   resources :terminology_source_packages
   resources :terminology_source_contents
   get 'roles/get_roles'
+  get 'roles/get_roles_token', defaults: { format: 'text' }
   #ids like cshupp@gmail.com aren't valid in a URL :-(
   #match 'roles/get_roles/:id' => 'roles#get_roles', :as => :get_roles, via: [:get]
 

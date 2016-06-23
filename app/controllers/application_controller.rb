@@ -25,6 +25,7 @@ class ApplicationController < ActionController::Base
 
   def internal_error(exception)
     $log.error(exception.message)
+    $log.error(exception.class.to_s)
     $log.error request.fullpath
     $log.error(exception.backtrace.join("\n"))
     @centered_flash = true
