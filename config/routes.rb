@@ -1,7 +1,5 @@
 Rails.application.routes.draw do
 
-  resources :terminology_source_packages
-  resources :terminology_source_contents
   get 'roles/get_roles'
   get 'roles/get_roles_token', defaults: { format: 'text' }
   #ids like cshupp@gmail.com aren't valid in a URL :-(
@@ -28,6 +26,11 @@ Rails.application.routes.draw do
 
   match 'services/render_props' => 'services#render_props', :as => :services_render_props, via: [:get]
   resources :services
+
+  get 'terminology_source_packages' => 'terminology_source_packages#index'
+  get 'terminology_source_packages/load_build_data' => 'terminology_source_packages#ajax_load_build_data'
+  get 'terminology_source_packages/check_polling' => 'terminology_source_packages#ajax_check_polling'
+  post 'terminology_source_packages' => 'terminology_source_packages#create'
 
   get 'prisme_job_queue/list'
   get 'prisme_job_queue/reload_job_queue_list'

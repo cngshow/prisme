@@ -1,7 +1,10 @@
 <!-- Trigger the modal with a button -->
 <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal" onclick="reset_form();">Request New Build</button>
 
-<h1>Terminology Converter Dashboard</h1>
+<div class="page-header">
+  <h1>Terminology Converter Dashboard</h1>
+</div>
+<!--todo use the filter_table_poll_results.html.erb -->
 <div>
   <label for="filter_rows">Filter Results:&nbsp;&nbsp;</label>
   <select id="filter_rows" onchange="poll();">
@@ -135,16 +138,6 @@
     return span;
   }
 
-  function format_epoch_in_local(epoch) {
-    var ret = epoch;
-
-    if ($.isNumeric(epoch)) {
-      var i = parseInt(epoch) * 1000;
-      ret = new Date(i).toLocaleString();
-    }
-    return ret;
-  }
-
   /*
    {"job_id":"4c0a2d3c-255d-429e-9dfb-68739d8d9f11","job_name":"JenkinsStartBuild","status":4,"queue":"default","scheduled_at":"2016-04-27T20:59:49.841Z",
    "enqueued_at":"2016-04-27T20:59:49.902Z","started_at":"2016-04-27T20:59:49.911Z","completed_at":"2016-04-27T20:59:51.312Z","last_error":null,
@@ -180,7 +173,7 @@
       });
     }
     else {
-      rows = '<tr><td colspan="9" style="text-align:center">There are no items to list...</td></tr>';
+      var rows = '<tr><td colspan="9" style="text-align:center">There are no items to list...</td></tr>';
       $('#' + tableId + ' tbody').html(rows);
     }
   }
@@ -217,7 +210,6 @@
     // call init_select2 to initialize all select inputs to use the select2 js library
     init_select2();
   });
-
 
 
   //

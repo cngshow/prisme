@@ -1,0 +1,13 @@
+<div>
+  <label for="<%= filter_id %>"><%= filter_label %>:&nbsp;&nbsp;</label>
+  <select id="<%= filter_id %>">
+    <option value="15">15 Rows</option>
+    <option value="30">30 Rows</option>
+    <option value="45">45 Rows</option>
+    <option value="60">60 Rows</option>
+    <option value="999999">All Rows</option>
+  </select>
+</div>
+<script>
+  $('#<%=filter_id%>').change(<%= poll %>);
+</script>

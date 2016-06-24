@@ -26,6 +26,16 @@
 //= require bootstrap-notify
 //= require_tree .
 
+function format_epoch_in_local(epoch) {
+    var ret = epoch;
+
+    if ($.isNumeric(epoch)) {
+        var i = parseInt(epoch) * 1000;
+        ret = new Date(i).toLocaleString();
+    }
+    return ret;
+}
+
 function init_select2() {
     $('.select2-prisme').each(function (index, element) {
         var options = {

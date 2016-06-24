@@ -63,7 +63,7 @@ class TerminologyUploadTracker < PrismeBaseJob
     result_hash(ar)[:progress.to_s]
   end
 
-  def self.uploaded_files
+  def self.uploaded_files(ar)
     result_hash(ar)[:files.to_s]
   end
 

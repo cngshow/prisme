@@ -253,7 +253,7 @@ class TerminologyConverterController < ApplicationController
     r_val = {}
     converter_options = fetch_converter_options
     internal_name_to_value_hash = {}
-    values = converter_option_keys.each do |elem|
+    converter_option_keys.each do |elem|
       key = elem.split(CONVERTER_OPTION_PREFIX).last
       value = elem
       internal_name_to_value_hash[key] = value

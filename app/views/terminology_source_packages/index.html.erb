@@ -1,0 +1,193 @@
+<style>
+  .modal-wide .modal-dialog {
+    width: 50%; /* or whatever you wish */
+  }
+
+  .remove_row_div {
+    display: inline-block;
+    vertical-align: top;
+  }
+
+  .fileupload_div {
+    display: inline-block;
+    width: 80%;
+    /*height: 100px;*/
+    /*margin: 3px;*/
+  }
+</style>
+<script>
+  function tsp_poll() {
+    console.log('calling tsp_poller...');//todo implement this
+  }
+</script>
+<!-- Trigger the modal with a button -->
+<button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Create New Terminology Source Package</button>
+<div class="page-header">
+  <h1>Terminology Source Package Dashboard</h1>
+</div>
+
+<%= render 'layouts/filter_table_poll_results', filter_id: 'tsp_filter_rows', filter_label: 'Filter Results', poll: 'tsp_poll()' %>
+<table id="data-table" class="prisme-table table-striped table-hover">
+  <thead>
+  <tr>
+    <th>User Name</th>
+    <th>Uploaded Files</th>
+    <th>Started At</th>
+    <th>State</th>
+    <th>Result</th>
+    <th width="300px">Progress</th>
+    <th>Job Completed At</th>
+    <th>Elapsed Time</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+  </tr>
+  <tr>
+    <td colspan="8" style="text-align:center">There are no items to list...</td>
+  </tr>
+  </tbody>
+</table>
+<br/>
+
+<!-- Modal -->
+<div id="myModal" class="modal fade modal-wide" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Terminology Source Package Creation</h4>
+      </div>
+      <div class="modal-body">
+        <button onclick="add_upload(true)" class="btn btn-primary">Add Source Upload Row</button>
+        <br><br>
+        <%= form_for(@package, remote: true, html: {multipart: true}) do %>
+            <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+            <div>selection criteria</div>
+            <div id="uploads">
+              <h4>Source Content to Upload</h4>
+              <div id="source_rows"></div>
+            </div>
+            <br>
+            <hr>
+        <% end %>
+        <div class="btn btn-primary btn-lg" onclick="submitPackage()" id="btn_submit">Create Terminology Source Package</div>
+      </div>
+    </div>
+  </div>
+  <script>
+    function add_upload(include_remove) {
+      var milliseconds = (new Date).getTime();
+      var input = $('<input>').attr('type', "file").attr('data-millis', milliseconds).attr('required', 'required');
+      var sourceRows = $('#source_rows').append($('<div>').attr('id', 'i_' + milliseconds.toString()).addClass('fileupload_div').html(input));
+
+      if (include_remove) {
+        var btn_rm = $('<a>').addClass('btn btn-danger').text('Remove').on('click', function () {
+          $('#i_' + milliseconds.toString()).remove();
+          $('#x_' + milliseconds.toString()).remove();
+        });
+        sourceRows.append($('<div>').attr('id', 'x_' + milliseconds.toString()).addClass("remove_row_div").html(btn_rm));
+      }
+      input.fileinput({
+        msgNo: 'Please choose a file to upload. No',
+        minFileCount: 1,
+        showRemove: false,
+        showClose: true,
+        showUpload: false,
+        showPreview: false
+      });
+    }
+
+    function submitPackage() {
+      var submit_form = true;
+
+      $('[data-millis]').each(function (index, value) {
+        $(this).attr('name', 'terminology_source_package[terminology_source_contents_attributes][' + index + '][upload]');
+
+        if (value.value === '') {
+          submit_form = false;
+          return false;
+        }
+      });
+
+      if (submit_form) {
+        $("#btn_submit").attr('onclick', 'return false;').html('<span><i class="fa fa-cog fa-spin fa-fw" aria-hidden="true"></i>Uploading...Please Wait</span>')
+      }
+      $('#new_terminology_source_package').submit();
+    }
+
+    var fields = ['user', 'uploaded_files', 'started_at', 'state', 'result', 'progress', 'state_time', 'elapsed_time'];
+
+    function loadTable(tableId, fields, data) {
+      $('#' + tableId).find('tbody').empty();
+
+      if (data.length > 0) {
+        $.each(data, function (index, row) {
+          var tr_data = $('<tr>');
+
+          $.each(fields, function (index, field) {
+            if (field === 'started_at') {
+              tr_data.append($('<td>').text(format_epoch_in_local(row.started_at)));
+            }
+            else if (field === 'progress') {
+              var title = row.progress < 100 ? row.title : '';
+              var pbar = $('<div>').addClass('progress-bar')
+                  .prop('role','progressbar')
+                  .attr('aria-valuenow',row.progress)
+                  .attr('aria-valuemin', 0)
+                  .attr('aria-valuemax', 100)
+                  .css('width', row.progress.toString() + '%')
+                  .text(row.progress.toString() + '%');
+              tr_data.append($('<td>').html($('<span>').html(title + '<br>').append($('<div>').addClass("progress").html(pbar))));
+            }
+            else if (field === 'state_time') {
+              var txt = row.progress < 100 ? 'Running...' : format_epoch_in_local(row.state_time);
+              tr_data.append($('<td>').text(txt));
+            }
+            else {
+              tr_data.append($('<td>').text(eval('row.' + field)));
+            }
+          });
+          $('#' + tableId + ' tbody').append(tr_data);
+        });
+      }
+      else {
+        var rows = '<tr><td colspan="8" style="text-align:center">There are no items to list...</td></tr>';
+        $('#' + tableId + ' tbody').html(rows);
+      }
+    }
+
+    function poll() {
+      console.log('calling poll');
+      var row_limit = parseInt($('#tsp_filter_rows').find('option:selected').val());
+
+      $.getJSON(gon.routes.terminology_source_packages_load_build_data_path, {row_limit: row_limit}, function (data) {
+        loadTable('data-table', fields, data);
+
+        <% if Rails.env.development? %>
+        if (polling.isPolling('terminology_source_packages')) {
+          $.getJSON(gon.routes.terminology_source_packages_check_polling_path, {}, function (data) {
+            console.log(JSON.stringify(data));
+            if (data.poll === false) {
+              polling.unregisterController('terminology_source_packages');
+
+              //call final poll in case there is a timing issue
+              poll();
+            }
+          });
+        }
+        <% end %>
+      });
+    }
+
+    $(document).ready(function () {
+      add_upload(false);
+      poll();
+
+      //register for polling
+      polling.registerController('terminology_source_packages', poll, 1000);
+    });
+  </script>
+</div>
