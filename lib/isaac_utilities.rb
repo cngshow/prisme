@@ -169,11 +169,13 @@ module IsaacUploader
 
     def finished_time(terminology_package_id:)
       h = get(terminology_package_id)
-      time = Time.now
+      time = nil
       if (h.nil?)
         ar = fetch_leaf terminology_package_id
         time = Time.at((TerminologyUploadTracker.finish_time ar).to_i)
         $log.debug("Time (from the DB) is #{time}")
+      else
+        time = h[:state_observer].last_event_time
       end
       time
     end
