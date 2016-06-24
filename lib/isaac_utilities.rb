@@ -169,7 +169,7 @@ module IsaacUploader
 
     def finished_time(terminology_package_id:)
       h = get(terminology_package_id)
-      time = nil
+      time = Time.now
       if (h.nil?)
         ar = fetch_leaf terminology_package_id
         time = Time.at((TerminologyUploadTracker.finish_time ar).to_i)
