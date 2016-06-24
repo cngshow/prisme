@@ -53,10 +53,12 @@ class TerminologySourcePackagesController < ApplicationController
                                                             artifact_repository_url: repository_url, repository_username:repository_username,
                                                             repository_password: repository_password)
       progress_observer = IsaacUploader::UploadObserver.new()
-      state_observer = IsaacUploader::UploadObserver.new()
+      state_observer = IsaacUploader::StateObserver.new()
+      title_observer = IsaacUploader::UploadObserver.new()
       task.progressProperty.addListener(progress_observer)
       task.stateProperty.addListener(state_observer)
-      IsaacUploader::TaskHolder.instance.put(id, {task: task, progress_observer: progress_observer, state_observer: state_observer})
+      task.titleProperty.addListener(title_observer)
+      IsaacUploader::TaskHolder.instance.put(id, {task: task, progress_observer: progress_observer, state_observer: state_observer, title_observer: title_observer})
 
       #kick off the job
       TerminologyUploadTracker.perform_later(package, files)

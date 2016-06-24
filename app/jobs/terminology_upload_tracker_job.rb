@@ -7,10 +7,10 @@ class TerminologyUploadTracker < PrismeBaseJob
     task = task_hash[:task]
     progress_observer = task_hash[:progress_observer]
     state_observer = task_hash[:state_observer]
+    title_observer = task_hash[:title_observer]
     result_hash = {}
     @package_id = package_ar.id
     result_hash[:package_id] = @package_id
-    result_hash[:progress] = progress_observer.new_value.to_s
     result_hash[:files] = files
     result = result_hash[:state]
     @done = false
@@ -18,6 +18,8 @@ class TerminologyUploadTracker < PrismeBaseJob
       IsaacUploader.start_work(task: task) if files #start the upload
       state  = state_observer.new_value
       result_hash[:state] = state.to_s #might be nil
+      result_hash[:current_title] = title_observer.new_value.to_s
+      result_hash[:progress] = progress_observer.new_value.to_s
       $log.info("The current upload for user #{package_ar.user} is #{progress_observer.new_value}, The current state is #{state_observer.new_value}")
       if TerminologyUploadTracker.done? state
         @done = true
@@ -25,21 +27,32 @@ class TerminologyUploadTracker < PrismeBaseJob
         result = state.to_s
         #result = task.to_s
         $log.debug("Task is #{task}")
+        result[:finish_time] = (IsaacUploader::TaskHolder.instance.finished_time(terminology_package_id: @package_id)).to_i
         package_ar.destroy
       else
         TerminologyUploadTracker.set(wait_until: $PROPS['TERMINOLOGY_UPLOAD.upload_check'].to_i.seconds.from_now).perform_later(package_ar, false, track_child_job)
       end
-      progress = IsaacUploader::TaskHolder.instance.current_progress @package_id
-      state = IsaacUploader::TaskHolder.instance.current_state @package_id
-      result = IsaacUploader::TaskHolder.instance.current_result @package_id
-      $log.debug("[#{progress}, #{state}, #{result}]")
+      progress = IsaacUploader::TaskHolder.instance.current_progress terminology_package_id: @package_id
+      state = IsaacUploader::TaskHolder.instance.current_state terminology_package_id: @package_id
+      result = IsaacUploader::TaskHolder.instance.current_result terminology_package_id: @package_id
+      title = IsaacUploader::TaskHolder.instance.title terminology_package_id: @package_id
+      $log.debug("[#{progress}, #{state}, #{title}, #{result}]")
     rescue => ex
         $log.error("Failed to complete terminology upload tracking! #{ex}")
+        $log.error(ex.backtrace.join("\n"))
         result = ex.to_s
     ensure
       save_result(result, result_hash)
     end
 
+  end
+
+  def self.title(ar)
+    result_hash(ar)[:current_title.to_s]
+  end
+
+  def self.finish_time(ar)
+    result_hash(ar)[:finish_time.to_s]
   end
 
   def self.state(ar)

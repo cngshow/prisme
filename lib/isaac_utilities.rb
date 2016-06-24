@@ -96,6 +96,14 @@ module IsaacUploader
     end
   end
 
+  class StateObserver < UploadObserver
+    attr_reader :last_event_time
+    def changed(observable_task, oldValue, newValue)
+      super observable_task, oldValue, newValue
+      @last_event_time = Time.now
+    end
+  end
+
   class TaskHolder
     include Singleton
 
@@ -108,11 +116,11 @@ module IsaacUploader
       #if above is nil, find job leaf with this ID and get state.
     end
 
-    def current_progress(id)
-      h = get(id)
+    def current_progress(terminology_package_id:)
+      h = get(terminology_package_id)
       progress = nil
       if (h.nil?)
-        ar = fetch_leaf id
+        ar = fetch_leaf terminology_package_id
         progress = TerminologyUploadTracker.progress ar
         state = TerminologyUploadTracker.state ar
         done = ((TerminologyUploadTracker.done? state) || (PrismeJob.orphan? ar))
@@ -130,11 +138,11 @@ module IsaacUploader
     end
 
 
-    def current_state(id)
-      h = get(id)
+    def current_state(terminology_package_id:)
+      h = get(terminology_package_id)
       state = nil
       if (h.nil?)
-        ar = fetch_leaf id
+        ar = fetch_leaf terminology_package_id
         state = TerminologyUploadTracker.state ar
         state = PrismeJobConstants::Status::STATUS_HASH[:ORPHANED] if PrismeJob.orphan? ar
         $log.debug("State (from the DB) is #{state}")
@@ -145,12 +153,36 @@ module IsaacUploader
       state
     end
 
+    def title(terminology_package_id:)
+      h = get(terminology_package_id)
+      title = nil
+      if (h.nil?)
+        ar = fetch_leaf terminology_package_id
+        title = TerminologyUploadTracker.title ar
+        $log.debug("Title (from the DB) is #{title}")
+      else
+        title = h[:title_observer].new_value
+        $log.debug("Title (from the Observer) is #{title}")
+      end
+      title
+    end
 
-    def current_result(id)
-      h = get(id)
+    def finished_time(terminology_package_id:)
+      h = get(terminology_package_id)
+      time = Time.now
+      if (h.nil?)
+        ar = fetch_leaf terminology_package_id
+        time = Time.at((TerminologyUploadTracker.finish_time ar).to_i)
+        $log.debug("Time (from the DB) is #{time}")
+      end
+      time
+    end
+
+    def current_result(terminology_package_id:)
+      h = get(terminology_package_id)
       result = nil
       if (h.nil?)
-        ar = fetch_leaf id
+        ar = fetch_leaf terminology_package_id
         result = ar.result
         result = "Server reboot during upload." if PrismeJob.orphan? ar
         $log.debug("Result (from the DB) is #{result}")
@@ -168,17 +200,15 @@ module IsaacUploader
       @job_map.delete(k)
     end
 
-    def fetch_leaf(id)
+# IsaacUploader::TaskHolder.instance.current_progress 377
+# load './lib/isaac_utilities.rb'
+    private
+    def fetch_leaf(terminology_package_id)
       upload_jobs = PrismeJob.job_name('TerminologyUploadTracker').completed_by(3.days.ago).leaves
-      upload_jobs = upload_jobs.select do |j|  id.to_s.eql?(TerminologyUploadTracker.package_id(j).to_s) end
+      upload_jobs = upload_jobs.select do |j|  terminology_package_id.to_s.eql?(TerminologyUploadTracker.package_id(j).to_s) end
       $log.error ("I expect only 1 upload job! I got #{upload_jobs.length}") if (upload_jobs.length > 1)
       upload_jobs.first
     end
-
-# IsaacUploader::TaskHolder.instance.current_progress 377
-# load './lib/isaac_utilities.rb'
-
-    private
 
     def initialize
       @job_map ||= {}
