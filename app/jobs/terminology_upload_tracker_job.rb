@@ -27,7 +27,7 @@ class TerminologyUploadTracker < PrismeBaseJob
         result = state.to_s
         #result = task.to_s
         $log.debug("Task is #{task}")
-        result[:finish_time] = (IsaacUploader::TaskHolder.instance.finished_time(terminology_package_id: @package_id)).to_i
+        result_hash[:finish_time] = (IsaacUploader::TaskHolder.instance.finished_time(terminology_package_id: @package_id)).to_i
         package_ar.destroy
       else
         TerminologyUploadTracker.set(wait_until: $PROPS['TERMINOLOGY_UPLOAD.upload_check'].to_i.seconds.from_now).perform_later(package_ar, false, track_child_job)
