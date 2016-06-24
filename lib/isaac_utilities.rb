@@ -175,7 +175,10 @@ module IsaacUploader
         time = Time.at((TerminologyUploadTracker.finish_time ar).to_i)
         $log.debug("Time (from the DB) is #{time}")
       else
-        $log.debug("Time is Time.now...")
+        #Are we done?  Use the final event time!!
+        state_obs = h[:state_observer]
+        time = state_obs.last_event_time if TerminologyUploadTracker.done? state_obs.new_value
+        $log.debug("Time is Time.now or the final time...")
       end
       time
     end
