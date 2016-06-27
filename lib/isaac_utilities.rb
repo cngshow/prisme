@@ -70,6 +70,24 @@ module IsaacUploader
   RXNORM = JIsaacLibrary::SupportedConverterTypes::RXNORM
   RXNORM_SOLOR = JIsaacLibrary::SupportedConverterTypes::RXNORM_SOLOR
   ALL_SUPPORTED_CONVERTER_TYPES = [LOINC,LOINC_TECH_PREVIEW, SCT, SCT_EXTENSION, VHAT, RXNORM, RXNORM_SOLOR]
+  CONVERTER_TYPE_GUI_HASH = {}
+  ALL_SUPPORTED_CONVERTER_TYPES.each do |converter|
+    CONVERTER_TYPE_GUI_HASH[converter] ||= {}
+    CONVERTER_TYPE_GUI_HASH[converter][:artifact_dependencies] = converter.getArtifactDependencies.map do |e| e.to_s end
+    CONVERTER_TYPE_GUI_HASH[converter][:ibdf_dependencies] = converter.getIBDFDependencies.map do |e| e.to_s end
+    CONVERTER_TYPE_GUI_HASH[converter][:artifact_id] = converter.getArtifactId.to_s
+    CONVERTER_TYPE_GUI_HASH[converter][:upload_file_info] ||= []
+    converter.getUploadFileInfo.each do |uf|
+      hash = {}
+      hash[:suggested_source_location] = uf.getSuggestedSourceLocation.to_s
+      hash[:suggested_source_url] = uf.getSuggestedSourceURL.to_s
+      hash[:expected_naming_pattern] = uf.getExpectedNamingPatternDescription.to_s
+      hash[:expected_name_regex] = uf.getExpectedNamingPatternRegExpPattern.to_s
+      hash[:sample_name] = uf.getSampleName.to_s
+      hash[:file_required] = uf.fileIsRequired
+      CONVERTER_TYPE_GUI_HASH[converter][:upload_file_info] << hash
+    end
+  end
 
   def self.create_src_upload_configuration (supported_converter_type:, version:, extension_name:, files_to_upload:,
       git_url:, git_username:, git_password:,  artifact_repository_url:, repository_username:, repository_password:)

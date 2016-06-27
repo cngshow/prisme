@@ -4,8 +4,8 @@ class TerminologySourcePackagesController < ApplicationController
   def index
     # new up a TerminologySourcePackage model for the modal popup allowing the user to create a new package
     @package = TerminologySourcePackage.new
-
-
+a = IsaacUploader::CONVERTER_TYPE_GUI_HASH
+puts "hi"
   end
 
   # POST /terminology_package
