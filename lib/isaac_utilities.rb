@@ -88,6 +88,7 @@ module IsaacUploader
       CONVERTER_TYPE_GUI_HASH[converter][:upload_file_info] << hash
     end
   end
+  CONVERTER_TYPE_GUI_HASH.freeze
 
   def self.create_src_upload_configuration (supported_converter_type:, version:, extension_name:, files_to_upload:,
       git_url:, git_username:, git_password:,  artifact_repository_url:, repository_username:, repository_password:)
