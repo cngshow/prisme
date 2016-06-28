@@ -90,6 +90,18 @@ module IsaacUploader
   end
   CONVERTER_TYPE_GUI_HASH.freeze
 
+  #
+  def self.converter_types_as_html_options
+    ret = []
+
+    ALL_SUPPORTED_CONVERTER_TYPES.each do |i|
+      key = i.to_s
+      text = key.gsub('_', ' ')
+      ret << [text, key]
+    end
+    ret
+  end
+
   def self.create_src_upload_configuration (supported_converter_type:, version:, extension_name:, files_to_upload:,
       git_url:, git_username:, git_password:,  artifact_repository_url:, repository_username:, repository_password:)
     files_to_upload = files_to_upload.map do |file_as_string| java.io.File.new(file_as_string) end

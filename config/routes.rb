@@ -30,6 +30,7 @@ Rails.application.routes.draw do
   get 'terminology_source_packages' => 'terminology_source_packages#index'
   get 'terminology_source_packages/load_build_data' => 'terminology_source_packages#ajax_load_build_data'
   get 'terminology_source_packages/check_polling' => 'terminology_source_packages#ajax_check_polling'
+  get 'terminology_source_packages/converter_change' => 'terminology_source_packages#ajax_converter_change'
   post 'terminology_source_packages' => 'terminology_source_packages#create'
 
   get 'prisme_job_queue/list'

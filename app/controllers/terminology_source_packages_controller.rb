@@ -4,10 +4,7 @@ class TerminologySourcePackagesController < ApplicationController
   def index
     # new up a TerminologySourcePackage model for the modal popup allowing the user to create a new package
     @package = TerminologySourcePackage.new
-a = IsaacUploader::CONVERTER_TYPE_GUI_HASH
-puts "hi"
   end
-
   # POST /terminology_package
   # POST /terminology_package.json
   def create
@@ -65,6 +62,12 @@ puts "hi"
     render json: {poll: prisme_job_has_running_jobs}
   end
 
+  def ajax_converter_change
+    converter = params[:converter]
+    a = IsaacUploader::CONVERTER_TYPE_GUI_HASH
+    upload_options = a.select{|i|i.to_s.eql?(converter)}
+    render json: upload_options.first[1]
+  end
 
   private
   def upload(package)
@@ -86,11 +89,15 @@ puts "hi"
     end
 
     begin
-      task = IsaacUploader::create_src_upload_configuration(supported_converter_type: IsaacUploader::SCT_EXTENSION, version: '50.6',
-                                                            extension_name: 'us',
-                                                            files_to_upload: files ,git_url: git_url,
-                                                            git_username: git_user, git_password: git_pass,
-                                                            artifact_repository_url: repository_url, repository_username:repository_username,
+      task = IsaacUploader::create_src_upload_configuration(supported_converter_type: params['supported_converter'],
+                                                            version: params['version'],
+                                                            extension_name: params['extension_name'],
+                                                            files_to_upload: files ,
+                                                            git_url: git_url,
+                                                            git_username: git_user,
+                                                            git_password: git_pass,
+                                                            artifact_repository_url: repository_url,
+                                                            repository_username:repository_username,
                                                             repository_password: repository_password)
       progress_observer = IsaacUploader::UploadObserver.new
       state_observer = IsaacUploader::StateObserver.new

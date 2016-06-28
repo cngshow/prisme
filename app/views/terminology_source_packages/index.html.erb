@@ -1,9 +1,13 @@
 <style>
+  .popover {
+    max-width: 1000px;
+  }
+
   .modal-wide .modal-dialog {
     width: 50%; /* or whatever you wish */
   }
 
-  .remove_row_div {
+  .upload_info_div {
     display: inline-block;
     vertical-align: top;
   }
@@ -61,35 +65,76 @@
         <h4 class="modal-title">Terminology Source Package Creation</h4>
       </div>
       <div class="modal-body">
-        <button onclick="add_upload(true)" class="btn btn-primary">Add Source Upload Row</button>
-        <br><br>
         <%= form_for(@package, remote: true, html: {multipart: true}) do %>
             <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
-            <div>selection criteria</div>
-            <div id="uploads">
+            <%= label_tag 'supported_converter', 'Supported Converter' %><br>
+            <%= select_tag 'supported_converter',
+                           options_for_select(IsaacUploader.converter_types_as_html_options),
+                           {:prompt => '-- Select a Converter Type --'} %><br><br>
+
+            <%= label_tag 'version', 'Version' %><br>
+            <%= text_field_tag 'version' %><br><br>
+
+            <%= label_tag 'extension_name', 'Extension Name' %><br>
+            <%= select_tag 'extension_name',
+                           options_for_select(['us', 'fr', 'es']),
+                           {:prompt => '-- Select an Extension --'} %><br><br>
+
+            <div id="uploads" style="display: none">
+              <br>
               <h4>Source Content to Upload</h4>
               <div id="source_rows"></div>
+              <br>
+              <hr>
+              <div class="btn btn-primary btn-lg" onclick="submitPackage()" id="btn_submit">Create Terminology Source Package</div>
             </div>
-            <br>
-            <hr>
         <% end %>
-        <div class="btn btn-primary btn-lg" onclick="submitPackage()" id="btn_submit">Create Terminology Source Package</div>
       </div>
     </div>
   </div>
   <script>
-    function add_upload(include_remove) {
-      var milliseconds = (new Date).getTime();
-      var input = $('<input>').attr('type', "file").attr('data-millis', milliseconds).attr('required', 'required');
-      var sourceRows = $('#source_rows').append($('<div>').attr('id', 'i_' + milliseconds.toString()).addClass('fileupload_div').html(input));
+    function add_upload(upload_json) {
+      /*
+       artifact_id
+       ibdf_dependencies
+       artifact_dependencies
 
-      if (include_remove) {
-        var btn_rm = $('<a>').addClass('btn btn-danger').text('Remove').on('click', function () {
-          $('#i_' + milliseconds.toString()).remove();
-          $('#x_' + milliseconds.toString()).remove();
-        });
-        sourceRows.append($('<div>').attr('id', 'x_' + milliseconds.toString()).addClass("remove_row_div").html(btn_rm));
+       suggested_source_location
+       suggested_source_url
+       expected_naming_pattern
+       expected_name_regex
+       sample_name
+       file_required
+       */
+      var milliseconds = (new Date).getTime();
+      var input = $('<input>').attr('type', "file").attr('data-millis', milliseconds).attr('required', upload_json['file_required']).attr('pattern', upload_json['expected_name_regex']);
+      var sourceRows = $('#source_rows').append($('<div>').attr('id', 'i_' + milliseconds.toString()).addClass('fileupload_div').html(input));
+      var suggested_source_url = upload_json['suggested_source_url'];
+      var suggested_source_location = upload_json['suggested_source_location'];
+      var sample_name = upload_json['sample_name'];
+      var file_required = upload_json['file_required'];
+      var expected_name_regex = upload_json['expected_name_regex'];//todo test this!!!
+
+      var source_msg = '';
+      if (sample_name !== '') {
+        source_msg += '<strong>Sample Name:&nbsp;</strong>' + sample_name + '<br><br>';
       }
+      if (suggested_source_location !== '') {
+        source_msg += '<strong>Suggested Source Location:&nbsp;</strong>' + suggested_source_location + '<br><br>';
+      }
+      if (suggested_source_url !== '') {
+        source_msg += '<strong>Suggested Source URL:&nbsp;</strong>' + suggested_source_url + '<br>';
+      }
+      var info = $('<a>').html('<i class="fa fa-info-circle fa-2x" aria-hidden="true"></i>');
+      sourceRows.append($('<div>').addClass("upload_info_div").html(info));
+      info.popover({
+        html: true,
+        container: 'body',
+        title: 'File Upload Information',
+        content: "<div><p>" + upload_json['expected_naming_pattern'] + "</p></div>" +
+        "<div><p>" + source_msg + "</p></div>"
+      });
+
       input.fileinput({
         msgNo: 'Please choose a file to upload. No',
         minFileCount: 1,
@@ -134,8 +179,8 @@
             else if (field === 'progress') {
               var title = row.progress < 100 ? row.title : '';
               var pbar = $('<div>').addClass('progress-bar')
-                  .prop('role','progressbar')
-                  .attr('aria-valuenow',row.progress)
+                  .prop('role', 'progressbar')
+                  .attr('aria-valuenow', row.progress)
                   .attr('aria-valuemin', 0)
                   .attr('aria-valuemax', 100)
                   .css('width', row.progress.toString() + '%')
@@ -183,7 +228,28 @@
     }
 
     $(document).ready(function () {
-      add_upload(false);
+      // set the onchange for the supported_converter selection
+      $('#supported_converter').change(function () {
+        $('#uploads').hide();
+        $('#source_rows').empty();
+        $('div.popover').remove();
+        var converter = this.value;
+
+        if (converter !== '') {
+          $.ajax({
+            url: gon.routes.terminology_source_packages_converter_change_path,
+            type: "GET",
+            data: {converter: converter},
+            success: function (data) {
+              $.each(data['upload_file_info'], function () {
+                add_upload(this);
+              });
+              $('#uploads').fadeIn();
+            }
+          });
+        }
+      });
+
       poll();
 
       //register for polling
