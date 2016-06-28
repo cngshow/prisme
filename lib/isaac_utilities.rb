@@ -69,7 +69,7 @@ module IsaacUploader
   VHAT = JIsaacLibrary::SupportedConverterTypes::VHAT
   RXNORM = JIsaacLibrary::SupportedConverterTypes::RXNORM
   RXNORM_SOLOR = JIsaacLibrary::SupportedConverterTypes::RXNORM_SOLOR
-  ALL_SUPPORTED_CONVERTER_TYPES = [LOINC,LOINC_TECH_PREVIEW, SCT, SCT_EXTENSION, VHAT, RXNORM, RXNORM_SOLOR]
+  ALL_SUPPORTED_CONVERTER_TYPES =  JIsaacLibrary::SupportedConverterTypes.values.map do |enum| enum end
   CONVERTER_TYPE_GUI_HASH = {}
   ALL_SUPPORTED_CONVERTER_TYPES.each do |converter|
     CONVERTER_TYPE_GUI_HASH[converter] ||= {}
