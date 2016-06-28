@@ -125,8 +125,10 @@
       if (suggested_source_url !== '') {
         source_msg += '<strong>Suggested Source URL:&nbsp;</strong>' + suggested_source_url + '<br>';
       }
+
       var info = $('<a>').html('<i class="fa fa-info-circle fa-2x" aria-hidden="true"></i>');
       sourceRows.append($('<div>').addClass("upload_info_div").html(info));
+
       info.popover({
         html: true,
         container: 'body',
@@ -228,6 +230,10 @@
     }
 
     $(document).ready(function () {
+      $(document).on('hide.bs.modal','#myModal', function () {
+        $('div.popover').remove();
+      });
+
       // set the onchange for the supported_converter selection
       $('#supported_converter').change(function () {
         $('#uploads').hide();
