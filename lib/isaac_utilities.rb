@@ -94,6 +94,7 @@ module IsaacUploader
       git_url:, git_username:, git_password:,  artifact_repository_url:, repository_username:, repository_password:)
     files_to_upload = files_to_upload.map do |file_as_string| java.io.File.new(file_as_string) end
     begin
+      supported_converter_type = JIsaacLibrary::SupportedConverterTypes.valueOf(supported_converter_type) if (supported_converter_type.kind_of? String)
       return JIsaacLibrary::SrcUploadCreator.createSrcUploadConfiguration(supported_converter_type, version, extension_name, files_to_upload, git_url, git_username, git_password, artifact_repository_url, repository_username, repository_password)
     rescue java.lang.Throwable => ex
       $log.error("Failed to upload files! " + ex.to_s)
