@@ -228,7 +228,7 @@ module IsaacUploader
 # load './lib/isaac_utilities.rb'
     private
     def fetch_leaf(terminology_package_id)
-      upload_jobs = PrismeJob.job_name('TerminologyUploadTracker').completed_by(($PROPS['PRISME.job_queue_trim'].to_i + 1).days.ago).leaves
+      upload_jobs = PrismeJob.job_name('TerminologyUploadTracker').completed_by(($PROPS['PRISME.job_queue_trim'].to_i).days.ago).leaves
       upload_jobs = upload_jobs.select do |j|  terminology_package_id.to_s.eql?(TerminologyUploadTracker.package_id(j).to_s) end
       $log.error ("I expect only 1 upload job! I got #{upload_jobs.length}") if (upload_jobs.length > 1)
       upload_jobs.first
