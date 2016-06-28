@@ -24,7 +24,7 @@ puts "hi"
   def ajax_load_build_data
     row_limit = params[:row_limit]
     # get the root tracker jobs
-    data = PrismeJob.job_name('TerminologyUploadTracker').where('root_job_id is null').order(completed_at: :desc).limit(row_limit)
+    data = PrismeJob.job_name('TerminologyUploadTracker').where('root_job_id is null').completed_by(($PROPS['PRISME.job_queue_trim'].to_i).days.ago).limit(row_limit)
     ret = []
 
     data.each do |jsb|
