@@ -11,6 +11,7 @@ class TerminologyUploadTracker < PrismeBaseJob
     result_hash = {}
     @package_id = package_ar.id
     result_hash[:package_id] = @package_id
+    result_hash[:user] = package_ar.user
     result_hash[:files] = files
     result = result_hash[:state]
     @done = false
@@ -61,6 +62,10 @@ class TerminologyUploadTracker < PrismeBaseJob
 
   def self.progress(ar)
     result_hash(ar)[:progress.to_s]
+  end
+
+  def self.user(ar)
+    result_hash(ar)[:user.to_s]
   end
 
   def self.uploaded_files(ar)

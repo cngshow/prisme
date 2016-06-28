@@ -21,7 +21,7 @@ class TerminologySourcePackagesController < ApplicationController
   def ajax_load_build_data
     row_limit = params[:row_limit]
     # get the root tracker jobs
-    data = PrismeJob.job_name('TerminologyUploadTracker').where('root_job_id is null').completed_by(($PROPS['PRISME.job_queue_trim'].to_i).days.ago).limit(row_limit)
+    data = PrismeJob.job_name('TerminologyUploadTracker').where('root_job_id is null').completed_by(($PROPS['PRISME.job_queue_trim'].to_i).days.ago).order(completed_at: :desc)
     ret = []
 
     data.each do |jsb|
@@ -42,6 +42,7 @@ class TerminologySourcePackagesController < ApplicationController
       row_data['state'] = state.nil? ? jsb.status.to_s : state.to_s
       row_data['state_time'] = state_time.to_i
       row_data['title'] = title.to_s
+      row_data['user'] = TerminologyUploadTracker.user(jsb).to_s
       row_data['result'] = result.to_s
       row_data['progress'] = progress.nil? ? 0 : (progress.to_f * 100).round
 
