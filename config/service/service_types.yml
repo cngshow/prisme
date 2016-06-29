@@ -25,18 +25,23 @@ nexus:
   props:
    - key: nexus_repository_url
      tooltip: Enter the Nexus Repository URL for the Nexus Artifactory Server (e.g. http://vadev.mantech.com:8081/nexus/content/groups/everything/)
-     label: Nexus Repository URL
+     label: Nexus Repository URL (Read)
      type: url
      order_idx: 0
+   - key: nexus_publication_url
+     tooltip: Enter the Nexus Repository URL for publishing to the Nexus Artifactory Server (e.g. http://vadev.mantech.com:8081/nexus/content/repositories/termdata/)
+     label: Nexus Repository URL (Publish)
+     type: url
+     order_idx: 1
    - key: nexus_user
      tooltip: Enter the user name to use for logging on to the Nexus Server
      label: User Name
-     order_idx: 1
+     order_idx: 2
    - key: nexus_pwd
      tooltip: Enter the password to use for logging on to the Nexus Server
      label: Password
      type: password
-     order_idx: 2
+     order_idx: 3
 
 jenkins:
   label: Jenkins
