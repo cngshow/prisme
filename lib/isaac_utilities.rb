@@ -228,8 +228,11 @@ module IsaacUploader
         state = h[:state_observer].new_value
         task = h[:task]
         done = TerminologyUploadTracker.done? state
-        result = "Finished..." if done
-        result << "  " + task.get.to_s if Rails.env.development?
+        if done
+          result = "Finished..."
+          result << "  " + task.get.to_s if Rails.env.development?
+        end
+
         $log.debug("Result (from the Observer) is #{result}")
       end
       result
