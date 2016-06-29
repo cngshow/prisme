@@ -150,20 +150,15 @@
     }
 
     function submitPackage() {
-      var submit_form = true;
-
       $('[data-millis]').each(function (index, value) {
         $(this).attr('name', 'terminology_source_package[terminology_source_contents_attributes][' + index + '][upload]');
 
         if (value.value === '') {
-          submit_form = false;
           return false;
         }
       });
 
-      if (submit_form) {
-        $("#btn_submit").attr('onclick', 'return false;').html('<span><i class="fa fa-cog fa-spin fa-fw" aria-hidden="true"></i>Uploading...Please Wait</span>')
-      }
+      $("#btn_submit").attr('onclick', 'return false;').html('<span><i class="fa fa-cog fa-spin fa-fw" aria-hidden="true"></i>Uploading...Please Wait</span>')
       $('#new_terminology_source_package').submit();
     }
 
