@@ -79,7 +79,7 @@ class TerminologySourcePackagesController < ApplicationController
     git_user = git_props[PrismeService::GIT_USER]
     git_pass = git_props[PrismeService::GIT_PWD]
     artifactory_props = Service.get_artifactory_props
-    repository_url =  artifactory_props[PrismeService::NEXUS_REPOSITORY_URL]
+    repository_url =  artifactory_props[PrismeService::NEXUS_PUBLICATION_URL]
     repository_username = artifactory_props[PrismeService::NEXUS_USER]
     repository_password = artifactory_props[PrismeService::NEXUS_PWD]
     files = []
