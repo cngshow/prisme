@@ -119,8 +119,8 @@ module TomcatConcern
     begin
       path = context + path
       response = conn.get(path)
-    rescue Faraday::ConnectionFailed => ex
-      $log.warn("{path} is unreachable! #{ex.message}")
+    rescue Faraday::ConnectionFailed, Faraday::TimeoutError, Net::ReadTimeout => ex
+      $log.warn("#{path} is unreachable! #{ex.message}")
       return version
     end
     body = response.body
