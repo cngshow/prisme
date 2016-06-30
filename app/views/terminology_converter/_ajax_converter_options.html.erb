@@ -1,0 +1,35 @@
+<% return if converter_options.empty? %>
+
+<% converter_options.each do |dd| %>
+    <br>
+    <br>
+    <label for="<%= dd[:internal_name] %>"
+           title="<%= dd[:description] %>">
+      <%= dd[:display_name] %>
+    </label><br>
+    <select id="<%= dd[:internal_name] %>"
+            name="<%= TerminologyConverterHelper::CONVERTER_OPTION_PREFIX + dd[:internal_name] %>[]"
+            title="<%= dd[:description] %>"
+            data-placeholder="<%= dd[:display_name]%>. This is <%= dd[:allow_no_selection] ? 'not' : ''%> required."
+    >
+      <% unless (dd[:allow_multi_select]) %>
+          <option value=''></option>
+      <% end %>
+      <% dd[:suggested_pick_list_values].each do |option| %>
+          <option value='<%= option[:suggested_value] %>'><%= option[:suggested_description] %></option>
+      <% end %>
+    </select>
+    <script>
+      var options = {
+        theme: "bootstrap",
+        width: '500px',
+        multiple: <%= dd[:allow_multi_select] %>,
+        required: <%= ! dd[:allow_no_selection] %>,
+        <% unless dd[:allow_multi_select] %>
+        allowClear: true,
+        <% end %>
+        tags: true
+      };
+      $('#<%= dd[:internal_name]%>').select2(options);
+    </script>
+<% end %>

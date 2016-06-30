@@ -1,5 +1,3 @@
-require 'uri'
-
 class WelcomeController < ApplicationController
   include TomcatConcern
   before_action :auth_admin, only: [:tomcat_app_action]

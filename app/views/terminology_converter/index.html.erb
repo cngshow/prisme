@@ -1,7 +1,10 @@
 <!-- Trigger the modal with a button -->
 <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal" onclick="reset_form();">Request New Build</button>
 
-<h1>Terminology Converter Dashboard</h1>
+<div class="page-header">
+  <h1>Terminology Converter Dashboard</h1>
+</div>
+<!--todo use the filter_table_poll_results.html.erb -->
 <div>
   <label for="filter_rows">Filter Results:&nbsp;&nbsp;</label>
   <select id="filter_rows" onchange="poll();">
@@ -47,15 +50,22 @@
       <div class="modal-body">
         <%= form_tag(:controller => 'terminology_converter', :action => :request_build, remote: true) do |f| %>
             <%= label_tag 'terminology_source', 'Terminology Source' %><br>
-            <%= select_tag 'terminology_source', options_from_collection_for_select(@sources, :option_key, :option_value),
-                           :include_blank => '-- Select the Terminology Source --', required: true,
-                           :onchange => 'term_source_change(this.value)'
+            <%= select_tag 'terminology_source',
+                           options_from_collection_for_select(@sources, :option_key, :option_value),
+                           :class => 'select2-prisme',
+                           :include_blank => true,
+                           :data => {ph: 'Select the Terminology Source',
+                                     w: '500px',
+                                     single_select: true
+                           },
+                           :onchange => 'term_source_change(this.value)',
+                           required: true
             %>
             <br>
             <br>
             <div id="term_source_details_div"></div>
-            <div class="modal-footer">
-              <%= submit_tag 'Submit', data: {disable_with: 'Please wait...'}, class: 'btn btn-primary' %>
+            <div id="term_source_actions_div" class="modal-footer">
+              <%= submit_tag 'Submit', data: {disable_with: 'Processing Request...'}, class: 'btn btn-primary' %>
               <%= button_tag 'Cancel', data: {dismiss: 'modal'}, class: 'btn btn-primary' %>
             </div>
         <% end %>
@@ -66,8 +76,9 @@
 
 <script>
   function term_source_change(val) {
+    $('#term_source_actions_div').hide();
     if (val.length === 0) {
-      $('#term_source_details_div').html('');
+      reset_form(true);
       return false;
     }
 
@@ -81,9 +92,12 @@
     });
   }
 
-  function reset_form() {
-    $('#terminology_source').find('option[value=""]').prop('selected', 'selected').change();
+  function reset_form(term_source_change) {
+    if (term_source_change !== true) {
+      $('#terminology_source').find('option[value=""]').prop('selected', 'selected').change();
+    }
     $('#term_source_details_div').html('');
+    $('#term_source_actions_div').hide();
   }
 
   function build_status_renderer(params) {
@@ -124,16 +138,6 @@
     return span;
   }
 
-  function format_epoch_in_local(epoch) {
-    var ret = epoch;
-
-    if ($.isNumeric(epoch)) {
-      var i = parseInt(epoch) * 1000;
-      ret = new Date(i).toLocaleString();
-    }
-    return ret;
-  }
-
   /*
    {"job_id":"4c0a2d3c-255d-429e-9dfb-68739d8d9f11","job_name":"JenkinsStartBuild","status":4,"queue":"default","scheduled_at":"2016-04-27T20:59:49.841Z",
    "enqueued_at":"2016-04-27T20:59:49.902Z","started_at":"2016-04-27T20:59:49.911Z","completed_at":"2016-04-27T20:59:51.312Z","last_error":null,
@@ -169,7 +173,7 @@
       });
     }
     else {
-      rows = '<tr><td colspan="9" style="text-align:center">There are no items to list...</td></tr>'
+      var rows = '<tr><td colspan="9" style="text-align:center">There are no items to list...</td></tr>';
       $('#' + tableId + ' tbody').html(rows);
     }
   }
@@ -202,5 +206,34 @@
 
     //register for polling
     polling.registerController('terminology_converter', poll, 5000);
+
+    // call init_select2 to initialize all select inputs to use the select2 js library
+    init_select2();
   });
+
+
+  //
+  ////    build a drop down
+  //    var dd = $('<select>').attr('name', 'kma').attr('id', 'kma').attr('multiple', true);
+  //    dd.data('placeholder', 'enter something');
+  ////    dd.append($('<option>').text('').attr('value', ''));
+  //    dd.append($('<option>').text('first').attr('value', 1).attr('title', 'this is the first one bobo'));
+  //    dd.append($('<option>').text('second').attr('value', 2).attr('title', 'this is the second item !'));
+  //    dd.append($('<option>').text('third').attr('value', 3));
+  ////    dd.addClass('chosen');
+  //    $("#kma_div").html(dd);
+  //    $( "#kma" ).select2({
+  //      theme: "bootstrap",
+  //      width: '500px',
+  //      tags: true
+  //    });
+  //    $(".chosen").chosen({
+  //      'no_results_text' :'Oops, nothing found!',
+  //      'width'           :'700px',
+  //      'search_contains' : true,
+  //      'placeholder_text_multiple':'Please choose something ...',
+  //      'display_selected_options':false
+  //    });
+
+  //    dd.chosen({});
 </script>

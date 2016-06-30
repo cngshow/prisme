@@ -44,7 +44,7 @@ class JenkinsCheckBuild < PrismeBaseJob
     result_hash[:deleted] = Deleted::NO
     begin
       if job_creation_exception_thrown
-        $log.warn("job_creation_exception_thrown")
+        $log.warn('job_creation_exception_thrown')
         result_hash[:deleted] = Deleted::UNKNOWN
         result_hash[:build] = BuildResult::FAILURE
       else
@@ -57,7 +57,7 @@ class JenkinsCheckBuild < PrismeBaseJob
           $log.info("#{name} is still in Jenkin's queue.")
           result << "Jenkins job #{name} is in the build queue.\n"
           result_hash[:build] = BuildResult::INQUEUE
-          JenkinsCheckBuild.set(wait: time).perform_later(jenkins_config, name, attempt_number, track_child_job)
+          JenkinsCheckBuild.set(wait: time).perform_later(jenkins_config, name, attempt_number, false, track_child_job)
         else
           details = build.details #can throw NPE even though build is not nil
           if (details.isBuilding)
@@ -65,7 +65,7 @@ class JenkinsCheckBuild < PrismeBaseJob
             result_hash[:build] = BuildResult::BUILDING
             result << "Jenkins job #{name} is still building.\n"
             $log.info("#{name} is still being built by Jenkins.")
-            JenkinsCheckBuild.set(wait: time).perform_later(jenkins_config, name, attempt_number, track_child_job)
+            JenkinsCheckBuild.set(wait: time).perform_later(jenkins_config, name, attempt_number, false, track_child_job)
           else
             #set the result
             build_result = details.getResult
@@ -73,7 +73,7 @@ class JenkinsCheckBuild < PrismeBaseJob
               result << "Jenkins job #{name} is rebuilding.\n"
               result_hash[:build] = build_result.to_s
               #do rebuilding
-              JenkinsCheckBuild.set(wait: time).perform_later(jenkins_config, name, attempt_number, track_child_job)
+              JenkinsCheckBuild.set(wait: time).perform_later(jenkins_config, name, attempt_number, false, track_child_job)
             else
               #display the result and delete the job
               result << "Jenkins job #{name} has a build result of " + build_result.to_s + ".\n"
@@ -81,10 +81,16 @@ class JenkinsCheckBuild < PrismeBaseJob
               result_hash[:build] = build_result.to_s
               begin
                 result_hash[:deleted] = Deleted::UNKNOWN
-                jenkins.deleteJob(name.strip, false)
-                result_hash[:deleted] = Deleted::YES
-                result << " Jenkins job #{name} was deleted from Jenkins.\n"
-                $log.info " Jenkins job #{name} was deleted from Jenkins.\n"
+                if (boolean($PROPS['JENKINS.delete_jenkins_jobs']))
+                  jenkins.deleteJob(name.strip, false)
+                  result_hash[:deleted] = Deleted::YES
+                  result << " Jenkins job #{name} was deleted from Jenkins.\n"
+                  $log.info " Jenkins job #{name} was deleted from Jenkins.\n"
+                else
+                  result_hash[:deleted] = Deleted::NO
+                  result << " Jenkins job #{name} was not deleted from Jenkins.\n"
+                  $log.info " Jenkins job #{name} was not deleted from Jenkins(See prisme.properties).\n"
+                end
               rescue java.lang.Exception => ex
                 #https://github.com/RisingOak/jenkins-client/issues/154
                 #we just log this.  Cleanup Job will take a second crack at it if needed
@@ -102,11 +108,11 @@ class JenkinsCheckBuild < PrismeBaseJob
       result_hash[:attempt_number] = attempt_number
       if (attempt_number <= max_attempts)
         $log.info("Attempting to gain the status of #{name} again.")
-        JenkinsCheckBuild.set(wait: time).perform_later(jenkins_config, name, attempt_number, track_child_job)
+        JenkinsCheckBuild.set(wait: time).perform_later(jenkins_config, name, attempt_number, false, track_child_job)
         raise JenkinsClient::JenkinsJavaError, ex
       end
     ensure
-      save_result result, result_hash
+      save_result(result, result_hash)
     end
   end
 

@@ -80,8 +80,8 @@ class ArtifactDownloadJob < PrismeBaseJob
       p_clone[:p] = nexus_query_params[:p] + '.md5'
       md5url = "#{baseurl}?#{p_clone.to_query}"
       md5 = get_nexus_connection('*/*').get("#{md5url}", {}).body
-      $log.debug('SHA1 for ' + war_name + ' is: ' + sha1)
-      $log.debug('MD5 for ' + war_name + ' is: ' + md5)
+      $log.debug('SHA1 for ' + war_name + ' is supposed to be: ' + sha1)
+      $log.debug('MD5 for ' + war_name + ' is supposed to be: ' + md5)
       #file_name = 'c:/temp/dan.yml'
       actual_sha1 = Digest::SHA1.file(file_name).to_s
       actual_md5 = Digest::MD5.file(file_name).to_s
@@ -128,7 +128,7 @@ class ArtifactDownloadJob < PrismeBaseJob
       end
       $log.debug("Kicking off next job (DeployWar) #{file_name} #{context}")
       #activeRecord instantiate new job
-      DeployWarJob.perform_later(file_name, context, tomcat_ar) #, pass in parent id and my ID
+      DeployWarJob.perform_later(file_name, context, tomcat_ar, track_child_job)
     ensure
       save_result result
     end

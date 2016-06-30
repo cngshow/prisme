@@ -10,6 +10,7 @@ class PrismeJob < ActiveRecord::Base
   scope :job_ids_in, -> (ids,include) {where("job_id #{include ? 'IN' : 'NOT IN'} (#{ids.map do |e| "'#{e}'" end.join(',')})")}
   scope :orphan, -> (bool) {where("status #{bool ? '=' : '!='} #{PrismeJobConstants::Status::STATUS_HASH[:ORPHANED]} ")}
   scope :completed, -> (bool) {where("status #{bool ? '>=' : '<'} #{PrismeJobConstants::Status::STATUS_HASH[:FAILED]}")}
+  scope :completed_by, -> (time) {where("completed_at >= '#{time}'")}
 
   def self.has_running_jobs?(job_name)
     PrismeJob.job_name(job_name).completed(false).orphan(false).count > 0
@@ -63,6 +64,11 @@ class PrismeJob < ActiveRecord::Base
       $log.debug("Done orphaning a #{orphan.job_name} with id #{orphan.job_id} and status " + status_string(orphan))
     end
   end
+
+  def self.orphan?(ar)
+    ar.status.eql? PrismeJobConstants::Status::STATUS_HASH[:ORPHANED]
+  end
+
 end
 =begin
 

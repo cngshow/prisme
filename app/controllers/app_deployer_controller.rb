@@ -62,7 +62,9 @@ class AppDeployerController < ApplicationController
     nexus_query_params[:r] = war_file.repo
     nexus_query_params[:c] = war_file.classifier unless war_file.classifier.empty?
     nexus_query_params[:p] = war_file.package
-    war_cookie_params[:prisme_root] = request.original_url.split(request.fullpath).first + root_path
+    war_cookie_params[:prisme_root] = root_url
+    war_cookie_params[:prisme_roles_url] = URI(roles_get_roles_url).to_https if RolesController.ssl_configured?
+    war_cookie_params[:prisme_roles_url] = roles_get_roles_url unless RolesController.ssl_configured?
     war_cookie_params[:war_group_id] = war_file.groupId
     war_cookie_params[:war_artifact_id] = war_file.artifactId
     war_cookie_params[:war_version] = war_file.version
@@ -84,8 +86,10 @@ class AppDeployerController < ApplicationController
       war_cookie_params[:isaac_root] =  params['tomcat_isaac_rest']
     end
 
-    ArtifactDownloadJob.perform_later(nexus_query_params, war_cookie_params, war_name, tomcat_ar)
-    redirect_to prisme_job_queue_list_path
+    job = ArtifactDownloadJob.perform_later(nexus_query_params, war_cookie_params, war_name, tomcat_ar)
+    PrismeBaseJob.save_user(job_id: job.job_id, user: current_user.email)
+    session[:select_tabpage] = 1
+    redirect_to root_path
   end
 
   private

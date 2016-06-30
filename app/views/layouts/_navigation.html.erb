@@ -8,18 +8,27 @@
         <a href="<%= root_path %>"><span class="glyphicon glyphicon-home" onclick="polling.checkPolling('welcome');"></span></a>
       </li>
       <% if policy(:navigation).registered? %>
-          <li><a href="<%= terminology_converter_path %>" onclick="polling.checkPolling('converter');">Terminology Converter</a></li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Terminology
+              <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="<%= terminology_source_packages_path %>" onclick="polling.checkPolling('tsp_upload');">Source Package Upload</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="<%= terminology_converter_path %>" onclick="polling.checkPolling('converter');">Convert Terminology</a></li>
+            </ul>
+          </li>
           <!--<li><a href="#" onclick="checkPolling('db_builder');">DB Builder</a></li>-->
           <li><a href="<%= app_deployer_path %>" onclick="polling.checkPolling('deployer');">App Deployer</a></li>
       <% end %>
       <li><a href="<%= prisme_job_queue_list_path %>" onclick="polling.checkPolling('job_queue');">Job Queue Listing</a></li>
       <% if policy(:navigation).admin? %>
           <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administration <span class="caret"></span></a>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administration
+              <span class="caret"></span></a>
             <ul class="dropdown-menu">
-              <li><a href="<%= admin_user_edit_list_path %>" onclick="polling.checkPolling('admin_user_edit');">Edit User Permissions</a></li>
+              <li><a href="<%= list_users_path %>" onclick="polling.checkPolling('admin_user_edit');">Edit User Permissions</a></li>
               <li role="separator" class="divider"></li>
-              <li><a href="<%= services_path %>" onclick="polling.checkPolling('deployer');">Service Provisioning</a></li>
+              <li><a href="<%= services_path %>" onclick="polling.checkPolling('services');">Service Provisioning</a></li>
             </ul>
           </li>
       <% end %>
@@ -31,5 +40,8 @@
         <% end %>
       </li>
     </ul>
+    <div style="float:right; padding-top: 15px; padding-right: 15px">
+      <%= raw (current_user.nil? ? '' : "<Strong>Current User:</strong>&nbsp;#{current_user.email}") %>
+    </div>
   </div>
 </nav>

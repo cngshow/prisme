@@ -8,6 +8,8 @@ development:
   #adapter: sqlite3  #schema: prisme_development
   <<: *default
   database: db/data/h2_prisme_development
+  username: sa
+  password: sa
   #url: jdbc:hsqldb:file:./db/data/prisme_development
   #url: jdbc:derby:file:./db/data/prisme_development
   #database: db/data/prisme_development.sqlite3
@@ -20,16 +22,16 @@ test:
 #  schema: prisme_test
 #  database: prisme_test
 #  url: jdbc:hsqldb:file:./db/data/prisme_test
-  <% if File.exists? '/u01/prismeData/h2_prisme_test.mv.db' %>
-  database: /u01/prismeData/h2_prisme_test
+  <% if File.exists? '/app/prismeData/h2_prisme_test.mv.db' %>
+  database: /app/prismeData/h2_prisme_test
   <% else %>
   database: db/data/h2_prisme_test
   <% end %>
 
 production:
   <<: *default
-  <% if File.exists? '/u01/prismeData/h2_prisme_production.mv.db' %>
-  database: /u01/prismeData/h2_prisme_production
+  <% if File.exists? '/app/prismeData/h2_prisme_production.mv.db' %>
+  database: /app/prismeData/h2_prisme_production
   <% else %>
   database: db/data/h2_prisme_production
   <% end %>

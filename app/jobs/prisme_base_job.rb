@@ -40,6 +40,12 @@ class PrismeBaseJob < ActiveJob::Base
           prisme_job.parent_job_id = parent_job_id
         end
 
+        if hash_args.has_key?(:calling_user)
+          calling_user = hash_args[:calling_user]
+          $log.debug('------------- setting the calling_user for ' + self.job_id + ' to ' + calling_user)
+          prisme_job.user = calling_user
+        end
+
         if hash_args.has_key?(:root_job_id)
           root_job_id = hash_args[:root_job_id].nil? ? hash_args[:parent_job_id] : hash_args[:root_job_id]
           $log.debug('------------- setting the root_job_id for ' + self.job_id + ' to ' + root_job_id)
@@ -95,6 +101,7 @@ class PrismeBaseJob < ActiveJob::Base
     active_record.completed_at = Time.now
     #OK I am a child job, spun off by parent parent_job_id.  My parent is no longer a leaf
     update_parent_leaf_and_save(active_record)
+    finalize if self.respond_to? :finalize
   end
 
   rescue_from(StandardError) do |exception|
@@ -121,7 +128,16 @@ class PrismeBaseJob < ActiveJob::Base
   end
 
   def track_child_job
-    {parent_job_id: job_id, root_job_id: lookup.root_job_id}
+    job_ar = lookup
+    ret = {parent_job_id: job_id, root_job_id: job_ar.root_job_id}
+    ret[:calling_user] = job_ar.user if job_ar.user
+    ret
+  end
+
+  def self.save_user(job_id:, user:)
+    prisme_job = PrismeJob.find_by(job_id: job_id)
+    prisme_job.user = user
+    prisme_job.save!
   end
 
   private

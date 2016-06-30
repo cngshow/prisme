@@ -25,6 +25,7 @@ class ApplicationController < ActionController::Base
 
   def internal_error(exception)
     $log.error(exception.message)
+    $log.error(exception.class.to_s)
     $log.error request.fullpath
     $log.error(exception.backtrace.join("\n"))
     @centered_flash = true
@@ -37,7 +38,7 @@ class ApplicationController < ActionController::Base
       when Faraday::ConnectionFailed
         render :file => (trinidad? ? 'public/nexus_not_available.html' : "#{Rails.root}/../nexus_not_available.html")
         return
-      when JIsaacGit::GitFailureException
+      when JIsaacLibrary::GitFailureException
         render :file => (trinidad? ? 'public/git_not_available.html' : "#{Rails.root}/../git_not_available.html")
         return
     end

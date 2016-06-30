@@ -12,7 +12,7 @@ one:
 two:
   service: tomcat
   key: cargo.remote.password
-  value: '[79, 155, 44, 205, 82, 218, 80, 35, 26, 10, 173, 105, 31, 126, 237, 251]'
+  value:  "[\"jK\\x90\\xA1\\x1Fk\\x87\\xD7\\xC3\\xD8\\xA8\\x9A\\x18\\xD4fC\"]"
   order_idx: 1
 three:
   service: tomcat
@@ -29,7 +29,7 @@ one_l:
 two_l:
   service: tomcat_localhost
   key: cargo.remote.password
-  value: '[79, 155, 44, 205, 82, 218, 80, 35, 26, 10, 173, 105, 31, 126, 237, 251]'
+  value: "[\"jK\\x90\\xA1\\x1Fk\\x87\\xD7\\xC3\\xD8\\xA8\\x9A\\x18\\xD4fC\"]"
   order_idx: 1
 three_l:
   service: tomcat_localhost
@@ -42,16 +42,21 @@ six:
   key: nexus_repository_url
   value: http://vadev.mantech.com:8081/nexus/content/groups/everything/
   order_idx: 0
+six_and_a_half:
+  service: nexus
+  key: nexus_publication_url
+  value: http://vadev.mantech.com:8081/nexus/content/repositories/termdata/
+  order_idx: 1
 seven:
   service: nexus
   key: nexus_user
   value: devtest
-  order_idx: 1
+  order_idx: 2
 eight:
   service: nexus
   key: nexus_pwd
-  value: '[79, 155, 44, 205, 82, 218, 80, 35, 26, 10, 173, 105, 31, 126, 237, 251]'
-  order_idx: 2
+  value: "[\"jK\\x90\\xA1\\x1Fk\\x87\\xD7\\xC3\\xD8\\xA8\\x9A\\x18\\xD4fC\"]"
+  order_idx: 3
 
 # jenkins service properties
 nine:
@@ -67,7 +72,7 @@ ten:
 eleven:
   service: jenkins
   key: jenkins_pwd
-  value: '[79, 155, 44, 205, 82, 218, 80, 35, 26, 10, 173, 105, 31, 126, 237, 251]'
+  value: "[\"jK\\x90\\xA1\\x1Fk\\x87\\xD7\\xC3\\xD8\\xA8\\x9A\\x18\\xD4fC\"]"
   order_idx: 2
 
 # git service properties
@@ -84,5 +89,5 @@ thirteen:
 fourteen:
   service: git
   key: git_pwd
-  value: '[79, 155, 44, 205, 82, 218, 80, 35, 26, 10, 173, 105, 31, 126, 237, 251]'
+  value: "[\"jK\\x90\\xA1\\x1Fk\\x87\\xD7\\xC3\\xD8\\xA8\\x9A\\x18\\xD4fC\"]"
   order_idx: 2

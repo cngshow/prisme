@@ -1,5 +1,11 @@
 Rails.application.routes.draw do
 
+  get 'roles/get_roles'
+  get 'roles/get_roles_token', defaults: { format: 'text' }
+  #ids like cshupp@gmail.com aren't valid in a URL :-(
+  #match 'roles/get_roles/:id' => 'roles#get_roles', :as => :get_roles, via: [:get]
+
+
   devise_for :users
 
   #
@@ -14,11 +20,18 @@ Rails.application.routes.draw do
   # match '/users/update' => 'admin_user_edit#update', :as => :admin_user_update
   # match '/users/:id/list' => 'admin_user_edit#list', :as => :admin_user_list
 
-  get 'admin_user_edit/list'
-  post 'admin_user_edit/update'
+  get 'list_users' => 'admin_user_edit#list'
+  post 'admin_user_edit/update_user_roles'
+  match 'delete_user/:id' => 'admin_user_edit#delete_user', as: 'delete_user', via: [:get]
 
   match 'services/render_props' => 'services#render_props', :as => :services_render_props, via: [:get]
   resources :services
+
+  get 'terminology_source_packages' => 'terminology_source_packages#index'
+  get 'terminology_source_packages/load_build_data' => 'terminology_source_packages#ajax_load_build_data'
+  get 'terminology_source_packages/check_polling' => 'terminology_source_packages#ajax_check_polling'
+  get 'terminology_source_packages/converter_change' => 'terminology_source_packages#ajax_converter_change'
+  post 'terminology_source_packages' => 'terminology_source_packages#create'
 
   get 'prisme_job_queue/list'
   get 'prisme_job_queue/reload_job_queue_list'
@@ -39,6 +52,8 @@ Rails.application.routes.draw do
   get 'terminology_converter/load_build_data' => 'terminology_converter#ajax_load_build_data'
   get 'terminology_converter/check_polling' => 'terminology_converter#ajax_check_polling'
   get 'terminology_converter/term_source_change' => 'terminology_converter#ajax_term_source_change'
+  get 'terminology_converter/ibdf_change' => 'terminology_converter#ajax_ibdf_change'
+  get 'terminology_converter/converter_version_change' => 'terminology_converter#ajax_converter_version_change'
   post 'terminology_converter/request_build'
 
   root 'welcome#index'

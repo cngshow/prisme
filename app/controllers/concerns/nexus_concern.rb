@@ -12,43 +12,6 @@ module NexusConcern
     end
     nexus_conn
   end
-
-  class TermSource
-    attr_reader :repoUrl, :groupId, :artifactId, :version
-
-    def initialize(repoUrl:, groupId:, artifactId:, version:)
-      @repoUrl = repoUrl
-      @groupId = groupId
-      @artifactId = artifactId
-      @version = version
-    end
-
-    def self.init_from_select_key(key)
-      vals = key.split('|')
-      raise ArgumentError.new('String passed in from select input is blank!') if vals.length != 4
-      TermSource.new(repoUrl: vals[0], groupId: vals[1], artifactId: vals[2], version: vals[3])
-    end
-
-    def get_full_path
-      "#{@repoUrl}/#{@groupId.gsub('.', '/')}/#{@artifactId}/#{@version}/"
-    end
-
-    def artifact(ext)
-      "#{get_full_path}#{@artifactId}-#{@version}.#{ext}"
-    end
-
-    def get_key
-      "#{@repoUrl}|#{@groupId}|#{@artifactId}|#{@version}"
-    end
-
-    def get_value
-      "#{@artifactId} version #{@version}"
-    end
-
-    def select_option
-      {key: get_key, value: get_value}
-    end
-  end
 end
 
 class TermConvertOption
@@ -61,6 +24,9 @@ class TermConvertOption
     @classifier = classifier
   end
 
+  # Builds a JSON object from the dropdown argument
+  # @param option_key [String] the key value being parsed
+  # @return [String] the argument as a Ruby Hash
   def self.arg_as_json(option_key)
     ret = {}
     args = [:g, :a, :v, :c]
@@ -79,13 +45,7 @@ class TermConvertOption
   end
 
   def option_value
-    ret = "#{artifactId}-#{version}"
-
-    if (classifier)
-      ret += "-#{classifier}"
-    end
-
-    ret
+    "#{artifactId}-#{version}#{classifier ? '-' + classifier : ''}"
   end
 
   def select_option

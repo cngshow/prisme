@@ -20,3 +20,7 @@
 <% if session.has_key?(:ajax_flash) %>
   <% session[:ajax_flash] = nil %>
 <% end %>
+
+function ajax_flash(options, settings) {
+  $.notify(options, settings);
+}
