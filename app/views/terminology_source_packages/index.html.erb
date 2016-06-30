@@ -73,10 +73,11 @@
                            {:prompt => '-- Select a Converter Type --'} %><br><br>
 
             <%= label_tag 'version', 'Version' %><br>
-            <%= text_field_tag 'version', nil, required: true, placeholder: 'Enter Your Version Number', title: 'Enter Your Version Number', width: '150px', maxlength: 75, size: 75%><br><br>
+            <%= text_field_tag 'version', nil, required: true, data: {required: true}, placeholder: 'Enter Your Version Number', title: 'Enter Your Version Number', width: '150px', maxlength: 75, size: 75 %>
+            <br><br>
 
             <%= label_tag 'extension_name', 'Extension Name' %><br>
-            <%= text_field_tag 'extension_name', nil, width: '150px', maxlength: 75, size: 75  %><br><br>
+            <%= text_field_tag 'extension_name', nil, width: '150px', maxlength: 75, size: 75 %><br><br>
 
             <div id="uploads" style="display: none">
               <h4>Source Content to Upload</h4>
@@ -87,6 +88,7 @@
               <br>
               <hr>
               <div class="btn btn-primary btn-lg" onclick="submitPackage()" id="btn_submit">Create Terminology Source Package</div>
+              <button id="btn_submit_hidden" style="display: none"></button>
             </div>
         <% end %>
       </div>
@@ -95,18 +97,20 @@
   <script>
     function add_upload(upload_json) {
       var milliseconds = (new Date).getTime();
-      var input = $('<input>').attr('type', "file").attr('data-millis', milliseconds);
+      var input = $('<input>').attr('type', "file").attr('data-millis', milliseconds).attr('data-required', true).attr('required', true);//todo currently all file inputs are required
       var sourceRows = $('#source_rows');
       sourceRows.append($('<div>').attr('id', 'i_' + milliseconds.toString()).addClass('fileupload_div').html(input));
 
       //if upload_json is undefined then the user is adding an additional source record
       if (upload_json !== undefined) {
-        input.attr('pattern', upload_json['expected_name_regex']);//todo work this
-        input.attr('required', upload_json['file_required']);
+//        input.attr('required', upload_json['file_required']);//todo use this for input params
+//        input.attr('data-required', true);
+        input.attr('data-reggie', upload_json['expected_naming_pattern']);
+
         var suggested_source_url = upload_json['suggested_source_url'];
         var suggested_source_location = upload_json['suggested_source_location'];
         var sample_name = upload_json['sample_name'];
-        var file_required = upload_json['file_required'];
+//        var file_required = upload_json['file_required'];
         var source_msg = '';
 
         if (sample_name !== '') {
@@ -140,8 +144,8 @@
       }
 
       input.fileinput({
-        msgNo: 'Please choose a file to upload. No',
-        minFileCount: 1,
+//        msgNo: 'Please choose a file to upload. No',
+//        minFileCount: 1,
         showRemove: false,
         showClose: true,
         showUpload: false,
@@ -151,22 +155,39 @@
 
     function submitPackage() {
       var submit_form = true;
+      var warning = "There are possible validation errors in the file names specified to upload.\n\nMSG\n\nDo you want to continue and submit this request?";
+      var warn_msg = "";
 
-      $('[data-millis]').each(function (index, value) {
-        $(this).attr('name', 'terminology_source_package[terminology_source_contents_attributes][' + index + '][upload]');
-console.log(value.value + '::' + $(this).attr('pattern'));
+      $('[data-required]').each(function (index, value) {
         if (value.value === '') {
           submit_form = false;
-        } else {
-          submit_form = $('#new_terminology_source_package').valid();
         }
       });
 
+      if (submit_form) {
+        $('[data-millis]').each(function (index, value) {
+          $(this).attr('name', 'terminology_source_package[terminology_source_contents_attributes][' + index + '][upload]');
+          var reggie = new RegExp($(this).attr('pattern'), 'i');
+          console.log(value.value + '::' + reggie.toString() + ' regex passes? ' + reggie.test(value.value).toString());
+
+          if (!reggie.test(value.value)) {
+            warn_msg += $(this).attr('data-reggie') + "\n\n";
+          }
+        });
+
+        if (warn_msg !== '') {
+          warning = warning.replace('MSG', warn_msg);
+          submit_form = (confirm(warning));
+          if (! submit_form) return false;
+        }
+      }
 
       if (submit_form) {
-        $("#btn_submit").attr('onclick', 'return false;').html('<span><i class="fa fa-cog fa-spin fa-fw" aria-hidden="true"></i>Uploading...Please Wait</span>')
+        $("#btn_submit").attr('onclick', 'return false;').html('<span><i class="fa fa-cog fa-spin fa-fw" aria-hidden="true"></i>Uploading...Please Wait</span>');
       }
-      $('#new_terminology_source_package').submit();
+
+      //submit the form in all cases to have the validations kick in
+      $('#btn_submit_hidden').click();
     }
 
     var fields = ['user', 'uploaded_files', 'started_at', 'state', 'result', 'progress', 'state_time', 'elapsed_time'];
