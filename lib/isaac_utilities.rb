@@ -153,6 +153,7 @@ module IsaacUploader
       progress = nil
       if (h.nil?)
         ar = fetch_leaf terminology_package_id
+        return 0 unless leaf_valid?(ar, terminology_package_id)
         progress = TerminologyUploadTracker.progress ar
         state = TerminologyUploadTracker.state ar
         done = ((TerminologyUploadTracker.done? state) || (PrismeJob.orphan? ar))
@@ -175,6 +176,7 @@ module IsaacUploader
       state = nil
       if (h.nil?)
         ar = fetch_leaf terminology_package_id
+        return "UNKNOWN" unless leaf_valid?(ar, terminology_package_id)
         state = TerminologyUploadTracker.state ar
         state = PrismeJobConstants::Status::STATUS_HASH[:ORPHANED] if PrismeJob.orphan? ar
         $log.debug("State (from the DB) is #{state}")
@@ -190,6 +192,7 @@ module IsaacUploader
       title = nil
       if (h.nil?)
         ar = fetch_leaf terminology_package_id
+        return "UNKNOWN" unless leaf_valid?(ar, terminology_package_id)
         title = TerminologyUploadTracker.title ar
         $log.debug("Title (from the DB) is #{title}")
       else
@@ -204,6 +207,7 @@ module IsaacUploader
       time = Time.now
       if (h.nil?)
         ar = fetch_leaf terminology_package_id
+        return Time.now unless leaf_valid?(ar, terminology_package_id)
         time = Time.at((TerminologyUploadTracker.finish_time ar).to_i)
         $log.debug("Time (from the DB) is #{time}")
       else
@@ -220,6 +224,7 @@ module IsaacUploader
       result = nil
       if (h.nil?)
         ar = fetch_leaf terminology_package_id
+        return "UNKNOWN" unless leaf_valid?(ar, terminology_package_id)
         result = ar.result
         result = "Server reboot during upload." if PrismeJob.orphan? ar
         $log.debug("Result (from the DB) is #{result}")
@@ -232,7 +237,6 @@ module IsaacUploader
           result = "Finished..."
           result << "  " + task.get.to_s if Rails.env.development?
         end
-
         $log.debug("Result (from the Observer) is #{result}")
       end
       result
@@ -246,10 +250,18 @@ module IsaacUploader
 # load './lib/isaac_utilities.rb'
     private
     def fetch_leaf(terminology_package_id)
-      upload_jobs = PrismeJob.job_name('TerminologyUploadTracker').completed_by(($PROPS['PRISME.job_queue_trim'].to_i).days.ago).leaves
+      upload_jobs = PrismeJob.job_name('TerminologyUploadTracker').completed_by(($PROPS['PRISME.job_queue_trim'].to_i).days.ago).orphan(false).leaves
       upload_jobs = upload_jobs.select do |j|  terminology_package_id.to_s.eql?(TerminologyUploadTracker.package_id(j).to_s) end
       $log.error ("I expect only 1 upload job! I got #{upload_jobs.length}") if (upload_jobs.length > 1)
       upload_jobs.first
+    end
+
+    def leaf_valid?(active_record, terminology_package_id)
+        if (active_record.nil?)
+          $log.warn("No leaf was found for terminology_package_id #{terminology_package_id},  you may have corrupted data in the TerminologyUploadTracker table.  Was the server rebooted unexpectedly?")
+          return false
+        end
+      true
     end
 
     def initialize
