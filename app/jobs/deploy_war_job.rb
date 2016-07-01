@@ -30,6 +30,10 @@ class DeployWarJob < PrismeBaseJob
         runtime_config.setProperty(k, v)
         $log.debug("Added #{k} -- #{v} to the runtime config.")
       end
+      if(props[PrismeService::CARGO_REMOTE_URL].strip.start_with?("https"))
+        runtime_config.setProperty(PrismeService::CARGO_PROTOCOL, 'https')
+        $log.info("Setting the cargo protocol to https.")
+      end
       tom_container = factory.createContainer("tomcat8x", type, runtime_config)
       deployable_type = JCargo::DeployableType::WAR
       deployer_factory = JCargo::DefaultDeployableFactory.new

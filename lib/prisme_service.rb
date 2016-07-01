@@ -10,6 +10,7 @@ module PrismeService
   CARGO_REMOTE_PASSWORD = 'cargo.remote.password'
   CARGO_HOSTNAME = 'cargo.hostname'
   CARGO_SERVLET_PORT = 'cargo.servlet.port'
+  CARGO_PROTOCOL = 'cargo.protocol'
 
   # NEXUS
   NEXUS_ROOT = 'nexus_root'
