@@ -286,7 +286,15 @@ module IsaacConverter
   end
 
   def self.get_converter_options(converter:, repository_url:, repository_username:, repository_password:)
-    JIsaacLibrary::ContentConverterCreator.getConverterOptions(converter, repository_url, repository_username, repository_password)
+    r_val = JIsaacLibrary::ContentConverterCreator.getConverterOptions(converter, repository_url, repository_username, repository_password)
+    r_val.each do |e|
+      #internal_name, moduleUUID
+      e.define_singleton_method (:validation_regex) do
+        return '.*' unless e.internal_name.eql?("moduleUUID")
+        return ['^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$', true]
+      end
+    end
+    r_val
   end
 
   def self.create_content_converter(sdo_source_content:, converter_version:, additional_source_dependencies_sdo_j_a:, additional_source_dependencies_ibdf_j_a:,converter_option_values:, git_url:,git_user:, git_pass:)

@@ -187,7 +187,7 @@ class TerminologyConverterController < ApplicationController
     converter_options = fetch_converter_options
     json = converter_options.map do |co|
       {display_name: co.display_name, description: co.description, internal_name: co.internal_name, allow_multi_select: co.allow_multi_select?, allow_no_selection: co.allow_no_selection?,
-       suggested_pick_list_values: co.suggested_pick_list_values.map do |suggested|
+       validation_regex: co.validation_regex ,suggested_pick_list_values: co.suggested_pick_list_values.map do |suggested|
          {suggested_value: suggested.value, suggested_description: suggested.description}
        end}
     end
