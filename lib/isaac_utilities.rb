@@ -1,7 +1,7 @@
 module JIsaacLibrary
   include_package 'gov.vha.isaac.ochre.pombuilder.artifacts'#IBDFFile, SDOSourceContent, Converter, Artifact
   include_package 'gov.vha.isaac.ochre.pombuilder.dbbuilder'#DBConfigurationCreator
-  include_package 'gov.vha.isaac.ochre.pombuilder.converter'#ContentConverterCreator, SupportedConverterTypes, UploadFileInfo, SrcUploadCreator
+  include_package 'gov.vha.isaac.ochre.pombuilder.converter'#ContentConverterCreator, SupportedConverterTypes, UploadFileInfo
   include_package 'gov.vha.isaac.ochre.pombuilder.upload'#UploadFileInfo, SrcUploadCreator
   include_package 'gov.vha.isaac.ochre.api.util'#WorkExecutors
 
