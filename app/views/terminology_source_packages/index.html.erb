@@ -178,7 +178,7 @@
         if (warn_msg !== '') {
           warning = warning.replace('MSG', warn_msg);
           submit_form = (confirm(warning));
-          if (! submit_form) return false;
+          if (!submit_form) return false;
         }
       }
 
@@ -198,10 +198,22 @@
       if (data.length > 0) {
         $.each(data, function (index, row) {
           var tr_data = $('<tr>');
+          var state_unknown = (row.state === 'UNKNOWN');
 
-          $.each(fields, function (index, field) {
+          inner_loop:
+          for (var f = 0; f < fields.length; f++) {
+            var field = fields[f];
+
             if (field === 'started_at') {
               tr_data.append($('<td>').text(format_epoch_in_local(row.started_at)));
+            }
+            else if (field === 'state' && state_unknown) {
+              tr_data.append($('<td>').text(row.state));
+              tr_data.append($('<td>').text(''));//result
+              tr_data.append($('<td>').text(''));//progress
+              tr_data.append($('<td>').text(''));//state_time
+              tr_data.append($('<td>').text(''));//elapsed_time
+              break inner_loop;
             }
             else if (field === 'progress') {
               var title = row.progress < 100 ? row.title : '';
@@ -221,7 +233,7 @@
             else {
               tr_data.append($('<td>').text(eval('row.' + field)));
             }
-          });
+          };
           $('#' + tableId + ' tbody').append(tr_data);
         });
       }
