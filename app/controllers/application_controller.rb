@@ -35,7 +35,7 @@ class ApplicationController < ActionController::Base
       when Pundit::NotAuthorizedError
         render :file => (trinidad? ? 'public/not_authorized.html' : "#{Rails.root}/../not_authorized.html")
         return
-      when Faraday::ConnectionFailed
+      when Faraday::ClientError
         render :file => (trinidad? ? 'public/nexus_not_available.html' : "#{Rails.root}/../nexus_not_available.html")
         return
       when JIsaacLibrary::GitFailureException
