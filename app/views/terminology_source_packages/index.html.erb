@@ -106,6 +106,7 @@
 //        input.attr('required', upload_json['file_required']);//todo use this for input params
 //        input.attr('data-required', true);
         input.attr('data-reggie', upload_json['expected_naming_pattern']);
+        input.attr('pattern', upload_json['expected_name_regex']);
 
         var suggested_source_url = upload_json['suggested_source_url'];
         var suggested_source_location = upload_json['suggested_source_location'];
