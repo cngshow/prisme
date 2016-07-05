@@ -31,5 +31,16 @@
         tags: true
       };
       $('#<%= dd[:internal_name]%>').select2(options);
+
+      // check if we are adding regex validations
+      <% if (dd[:validation_regex].length === 2) %>
+        var reggie = new RegExp('<%= dd[:validation_regex].first %>', '<%= dd[:validation_regex].last ? 'i' : ''%>');
+        $.validator.addMethod('regex_<%= dd[:internal_name]%>', function(value, element){
+          return this.optional(element) || reggie.test(value);
+        });
+        $('#<%= dd[:internal_name]%>').rules( "add", {
+          'regex_<%= dd[:internal_name]%>' : true,
+          messages: {'regex_<%= dd[:internal_name]%>' : 'Please enter a valid <%= dd[:display_name] %>'}});
+      <% end %>
     </script>
 <% end %>

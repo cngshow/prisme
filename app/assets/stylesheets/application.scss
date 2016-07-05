@@ -26,6 +26,11 @@
 @import "font-awesome-sprockets";
 @import "font-awesome";
 
+// used with jquery validation
+.error {
+  color: red;
+}
+
 html, body {
   padding: 5px;
 }
