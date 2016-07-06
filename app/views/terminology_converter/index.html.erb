@@ -48,7 +48,7 @@
         <h4 class="modal-title">Terminology Conversion Request</h4>
       </div>
       <div class="modal-body">
-        <%= form_tag(:controller => 'terminology_converter', :action => :request_build, remote: true) do |f| %>
+        <%= form_tag(terminology_converter_request_build_path, id: 'myForm') do %>
             <%= label_tag 'terminology_source', 'Terminology Source' %><br>
             <%= select_tag 'terminology_source',
                            options_from_collection_for_select(@sources, :option_key, :option_value),
@@ -66,7 +66,7 @@
             <div id="term_source_details_div"></div>
             <div id="term_source_actions_div" class="modal-footer">
               <%= submit_tag 'Submit', data: {disable_with: 'Processing Request...'}, class: 'btn btn-primary' %>
-              <%= button_tag 'Cancel', data: {dismiss: 'modal'}, class: 'btn btn-primary' %>
+              <a data-dismiss="modal" class="btn btn-primary">Cancel</a>
             </div>
         <% end %>
       </div>
@@ -209,6 +209,9 @@
 
     // call init_select2 to initialize all select inputs to use the select2 js library
     init_select2();
+
+    // initialize the jquery validation plugin
+    $("#myForm").validate();
   });
 
 
