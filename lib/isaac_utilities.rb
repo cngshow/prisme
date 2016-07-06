@@ -115,6 +115,7 @@ module IsaacUploader
   end
 
   def self.start_work(task: )
+    $log.info("Starting work on a task!")
     JIsaacLibrary::WorkExecutors.safeExecute(task)
   end
 
@@ -214,7 +215,6 @@ module IsaacUploader
         #Are we done?  Use the final event time!!
         state_obs = h[:state_observer]
         time = state_obs.last_event_time if TerminologyUploadTracker.done? state_obs.new_value
-        $log.debug("Time is Time.now or the final time...")
       end
       time
     end
@@ -258,7 +258,7 @@ module IsaacUploader
 
     def leaf_valid?(active_record, terminology_package_id)
         if (active_record.nil?)
-          $log.warn("No leaf was found for terminology_package_id #{terminology_package_id},  you may have corrupted data in the TerminologyUploadTracker table.  Was the server rebooted unexpectedly?")
+         # $log.warn("No leaf was found for terminology_package_id #{terminology_package_id},  you may have corrupted data in the TerminologyUploadTracker table.  Was the server rebooted unexpectedly?")
           return false
         end
       true
