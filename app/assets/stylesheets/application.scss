@@ -26,10 +26,49 @@
 @import "font-awesome-sprockets";
 @import "font-awesome";
 
-// used with jquery validation
-.error {
-  color: red;
+// used with jquery validation - specifically with select2 dropdowns and jq validate
+// start - jquery validate error displayed to the right of the label for the input field
+label.error {
+  margin-left:9px;
+  font-size:small;
+  color: #4d0909;
 }
+
+label.arrow_box {
+  position: relative;
+  background: #e0ddda;
+  border: 1px solid #4d0909;
+  border-radius: 6px;
+  padding: 5px;
+  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.80);
+  -moz-box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.80);
+  -webkit-box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.80);
+}
+label.arrow_box:after, .arrow_box:before {
+  right: 100%;
+  top: 50%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+}
+
+label.arrow_box:after {
+  border-color: rgba(224, 221, 218, 0);
+  border-right-color: #e0ddda;
+  border-width: 6px;
+  margin-top: -6px;
+}
+
+label.arrow_box:before {
+  border-color: rgba(77, 9, 9, 0);
+  border-right-color: #4d0909;
+  border-width: 8px;
+  margin-top: -8px;
+}
+// end jquery validator label validation error
 
 html, body {
   padding: 5px;
