@@ -16,6 +16,7 @@ class TerminologyUploadTracker < PrismeBaseJob
     result = result_hash[:state]
     @done = false
     begin
+      $log.info("Files: " + files.inspect)
       IsaacUploader.start_work(task: task) if files #start the upload
       state  = state_observer.new_value
       result_hash[:state] = state.to_s #might be nil
