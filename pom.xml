@@ -69,6 +69,14 @@
       <version>1.4.19</version>
     </dependency>
     <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+    </dependency>
+    <dependency>
       <groupId>de.schlichtherle.truezip</groupId>
       <artifactId>truezip-driver-zip</artifactId>
       <version>7.7.9</version>
@@ -142,7 +150,7 @@
             <configuration>
               <!-- We really just want jenkins-client, cargo, and their transitive dependencies. -->
               <excludeArtifactIds>
-                jruby-complete,rake,bundler,rails_common,junit,log4j-core,log4j-slf4j-impl,log4j-jul,hamcrest-core,
+                jruby-complete,rake,bundler,rails_common,junit,log4j-slf4j-impl,log4j-jul,hamcrest-core,
               </excludeArtifactIds>
               <overWriteReleases>true</overWriteReleases>
               <overWriteSnapshots>true</overWriteSnapshots>

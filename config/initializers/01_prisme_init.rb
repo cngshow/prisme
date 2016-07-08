@@ -9,6 +9,7 @@ end
 require './lib/rails_common/props/prop_loader'
 require './lib/rails_common/logging/open_logging'
 require './lib/rails_common/logging/logging'
+require './lib/rails_common/logging/rails_appender'
 #above from rails common
 
 require './lib/prisme_service'
