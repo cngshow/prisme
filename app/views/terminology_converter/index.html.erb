@@ -48,7 +48,7 @@
         <h4 class="modal-title">Terminology Conversion Request</h4>
       </div>
       <div class="modal-body">
-        <%= form_tag(terminology_converter_request_build_path, id: 'myForm') do %>
+        <%= form_tag(terminology_converter_request_build_path, remote: true, id: 'myForm') do %>
             <%= label_tag 'terminology_source', 'Terminology Source' %><br>
             <%= select_tag 'terminology_source',
                            options_from_collection_for_select(@sources, :option_key, :option_value),
@@ -211,7 +211,14 @@
     init_select2();
 
     // initialize the jquery validation plugin
-    $("#myForm").validate();
+    $('#myForm').validate({
+      errorPlacement: function(error, element) {
+        var lbl = $("label[for='"+ element.attr('id')+"']");
+        error.addClass('arrow_box');
+        error.insertAfter(lbl);
+      }//,
+      //wrapper: 'span'
+    });
   });
 
 
