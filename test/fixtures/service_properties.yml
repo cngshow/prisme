@@ -40,12 +40,12 @@ three_l:
 six:
   service: nexus
   key: nexus_repository_url
-  value: http://vadev.mantech.com:8081/nexus/content/groups/everything/
+  value: https://vadev.mantech.com:8080/nexus/content/groups/everything/
   order_idx: 0
 six_and_a_half:
   service: nexus
   key: nexus_publication_url
-  value: http://vadev.mantech.com:8081/nexus/content/repositories/termdata/
+  value: https://vadev.mantech.com:8080/nexus/content/repositories/termdata/
   order_idx: 1
 seven:
   service: nexus
@@ -62,7 +62,7 @@ eight:
 nine:
   service: jenkins
   key: jenkins_root
-  value: http://vadev.mantech.com:8080
+  value: https://vadev.mantech.com:8081
   order_idx: 0
 ten:
   service: jenkins
