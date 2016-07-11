@@ -158,7 +158,7 @@ module IsaacUploader
         progress = TerminologyUploadTracker.progress ar
         state = TerminologyUploadTracker.state ar
         done = ((TerminologyUploadTracker.done? state) || (PrismeJob.orphan? ar))
-        $log.error("I am expecting to always be done if I am pulling data from the job active record! Done is #{done}") unless done
+        #$log.error("I am expecting to always be done if I am pulling data from the job active record! Done is #{done}") unless done
         $log.debug("Progress (from the DB) is #{progress}")
         progress = 1 if done
       else
