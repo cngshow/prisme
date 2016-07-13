@@ -33,6 +33,12 @@ Rails.application.routes.draw do
   get 'terminology_source_packages/converter_change' => 'terminology_source_packages#ajax_converter_change'
   post 'terminology_source_packages' => 'terminology_source_packages#create'
 
+  # DB BUILDER routes
+  get 'terminology_db_builder' => 'terminology_db_builder#index'
+  post 'terminology_db_builder/request_build'
+  get 'terminology_db_builder/load_build_data' => 'terminology_db_builder#ajax_load_build_data'
+  get 'terminology_db_builder/check_polling' => 'terminology_db_builder#ajax_check_polling'
+
   get 'prisme_job_queue/list'
   get 'prisme_job_queue/reload_job_queue_list'
 

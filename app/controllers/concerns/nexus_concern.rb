@@ -88,3 +88,62 @@ class NexusArtifactSelectOption
     {key: select_key, value: select_value}
   end
 end
+
+
+class NexusOption
+  attr_reader :g, :a, :v, :r, :c, :p
+
+  def initialize(**data)
+    # group, artifact, and version are required
+    raise StandardError('Invalid arguments passed. The nexus data must contain :g, :a, and :v at a minimum.') unless [:g, :a, :v].all? {|s| data.key? s}
+
+    # set all of the data points
+    @g = data[:g]
+    @a = data[:a]
+    @v = data[:v]
+    @r = data[:r] ||= '' #repo
+    @c = data[:c] ||= '' #classifier
+    @p = data[:p] ||= '' #package
+  end
+
+  # Builds a JSON object from the dropdown argument
+  # @param option_key [String] the key value being parsed
+  # @return [String] the argument as d Ruby Hash
+  def self.arg_as_json(option_key)
+    ret = {}
+    args = [:g, :a, :v, :r, :c, :p]
+    unless (option_key.nil?)
+      option_key.split('|').each_with_index do |arg, idx|
+        ret[args[idx]] = arg
+      end
+    else
+      raise StandardError('option_key argument passed was nil.')
+    end
+    ret
+  end
+
+  # Builds a JSON object from the dropdown argument
+  # @param option_key [String] the key value being parsed
+  # @return [String] the argument as a Ruby Hash
+  def self.init_from_select_key(key)
+    vals = key.split('|')
+    raise ArgumentError.new('String passed in from select input is blank!') if vals.length != 6
+    NexusOption.new({g: vals[0], a: vals[1], v: vals[2], r: vals[3], c: vals[4], p: vals[5]})
+  end
+
+  def option_key
+    "#{g}|#{a}|#{v}|#{r}|#{c}|#{p}"
+  end
+
+  # drop down display shows artifact-version and appends the classifier and packaging if available
+  def option_value
+    ret = "#{a}-#{v}"
+    ret << "-#{c}" unless c.empty?
+    ret << ".#{p}" unless p.empty?
+    ret
+  end
+
+  def select_option
+    {key: option_key, value: option_value}
+  end
+end

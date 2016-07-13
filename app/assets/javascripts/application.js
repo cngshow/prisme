@@ -49,6 +49,12 @@ function init_select2() {
                 case 'singleSelect':
                     options['minimumResultsForSearch'] = Infinity;
                     break;
+                case 'multi':
+                    options['multiple'] = true;
+                    if ($(element).attr('required') !== undefined) {
+                        options['minimumResultsForSearch'] = 1;
+                    }
+                    break;
                 case 'ph':
                     options['placeholder'] = dataset[value];
                     break;
@@ -58,5 +64,9 @@ function init_select2() {
             }
         });
         $(element).select2(options);
+        $(element).on('select2:opening', function (evt) {
+            var target_name = evt.target.name + '-error';
+            $('#' + target_name).remove();
+        });
     });
 }
