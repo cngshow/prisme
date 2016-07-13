@@ -5,6 +5,7 @@ class TerminologySourcePackagesController < ApplicationController
     # new up a TerminologySourcePackage model for the modal popup allowing the user to create a new package
     @package = TerminologySourcePackage.new
   end
+
   # POST /terminology_package
   # POST /terminology_package.json
   def create
@@ -21,7 +22,11 @@ class TerminologySourcePackagesController < ApplicationController
   def ajax_load_build_data
     row_limit = params[:row_limit]
     # get the root tracker jobs
-    data = PrismeJob.job_name('TerminologyUploadTracker').where('root_job_id is null').orphan(false).completed_by(($PROPS['PRISME.job_queue_trim'].to_i).days.ago).order(completed_at: :desc)
+    data = PrismeJob.job_name('TerminologyUploadTracker')
+               .where('root_job_id is null').orphan(false)
+               .completed_by(($PROPS['PRISME.job_queue_trim'].to_i).days.ago)
+               .order(completed_at: :desc)
+               .limit(row_limit)
     ret = []
 
     data.each do |jsb|
@@ -30,9 +35,9 @@ class TerminologySourcePackagesController < ApplicationController
 
       # pull the row as json
       row_data = JSON.parse(jsb.to_json)
-      row_data['started_at'] = row_data['started_at'].nil? ? nil :  DateTime.parse(row_data['started_at']).to_time.to_i
+      row_data['started_at'] = row_data['started_at'].nil? ? nil : DateTime.parse(row_data['started_at']).to_time.to_i
       # strip out just the file name(s) being uploaded
-      row_data['uploaded_files'] = TerminologyUploadTracker.uploaded_files(jsb).map {|f| f.reverse.split('/')[0].reverse}.join(', ')
+      row_data['uploaded_files'] = TerminologyUploadTracker.uploaded_files(jsb).map { |f| f.reverse.split('/')[0].reverse }.join(', ')
       # get the current state/progress of this job
       progress = IsaacUploader::TaskHolder.instance.current_progress(terminology_package_id: package_id)
       state = IsaacUploader::TaskHolder.instance.current_state(terminology_package_id: package_id)
@@ -66,7 +71,7 @@ class TerminologySourcePackagesController < ApplicationController
   def ajax_converter_change
     converter = params[:converter]
     a = IsaacUploader::CONVERTER_TYPE_GUI_HASH
-    upload_options = a.select{|i|i.to_s.eql?(converter)}
+    upload_options = a.select { |i| i.to_s.eql?(converter) }
     render json: upload_options.first[1]
   end
 
@@ -79,7 +84,7 @@ class TerminologySourcePackagesController < ApplicationController
     git_user = git_props[PrismeService::GIT_USER]
     git_pass = git_props[PrismeService::GIT_PWD]
     artifactory_props = Service.get_artifactory_props
-    repository_url =  artifactory_props[PrismeService::NEXUS_PUBLICATION_URL]
+    repository_url = artifactory_props[PrismeService::NEXUS_PUBLICATION_URL]
     repository_username = artifactory_props[PrismeService::NEXUS_USER]
     repository_password = artifactory_props[PrismeService::NEXUS_PWD]
     files = []
@@ -93,12 +98,12 @@ class TerminologySourcePackagesController < ApplicationController
       task = IsaacUploader::create_src_upload_configuration(supported_converter_type: params['supported_converter'],
                                                             version: params['version'],
                                                             extension_name: params['extension_name'],
-                                                            files_to_upload: files ,
+                                                            files_to_upload: files,
                                                             git_url: git_url,
                                                             git_username: git_user,
                                                             git_password: git_pass,
                                                             artifact_repository_url: repository_url,
-                                                            repository_username:repository_username,
+                                                            repository_username: repository_username,
                                                             repository_password: repository_password)
       progress_observer = IsaacUploader::UploadObserver.new
       state_observer = IsaacUploader::StateObserver.new
@@ -112,12 +117,13 @@ class TerminologySourcePackagesController < ApplicationController
       TerminologyUploadTracker.perform_later(package, files)
     rescue IsaacUploader::UploadException => ex
       #log and redirect
-      $log.error {"Upload exception! #{ex.to_s}"}
+      $log.error { "Upload exception! #{ex.to_s}" }
       #redirect and flash error....
       #consider destroying the package
       #package.destroy
     end
   end
+
   # Never trust parameters from the scary internet, only allow the white list through.
   def terminology_source_package_params
     params.require(:terminology_source_package).permit(:user, terminology_source_contents_attributes: [:upload])
