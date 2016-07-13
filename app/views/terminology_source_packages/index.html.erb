@@ -67,17 +67,23 @@
       <div class="modal-body">
         <%= form_for(@package, remote: true, html: {multipart: true}) do %>
             <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
-            <%= label_tag 'supported_converter', 'Supported Converter' %><br>
-            <%= select_tag 'supported_converter',
-                           options_for_select(IsaacUploader.converter_types_as_html_options),
-                           {:prompt => '-- Select a Converter Type --'} %><br><br>
-
-            <%= label_tag 'version', 'Version' %><br>
-            <%= text_field_tag 'version', nil, required: true, data: {required: true}, placeholder: 'Enter Your Version Number', title: 'Enter Your Version Number', width: '150px', maxlength: 75, size: 75 %>
-            <br><br>
-
-            <%= label_tag 'extension_name', 'Extension Name' %><br>
-            <%= text_field_tag 'extension_name', nil, width: '150px', maxlength: 75, size: 75 %><br><br>
+            <div>
+              <%= label_tag 'supported_converter', 'Supported Converter' %><br>
+              <%= select_tag 'supported_converter',
+                             options_for_select(IsaacUploader.converter_types_as_html_options),
+                             {:prompt => '-- Select a Converter Type --'} %>
+            </div>
+            <br>
+            <div title="Enter Your Version Number">
+              <%= label_tag 'version', 'Version' %><br>
+              <%= text_field_tag 'version', nil, required: true, data: {required: true}, placeholder: 'Enter Your Version Number', width: '150px', maxlength: 75, size: 75 %>
+            </div>
+            <br>
+            <div>
+              <%= label_tag 'extension_name', 'Extension Name' %><br>
+              <%= text_field_tag 'extension_name', nil, width: '150px', maxlength: 75, size: 75, placeholder: 'Enter the Extension Name' %>
+            </div>
+            <br>
 
             <div id="uploads" style="display: none">
               <h4>Source Content to Upload</h4>
@@ -124,7 +130,7 @@
           source_msg += '<strong>Suggested Source URL:&nbsp;</strong>' + suggested_source_url + '<br>';
         }
 
-        var info = $('<a>').html('&nbsp;<i class="fa fa-info-circle fa-2x" aria-hidden="true"></i>');
+        var info = $('<a>').html('<i class="fa fa-info-circle fa-2x" aria-hidden="true"></i>');
         sourceRows.append($('<div>').addClass("inline_align_top_div").html(info));
 
         info.popover({
@@ -202,39 +208,40 @@
           var state_unknown = (row.state === 'UNKNOWN');
 
           inner_loop:
-          for (var f = 0; f < fields.length; f++) {
-            var field = fields[f];
+              for (var f = 0; f < fields.length; f++) {
+                var field = fields[f];
 
-            if (field === 'started_at') {
-              tr_data.append($('<td>').text(format_epoch_in_local(row.started_at)));
-            }
-            else if (field === 'state' && state_unknown) {
-              tr_data.append($('<td>').text(row.state));
-              tr_data.append($('<td>').text(''));//result
-              tr_data.append($('<td>').text(''));//progress
-              tr_data.append($('<td>').text(''));//state_time
-              tr_data.append($('<td>').text(''));//elapsed_time
-              break inner_loop;
-            }
-            else if (field === 'progress') {
-              var title = row.progress < 100 ? row.title : '';
-              var pbar = $('<div>').addClass('progress-bar')
-                  .prop('role', 'progressbar')
-                  .attr('aria-valuenow', row.progress)
-                  .attr('aria-valuemin', 0)
-                  .attr('aria-valuemax', 100)
-                  .css('width', row.progress.toString() + '%')
-                  .text(row.progress.toString() + '%');
-              tr_data.append($('<td>').html($('<span>').html(title + '<br>').append($('<div>').addClass("progress").html(pbar))));
-            }
-            else if (field === 'state_time') {
-              var txt = row.progress < 100 ? 'Running...' : format_epoch_in_local(row.state_time);
-              tr_data.append($('<td>').text(txt));
-            }
-            else {
-              tr_data.append($('<td>').text(eval('row.' + field)));
-            }
-          };
+                if (field === 'started_at') {
+                  tr_data.append($('<td>').text(format_epoch_in_local(row.started_at)));
+                }
+                else if (field === 'state' && state_unknown) {
+                  tr_data.append($('<td>').text(row.state));
+                  tr_data.append($('<td>').text(''));//result
+                  tr_data.append($('<td>').text(''));//progress
+                  tr_data.append($('<td>').text(''));//state_time
+                  tr_data.append($('<td>').text(''));//elapsed_time
+                  break inner_loop;
+                }
+                else if (field === 'progress') {
+                  var title = row.progress < 100 ? row.title : '';
+                  var pbar = $('<div>').addClass('progress-bar')
+                      .prop('role', 'progressbar')
+                      .attr('aria-valuenow', row.progress)
+                      .attr('aria-valuemin', 0)
+                      .attr('aria-valuemax', 100)
+                      .css('width', row.progress.toString() + '%')
+                      .text(row.progress.toString() + '%');
+                  tr_data.append($('<td>').html($('<span>').html(title + '<br>').append($('<div>').addClass("progress").html(pbar))));
+                }
+                else if (field === 'state_time') {
+                  var txt = row.progress < 100 ? 'Running...' : format_epoch_in_local(row.state_time);
+                  tr_data.append($('<td>').text(txt));
+                }
+                else {
+                  tr_data.append($('<td>').text(eval('row.' + field)));
+                }
+              }
+          ;
           $('#' + tableId + ' tbody').append(tr_data);
         });
       }
