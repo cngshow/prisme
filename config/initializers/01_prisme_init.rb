@@ -48,3 +48,8 @@ unless ($rake || defined?(Rails::Generators))
     end
   end
 end
+
+puts "Object space disabled again"
+#https://github.com/jruby/jruby/wiki/PerformanceTuning#dont-enable-objectspace
+#one of our dependend gems (zip.rb) enables this.  Disabling.
+JRuby.objectspace = false

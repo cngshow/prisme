@@ -2,7 +2,7 @@ module TerminologyConverterHelper
   include NexusConcern
   CONVERTER_OPTION_PREFIX = 'converter_option_param_'
 
-  def load_drop_down(nexus_params: nexus_params)
+  def load_drop_down(nexus_params:)
     url_string = '/nexus/service/local/lucene/search'
     options = []
     response = get_nexus_connection.get(url_string, nexus_params)
@@ -29,7 +29,7 @@ module TerminologyConverterHelper
     options
   end
 
-  def load_ibdf_classifiers(nexus_params: nexus_params)
+  def load_ibdf_classifiers(nexus_params:)
     url_string = '/nexus/service/local/lucene/search'
     options = []
     response = get_nexus_connection.get(url_string, nexus_params)
