@@ -50,6 +50,7 @@ module TomcatConcern
       pwd = service_props[PrismeService::CARGO_REMOTE_PASSWORD]
 
       conn = Faraday.new(url: url) do |faraday|
+        faraday.options.open_timeout = 5
         faraday.request :url_encoded # form-encode POST params
         faraday.use Faraday::Response::Logger, $log
         faraday.adapter :net_http # make requests with Net::HTTP
