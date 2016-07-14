@@ -61,8 +61,12 @@ class TerminologyDbBuilderController < ApplicationController
     s_group_id = ibdf_files.first[:g]
     s_artifact_id = ibdf_files.first[:a]
     s_version = ibdf_files.first[:v]
-    greg = params
-    bowman = 'rules'
+    db_name = params['db_name']
+    db_version = params['db_version']
+    db_description = params['db_description']
+    artifact_classifier = params['artifact_classifier']
+    classify = params['classify']
+    metadata_version = params['metadata_version']
     return
     # strip out the individual arguments for term source
     term_source = params[:terminology_source]
