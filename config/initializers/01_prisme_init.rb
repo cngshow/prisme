@@ -9,7 +9,6 @@ end
 require './lib/rails_common/props/prop_loader'
 require './lib/rails_common/logging/open_logging'
 require './lib/rails_common/logging/logging'
-require './lib/rails_common/logging/rails_appender'
 #above from rails common
 
 require './lib/prisme_service'
@@ -25,7 +24,7 @@ props.put('java.util.logging.manager', $PROPS['PRISME.log_manager'])
 $SERVICE_TYPES = YAML.load_file('./config/service/service_types.yml').freeze
 
 unless ($rake || defined?(Rails::Generators))
-
+  STFU_MODE = false
   begin
     ActiveRecord::Base.logger = $log_rails
     ActiveRecord::Migrator.migrate "db/migrate"
@@ -47,9 +46,14 @@ unless ($rake || defined?(Rails::Generators))
       $log.info("If the message above states the database was closed then don't worry :-).")
     end
   end
+else
+  STFU_MODE = true
 end
 
-puts "Object space disabled again"
 #https://github.com/jruby/jruby/wiki/PerformanceTuning#dont-enable-objectspace
-#one of our dependend gems (zip.rb) enables this.  Disabling.
+#one of our dependent gems (zip.rb) enables this.  Disabling.
 JRuby.objectspace = false
+unless STFU_MODE
+  puts "Object space disabled again"
+  require './lib/rails_common/logging/rails_appender'
+end

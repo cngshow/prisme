@@ -57,95 +57,18 @@ class TerminologyDbBuilderController < ApplicationController
 =end
 
   def request_build
+
     ibdf_files = params[:ibdf_selections].split(',').map {|f| NexusOption.arg_as_json(f)}
-    s_group_id = ibdf_files.first[:g]
-    s_artifact_id = ibdf_files.first[:a]
-    s_version = ibdf_files.first[:v]
-    greg = params
-    bowman = 'rules'
-    return
-    # strip out the individual arguments for term source
-    term_source = params[:terminology_source]
-    s_hash = TermConvertOption.arg_as_json(term_source)
-    s_group_id = s_hash[:g]
-    s_artifact_id = s_hash[:a]
-    s_version = s_hash[:v]
-    converter_options = fetch_converter_options
-    # strip out the version argument for converter_version
-    converter_version = params[:converter_version]
-    cv_hash = TermConvertOption.arg_as_json(converter_version)
-    converter_version = cv_hash[:v]
+    db_name = params['db_name']
+    db_version = params['db_version']
+    db_description = params['db_description']
+    artifact_classifier = params['artifact_classifier']
+    classify = boolean(params['classify'])
+    metadata_version = params['metadata_version']
 
-    # initialize the SDOSourceContent based on the selected source
-    sdo_source_content = JIsaacLibrary::get_sdo(group_id: s_group_id, artifact: s_artifact_id, version: s_version)
-
-    # pull out the git authentication information
-    git_props = Service.get_git_props
-    git_url = git_props[PrismeService::GIT_REPOSITORY_URL]
-    git_user = git_props[PrismeService::GIT_USER]
-    git_pass = git_props[PrismeService::GIT_PWD]
-
-    # set the default (empty array) ibdf file dependency and populate it if we have a param passed
-    addl_ibdf_dependency = params[:addl_ibdf_dependency]
-    addl_ibdf = JIsaacLibrary::ibdf_file_to_j_a()
-
-    if addl_ibdf_dependency
-      # strip out the individual arguments for addl_ibdf_dependency
-      ibdf_hash = TermConvertOption.arg_as_json(addl_ibdf_dependency)
-      ibdf_group_id = ibdf_hash[:g]
-      ibdf_artifact_id = ibdf_hash[:a]
-      ibdf_version = ibdf_hash[:v]
-      ibdf_classifier = params[:ibdf_classifier]
-      addl_ibdf = JIsaacLibrary::create_ibdf_sdo_java_array({group_id: ibdf_group_id, artifact: ibdf_artifact_id, version: ibdf_version, classifier: ibdf_classifier}, 'IBDFFile')
-    end
-
-    # set the default (empty array) source file dependency and populate it if we have a param passed todo
-    addl_source_dependency = params[:addl_source_dependency]
-    addl_src = JIsaacLibrary::sdo_source_content_to_j_a()
-
-    if addl_source_dependency
-      # strip out the individual arguments for addl_source_dependency
-      src_hash = TermConvertOption.arg_as_json(addl_source_dependency)
-      src_group_id = src_hash[:g]
-      src_artifact_id = src_hash[:a]
-      src_version = src_hash[:v]
-      src_classifier = src_hash[:c]
-      addl_src = JIsaacLibrary::sdo_source_content_to_j_a([src_group_id, src_artifact_id, src_version, src_classifier])
-    end
-
-    git_failure = nil
-
-    begin
-      converter_option_keys = params.keys.select { |key| key.starts_with?(CONVERTER_OPTION_PREFIX) }
-      converter_option_param_hash = converter_option_values(converter_option_keys: converter_option_keys)
-      tag_name = IsaacConverter::create_content_converter(sdo_source_content: sdo_source_content,
-                                                          converter_version: converter_version,
-                                                          additional_source_dependencies_sdo_j_a: addl_src,
-                                                          additional_source_dependencies_ibdf_j_a: addl_ibdf,
-                                                          converter_option_values: converter_option_param_hash,
-                                                          git_url: git_url,
-                                                          git_user: git_user,
-                                                          git_pass: git_pass)
-    rescue => ex
-      $log.error("Git call failed!  Message: #{ex.message}")
-      $log.error(ex.backtrace.join("\n"))
-      raise JIsaacLibrary::GitFailureException.new(ex)
-    end
-
-    development = Rails.env.development?
-
-    # file to render
-    props = Service.get_build_server_props
-    j_xml = PrismeService::JENKINS_XML
-    url = props[PrismeService::JENKINS_ROOT]
-    user = props[PrismeService::JENKINS_USER]
-    password = props[PrismeService::JENKINS_PWD]
-
-    # you MUST pass binding in order to have the erb process local variables
-    @job_xml = ERB.new(File.open(j_xml, 'r') { |file| file.read }).result(binding)
-    t_s = Time.now.strftime('%Y_%m_%dT%H_%M_%S')
-    job = JenkinsStartBuild.perform_later("#{JenkinsStartBuild::PRISME_NAME_PREFIX}#{s_artifact_id}_#{t_s}", @job_xml, url, user, password)
+    job = TerminologyDatabaseBuilder.perform_later(db_name, db_version, db_description, artifact_classifier, classify, ibdf_files, metadata_version)
     PrismeBaseJob.save_user(job_id: job.job_id, user: current_user.email)
+
     redirect_to action: 'index'
   end
 
