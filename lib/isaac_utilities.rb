@@ -4,7 +4,7 @@ module JIsaacLibrary
   include_package 'gov.vha.isaac.ochre.pombuilder.converter' #ContentConverterCreator, SupportedConverterTypes, UploadFileInfo
   include_package 'gov.vha.isaac.ochre.pombuilder.upload' #UploadFileInfo, SrcUploadCreator
   include_package 'gov.vha.isaac.ochre.api.util' #WorkExecutors
-
+  include_package 'gov.vha.isaac.ochre.pombuilder' #GitPublish
   #invoke as follows:
   #ibdf_file_to_j_a(["org.foo","loinc","5.0"],["org.foo","loinc","3.0","some_classifier"],...)
   #JIsaacLibrary::ibdf_file_to_j_a(["org.foo","loinc","5.0"],["org.foo","loinc","3.0","some_classifier"])
@@ -63,6 +63,10 @@ end
 
 module IsaacDBConfigurationCreator
 
+  class << self
+    attr_accessor :db_tag_list, :db_tag_list_dirty
+  end
+
   #public static String createDBConfiguration(
   # String name, String version, String description,  String resultClassifier, boolean classify,
   # IBDFFile[] ibdfFiles, String metadataVersion, String gitRepositoryURL, String gitUsername, String gitPassword) throws Exception
@@ -70,20 +74,49 @@ module IsaacDBConfigurationCreator
   # s_artifact_id = ibdf_files.first[:a]
   # s_version = ibdf_files.first[:v]
   def self.create_db_configuration(name:, version:, description:, result_classifier:, classify_bool:, ibdf_files:, metadata_version:, git_url:, git_user:, git_password:)
+    @db_tag_list_dirty = true
     $log.info("Starting a db create...")
     ibdf_converted = ibdf_files.map do |ibdf|
       #the search symbols in nexus are: 'a' for artifact id, 'g' for group id, and 'v' for version
-      [ibdf[:g],ibdf[:a], ibdf[:v]]
+      [ibdf[:g], ibdf[:a], ibdf[:v]]
     end
     ibdf_j_a = JIsaacLibrary::ibdf_file_to_j_a(*ibdf_converted)
     begin
-      return JIsaacLibrary::DBConfigurationCreator.createDBConfiguration(name, version,description, result_classifier, classify_bool, ibdf_j_a, metadata_version, git_url, git_user, git_password)
+      return JIsaacLibrary::DBConfigurationCreator.createDBConfiguration(name, version, description, result_classifier, classify_bool, ibdf_j_a, metadata_version, git_url, git_user, git_password)
     rescue java.lang.Throwable => ex
       $log.error("Failed to create db configuration! " + ex.to_s)
       $log.error(ex.backtrace.join("\n"))
       raise DBConfigurationException.new(ex)
     end
     $log.info("db create finished...")
+  end
+
+  def self.read_tags
+    #not thread safe!
+    # pull out the git authentication information
+    git_props = Service.get_git_props
+    git_url = git_props[PrismeService::GIT_REPOSITORY_URL]
+    git_user = git_props[PrismeService::GIT_USER]
+    git_pass = git_props[PrismeService::GIT_PWD]
+    if (@db_tag_list.nil? or @db_tag_list_dirty)
+      @db_tag_list = JIsaacLibrary::GitPublish.readTags(git_url, git_user, git_pass).to_a
+      @db_tag_list_dirty = false
+    end
+    @db_tag_list
+    # IsaacDBConfigurationCreator.read_tags
+    #sample result below.
+    #["refs/tags/gov.vha.isaac.db/BillyBob/Version_23.45678432124354", "refs/tags/gov.vha.isaac.db/Cris/20160301-loader-3.2", "refs/tags/gov.vha.isaac.db/Cris/Cris4", "refs/tags/gov.vha.isaac.db/greg/123"]
+  end
+  GIT_TAG_PREAMBLE = 'refs/tags/'
+  GROUP_ID = JIsaacLibrary::DBConfigurationCreator.groupId
+  GIT_TAG_GROUP_ID = GIT_TAG_PREAMBLE + GROUP_ID
+  GIT_CONFLICT_DB_NAME = :db_name
+  GIT_CONFLICT_DB_VERSION = :db_version
+
+  def self.tag_conflict?(name:, version:)
+    potential_git_tag = GIT_TAG_GROUP_ID + "/#{name}/#{version}"
+    tags = read_tags
+    tags.include? potential_git_tag
   end
 
   class DBConfigurationException < StandardError

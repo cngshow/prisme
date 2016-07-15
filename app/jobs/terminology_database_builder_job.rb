@@ -64,5 +64,5 @@ class TerminologyDatabaseBuilder < PrismeBaseJob
   def self.metadata_version(ar)
     result_hash(ar)[:metadata_version.to_s]
   end
-  
+
 end

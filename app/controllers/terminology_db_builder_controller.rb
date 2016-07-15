@@ -66,6 +66,10 @@ class TerminologyDbBuilderController < ApplicationController
     classify = boolean(params['classify'])
     metadata_version = params['metadata_version']
 
+    if (IsaacDBConfigurationCreator.tag_conflict?(name: db_name, version: db_version))
+      #tell the user they need to change at least one of the values and leave the UI up.
+    end
+
     job = TerminologyDatabaseBuilder.perform_later(db_name, db_version, db_description, artifact_classifier, classify, ibdf_files, metadata_version)
     PrismeBaseJob.save_user(job_id: job.job_id, user: current_user.email)
 
