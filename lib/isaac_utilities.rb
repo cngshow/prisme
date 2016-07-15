@@ -110,8 +110,6 @@ module IsaacDBConfigurationCreator
   GIT_TAG_PREAMBLE = 'refs/tags/'
   GROUP_ID = JIsaacLibrary::DBConfigurationCreator.groupId
   GIT_TAG_GROUP_ID = GIT_TAG_PREAMBLE + GROUP_ID
-  GIT_CONFLICT_DB_NAME = :db_name
-  GIT_CONFLICT_DB_VERSION = :db_version
 
   def self.tag_conflict?(name:, version:)
     potential_git_tag = GIT_TAG_GROUP_ID + "/#{name}/#{version}"
