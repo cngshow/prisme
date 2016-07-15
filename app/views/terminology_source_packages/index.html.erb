@@ -81,7 +81,7 @@
             <br>
             <div>
               <%= label_tag 'extension_name', 'Extension Name' %><br>
-              <%= text_field_tag 'extension_name', nil, width: '150px', maxlength: 75, size: 75, placeholder: 'Enter the Extension Name' %>
+              <%= text_field_tag 'extension_name', nil, width: '150px', maxlength: 75, size: 75, placeholder: 'Enter the Extension Name (optional)' %>
             </div>
             <br>
 
@@ -162,7 +162,7 @@
 
     function submitPackage() {
       var submit_form = true;
-      var warning = "There are possible validation errors in the file names specified to upload.\n\nMSG\n\nDo you want to continue and submit this request?";
+      var warning = "There are possible validation errors in the file names specified to upload.<br><br>MSG<br><br>Do you want to continue and submit this request?";
       var warn_msg = "";
 
       $('[data-required]').each(function (index, value) {
@@ -178,18 +178,28 @@
           console.log(value.value + '::' + reggie.toString() + ' regex passes? ' + reggie.test(value.value).toString());
 
           if (!reggie.test(value.value)) {
-            warn_msg += $(this).attr('data-reggie') + "\n\n";
+            warn_msg += $(this).attr('data-reggie') + "<br><br>";
           }
         });
 
         if (warn_msg !== '') {
           warning = warning.replace('MSG', warn_msg);
-          submit_form = (confirm(warning));
-          if (!submit_form) return false;
+          bootbox.confirm({
+            size: 'large',
+            title: 'Warning',
+            message: warning,
+            callback: function (result) {
+              submitForm(result);
+            }
+          });
+          return false;
         }
       }
+      submitForm(submit_form);
+    }
 
-      if (submit_form) {
+    function submitForm(bool) {
+      if (bool) {
         $("#btn_submit").attr('onclick', 'return false;').html('<span><i class="fa fa-cog fa-spin fa-fw" aria-hidden="true"></i>Uploading...Please Wait</span>');
       }
 
