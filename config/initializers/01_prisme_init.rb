@@ -23,7 +23,6 @@ props = java.lang.System.getProperties
 props.put('java.util.logging.manager', $PROPS['PRISME.log_manager'])
 $SERVICE_TYPES = YAML.load_file('./config/service/service_types.yml').freeze
 
-STFU_MODE = true
 unless ($rake || defined?(Rails::Generators))
   STFU_MODE = false
   begin
@@ -47,6 +46,8 @@ unless ($rake || defined?(Rails::Generators))
       $log.info("If the message above states the database was closed then don't worry :-).")
     end
   end
+else
+  STFU_MODE = true
 end
 
 #https://github.com/jruby/jruby/wiki/PerformanceTuning#dont-enable-objectspace
