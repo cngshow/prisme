@@ -71,17 +71,24 @@
               <%= label_tag 'supported_converter', 'Supported Converter' %><br>
               <%= select_tag 'supported_converter',
                              options_for_select(IsaacUploader.converter_types_as_html_options),
-                             {:prompt => '-- Select a Converter Type --'} %>
+                             :class => 'select2-prisme form-control',
+                             :include_blank => true,
+                             :data => {ph: 'Select a Converter Type',
+                                       w: '525px',
+                                       singleSelect: true
+                             },
+                             required: true
+              %>
             </div>
             <br>
-            <div title="Enter Your Version Number">
+            <div title="Enter Your Version Number" class="input_div">
               <%= label_tag 'version', 'Version' %><br>
-              <%= text_field_tag 'version', nil, required: true, data: {required: true}, placeholder: 'Enter Your Version Number', width: '150px', maxlength: 75, size: 75 %>
+              <%= text_field_tag 'version', nil, required: true, data: {required: true}, placeholder: 'Enter Your Version Number', width: '150px', maxlength: 75, size: 75, class: 'form-control' %>
             </div>
             <br>
-            <div>
+            <div class="input_div">
               <%= label_tag 'extension_name', 'Extension Name' %><br>
-              <%= text_field_tag 'extension_name', nil, width: '150px', maxlength: 75, size: 75, placeholder: 'Enter the Extension Name (optional)' %>
+              <%= text_field_tag 'extension_name', nil, width: '150px', maxlength: 75, size: 75, placeholder: 'Enter the Extension Name (optional)', class: 'form-control' %>
             </div>
             <br>
 
@@ -151,8 +158,6 @@
       }
 
       input.fileinput({
-//        msgNo: 'Please choose a file to upload. No',
-//        minFileCount: 1,
         showRemove: false,
         showClose: true,
         showUpload: false,
@@ -312,9 +317,11 @@
         }
       });
 
-      poll();
+      // call init_select2 to initialize all select inputs to use the select2 js library
+      init_select2();
 
       //register for polling
+      poll();
       polling.registerController('terminology_source_packages', poll, 1000);
     });
   </script>

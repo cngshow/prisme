@@ -37,6 +37,7 @@ Rails.application.routes.draw do
   get 'terminology_db_builder' => 'terminology_db_builder#index'
   post 'terminology_db_builder/request_build'
   get 'terminology_db_builder/load_build_data' => 'terminology_db_builder#ajax_load_build_data'
+  get 'terminology_db_builder/check_tag_conflict' => 'terminology_db_builder#ajax_check_tag_conflict'
   get 'terminology_db_builder/check_polling' => 'terminology_db_builder#ajax_check_polling'
 
   get 'prisme_job_queue/list'
