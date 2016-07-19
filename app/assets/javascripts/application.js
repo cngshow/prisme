@@ -29,7 +29,7 @@
 function format_epoch_in_local(epoch) {
     var ret = epoch;
 
-    if ($.isNumeric(epoch)) {
+    if ($.isNumeric(epoch) && epoch > 0) {
         var i = parseInt(epoch) * 1000;
         ret = new Date(i).toLocaleString();
     }

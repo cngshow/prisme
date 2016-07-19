@@ -58,7 +58,7 @@ class TerminologyDatabaseBuilder < PrismeBaseJob
   end
 
   def self.ibdf_files(ar)
-    result_hash(ar)[:ibdf_files.to_s]
+    result_hash(ar)[:ibdf_files]
   end
 
   def self.metadata_version(ar)

@@ -26,6 +26,11 @@
 @import "font-awesome-sprockets";
 @import "font-awesome";
 
+// input div is used to size the div surrounding each input ont eh modal windows
+.input_div {
+  width: 525px;
+}
+
 // used with jquery validation - specifically with select2 dropdowns and jq validate
 // start - jquery validate error displayed to the right of the label for the input field
 label.error {

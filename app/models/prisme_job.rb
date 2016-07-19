@@ -70,12 +70,3 @@ class PrismeJob < ActiveRecord::Base
   end
 
 end
-=begin
-
-orphans.each do |o|
-  unless o.is_root?
-    o.parent_job.leaf = false
-    o.parent_job.save!
-  end
-end
-=end
