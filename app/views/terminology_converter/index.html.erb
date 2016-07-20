@@ -1,20 +1,11 @@
 <!-- Trigger the modal with a button -->
-<button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal" onclick="reset_form();">Request New Build</button>
+<button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal" onclick="reset_form();">Create Terminology Conversion</button>
 
 <div class="page-header">
   <h1>Terminology Converter Dashboard</h1>
 </div>
-<!--todo use the filter_table_poll_results.html.erb -->
-<div>
-  <label for="filter_rows">Filter Results:&nbsp;&nbsp;</label>
-  <select id="filter_rows" onchange="poll();">
-    <option value="15">15 Rows</option>
-    <option value="30">30 Rows</option>
-    <option value="45">45 Rows</option>
-    <option value="60">60 Rows</option>
-    <option value="999999">All Rows</option>
-  </select>
-</div>
+<%= render 'layouts/filter_table_poll_results', filter_id: 'tc_filter_rows', filter_label: 'Filter Results', include_all_rows: true, poll: 'poll' %>
+
 <table id="data-table" class="prisme-table table-striped table-hover">
   <thead>
   <tr>
@@ -186,8 +177,12 @@
   }
 
   function poll() {
-    console.log('calling poll');
-    var row_limit = parseInt($('#filter_rows').find('option:selected').val());
+    console.log('calling poll - tc');
+    var row_limit = arguments[0];
+
+    if (row_limit === undefined) {
+      row_limit = $('#tc_filter_rows').find('option:selected').val();
+    }
 
     $.getJSON(gon.routes.terminology_converter_load_build_data_path, {row_limit: row_limit}, function (data) {
       loadTable('data-table', data);
@@ -209,8 +204,6 @@
   }
 
   $(document).ready(function () {
-//    poll();
-
     //register for polling
     polling.registerPolling(polling.pollEnum.CONVERTER, poll, 5000);
 
