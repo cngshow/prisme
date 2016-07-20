@@ -4,6 +4,7 @@ var polling = (function () {
     var PollEnum = {
         WELCOME_CONTROLLER: 'welcome_controller',//used in navigation
         WELCOME_QUEUE: 'welcome_queue',//used for queue tabpage poll
+        WELCOME_DEPLOYMENTS: 'welcome_deployments',//used for deployments tabpage poll
         TERM_SOURCE: 'terminology_source_packages',
         CONVERTER: 'converter',
         DB_BUILDER: 'db_builder',

@@ -49,6 +49,14 @@ class WelcomeController < ApplicationController
     render json: json
   end
 
+  def reload_deployments
+    # reload the deployments
+    index
+
+    # render the deployments partial
+    render partial: 'welcome/deployments'
+  end
+
   private
   def format_deployments_table_data(tomcat_deployments)
     ret = []
