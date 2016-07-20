@@ -5,6 +5,7 @@ class PrismeCleanupJob < PrismeBaseJob
   end
 
   def perform(*args)
+    $log.info("cleaning #{self}")
     first_run = args.shift
     params = [$PROPS['PRISME.job_queue_trim'].to_i.days.ago,
               PrismeJobConstants::Status::STATUS_HASH[:COMPLETED],

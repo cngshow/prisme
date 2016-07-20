@@ -1,50 +1,45 @@
 require './app/jobs/prisme_base_job'
-Dir['./app/jobs/*.rb'].each {|file| require file }
+Dir['./app/jobs/*.rb'].each { |file| require file }
 
 require 'sucker_punch/async_syntax'
-
-SuckerPunch.logger = $log
-
-java_import 'java.util.Timer' do |p, c|
-  'JTimer'
-end
-
-java_import 'java.util.TimerTask' do |p, c|
-  'JTimerTask'
-end
-
-class TimerTask < JTimerTask
-
-  def set_runnable(task_lambda)
-    @lamb = task_lambda
-  end
-
-  def run
-    @lamb.call
-  end
-
-end
-# irb(main):011:0> TimerTask.new.to_java.getClass.getSuperclass
-# => class java.util.TimerTask
 
 module ActiveJob
   module QueueAdapters
     class SuckerPunchAdapter
       class << self
-        def enqueue_at(job, timestamp) #:nodoc:
-          time = java.util.Date.new(timestamp * 1000)
-          timer = JTimer.new(job.to_s)
-          timer_task = TimerTask.new
-          timer_task.set_runnable(-> { JobWrapper.new.async.perform job.serialize })
-          timer.java_send(:schedule, [JTimerTask.java_class, java.util.Date.java_class], timer_task, time)
+        def enqueue_at(job, timestamp)
+          java.lang.Thread.currentThread.setName("Prisme Scheduled Job #{job}")
+          @@scheduler ||= java.util.concurrent.Executors.newScheduledThreadPool(20)
+          time_delay = [timestamp - Time.now.to_i, 0].max #java source code (for one impl) does this already, but to be safe...)
+          @@scheduler.schedule(-> { JobWrapper.new.async.perform job.serialize }, time_delay, java.util.concurrent.TimeUnit::SECONDS);
+        end
+
+        def shutdown_scheduler
+          begin
+            $log.info("Preparing to shutdown future scheduler")
+            @@scheduler.shutdown
+            bool = @@scheduler.awaitTermination(120, java.util.concurrent.TimeUnit::SECONDS)
+            unless bool
+              naughty_tasks = @@scheduler.shutdownNow.to_a
+              $log.warn("The scheduler had to be stopped via shutdownNow.")
+              $log.warn("#{naughty_tasks}")
+            end
+            $log.info("Scheduler stopped!")
+          rescue => ex
+            $log.error("I could not shut down the scheduler for active job. #{ex}")
+            $log.error(ex.backtrace.join("\n"))
+          end
         end
       end
     end
   end
 end
 
+at_exit do
+  ActiveJob::QueueAdapters::SuckerPunchAdapter.shutdown_scheduler
+end
 
-unless($rake || defined?(Rails::Generators))
+unless ($rake || defined?(Rails::Generators))
   #schedule the PrismeCleanupJob to run now, synchronously in the current thread.
   PrismeCleanupJob.perform_now(true)
 end

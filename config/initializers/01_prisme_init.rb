@@ -46,6 +46,7 @@ unless ($rake || defined?(Rails::Generators))
       $log.info("If the message above states the database was closed then don't worry :-).")
     end
   end
+
 else
   STFU_MODE = true
 end
@@ -56,4 +57,19 @@ JRuby.objectspace = false
 unless STFU_MODE
   puts "Object space disabled again"
   require './lib/rails_common/logging/rails_appender'
+end
+
+java_import 'gov.vha.isaac.ochre.api.LookupService' do |p,c|
+  'JLookupService'
+end
+
+at_exit do
+  begin
+    $log.info("Internal Isaac libs getting shutdown...")
+    JLookupService.shutdownIsaac
+    $log.info("Isaac is shutdown...")
+  rescue => ex
+    $log.warn("Isaac libs got cranky during the shutdown. #{ex}")
+    $log.warn(ex.backtrace.join("\n"))
+  end
 end
