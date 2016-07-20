@@ -5,7 +5,7 @@
     <option value="30">30 Rows</option>
     <option value="45">45 Rows</option>
     <option value="60">60 Rows</option>
-    <% unless (exclude_all_rows) %>
+    <% if (include_all_rows) %>
         <option value="999999">All Rows</option>
     <% end %>
   </select>

@@ -22,8 +22,12 @@ var polling = (function () {
         if (registrations[controller]) {
             return false;
         }
+        
         // immediately call the function and then set the polling interval
-        callback;
+        if (typeof callback === "function") {
+            callback.apply(null, {});
+        }
+
         registrations[controller] = setInterval(callback, interval_seconds);
     }
 
