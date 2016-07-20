@@ -5,9 +5,21 @@
     <option value="30">30 Rows</option>
     <option value="45">45 Rows</option>
     <option value="60">60 Rows</option>
-    <option value="999999">All Rows</option>
+    <% unless (exclude_all_rows) %>
+        <option value="999999">All Rows</option>
+    <% end %>
   </select>
 </div>
 <script>
-  $('#<%=filter_id%>').change(<%= poll %>);
+  var $filter = $('#<%=filter_id%>');
+  $filter.change(function () {
+    var fnstring = "<%= poll %>";
+    var fnparams = [$filter.find('option:selected').val()];
+    var fn = window[fnstring];
+
+    // is object a function?
+    if (typeof fn === "function") {
+      fn.apply(null, fnparams);
+    }
+  });
 </script>

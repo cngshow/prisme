@@ -159,8 +159,9 @@
       });
     }
 
+    var fields = ['job_name', 'user', 'started_at', 'completed_at', 'status', 'ibdf_files', 'result'];
+
     function loadTable(tableId, data) {
-      var fields = ['job_name', 'user', 'started_at', 'completed_at', 'status', 'ibdf_files', 'result'];
       $('#' + tableId).find('tbody').empty();
 
       if (data.length > 0) {
@@ -199,15 +200,15 @@
       console.log('calling poll');
       var row_limit = parseInt($('#tsp_filter_rows').find('option:selected').val());
 
-      $.getJSON(gon.routes.terminology_db_builder_load_build_data_path, {row_limit: row_limit}, function (data) {
+      $.getJSON(gon.routes.terminology_db_builder_load_build_data_url, {row_limit: row_limit}, function (data) {
         loadTable('data-table', data);
 
         <% if Rails.env.development? %>
-        if (polling.isPolling('db_builder')) {
+        if (polling.isPolling(polling.pollEnum.DB_BUILDER)) {
           $.getJSON(gon.routes.terminology_db_builder_check_polling_path, {}, function (data) {
             console.log(JSON.stringify(data));
             if (data.poll === false) {
-              polling.unregisterController('db_builder');
+              polling.unregisterPolling(polling.pollEnum.DB_BUILDER);
 
               //call final poll in case there is a timing issue
               poll();
@@ -219,10 +220,8 @@
     }
 
     $(document).ready(function () {
-      poll();
-
       //register for polling
-      polling.registerController('db_builder', poll, 5000);
+      polling.registerPolling(polling.pollEnum.DB_BUILDER, poll, 5000);
 
       // call init_select2 to initialize all select inputs to use the select2 js library
       init_select2();

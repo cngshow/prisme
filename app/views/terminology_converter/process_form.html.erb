@@ -75,7 +75,7 @@
     $.getJSON(gon.routes.terminology_converter_check_polling_path, {}, function (data) {
       console.log(JSON.stringify(data));
       if (data.poll === false) {
-        polling.unregisterController('terminology_converter');
+        polling.unregisterPolling(polling.pollEnum.CONVERTER);
       }
     });
     <% end %>
@@ -84,10 +84,10 @@
   $(document).ready(function () {
     var gridDiv = document.querySelector("#build_results_div");
     new agGrid.Grid(gridDiv, gridOptions);
-    poll();
+//    poll();
 
     //register for polling
-    polling.registerController('terminology_converter', poll, 15000);
+    polling.registerPolling(polling.pollEnum.CONVERTER, poll, 15000);
 
 //    you want to call gridOptions.api.destroy(); when leaving to prevent memory leak
 

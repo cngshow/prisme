@@ -1,7 +1,6 @@
-<h1>PRISME Job Queue</h1>
-<button id="btn-update" class="btn btn-primary btn-lg">Refresh List</button>
-<br>
-<hr>
+<h2>PRISME Job Queue</h2>
+<%= render 'layouts/filter_table_poll_results', filter_id: 'pjq_filter_rows', filter_label: 'Filter Results', exclude_all_rows: true, poll: 'reload' %>
+
 <table id="data-table" class="prisme-table table-striped table-hover">
   <thead>
   <tr>
@@ -27,85 +26,79 @@
   }
 </style>
 <script>
-  $(document).ready(function (e) {
-    var fields = ['job_name', 'status', 'execution_times', 'elapsed_time', 'user', 'last_error', 'result'];
+  var fields = ['job_name', 'status', 'execution_times', 'elapsed_time', 'user', 'last_error', 'result'];
 
-    function loadTable(tableId, fields, data) {
-      $('#' + tableId + ' tbody').empty();
+  function loadTable(tableId, data) {
+    $('#' + tableId + ' tbody').empty();
 
-      $.each(data, function (index, item) {
-        // create the row adding a data-job_id attribute
-        var row = $('<tr>').addClass('queue').data('job_id', item['job_id']);
+    $.each(data, function (index, item) {
+      // create the row adding a data-job_id attribute
+      var row = $('<tr>').addClass('queue').data('job_id', item['job_id']);
 
-        $.each(fields, function (index, field) {
-          var item_value = item[field + ''];
+      $.each(fields, function (index, field) {
+        var item_value = item[field + ''];
 
-          if (field === 'status') {
-            var row_status = $('<td>').text(gon.job_status_constants[item_value]);
+        if (field === 'status') {
+          var row_status = $('<td>').text(gon.job_status_constants[item_value]);
 
-            if (item_value === <%= PrismeJobConstants::Status::STATUS_HASH[:QUEUED] %> ||
-                item_value === <%= PrismeJobConstants::Status::STATUS_HASH[:RUNNING] %>) {
-              row_status.prepend($('<i class="fa fa-cog fa-fw fa-spin" aria-hidden="true"></i>'));
-            }
-            row.append(row_status);
-          } else if (field === 'execution_times') {
-            //'scheduled_at', 'enqueued_at', 'started_at', 'completed_at',
-            row.append($('<td>').css('text-align','right').html("Enqueued At:<br>Scheduled At:<br>Started At:<br>Completed At:"));
-
-            // times formatted with  <br>s
-            var times = 'Not Yet Enqueued<br>';
-
-            if (item['enqueued_at'] !== null) {
-              times = moment(item['enqueued_at']).format('YYYY-MM-DD [at] HH:mm:ss') + '<br>';
-            }
-
-            if (item['scheduled_at'] !== null) {
-              times += moment(item['scheduled_at']).format('YYYY-MM-DD [at] HH:mm:ss') + '<br>';
-            } else {
-              times += 'Not Yet Scheduled<br>'
-            }
-
-            if (item['started_at'] !== null) {
-              times += moment(item['started_at']).format('YYYY-MM-DD [at] HH:mm:ss') + '<br>';
-            } else {
-              times += 'Not Yet Started<br>'
-            }
-
-            if (item['completed_at'] !== null) {
-              times += moment(item['completed_at']).format('YYYY-MM-DD [at] HH:mm:ss') + '<br>';
-            } else {
-              times += 'Not Yet Completed<br>'
-            }
-            row.append($('<td>').html(times));
+          if (item_value === <%= PrismeJobConstants::Status::STATUS_HASH[:QUEUED] %> ||
+              item_value === <%= PrismeJobConstants::Status::STATUS_HASH[:RUNNING] %>) {
+            row_status.prepend($('<i class="fa fa-cog fa-fw fa-spin" aria-hidden="true"></i>'));
           }
-          else {
-            row.append($('<td>').text(item_value));
+          row.append(row_status);
+        } else if (field === 'execution_times') {
+          //'scheduled_at', 'enqueued_at', 'started_at', 'completed_at',
+          row.append($('<td>').css('text-align', 'right').html("Enqueued At:<br>Scheduled At:<br>Started At:<br>Completed At:"));
+
+          // times formatted with  <br>s
+          var times = 'Not Yet Enqueued<br>';
+
+          if (item['enqueued_at'] !== null) {
+            times = moment(item['enqueued_at']).format('YYYY-MM-DD [at] HH:mm:ss') + '<br>';
           }
-        });
-        $('#' + tableId + ' tbody').append(row);
-      });
-    }
 
-    $('#btn-update').click(function (e) {
-      reload();
-    });
+          if (item['scheduled_at'] !== null) {
+            times += moment(item['scheduled_at']).format('YYYY-MM-DD [at] HH:mm:ss') + '<br>';
+          } else {
+            times += 'Not Yet Scheduled<br>'
+          }
 
-    function reload() {
-      console.log('calling reload!');
-      $.ajax({
-        url: gon.routes.prisme_job_queue_reload_job_queue_list_path,
-        type: "GET",
-        dataType: "json",
-        success: function (data) {
-          loadTable('data-table', fields, data);
+          if (item['started_at'] !== null) {
+            times += moment(item['started_at']).format('YYYY-MM-DD [at] HH:mm:ss') + '<br>';
+          } else {
+            times += 'Not Yet Started<br>'
+          }
+
+          if (item['completed_at'] !== null) {
+            times += moment(item['completed_at']).format('YYYY-MM-DD [at] HH:mm:ss') + '<br>';
+          } else {
+            times += 'Not Yet Completed<br>'
+          }
+          row.append($('<td>').html(times));
         }
-      })
+        else {
+          row.append($('<td>').text(item_value));
+        }
+      });
+      $('#' + tableId + ' tbody').append(row);
+    });
+  }
+
+  function reload() {
+    console.log('calling reload!');
+    var rowlimit = arguments[0];
+
+    if (rowlimit === undefined) {
+      rowlimit = $('#pjq_filter_rows').find('option:selected').val();
     }
 
-    reload();
+    $.getJSON(gon.routes.welcome_reload_job_queue_list_path, {row_limit: rowlimit}, function (data) {
+      loadTable('data-table', data);
+    })
+  }
 
-    //register for polling
-    polling.registerController('welcome_job_queue', reload, 5000);
-
+  $(document).ready(function (e) {
+    // register for polling
+    polling.registerPolling(polling.pollEnum.WELCOME_QUEUE, reload, 5000);
   });
 </script>

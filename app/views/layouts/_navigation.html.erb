@@ -5,39 +5,37 @@
   <div>
     <ul class="nav navbar-nav">
       <li>
-        <a href="<%= root_path %>"><span class="glyphicon glyphicon-home" onclick="polling.checkPolling('welcome');"></span></a>
+        <a href="<%= root_path %>"><span class="glyphicon glyphicon-home" onclick="polling.checkPolling(polling.pollEnum.WELCOME);"></span></a>
       </li>
       <% if policy(:navigation).registered? %>
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Terminology
               <span class="caret"></span></a>
             <ul class="dropdown-menu">
-              <li><a href="<%= terminology_source_packages_path %>" onclick="polling.checkPolling('tsp_upload');">Source Package Upload</a></li>
+              <li><a href="<%= terminology_source_packages_path %>" onclick="polling.checkPolling(polling.pollEnum.TERM_SOURCE);">Source Package Upload</a></li>
               <li role="separator" class="divider"></li>
-              <li><a href="<%= terminology_converter_path %>" onclick="polling.checkPolling('converter');">Convert Terminology</a></li>
+              <li><a href="<%= terminology_converter_path %>" onclick="polling.checkPolling(polling.pollEnum.CONVERTER);">Convert Terminology</a></li>
               <li role="separator" class="divider"></li>
-              <li><a href="<%= terminology_db_builder_path %>" onclick="polling.checkPolling('db_builder');">Database Builder</a></li>
+              <li><a href="<%= terminology_db_builder_path %>" onclick="polling.checkPolling(polling.pollEnum.DB_BUILDER);">Database Builder</a></li>
             </ul>
           </li>
-          <li><a href="<%= app_deployer_path %>" onclick="polling.checkPolling('deployer');">App Deployer</a></li>
+          <li><a href="<%= app_deployer_path %>" onclick="polling.checkPolling(polling.pollEnum.DEPLOYER);">App Deployer</a></li>
       <% end %>
-      <li><a href="<%= prisme_job_queue_list_path %>" onclick="polling.checkPolling('job_queue');">Job Queue Listing</a></li>
       <% if policy(:navigation).admin? %>
           <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administration
-              <span class="caret"></span></a>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administration<span class="caret"></span></a>
             <ul class="dropdown-menu">
-              <li><a href="<%= list_users_path %>" onclick="polling.checkPolling('admin_user_edit');">Edit User Permissions</a></li>
+              <li><a href="<%= list_users_path %>" onclick="polling.checkPolling(polling.pollEnum.ADMIN_USER_EDIT);">Edit User Permissions</a></li>
               <li role="separator" class="divider"></li>
-              <li><a href="<%= services_path %>" onclick="polling.checkPolling('services');">Service Provisioning</a></li>
+              <li><a href="<%= services_path %>" onclick="polling.checkPolling(polling.pollEnum.SERVICES);">Service Provisioning</a></li>
             </ul>
           </li>
       <% end %>
       <li>
         <% if current_user.nil? %>
-            <a href="<%= new_user_session_path %>" onclick="polling.checkPolling('logIn');">Log in</a>
+            <a href="<%= new_user_session_path %>" onclick="polling.checkPolling(polling.pollEnum.LOGIN);">Log in</a>
         <% else %>
-            <a href="<%= destroy_user_session_path %>" onclick="polling.checkPolling('logOut');">Log out</a>
+            <a href="<%= destroy_user_session_path %>" onclick="polling.checkPolling(polling.pollEnum.LOGOUT);">Log out</a>
         <% end %>
       </li>
     </ul>

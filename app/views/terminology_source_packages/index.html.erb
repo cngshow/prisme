@@ -14,23 +14,17 @@
 
   .fileupload_div {
     display: inline-block;
-    width: 80%;
-    /*height: 100px;*/
-    /*margin: 3px;*/
+    width: 525px;
+    margin-right: 3px;
   }
 </style>
-<script>
-  function tsp_poll() {
-    console.log('calling tsp_poller...');//todo implement this
-  }
-</script>
 <!-- Trigger the modal with a button -->
 <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Create New Terminology Source Package</button>
 <div class="page-header">
   <h1>Terminology Source Package Dashboard</h1>
 </div>
 
-<%= render 'layouts/filter_table_poll_results', filter_id: 'tsp_filter_rows', filter_label: 'Filter Results', poll: 'tsp_poll()' %>
+<%= render 'layouts/filter_table_poll_results', filter_id: 'tsp_filter_rows', filter_label: 'Filter Results', poll: 'poll' %>
 <table id="data-table" class="prisme-table table-striped table-hover">
   <thead>
   <tr>
@@ -83,23 +77,24 @@
             <br>
             <div title="Enter Your Version Number" class="input_div">
               <%= label_tag 'version', 'Version' %><br>
-              <%= text_field_tag 'version', nil, required: true, data: {required: true}, placeholder: 'Enter Your Version Number', width: '150px', maxlength: 75, size: 75, class: 'form-control' %>
+              <%= text_field_tag 'version', nil, required: true, data: {required: true}, placeholder: 'Enter Your Version Number', maxlength: 75, size: 75, class: 'form-control' %>
             </div>
             <br>
-            <div class="input_div">
+            <div class="input_div"><!-- todo put this everywhere and set up with jq validate-->
               <%= label_tag 'extension_name', 'Extension Name' %><br>
-              <%= text_field_tag 'extension_name', nil, width: '150px', maxlength: 75, size: 75, placeholder: 'Enter the Extension Name (optional)', class: 'form-control' %>
+              <%= text_field_tag 'extension_name', nil, maxlength: 75, size: 75, placeholder: 'Enter the Extension Name (optional)', class: 'form-control' %>
             </div>
             <br>
 
             <div id="uploads" style="display: none">
-              <h4>Source Content to Upload</h4>
-              <a onclick="add_upload()" class="btn btn-primary">Add Source Upload</a>
-              <br>
-              <br>
-              <div id="source_rows"></div>
-              <br>
-              <hr>
+              <fieldset class="classic-border">
+                <legend class="classic-border">Source Content to Upload</legend>
+                <a onclick="add_upload()" class="btn btn-primary">Add Source Upload</a>
+                <br>
+                <br>
+                <div id="source_rows"></div>
+                <br>
+              </fieldset>
               <div class="btn btn-primary btn-lg" onclick="submitPackage()" id="btn_submit">Create Terminology Source Package</div>
               <button id="btn_submit_hidden" style="display: none"></button>
             </div>
@@ -214,7 +209,7 @@
 
     var fields = ['user', 'uploaded_files', 'started_at', 'state', 'result', 'progress', 'state_time', 'elapsed_time'];
 
-    function loadTable(tableId, fields, data) {
+    function loadTable(tableId, data) {
       $('#' + tableId).find('tbody').empty();
 
       if (data.length > 0) {
@@ -271,14 +266,14 @@
       var row_limit = parseInt($('#tsp_filter_rows').find('option:selected').val());
 
       $.getJSON(gon.routes.terminology_source_packages_load_build_data_path, {row_limit: row_limit}, function (data) {
-        loadTable('data-table', fields, data);
+        loadTable('data-table', data);
 
         <% if Rails.env.development? %>
-        if (polling.isPolling('terminology_source_packages')) {
+        if (polling.isPolling(polling.pollEnum.TERM_SOURCE)) {
           $.getJSON(gon.routes.terminology_source_packages_check_polling_path, {}, function (data) {
             console.log(JSON.stringify(data));
             if (data.poll === false) {
-              polling.unregisterController('terminology_source_packages');
+              polling.unregisterPolling(polling.pollEnum.TERM_SOURCE);
 
               //call final poll in case there is a timing issue
               poll();
@@ -321,8 +316,7 @@
       init_select2();
 
       //register for polling
-      poll();
-      polling.registerController('terminology_source_packages', poll, 1000);
+      polling.registerPolling(polling.pollEnum.TERM_SOURCE, poll, 1000);
     });
   </script>
 </div>
