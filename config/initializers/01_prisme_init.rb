@@ -1,3 +1,4 @@
+$CLASSPATH << "#{Rails.root}/lib/rails_common/logging/"
 ##
 # Do common initialization tasks in prisme
 #
@@ -9,13 +10,13 @@ end
 require './lib/rails_common/props/prop_loader'
 require './lib/rails_common/logging/open_logging'
 require './lib/rails_common/logging/logging'
+
 #above from rails common
 
 require './lib/prisme_service'
 require './lib/cipher'
 require './lib/jenkin_client'
 require './lib/rails_common/util/helpers'
-require './lib/isaac_utilities'
 require './lib/rails_common/roles/roles'
 
 #System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
@@ -58,6 +59,8 @@ unless STFU_MODE
   puts "Object space disabled again"
   require './lib/rails_common/logging/rails_appender'
 end
+#isaac utilities must be loaded after our appenders are set (if they are set.)
+require './lib/isaac_utilities'
 
 java_import 'gov.vha.isaac.ochre.api.LookupService' do |p,c|
   'JLookupService'
