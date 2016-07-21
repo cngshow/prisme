@@ -25,8 +25,11 @@
         <td style="text-align: left">
           <a data-toggle="modal" data-target="#editModal" class="btn btn-primary" role="button" onclick='edit_user_roles(<%=user.id%>, <%= raw JSON.parse(user_roles.to_json) %>);'>
             <i class="fa fa-edit fa-fw" aria-hidden="true"></i>&nbsp;Edit User Roles</a>
-          <a class="btn btn-danger" role="button" onclick="delete_user(<%=user.id%>, '<%= user.email %>');">
-            <i class="fa fa-trash fa-fw" aria-hidden="true"></i>&nbsp;Delete User</a>
+          <!-- user cannot delete themselves -->
+          <% unless (current_user.email.eql?(user.email)) %>
+              <a class="btn btn-danger" role="button" onclick="delete_user(<%=user.id%>, '<%= user.email %>');">
+                <i class="fa fa-trash fa-fw" aria-hidden="true"></i>&nbsp;Delete User</a>
+          <% end %>
         </td>
       </tr>
   <% end %>
