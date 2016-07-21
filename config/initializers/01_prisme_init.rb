@@ -24,7 +24,7 @@ props.put('java.util.logging.manager', $PROPS['PRISME.log_manager'])
 $SERVICE_TYPES = YAML.load_file('./config/service/service_types.yml').freeze
 
 unless ($rake || defined?(Rails::Generators))
-
+  STFU_MODE = false
   begin
     ActiveRecord::Base.logger = $log_rails
     ActiveRecord::Migrator.migrate "db/migrate"
@@ -45,5 +45,31 @@ unless ($rake || defined?(Rails::Generators))
       $log.error("H2 database was not shutdown, or was previously shutdown. " + ex.message)
       $log.info("If the message above states the database was closed then don't worry :-).")
     end
+  end
+
+else
+  STFU_MODE = true
+end
+
+#https://github.com/jruby/jruby/wiki/PerformanceTuning#dont-enable-objectspace
+#one of our dependent gems (zip.rb) enables this.  Disabling.
+JRuby.objectspace = false
+unless STFU_MODE
+  puts "Object space disabled again"
+  require './lib/rails_common/logging/rails_appender'
+end
+
+java_import 'gov.vha.isaac.ochre.api.LookupService' do |p,c|
+  'JLookupService'
+end
+
+at_exit do
+  begin
+    $log.info("Internal Isaac libs getting shutdown...")
+    JLookupService.shutdownIsaac
+    $log.info("Isaac is shutdown...")
+  rescue => ex
+    $log.warn("Isaac libs got cranky during the shutdown. #{ex}")
+    $log.warn(ex.backtrace.join("\n"))
   end
 end

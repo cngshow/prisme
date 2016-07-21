@@ -1,3 +1,4 @@
+#TestJob
 class TestJob < PrismeBaseJob
   queue_as :default
   @@runs = 0

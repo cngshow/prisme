@@ -1,9 +1,3 @@
-<!--
-this style is for the more complex validation check
-<style>
-  span.error{color:red;}
-</style>
--->
 <h1>Application Deployer</h1>
 <%= form_tag(app_deployer_deploy_app_path, :id => 'app_deployer_form') do |f| %>
     <h3>Select the Application Type</h3>
@@ -136,22 +130,12 @@ this style is for the more complex validation check
         form.submit();
       }
     }).validate({
-      /*      errorPlacement: function(error, element) {
-       // Append error within linked label
-       $( element )
-       .closest( "form" )
-       .find( "label[for='" + element.attr( "id" ) + "']" )
-       .append( error );
-       },
-       errorElement: "span",
-       messages: {
-       komet_wars: {
-       required: " (required)",
-       minlength: " (must be at least 3 characters)"
-       }
-       }*/
       errorPlacement: function errorPlacement(error, element) {
-        element.after(error);
+        var lbl = $( element )
+            .closest( "form" )
+            .find( "label[for='" + element.attr( "id" ) + "']" );
+        error.addClass('arrow_box');
+        error.insertAfter(lbl);
       }
     });
   });

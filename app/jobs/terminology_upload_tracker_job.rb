@@ -5,6 +5,7 @@ class TerminologyUploadTracker < PrismeBaseJob
     files = args.shift
     task_hash = IsaacUploader::TaskHolder.instance.get(package_ar.id)
     task = task_hash[:task]
+    task_result = nil
     progress_observer = task_hash[:progress_observer]
     state_observer = task_hash[:state_observer]
     title_observer = task_hash[:title_observer]
@@ -16,8 +17,24 @@ class TerminologyUploadTracker < PrismeBaseJob
     result = result_hash[:state]
     @done = false
     begin
-      IsaacUploader.start_work(task: task) if files #start the upload
-      state  = state_observer.new_value
+      $log.info("Files: " + files.inspect)
+      if files #start the upload
+        IsaacUploader.start_work(task: task)
+      else
+        $log.debug("About to block and wait for the upload to finish.")
+        task_result = nil
+        begin
+          task_result = task.get #we block and wait
+        rescue => ex
+          $log.error("The upload failed! {ex}")
+          $log.error(ex.backtrace.join("\n)"))
+        end
+        state = state_observer.new_value
+        unless (task_result.nil? || TerminologyUploadTracker.done?(state))
+          state_observer.changed(self, state_observer.new_value, javafx.concurrent.Worker::State::SUCCEEDED)
+        end
+        $log.info("Blocking call complete.  Result is #{task_result} with a final state of #{state}")
+      end
       result_hash[:state] = state.to_s #might be nil
       result_hash[:current_title] = title_observer.new_value.to_s
       result_hash[:progress] = progress_observer.new_value.to_s
@@ -31,7 +48,9 @@ class TerminologyUploadTracker < PrismeBaseJob
         result_hash[:finish_time] = state_observer.last_event_time.to_i
         package_ar.destroy
       else
-        TerminologyUploadTracker.set(wait_until: $PROPS['TERMINOLOGY_UPLOAD.upload_check'].to_i.seconds.from_now).perform_later(package_ar, false, track_child_job)
+        if (files)
+          TerminologyUploadTracker.perform_later(package_ar, false, track_child_job)
+        end
       end
       progress = IsaacUploader::TaskHolder.instance.current_progress terminology_package_id: @package_id
       state = IsaacUploader::TaskHolder.instance.current_state terminology_package_id: @package_id
@@ -39,9 +58,9 @@ class TerminologyUploadTracker < PrismeBaseJob
       title = IsaacUploader::TaskHolder.instance.title terminology_package_id: @package_id
       $log.debug("[#{progress}, #{state}, #{title}, #{result}]")
     rescue => ex
-        $log.error("Failed to complete terminology upload tracking! #{ex}")
-        $log.error(ex.backtrace.join("\n"))
-        result = ex.to_s
+      $log.error("Failed to complete terminology upload tracking! #{ex}")
+      $log.error(ex.backtrace.join("\n"))
+      result = ex.to_s
     ensure
       save_result(result, result_hash)
     end
@@ -83,8 +102,8 @@ class TerminologyUploadTracker < PrismeBaseJob
   #called after all metadata related to this job is saved to the database
   def finalize
     if @done
-      $log.debug {"Finalize called on #{@package_id}"}
-      IsaacUploader::TaskHolder.instance.delete(@package_id)  #no memory leaks, no race conditions!
+      $log.debug { "Finalize called on #{@package_id}" }
+      IsaacUploader::TaskHolder.instance.delete(@package_id) #no memory leaks, no race conditions!
       #this relinquishes all handles to our tasks.  There should be no memory leaks.
     end
   end

@@ -1,6 +1,8 @@
 require 'faraday'
 require 'uri'
 
+#The TomcatConcern must catch all Faraday::ClientError (all Faraday errors are subclasses of this) and not let them propagate to the
+#general handler.  The general handler will assume it is tied to Nexus.
 module TomcatConcern
   VALID_ACTIONS = [:start, :stop, :undeploy]
 
@@ -20,7 +22,7 @@ module TomcatConcern
 
       # make the rest call to change the state of the tomcat deployment based on the action (start, stop, undeploy) and the context (rails_komet, etc.)
       response = conn.get("/manager/text/#{action}", {path: context})
-    rescue Faraday::ConnectionFailed => ex
+    rescue Faraday::ClientError => ex
       $log.warn("Tomcat is unreachable! #{ex.message}")
       return {failed: ex.message}
     rescue => ex
@@ -48,6 +50,7 @@ module TomcatConcern
       pwd = service_props[PrismeService::CARGO_REMOTE_PASSWORD]
 
       conn = Faraday.new(url: url) do |faraday|
+        faraday.options.open_timeout = 30
         faraday.request :url_encoded # form-encode POST params
         faraday.use Faraday::Response::Logger, $log
         faraday.adapter :net_http # make requests with Net::HTTP
@@ -67,7 +70,7 @@ module TomcatConcern
 
     begin
       response = conn.get('/manager/text/list', {})
-    rescue Faraday::ConnectionFailed => ex
+    rescue Faraday::ClientError => ex
       return {failed: ex.message}
     end
 
@@ -119,7 +122,7 @@ module TomcatConcern
     begin
       path = context + path
       response = conn.get(path)
-    rescue Faraday::ConnectionFailed, Faraday::TimeoutError, Net::ReadTimeout => ex
+    rescue Faraday::ClientError => ex
       $log.warn("#{path} is unreachable! #{ex.message}")
       return version
     end

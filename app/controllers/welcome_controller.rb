@@ -2,7 +2,7 @@ class WelcomeController < ApplicationController
   include TomcatConcern
   before_action :auth_admin, only: [:tomcat_app_action]
   before_action :ensure_services_configured
-  skip_after_action :verify_authorized, :index
+  skip_after_action :verify_authorized, :index, :reload_job_queue_list
 
   def index
     $log.debug(current_user.email) unless current_user.nil?
@@ -28,6 +28,28 @@ class WelcomeController < ApplicationController
     @flash_state << " on #{service_name}"
     ajax_flash(@flash_state, {type: 'success'})
 
+    # reload the deployments
+    index
+
+    # render the deployments partial
+    render partial: 'welcome/deployments'
+  end
+
+  def reload_job_queue_list
+    row_limit = params['row_limit'] ||= 15
+    json = JSON.parse PrismeJob.job_name('PrismeCleanupJob', true).order(scheduled_at: :desc).limit(row_limit).to_json
+
+    json.each do |j|
+      if (!j['started_at'].nil? && !j['completed_at'].nil?)
+        j[:elapsed_time] = ApplicationHelper.convert_seconds_to_time(Time.parse(j['completed_at']) - Time.parse(j['started_at']))
+      else
+        j[:elapsed_time] = 'N/A'
+      end
+    end
+    render json: json
+  end
+
+  def reload_deployments
     # reload the deployments
     index
 

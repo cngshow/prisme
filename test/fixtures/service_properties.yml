@@ -12,12 +12,12 @@ one:
 two:
   service: tomcat
   key: cargo.remote.password
-  value:  "[\"jK\\x90\\xA1\\x1Fk\\x87\\xD7\\xC3\\xD8\\xA8\\x9A\\x18\\xD4fC\"]"
+  value:  "[\"jK\\x90\\xA1\\x1Fk\\x87\\xB6\\xAB\\xA3\\xC5\\xE7~\\xBA\\x1AK\", \"k]\\x95\\xD8w\\x15\\xFE\\xD3\\xC7\\xDC\\xAC\\x9E\\x1C\\xD0bG\"]"
   order_idx: 1
 three:
   service: tomcat
   key: cargo.tomcat.manager.url
-  value: http://vadev.mantech.com:4848/manager
+  value: https://vadev.mantech.com:4848/manager
   order_idx: 2
 
 # tomcat service properties
@@ -40,12 +40,12 @@ three_l:
 six:
   service: nexus
   key: nexus_repository_url
-  value: http://vadev.mantech.com:8081/nexus/content/groups/everything/
+  value: https://vadev.mantech.com:8080/nexus/content/groups/everything/
   order_idx: 0
 six_and_a_half:
   service: nexus
   key: nexus_publication_url
-  value: http://vadev.mantech.com:8081/nexus/content/repositories/termdata/
+  value: https://vadev.mantech.com:8080/nexus/content/repositories/termdata/
   order_idx: 1
 seven:
   service: nexus
@@ -62,7 +62,7 @@ eight:
 nine:
   service: jenkins
   key: jenkins_root
-  value: http://vadev.mantech.com:8080
+  value: https://vadev.mantech.com:8081
   order_idx: 0
 ten:
   service: jenkins
@@ -72,14 +72,14 @@ ten:
 eleven:
   service: jenkins
   key: jenkins_pwd
-  value: "[\"jK\\x90\\xA1\\x1Fk\\x87\\xD7\\xC3\\xD8\\xA8\\x9A\\x18\\xD4fC\"]"
+  value: "[\"jK\\x90\\xA1\\x1Fk\\x87\\xB6\\xAB\\xA3\\xC5\\xE7~\\xBA\\x1AK\", \"k]\\x95\\xD8w\\x15\\xFE\\xD3\\xC7\\xDC\\xAC\\x9E\\x1C\\xD0bG\"]"
   order_idx: 2
 
 # git service properties
 twelve:
   service: git
   key: git_repository_url
-  value: https://github.com/VA-CTT/db_tests.git
+  value: https://vadev.mantech.com:4848/git/r/db_test.git
   order_idx: 0
 thirteen:
   service: git

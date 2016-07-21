@@ -1,0 +1,238 @@
+<style>
+  .modal-wide .modal-dialog {
+    width: 50%;
+  }
+</style>
+
+<!-- Trigger the modal with a button -->
+<button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal" onclick="reset_form();">New Database Build Request</button>
+<div class="page-header">
+  <h1>Terminology Database Builder</h1>
+</div>
+
+<%= render 'layouts/filter_table_poll_results', filter_id: 'dbb_filter_rows', filter_label: 'Filter Results', include_all_rows: true, poll: 'poll' %>
+<table id="data-table" class="prisme-table table-striped table-hover">
+  <thead>
+  <tr>
+    <th>Job Name</th>
+    <th>User Name</th>
+    <th>Started At</th>
+    <th>Completed At</th>
+    <th>State</th>
+    <th>IBDF Files</th>
+    <th>Result</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+  </tr>
+  <tr>
+    <td colspan="7" style="text-align:center">There are no items to list...</td>
+  </tr>
+  </tbody>
+</table>
+<br/>
+
+<!-- Modal -->
+<div id="myModal" class="modal fade modal-wide" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Database Build Request</h4>
+      </div>
+      <div class="modal-body">
+        <%= form_tag terminology_db_builder_request_build_path, id: 'myForm' do %>
+            <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+            <div class="input_div" title="The name to use for the maven artifact that will result from executing this generated pom file.">
+              <%= label_tag 'db_name', 'Database Name' %><br>
+              <%= text_field_tag 'db_name', nil, required: true, data: {required: true}, placeholder: 'Enter the Name for this Database', maxlength: 75, size: 75, class: 'form-control'%>
+            </div>
+            <br>
+            <div class="input_div" title="The version to use for the maven artifact that will result from executing this generated pom file.">
+              <%= label_tag 'db_version', 'Database Version' %><br>
+              <%= text_field_tag 'db_version', nil, required: true, data: {required: true}, placeholder: 'Enter the Database Version', maxlength: 75, size: 75, class: 'form-control' %>
+            </div>
+            <br>
+            <div class="input_div" title="Describe the purpose / contents of the database being constructed.">
+              <%= label_tag 'db_description', 'Database Description' %><br>
+              <%= text_area_tag 'db_description', nil, required: true, data: {required: true}, placeholder: 'Enter a Database Description', rows: '3', cols: 76, class: 'form-control' %>
+            </div>
+            <br>
+            <div class="input_div" title="The (optional) maven classifier to use for the maven artifact that will result from executing this generated pom file. Often used to denote variations of a database version such as 'snapshot', 'full', etc.">
+              <%= label_tag 'artifact_classifier', 'Artifact Classifier' %><br>
+              <%= text_field_tag 'artifact_classifier', nil, placeholder: 'Artifact Classifier (optional)', maxlength: 75, size: 75, class: 'form-control' %>
+            </div>
+            <br>
+            <div class="input_div" title="Execute the Description Logic Reasoner across the database to create an inferred view">
+              <%= label_tag 'classify', 'Classify the Database' %>
+              <br>
+              <%= radio_button_tag 'classify', 'true', true %>&nbsp;True&nbsp;&nbsp;<%= radio_button_tag 'classify', 'false' %>&nbsp;False
+            </div>
+            <br>
+            <div class="input_div" title="The set of IBDF files to be included in the DB.  Do not include the metadata IBDF file from ISAAC, it is always included."><!-- this is important!! -->
+              <%= label_tag 'ibdf_files', 'IBDF Files' %><br>
+              <input type="hidden" name="ibdf_selections" id="ibdf_selections">
+              <%= select_tag 'ibdf_files',
+                             options_from_collection_for_select(@idbf_files, :option_key, :option_value),
+                             :class => 'select2-prisme form-control',
+                             :data => {ph: 'Select IBDF Files to Include in the Database',
+                                       w: '525px',
+                                       multi: true
+                             },
+                             required: true
+              %>
+            </div>
+            <br>
+            <div class="input_div" title=" The version of the metadata content to include in the DB.">
+              <%= label_tag 'metadata_version', 'Metadata Version' %><br>
+              <%= select_tag 'metadata_version',
+                             options_from_collection_for_select(@metadata_versions, :option_key, :option_value),
+                             :class => 'select2-prisme form-control',
+                             :include_blank => true,
+                             :data => {ph: 'Select the metadata version',
+                                       w: '525px',
+                                       singleSelect: true
+                             },
+                             required: true
+              %>
+            </div>
+            <br>
+            <div class="btn btn-primary btn-lg" onclick="submitPackage()" id="btn_submit">Create Database</div>
+            <button id="btn_submit_hidden" style="display: none"></button>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <script>
+    function reset_form() {
+      // deselect any previously selected options and get the default width
+      var _ibdfFiles = $('#ibdf_files');
+      _ibdfFiles.val('').change();
+
+      // set the width of the search__field in order to NOT have the placeholder cut off. This is an issue with select2 multi-selects.
+      // this selector finds the group div (important to surround with div in case the form has multiple select2 drop downs)
+      var w = _ibdfFiles.attr('data-w');
+      _ibdfFiles.closest('div').find('input.select2-search__field').css('width', w);
+
+      //remove any validation errors and reset the form (textfields, textareas, etc.)
+      $("#myForm").validate().resetForm();
+      document.getElementById("myForm").reset();
+    }
+
+    function submitPackage() {
+      $('#ibdf_selections').val($('#ibdf_files').val());
+      var $btnSubmit = $("#btn_submit");
+      $btnSubmit.attr('onclick', 'return false;').html('<span><i class="fa fa-cog fa-spin fa-fw" aria-hidden="true"></i>Sending DB Build Request...</span>');
+
+      // validate that the DB name will be unique
+      var db_name = $('#db_name').val();
+      var version = $('#db_version').val();
+
+      $.getJSON(gon.routes.terminology_db_builder_check_tag_conflict_path, {db_name: db_name, version: version}, function (data) {
+        if (data.tag_conflict === true) {
+          bootbox.alert({
+            size: 'medium',
+            title: 'Database Name Error',
+            message: "The computed Databse Name is not unique.<br><br>Please change either the database name or database version to ensure uniqueness.",
+            callback: function () {
+              // reset the submit button
+              $btnSubmit.attr('onclick', 'submitPackage();').text('Create Database');
+            }
+          });
+        } else {
+          if ($("#myForm").valid()) {
+            $('#btn_submit_hidden').click();
+          } else {
+            // reset the submit button
+            $btnSubmit.attr('onclick', 'submitPackage();').text('Create Database');
+          }
+        }
+      });
+    }
+
+    var fields = ['job_name', 'user', 'started_at', 'completed_at', 'status', 'ibdf_files', 'result'];
+
+    function loadTable(tableId, data) {
+      $('#' + tableId).find('tbody').empty();
+
+      if (data.length > 0) {
+        $.each(data, function (index, row) {
+          var tr_data = $('<tr>');
+
+          for (var f = 0; f < fields.length; f++) {
+            var field = fields[f];
+
+            if (field === 'started_at') {
+              tr_data.append($('<td>').text(format_epoch_in_local(row.started_at)));
+            }
+            else if (field === 'completed_at') {
+              tr_data.append($('<td>').text(format_epoch_in_local(row.completed_at)));
+            }
+            else if (field === 'status') {
+              tr_data.append($('<td>').text(gon.job_status_constants[row.status]));
+            }
+            else if (field === 'ibdf_files') {
+              tr_data.append($('<td>').html(row.ibdf_files));
+            }
+            else {
+              tr_data.append($('<td>').text(eval('row.' + field)));
+            }
+          }
+          $('#' + tableId + ' tbody').append(tr_data);
+        });
+      }
+      else {
+        var rows = '<tr><td colspan="' + fields.length + '" style="text-align:center">There are no items to list...</td></tr>';
+        $('#' + tableId + ' tbody').html(rows);
+      }
+    }
+
+    function poll() {
+      console.log('calling poll - dbb');
+      var row_limit = arguments[0];
+
+      if (row_limit === undefined) {
+        row_limit = $('#dbb_filter_rows').find('option:selected').val();
+      }
+
+      $.getJSON(gon.routes.terminology_db_builder_load_build_data_url, {row_limit: row_limit}, function (data) {
+        loadTable('data-table', data);
+
+        <% if Rails.env.development? %>
+        if (polling.isPolling(polling.pollEnum.DB_BUILDER)) {
+          $.getJSON(gon.routes.terminology_db_builder_check_polling_path, {}, function (data) {
+            console.log(JSON.stringify(data));
+            if (data.poll === false) {
+              polling.unregisterPolling(polling.pollEnum.DB_BUILDER);
+
+              //call final poll in case there is a timing issue
+              poll();
+            }
+          });
+        }
+        <% end %>
+      });
+    }
+
+    $(document).ready(function () {
+      //register for polling
+      polling.registerPolling(polling.pollEnum.DB_BUILDER, poll, 5000);
+
+      // call init_select2 to initialize all select inputs to use the select2 js library
+      init_select2();
+
+      // initialize the jquery validation plugin
+      $('#myForm').validate({
+        errorPlacement: function (error, element) {
+          var lbl = $("label[for='" + element.attr('id') + "']");
+          error.addClass('arrow_box');
+          error.insertAfter(lbl);
+        }//,
+        //wrapper: 'span'
+      });
+    });
+  </script>
+</div>

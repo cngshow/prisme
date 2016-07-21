@@ -14,23 +14,17 @@
 
   .fileupload_div {
     display: inline-block;
-    width: 80%;
-    /*height: 100px;*/
-    /*margin: 3px;*/
+    width: 525px;
+    margin-right: 3px;
   }
 </style>
-<script>
-  function tsp_poll() {
-    console.log('calling tsp_poller...');//todo implement this
-  }
-</script>
 <!-- Trigger the modal with a button -->
-<button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Create New Terminology Source Package</button>
+<button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Create Terminology Source Package</button>
 <div class="page-header">
   <h1>Terminology Source Package Dashboard</h1>
 </div>
 
-<%= render 'layouts/filter_table_poll_results', filter_id: 'tsp_filter_rows', filter_label: 'Filter Results', poll: 'tsp_poll()' %>
+<%= render 'layouts/filter_table_poll_results', filter_id: 'tsp_filter_rows', filter_label: 'Filter Results', include_all_rows: true, poll: 'poll' %>
 <table id="data-table" class="prisme-table table-striped table-hover">
   <thead>
   <tr>
@@ -67,26 +61,40 @@
       <div class="modal-body">
         <%= form_for(@package, remote: true, html: {multipart: true}) do %>
             <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
-            <%= label_tag 'supported_converter', 'Supported Converter' %><br>
-            <%= select_tag 'supported_converter',
-                           options_for_select(IsaacUploader.converter_types_as_html_options),
-                           {:prompt => '-- Select a Converter Type --'} %><br><br>
-
-            <%= label_tag 'version', 'Version' %><br>
-            <%= text_field_tag 'version', nil, required: true, data: {required: true}, placeholder: 'Enter Your Version Number', title: 'Enter Your Version Number', width: '150px', maxlength: 75, size: 75 %>
-            <br><br>
-
-            <%= label_tag 'extension_name', 'Extension Name' %><br>
-            <%= text_field_tag 'extension_name', nil, width: '150px', maxlength: 75, size: 75 %><br><br>
+            <div>
+              <%= label_tag 'supported_converter', 'Supported Converter' %><br>
+              <%= select_tag 'supported_converter',
+                             options_for_select(IsaacUploader.converter_types_as_html_options),
+                             :class => 'select2-prisme form-control',
+                             :include_blank => true,
+                             :data => {ph: 'Select a Converter Type',
+                                       w: '525px',
+                                       singleSelect: true
+                             },
+                             required: true
+              %>
+            </div>
+            <br>
+            <div title="Enter Your Version Number" class="input_div">
+              <%= label_tag 'version', 'Version' %><br>
+              <%= text_field_tag 'version', nil, required: true, data: {required: true}, placeholder: 'Enter Your Version Number', maxlength: 75, size: 75, class: 'form-control' %>
+            </div>
+            <br>
+            <div class="input_div"><!-- todo put this everywhere and set up with jq validate-->
+              <%= label_tag 'extension_name', 'Extension Name' %><br>
+              <%= text_field_tag 'extension_name', nil, maxlength: 75, size: 75, placeholder: 'Enter the Extension Name (optional)', class: 'form-control' %>
+            </div>
+            <br>
 
             <div id="uploads" style="display: none">
-              <h4>Source Content to Upload</h4>
-              <a onclick="add_upload()" class="btn btn-primary">Add Source Upload</a>
-              <br>
-              <br>
-              <div id="source_rows"></div>
-              <br>
-              <hr>
+              <fieldset class="classic-border">
+                <legend class="classic-border">Source Content to Upload</legend>
+                <a onclick="add_upload()" class="btn btn-primary">Add Source Upload</a>
+                <br>
+                <br>
+                <div id="source_rows"></div>
+                <br>
+              </fieldset>
               <div class="btn btn-primary btn-lg" onclick="submitPackage()" id="btn_submit">Create Terminology Source Package</div>
               <button id="btn_submit_hidden" style="display: none"></button>
             </div>
@@ -106,6 +114,7 @@
 //        input.attr('required', upload_json['file_required']);//todo use this for input params
 //        input.attr('data-required', true);
         input.attr('data-reggie', upload_json['expected_naming_pattern']);
+        input.attr('pattern', upload_json['expected_name_regex']);
 
         var suggested_source_url = upload_json['suggested_source_url'];
         var suggested_source_location = upload_json['suggested_source_location'];
@@ -123,7 +132,7 @@
           source_msg += '<strong>Suggested Source URL:&nbsp;</strong>' + suggested_source_url + '<br>';
         }
 
-        var info = $('<a>').html('&nbsp;<i class="fa fa-info-circle fa-2x" aria-hidden="true"></i>');
+        var info = $('<a>').html('<i class="fa fa-info-circle fa-2x" aria-hidden="true"></i>');
         sourceRows.append($('<div>').addClass("inline_align_top_div").html(info));
 
         info.popover({
@@ -144,8 +153,6 @@
       }
 
       input.fileinput({
-//        msgNo: 'Please choose a file to upload. No',
-//        minFileCount: 1,
         showRemove: false,
         showClose: true,
         showUpload: false,
@@ -155,7 +162,7 @@
 
     function submitPackage() {
       var submit_form = true;
-      var warning = "There are possible validation errors in the file names specified to upload.\n\nMSG\n\nDo you want to continue and submit this request?";
+      var warning = "There are possible validation errors in the file names specified to upload.<br><br>MSG<br><br>Do you want to continue and submit this request?";
       var warn_msg = "";
 
       $('[data-required]').each(function (index, value) {
@@ -171,18 +178,28 @@
           console.log(value.value + '::' + reggie.toString() + ' regex passes? ' + reggie.test(value.value).toString());
 
           if (!reggie.test(value.value)) {
-            warn_msg += $(this).attr('data-reggie') + "\n\n";
+            warn_msg += $(this).attr('data-reggie') + "<br><br>";
           }
         });
 
         if (warn_msg !== '') {
           warning = warning.replace('MSG', warn_msg);
-          submit_form = (confirm(warning));
-          if (! submit_form) return false;
+          bootbox.confirm({
+            size: 'large',
+            title: 'Warning',
+            message: warning,
+            callback: function (result) {
+              submitForm(result);
+            }
+          });
+          return false;
         }
       }
+      submitForm(submit_form);
+    }
 
-      if (submit_form) {
+    function submitForm(bool) {
+      if (bool) {
         $("#btn_submit").attr('onclick', 'return false;').html('<span><i class="fa fa-cog fa-spin fa-fw" aria-hidden="true"></i>Uploading...Please Wait</span>');
       }
 
@@ -192,36 +209,49 @@
 
     var fields = ['user', 'uploaded_files', 'started_at', 'state', 'result', 'progress', 'state_time', 'elapsed_time'];
 
-    function loadTable(tableId, fields, data) {
+    function loadTable(tableId, data) {
       $('#' + tableId).find('tbody').empty();
 
       if (data.length > 0) {
         $.each(data, function (index, row) {
           var tr_data = $('<tr>');
+          var state_unknown = (row.state === 'UNKNOWN');
 
-          $.each(fields, function (index, field) {
-            if (field === 'started_at') {
-              tr_data.append($('<td>').text(format_epoch_in_local(row.started_at)));
-            }
-            else if (field === 'progress') {
-              var title = row.progress < 100 ? row.title : '';
-              var pbar = $('<div>').addClass('progress-bar')
-                  .prop('role', 'progressbar')
-                  .attr('aria-valuenow', row.progress)
-                  .attr('aria-valuemin', 0)
-                  .attr('aria-valuemax', 100)
-                  .css('width', row.progress.toString() + '%')
-                  .text(row.progress.toString() + '%');
-              tr_data.append($('<td>').html($('<span>').html(title + '<br>').append($('<div>').addClass("progress").html(pbar))));
-            }
-            else if (field === 'state_time') {
-              var txt = row.progress < 100 ? 'Running...' : format_epoch_in_local(row.state_time);
-              tr_data.append($('<td>').text(txt));
-            }
-            else {
-              tr_data.append($('<td>').text(eval('row.' + field)));
-            }
-          });
+          inner_loop:
+              for (var f = 0; f < fields.length; f++) {
+                var field = fields[f];
+
+                if (field === 'started_at') {
+                  tr_data.append($('<td>').text(format_epoch_in_local(row.started_at)));
+                }
+                else if (field === 'state' && state_unknown) {
+                  tr_data.append($('<td>').text(row.state));
+                  tr_data.append($('<td>').text(''));//result
+                  tr_data.append($('<td>').text(''));//progress
+                  tr_data.append($('<td>').text(''));//state_time
+                  tr_data.append($('<td>').text(''));//elapsed_time
+                  break inner_loop;
+                }
+                else if (field === 'progress') {
+                  var title = row.progress < 100 ? row.title : '';
+                  var pbar = $('<div>').addClass('progress-bar')
+                      .prop('role', 'progressbar')
+                      .attr('aria-valuenow', row.progress)
+                      .attr('aria-valuemin', 0)
+                      .attr('aria-valuemax', 100)
+                      .css('width', row.progress.toString() + '%')
+                      .text(row.progress.toString() + '%');
+                  tr_data.append($('<td>').html($('<span>').html(title + '<br>').append($('<div>').addClass("progress").html(pbar))));
+                }
+                else if (field === 'state_time') {
+                  var txt = row.progress < 100 ? 'Running...' : format_epoch_in_local(row.state_time);
+                  tr_data.append($('<td>').text(txt));
+                }
+                else {
+                  tr_data.append($('<td>').text(eval('row.' + field)));
+                }
+              }
+          ;
           $('#' + tableId + ' tbody').append(tr_data);
         });
       }
@@ -232,18 +262,22 @@
     }
 
     function poll() {
-      console.log('calling poll');
-      var row_limit = parseInt($('#tsp_filter_rows').find('option:selected').val());
+      console.log('calling poll - tsp');
+      var row_limit = arguments[0];
+
+      if (row_limit === undefined) {
+        row_limit = $('#tsp_filter_rows').find('option:selected').val();
+      }
 
       $.getJSON(gon.routes.terminology_source_packages_load_build_data_path, {row_limit: row_limit}, function (data) {
-        loadTable('data-table', fields, data);
+        loadTable('data-table', data);
 
         <% if Rails.env.development? %>
-        if (polling.isPolling('terminology_source_packages')) {
+        if (polling.isPolling(polling.pollEnum.TERM_SOURCE)) {
           $.getJSON(gon.routes.terminology_source_packages_check_polling_path, {}, function (data) {
             console.log(JSON.stringify(data));
             if (data.poll === false) {
-              polling.unregisterController('terminology_source_packages');
+              polling.unregisterPolling(polling.pollEnum.TERM_SOURCE);
 
               //call final poll in case there is a timing issue
               poll();
@@ -255,6 +289,7 @@
     }
 
     $(document).ready(function () {
+      // remove popovers when the modal window is closed
       $(document).on('hide.bs.modal', '#myModal', function () {
         $('div.popover').remove();
       });
@@ -281,10 +316,11 @@
         }
       });
 
-      poll();
+      // call init_select2 to initialize all select inputs to use the select2 js library
+      init_select2();
 
       //register for polling
-      polling.registerController('terminology_source_packages', poll, 1000);
+      polling.registerPolling(polling.pollEnum.TERM_SOURCE, poll, 1000);
     });
   </script>
 </div>

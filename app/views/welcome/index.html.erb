@@ -25,7 +25,7 @@
     <li><a href='#tp-job_queue'>Job Queue</a></li>
   </ul>
   <div id="tp-deployments">
-    <%= render partial: 'deployments' %>
+    Loading Tomcat Deployment Information...
   </div>
   <div id="tp-job_queue">
     <%= render partial: 'job_queue' %>
@@ -33,11 +33,21 @@
 </div>
 
 <script>
+  function deployments_poll() {
+    console.log('polling deployments...');
+    $.get('<%= welcome_reload_deployments_path %>', {}, function (data) {
+      $('#tp-deployments').html(data);
+    });
+  }
+
   $(document).ready(function () {
     $("#tabs").tabs();
     <% if session[:select_tabpage] %>
       $("#tabs").tabs("option", "active", <%= session[:select_tabpage] %>);
       <% session.delete(:select_tabpage) %>
     <% end %>
+
+    //register for polling
+    polling.registerPolling(polling.pollEnum.WELCOME_DEPLOYMENTS, deployments_poll, 30000);
   });
 </script>
