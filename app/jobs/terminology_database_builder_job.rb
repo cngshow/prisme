@@ -38,31 +38,39 @@ class TerminologyDatabaseBuilder < PrismeBaseJob
   end
 
   def self.db_name(ar)
-    result_hash(ar)[:db_name.to_s]
+    result = ''
+    result << result_hash(ar)[:db_name.to_s].to_s
   end
 
   def self.db_version(ar)
-    result_hash(ar)[:db_version.to_s]
+    result = ''
+    result << result_hash(ar)[:db_version.to_s].to_s
   end
 
   def self.db_description(ar)
-    result_hash(ar)[:db_description.to_s]
+    result = ''
+    result << result_hash(ar)[:db_description.to_s].to_s
   end
 
   def self.artifact_classifier(ar)
-    result_hash(ar)[:artifact_classifier.to_s]
+    result = ''
+    result << result_hash(ar)[:artifact_classifier.to_s].to_s
   end
 
   def self.classify(ar)
-    result_hash(ar)[:classify.to_s]
+    result = ''
+    result << result_hash(ar)[:classify.to_s].to_s
   end
 
   def self.ibdf_files(ar)
-    result_hash(ar)[:ibdf_files]
+    result = result_hash(ar)[:ibdf_files]
+    result = [] if result.nil?
+    result
   end
 
   def self.metadata_version(ar)
-    result_hash(ar)[:metadata_version.to_s]
+    result = ''
+    result << result_hash(ar)[:metadata_version.to_s].to_s
   end
 
 end

@@ -4,19 +4,13 @@
   }
 </style>
 
-<script>
-  function tsp_poll() {
-    console.log('calling tsp_poller...');//todo implement this
-  }
-</script>
 <!-- Trigger the modal with a button -->
 <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal" onclick="reset_form();">New Database Build Request</button>
 <div class="page-header">
   <h1>Terminology Database Builder</h1>
 </div>
 
-<!-- todo test rendering the filter poll erb and implement in source packages and term converter -->
-<%= render 'layouts/filter_table_poll_results', filter_id: 'tsp_filter_rows', filter_label: 'Filter Results', poll: 'tsp_poll()' %>
+<%= render 'layouts/filter_table_poll_results', filter_id: 'dbb_filter_rows', filter_label: 'Filter Results', include_all_rows: true, poll: 'poll' %>
 <table id="data-table" class="prisme-table table-striped table-hover">
   <thead>
   <tr>
@@ -159,8 +153,9 @@
       });
     }
 
+    var fields = ['job_name', 'user', 'started_at', 'completed_at', 'status', 'ibdf_files', 'result'];
+
     function loadTable(tableId, data) {
-      var fields = ['job_name', 'user', 'started_at', 'completed_at', 'status', 'ibdf_files', 'result'];
       $('#' + tableId).find('tbody').empty();
 
       if (data.length > 0) {
@@ -196,18 +191,22 @@
     }
 
     function poll() {
-      console.log('calling poll');
-      var row_limit = parseInt($('#tsp_filter_rows').find('option:selected').val());
+      console.log('calling poll - dbb');
+      var row_limit = arguments[0];
 
-      $.getJSON(gon.routes.terminology_db_builder_load_build_data_path, {row_limit: row_limit}, function (data) {
+      if (row_limit === undefined) {
+        row_limit = $('#dbb_filter_rows').find('option:selected').val();
+      }
+
+      $.getJSON(gon.routes.terminology_db_builder_load_build_data_url, {row_limit: row_limit}, function (data) {
         loadTable('data-table', data);
 
         <% if Rails.env.development? %>
-        if (polling.isPolling('db_builder')) {
+        if (polling.isPolling(polling.pollEnum.DB_BUILDER)) {
           $.getJSON(gon.routes.terminology_db_builder_check_polling_path, {}, function (data) {
             console.log(JSON.stringify(data));
             if (data.poll === false) {
-              polling.unregisterController('db_builder');
+              polling.unregisterPolling(polling.pollEnum.DB_BUILDER);
 
               //call final poll in case there is a timing issue
               poll();
@@ -219,10 +218,8 @@
     }
 
     $(document).ready(function () {
-      poll();
-
       //register for polling
-      polling.registerController('db_builder', poll, 5000);
+      polling.registerPolling(polling.pollEnum.DB_BUILDER, poll, 5000);
 
       // call init_select2 to initialize all select inputs to use the select2 js library
       init_select2();
