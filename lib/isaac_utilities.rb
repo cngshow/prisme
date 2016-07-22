@@ -188,6 +188,10 @@ module IsaacUploader
     JIsaacLibrary::WorkExecutors.safeExecute(task)
   end
 
+  def self.fetch_result_and_block(task:)
+    JIsaacLibrary::SrcUploadCreator.fetchResult(task)
+  end
+
   class UploadObserver
     include javafx.beans.value.ChangeListener
     attr_reader :old_value, :new_value
