@@ -24,9 +24,9 @@ class TerminologyUploadTracker < PrismeBaseJob
         $log.debug("About to block and wait for the upload to finish.")
         task_result = nil
         begin
-          task_result = IsaacUploader.fetch_result_and_block(task: task) #we block and wait
+          task_result = IsaacUploader.fetch_result(task: task) #we block and wait
         rescue => ex
-          $log.error("The upload failed! {ex}")
+          $log.error("The upload failed! #{ex}")
           $log.error(ex.backtrace.join("\n)"))
         end
         state = state_observer.new_value

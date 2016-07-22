@@ -107,6 +107,7 @@ module IsaacDBConfigurationCreator
     #sample result below.
     #["refs/tags/gov.vha.isaac.db/BillyBob/Version_23.45678432124354", "refs/tags/gov.vha.isaac.db/Cris/20160301-loader-3.2", "refs/tags/gov.vha.isaac.db/Cris/Cris4", "refs/tags/gov.vha.isaac.db/greg/123"]
   end
+
   GIT_TAG_PREAMBLE = 'refs/tags/'
   GROUP_ID = JIsaacLibrary::DBConfigurationCreator.groupId
   GIT_TAG_GROUP_ID = GIT_TAG_PREAMBLE + GROUP_ID
@@ -188,8 +189,24 @@ module IsaacUploader
     JIsaacLibrary::WorkExecutors.safeExecute(task)
   end
 
-  def self.fetch_result_and_block(task:)
-    JIsaacLibrary::SrcUploadCreator.fetchResult(task)
+  def self.fetch_result(task:)
+    result = :uninitialized
+    JIsaacLibrary::WorkExecutors.safeExecute(
+        -> do
+          result = task.get
+          if (result.kind_of? java.lang.Exception)
+            $log.error("Task.get tossed an exception! #{result}")
+            $log.error(result.backtrace.join("\n"))
+          else
+            $log.info("The result from task.get is #{result}")
+          end
+        end
+    )
+    while (result.eql?(:uninitialized))
+      sleep 1
+    end
+    $log.info("Returning a result of #{result}")
+    return result
   end
 
   class UploadObserver
