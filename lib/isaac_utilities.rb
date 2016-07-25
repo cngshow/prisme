@@ -193,12 +193,17 @@ module IsaacUploader
     result = :uninitialized
     JIsaacLibrary::WorkExecutors.safeExecute(
         -> do
-          result = task.get
-          if (result.kind_of? java.lang.Exception)
-            $log.error("Task.get tossed an exception! #{result}")
-            $log.error(result.backtrace.join("\n"))
-          else
-            $log.info("The result from task.get is #{result}")
+          begin
+            result = task.get
+            if (result.kind_of? java.lang.Exception)
+              $log.error("Task.get tossed an exception! #{result}")
+              $log.error(result.backtrace.join("\n"))
+            else
+              $log.info("The result from task.get is #{result}")
+            end
+          rescue => ex
+            $log.error("Safe execute failed #{ex}")
+            $log.error(ex.backtrace.join("\n"))
           end
         end
     )
