@@ -66,7 +66,7 @@ class TerminologyDatabaseBuilder < PrismeBaseJob
   end
 
   def self.ibdf_files(ar)
-    result = result_hash(ar)[:ibdf_files]
+    result = result_hash(ar)[:ibdf_files.to_s]
     result = [] if result.nil?
     result
   end
