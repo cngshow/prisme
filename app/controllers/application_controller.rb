@@ -14,15 +14,6 @@ class ApplicationController < ActionController::Base
   before_action :setup_gon
   rescue_from Exception, :with => :internal_error
 
-  helper_method :ajax_flash
-
-  def ajax_flash(msg, **options)
-    @ajax_flash = {}
-    @ajax_flash[:msg] = msg
-    @ajax_flash.merge!(options)
-    session[:ajax_flash] = @ajax_flash.clone
-  end
-
   def internal_error(exception)
     $log.error(exception.message)
     $log.error(exception.class.to_s)

@@ -23,16 +23,11 @@ class WelcomeController < ApplicationController
     service_name = service.name
 
     # call TomcatConcern to perform the specified action
-    @flash_state = change_state(tomcat_service_id: tomcat_service_id, context: tomcat_app, action: tomcat_action)
-    @flash_state = @flash_state.strip
-    @flash_state << " on #{service_name}"
-    ajax_flash(@flash_state, {type: 'success'})
-
-    # reload the deployments
-    index
-
-    # render the deployments partial
-    render partial: 'welcome/deployments'
+    flash_state = change_state(tomcat_service_id: tomcat_service_id, context: tomcat_app, action: tomcat_action)
+    flash_state = flash_state.strip
+    flash_state << " on #{service_name}"
+    flash_notify(flash_state, type: 'success')
+    reload_deployments
   end
 
   def reload_job_queue_list

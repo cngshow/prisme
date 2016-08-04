@@ -17,14 +17,16 @@
 //= require turbolinks
 // select2 drop down js library
 //= require select2
-// require ag-grid/ag-grid
-// require jquery.smartWizard/jquery.smartWizard
 //= require jquery.steps-1.1.0/jquery.steps
 //= require jquery-validation/jquery.validate.min
 //= require moment/moment
 // this is for ajax_flash notifications
 //= require bootstrap-notify
 //= require_tree .
+
+function flash_notify(options, settings) {
+    $.notify(options, settings);
+}
 
 function format_epoch_in_local(epoch) {
     var ret = epoch;

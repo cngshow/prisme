@@ -151,9 +151,11 @@
     </div>
   </div>
 </div>
-<script>
-  <%= render '/ajax_flash.js'  %>
+<%= javascript_tag do %>
+    <%= raw show_flash_notify %>
+<% end %>
 
+<script>
   function edit_user_roles(edit_user_id, edit_user_current_roles) {
     // update the modal div with the user's current roles for form submission
     $('#user_id').val(edit_user_id);
@@ -179,7 +181,7 @@
             if (data.remove_row === true) {
               $('table#user_edit_list_table tr#user_row_' + user_id).remove();
             }
-            ajax_flash(data.flash_options, data.flash_settings);
+            flash_notify(data.flash_options, data.flash_settings);
           });
         }
       }
