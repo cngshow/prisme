@@ -8,7 +8,7 @@
 /.bundle
 
 # Ignore all logfiles and tempfiles.
-/log/*
+/logs/*
 !/log/.keep
 /tmp
 /public/assets/*
