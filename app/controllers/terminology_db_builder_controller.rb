@@ -38,12 +38,13 @@ class TerminologyDbBuilderController < ApplicationController
 
     begin
       row_limit = params[:row_limit]
-      data = PrismeJob.job_name('TerminologyDatabaseBuilder').order(completed_at: :desc).limit(row_limit)
+      data = PrismeJob.job_name('TerminologyDatabaseBuilder').orphan(false).order(completed_at: :desc).limit(row_limit)
 
       data.each do |jsb|
         row_data = JSON.parse(jsb.to_json)
-        row_data['started_at'] = DateTime.parse(row_data['started_at']).to_time.to_i
-        row_data['completed_at'] = DateTime.parse(row_data['completed_at']).to_time.to_i
+        row_data['started_at'] = row_data['started_at'].nil? ? nil : DateTime.parse(row_data['started_at']).to_time.to_i
+        row_data['completed_at'] = row_data['completed_at'].nil? ?  nil : DateTime.parse(row_data['completed_at']).to_time.to_i
+        # "ibdf_files":[{"g":"gov.vha.isaac.terminology.converted","a":"vhat-ibdf","v":"2016.01.07-loader-4.1"},{"g":"gov.vha.isaac.terminology.converted","a":"rf2-ibdf-us-extension","v":"20160301-loader-3.2","r":"","c":"Snapshot"}]
         row_data['ibdf_files'] = TerminologyDatabaseBuilder.ibdf_files(jsb).inject('') { |r, i| r << "#{i['a']}-#{i['v']}<br>" }
         ret << row_data
       end

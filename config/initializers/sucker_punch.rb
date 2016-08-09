@@ -8,8 +8,9 @@ module ActiveJob
     class SuckerPunchAdapter
       class << self
         def enqueue_at(job, timestamp)
-          java.lang.Thread.currentThread.setName("Prisme Scheduled Job #{job}")
-          @@scheduler ||= java.util.concurrent.Executors.newScheduledThreadPool(20)
+          #current_name = java.lang.Thread.currentThread.getName
+          #java.lang.Thread.currentThread.setName("Prisme Scheduled Job #{job}")
+          @@scheduler ||= java.util.concurrent.Executors.newScheduledThreadPool(20, JIsaacLibrary::NamedThreadFactory.new('PrismeScheduler', true))
           time_delay = [timestamp - Time.now.to_i, 0].max #java source code (for one impl) does this already, but to be safe...)
           @@scheduler.schedule(-> { JobWrapper.new.async.perform job.serialize }, time_delay, java.util.concurrent.TimeUnit::SECONDS);
         end
@@ -17,11 +18,10 @@ module ActiveJob
         def shutdown_scheduler
           begin
             $log.info("Preparing to shutdown future scheduler")
-            @@scheduler.shutdown
-            bool = @@scheduler.awaitTermination(120, java.util.concurrent.TimeUnit::SECONDS)
+            @@scheduler.shutdownNow
+            bool = @@scheduler.awaitTermination(10, java.util.concurrent.TimeUnit::SECONDS)
             unless bool
-              naughty_tasks = @@scheduler.shutdownNow.to_a
-              $log.warn("The scheduler had to be stopped via shutdownNow.")
+              $log.warn("The scheduler failed to be stopped via shutdownNow in ten seconds.")
               $log.warn("#{naughty_tasks}")
             end
             $log.info("Scheduler stopped!")

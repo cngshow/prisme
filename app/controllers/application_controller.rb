@@ -11,17 +11,8 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
-  before_action :setup_gon
+  before_action :setup_gon, :ssoi_headers
   rescue_from Exception, :with => :internal_error
-
-  helper_method :ajax_flash
-
-  def ajax_flash(msg, **options)
-    @ajax_flash = {}
-    @ajax_flash[:msg] = msg
-    @ajax_flash.merge!(options)
-    session[:ajax_flash] = @ajax_flash.clone
-  end
 
   def internal_error(exception)
     $log.error(exception.message)
@@ -50,6 +41,11 @@ class ApplicationController < ActionController::Base
     setup_routes
   end
 
+  def ssoi_headers
+    ssoi_user = request.headers['HTTP_ADSAMACCOUNTNAME']
+    $log.info("The SSOI user in this request is #{ssoi_user}")
+    @ssoi_headers = {ssoi_user: ssoi_user}
+  end
 
   def auth_registered
     authorize :navigation, :registered?

@@ -3,7 +3,7 @@ module JIsaacLibrary
   include_package 'gov.vha.isaac.ochre.pombuilder.dbbuilder' #DBConfigurationCreator
   include_package 'gov.vha.isaac.ochre.pombuilder.converter' #ContentConverterCreator, SupportedConverterTypes, UploadFileInfo
   include_package 'gov.vha.isaac.ochre.pombuilder.upload' #UploadFileInfo, SrcUploadCreator
-  include_package 'gov.vha.isaac.ochre.api.util' #WorkExecutors
+  include_package 'gov.vha.isaac.ochre.api.util' #WorkExecutors, #NamedThreadFactory
   include_package 'gov.vha.isaac.ochre.pombuilder' #GitPublish
   #invoke as follows:
   #ibdf_file_to_j_a(["org.foo","loinc","5.0"],["org.foo","loinc","3.0","some_classifier"],...)
@@ -107,6 +107,7 @@ module IsaacDBConfigurationCreator
     #sample result below.
     #["refs/tags/gov.vha.isaac.db/BillyBob/Version_23.45678432124354", "refs/tags/gov.vha.isaac.db/Cris/20160301-loader-3.2", "refs/tags/gov.vha.isaac.db/Cris/Cris4", "refs/tags/gov.vha.isaac.db/greg/123"]
   end
+
   GIT_TAG_PREAMBLE = 'refs/tags/'
   GROUP_ID = JIsaacLibrary::DBConfigurationCreator.groupId
   GIT_TAG_GROUP_ID = GIT_TAG_PREAMBLE + GROUP_ID
@@ -185,7 +186,32 @@ module IsaacUploader
 
   def self.start_work(task:)
     $log.info("Starting work on a task!")
-    JIsaacLibrary::WorkExecutors.safeExecute(task)
+    JIsaacLibrary::WorkExecutors.get().getExecutor().execute(task)
+  end
+
+  def self.fetch_result(task:)
+    result = :uninitialized
+    JIsaacLibrary::WorkExecutors.get().getExecutor().execute(
+        -> do
+          begin
+            result = task.get
+            if (result.kind_of? java.lang.Exception)
+              $log.error("Task.get tossed an exception! #{result}")
+              $log.error(result.backtrace.join("\n"))
+            else
+              $log.info("The result from task.get is #{result}")
+            end
+          rescue => ex
+            $log.error("Safe execute failed #{ex}")
+            $log.error(ex.backtrace.join("\n"))
+          end
+        end
+    )
+    while (result.eql?(:uninitialized))
+      sleep 1
+    end
+    $log.info("Returning a result of #{result}")
+    return result
   end
 
   class UploadObserver

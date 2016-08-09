@@ -1,13 +1,9 @@
-<style>
-  .centered_flash {
-    display: table;
-    margin: 0 auto;
-  }
-</style>
-
+<script>
 <% flash.each do |name, msg| %>
     <% if msg.is_a?(String) %>
-        <%= content_tag :div, msg, :id => "flash_#{name}", class: 'centered_flash' if @centered_flash %>
-        <%= content_tag :div, msg, :id => "flash_#{name}" unless @centered_flash %>
+        var options = { message: '<%= msg %>'};
+        var settings = {type: 'success', allow_dismiss: false};
+        flash_notify(options, settings);
     <% end %>
 <% end %>
+</script>

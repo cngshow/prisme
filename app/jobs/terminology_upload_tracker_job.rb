@@ -24,9 +24,9 @@ class TerminologyUploadTracker < PrismeBaseJob
         $log.debug("About to block and wait for the upload to finish.")
         task_result = nil
         begin
-          task_result = task.get #we block and wait
+          task_result = IsaacUploader.fetch_result(task: task) #we block and wait
         rescue => ex
-          $log.error("The upload failed! {ex}")
+          $log.error("The upload failed! #{ex}")
           $log.error(ex.backtrace.join("\n)"))
         end
         state = state_observer.new_value
@@ -42,7 +42,7 @@ class TerminologyUploadTracker < PrismeBaseJob
       if TerminologyUploadTracker.done? state
         @done = true
         $log.info("Deleting the files!  We are done!  Finished in state #{state}")
-        result = state.to_s
+        result = task_result # state.to_s
         #result = task.to_s
         $log.debug("Task is #{task}")
         result_hash[:finish_time] = state_observer.last_event_time.to_i

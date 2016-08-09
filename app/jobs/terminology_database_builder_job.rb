@@ -24,12 +24,15 @@ class TerminologyDatabaseBuilder < PrismeBaseJob
     result_hash[:metadata_version] = metadata_version
     result = ''
     begin
+      $log.debug("About to create a DB CONFIG.")
       result = IsaacDBConfigurationCreator::create_db_configuration(name: db_name, version: db_version, description: db_description,
                                                                     result_classifier: artifact_classifier, classify_bool: classify,
                                                                     ibdf_files: ibdf_files, metadata_version: metadata_version,
                                                                     git_url: git_url, git_user: git_user, git_password: git_pass)
+      $log.debug("DB CONFIG=#{result}")
     rescue => ex
       result = ex.message
+      $log.error("DB CONFIG failed. #{ex}")
       raise ex
     ensure
       save_result(result, result_hash)
@@ -63,7 +66,7 @@ class TerminologyDatabaseBuilder < PrismeBaseJob
   end
 
   def self.ibdf_files(ar)
-    result = result_hash(ar)[:ibdf_files]
+    result = result_hash(ar)[:ibdf_files.to_s]
     result = [] if result.nil?
     result
   end
