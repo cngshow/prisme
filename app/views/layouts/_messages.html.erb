@@ -3,7 +3,7 @@
     <% if msg.is_a?(String) %>
         var options = { message: '<%= msg %>'};
         var settings = {type: 'success', allow_dismiss: false};
-        $.notify(options, settings);
+        flash_notify(options, settings);
     <% end %>
 <% end %>
 </script>

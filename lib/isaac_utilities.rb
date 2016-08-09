@@ -186,12 +186,12 @@ module IsaacUploader
 
   def self.start_work(task:)
     $log.info("Starting work on a task!")
-    JIsaacLibrary::WorkExecutors.safeExecute(task)
+    JIsaacLibrary::WorkExecutors.get().getExecutor().execute(task)
   end
 
   def self.fetch_result(task:)
     result = :uninitialized
-    JIsaacLibrary::WorkExecutors.safeExecute(
+    JIsaacLibrary::WorkExecutors.get().getExecutor().execute(
         -> do
           begin
             result = task.get
