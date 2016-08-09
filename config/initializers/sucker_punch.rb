@@ -18,7 +18,7 @@ module ActiveJob
           begin
             $log.info("Preparing to shutdown future scheduler")
             @@scheduler.shutdown
-            bool = @@scheduler.awaitTermination(120, java.util.concurrent.TimeUnit::SECONDS)
+            bool = @@scheduler.awaitTermination(10, java.util.concurrent.TimeUnit::SECONDS)
             unless bool
               naughty_tasks = @@scheduler.shutdownNow.to_a
               $log.warn("The scheduler had to be stopped via shutdownNow.")
