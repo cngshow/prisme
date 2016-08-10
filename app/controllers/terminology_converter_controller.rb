@@ -32,6 +32,10 @@ class TerminologyConverterController < ApplicationController
     git_user = git_props[PrismeService::GIT_USER]
     git_pass = git_props[PrismeService::GIT_PWD]
 
+    # nexus url - these variables are in the local binding for the erb - DO NOT REMOVE!
+    nexus_props = Service.get_artifactory_props
+    nexus_publication_url = nexus_props[PrismeService::NEXUS_PUBLICATION_URL]
+
     # set the default (empty array) ibdf file dependency and populate it if we have a param passed
     addl_ibdf_dependency = params[:addl_ibdf_dependency]
     addl_ibdf = JIsaacLibrary::ibdf_file_to_j_a()

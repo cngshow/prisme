@@ -12,7 +12,6 @@ require './lib/rails_common/logging/open_logging'
 require './lib/rails_common/logging/logging'
 
 #above from rails common
-
 require './lib/prisme_service'
 require './lib/cipher'
 require './lib/jenkin_client'
@@ -28,22 +27,22 @@ unless ($rake || defined?(Rails::Generators))
   STFU_MODE = false
   begin
     ActiveRecord::Base.logger = $log_rails
-    ActiveRecord::Migrator.migrate "db/migrate"
+    ActiveRecord::Migrator.migrate 'db/migrate'
   rescue => ex
     $log.warn("Migration failed. #{ex.message}")
   ensure
     #ActiveRecord::Base.logger = nil
   end
-  $log.info("Migration complete!")
+  $log.info('Migration complete!')
 
   at_exit do
     #do cleanup
     begin
-      $log.always("Shutdown called!  Rails Prisme has been ruthlessly executed :-(")
-      ActiveRecord::Base.connection.execute("SHUTDOWN")
-      $log.always("H2 database has been shutdown.")
+      $log.always('Shutdown called!  Rails Prisme has been ruthlessly executed :-(')
+      ActiveRecord::Base.connection.execute('SHUTDOWN')
+      $log.always('H2 database has been shutdown.')
     rescue => ex
-      $log.error("H2 database was not shutdown, or was previously shutdown. " + ex.message)
+      $log.error('H2 database was not shutdown, or was previously shutdown. ' + ex.message)
       $log.info("If the message above states the database was closed then don't worry :-).")
     end
   end
@@ -56,23 +55,24 @@ end
 #one of our dependent gems (zip.rb) enables this.  Disabling.
 JRuby.objectspace = false
 unless STFU_MODE
-  puts "Object space disabled again"
+  puts 'Object space disabled again'
   require './lib/rails_common/logging/rails_appender'
-end
-#isaac utilities must be loaded after our appenders are set (if they are set.)
-require './lib/isaac_utilities'
 
-java_import 'gov.vha.isaac.ochre.api.LookupService' do |p,c|
-  'JLookupService'
-end
+  #isaac utilities must be loaded after our appenders are set (if they are set.)
+  require './lib/isaac_utilities'
 
-at_exit do
-  begin
-    $log.info("Internal Isaac libs getting shutdown...")
-    JLookupService.shutdownIsaac
-    $log.info("Isaac is shutdown...")
-  rescue => ex
-    $log.warn("Isaac libs got cranky during the shutdown. #{ex}")
-    $log.warn(ex.backtrace.join("\n"))
+  java_import 'gov.vha.isaac.ochre.api.LookupService' do |p,c|
+    'JLookupService'
+  end
+
+  at_exit do
+    begin
+      $log.info('Internal Isaac libs getting shutdown...')
+      JLookupService.shutdownIsaac
+      $log.info('Isaac is shutdown...')
+    rescue => ex
+      $log.warn("Isaac libs got cranky during the shutdown. #{ex}")
+      $log.warn(ex.backtrace.join("\n"))
+    end
   end
 end
