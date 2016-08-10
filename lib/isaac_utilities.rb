@@ -3,7 +3,7 @@ module JIsaacLibrary
   include_package 'gov.vha.isaac.ochre.pombuilder.dbbuilder' #DBConfigurationCreator
   include_package 'gov.vha.isaac.ochre.pombuilder.converter' #ContentConverterCreator, SupportedConverterTypes, UploadFileInfo
   include_package 'gov.vha.isaac.ochre.pombuilder.upload' #UploadFileInfo, SrcUploadCreator
-  include_package 'gov.vha.isaac.ochre.api.util' #WorkExecutors
+  include_package 'gov.vha.isaac.ochre.api.util' #WorkExecutors, #NamedThreadFactory
   include_package 'gov.vha.isaac.ochre.pombuilder' #GitPublish
   #invoke as follows:
   #ibdf_file_to_j_a(["org.foo","loinc","5.0"],["org.foo","loinc","3.0","some_classifier"],...)
@@ -186,12 +186,12 @@ module IsaacUploader
 
   def self.start_work(task:)
     $log.info("Starting work on a task!")
-    JIsaacLibrary::WorkExecutors.safeExecute(task)
+    JIsaacLibrary::WorkExecutors.get().getExecutor().execute(task)
   end
 
   def self.fetch_result(task:)
     result = :uninitialized
-    JIsaacLibrary::WorkExecutors.safeExecute(
+    JIsaacLibrary::WorkExecutors.get().getExecutor().execute(
         -> do
           begin
             result = task.get
