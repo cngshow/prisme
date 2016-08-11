@@ -7,6 +7,8 @@ class RolesController < ApplicationController
   force_ssl if: :ssl_configured_delegator? #,port: 8443
 
 
+  #sample invocation
+  #http://localhost:3000/roles/get_roles.json?id=devtest@devtest.gov
   def get_roles
     @user_id = params[:id]
     @password = params[:password]
