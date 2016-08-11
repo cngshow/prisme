@@ -97,7 +97,7 @@ class TerminologyConverterController < ApplicationController
     @job_xml = ERB.new(File.open(j_xml, 'r') { |file| file.read }).result(binding)
     t_s = Time.now.strftime('%Y_%m_%dT%H_%M_%S')
     job = JenkinsStartBuild.perform_later("#{JenkinsStartBuild::PRISME_NAME_PREFIX}#{s_artifact_id}_#{t_s}", @job_xml, url, user, password)
-    PrismeBaseJob.save_user(job_id: job.job_id, user: current_user.email)
+    PrismeBaseJob.save_user(job_id: job.job_id, user: prisme_user.user_name)
     redirect_to action: 'index'
   end
 

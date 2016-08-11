@@ -87,7 +87,7 @@ class AppDeployerController < ApplicationController
     end
 
     job = ArtifactDownloadJob.perform_later(nexus_query_params, war_cookie_params, war_name, tomcat_ar)
-    PrismeBaseJob.save_user(job_id: job.job_id, user: current_user.email)
+    PrismeBaseJob.save_user(job_id: job.job_id, user: prisme_user.user_name)
     session[:select_tabpage] = 1
     redirect_to root_path
   end

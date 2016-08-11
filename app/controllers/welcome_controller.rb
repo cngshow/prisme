@@ -5,8 +5,8 @@ class WelcomeController < ApplicationController
   skip_after_action :verify_authorized, :index, :reload_job_queue_list
 
   def index
-    $log.debug(current_user.email) unless current_user.nil?
-    $log.debug(current_user.to_s) if current_user.nil?
+    $log.debug(prisme_user.user_name) unless prisme_user.nil?
+    $log.debug(prisme_user.to_s) if prisme_user.nil?
 
     # get tomcat deployments
     tomcat_deployments = tomcat_server_deployments

@@ -3,7 +3,7 @@
     <%= render partial: 'app_deployment_table', locals: {deployment: deployment} %>
 <% end %>
 <script>
-  $(document).ready(function () {
+  $(function () {
     $('td[data-href]').on("click", function () {
       window.open($(this).data('href'));
     });

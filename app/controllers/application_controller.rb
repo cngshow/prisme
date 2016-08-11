@@ -5,13 +5,15 @@ class ApplicationController < ActionController::Base
   include ApplicationHelper
   include Pundit
   include CommonController
+  SSOI_USER = :ssoi_user
+  SSOI_HEADER = :ssoi_header
 
   after_action :verify_authorized, unless: :devise_controller?
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
-  before_action :setup_gon, :ssoi_headers
+  before_action :setup_gon, :read_ssoi_headers
   rescue_from Exception, :with => :internal_error
 
   def internal_error(exception)
@@ -19,7 +21,6 @@ class ApplicationController < ActionController::Base
     $log.error(exception.class.to_s)
     $log.error request.fullpath
     $log.error(exception.backtrace.join("\n"))
-    @centered_flash = true
 
     case exception
       when Pundit::AuthorizationNotPerformedError
@@ -41,10 +42,19 @@ class ApplicationController < ActionController::Base
     setup_routes
   end
 
-  def ssoi_headers
-    ssoi_user = request.headers['HTTP_ADSAMACCOUNTNAME']
-    $log.info("The SSOI user in this request is #{ssoi_user}")
-    @ssoi_headers = {ssoi_user: ssoi_user}
+  def read_ssoi_headers
+    ssoi_user_name = request.headers['HTTP_ADSAMACCOUNTNAME']
+    session[SSOI_HEADER] = nil
+    header_hash = {}
+    return if ssoi_user_name.nil?
+
+    unless SsoiUser.exists?(ssoi_user_name: ssoi_user_name)
+      SsoiUser.create(ssoi_user_name: ssoi_user_name)
+    end
+
+    user = SsoiUser.find_by(ssoi_user_name: ssoi_user_name)
+    header_hash[SSOI_USER] = user
+    session[SSOI_HEADER] = header_hash
   end
 
   def auth_registered
@@ -60,7 +70,6 @@ class ApplicationController < ActionController::Base
     build_server_configured = Service.service_exists? PrismeService::JENKINS
     application_server_configured = Service.service_exists? PrismeService::TOMCAT
     git_server_configured = Service.service_exists? PrismeService::GIT
-    @centered_flash = true
     render :file => (trinidad? ? 'public/not_configured.html' : "#{Rails.root}/../not_configured.html") unless (application_server_configured && artifactory_configured && build_server_configured && git_server_configured)
     return
   end
