@@ -10,7 +10,7 @@ class TerminologySourcePackagesController < ApplicationController
   # POST /terminology_package.json
   def create
     @package = TerminologySourcePackage.new(terminology_source_package_params)
-    @package.user = current_user.email
+    @package.user = prisme_user.user_name
     success = @package.save
     upload(@package)
 

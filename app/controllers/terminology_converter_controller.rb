@@ -46,7 +46,7 @@ class TerminologyConverterController < ApplicationController
       ibdf_group_id = ibdf_hash[:g]
       ibdf_artifact_id = ibdf_hash[:a]
       ibdf_version = ibdf_hash[:v]
-      ibdf_classifier = params[:ibdf_classifier]
+      ibdf_classifier = params[:addl_ibdf_classifier]
       addl_ibdf = JIsaacLibrary::create_ibdf_sdo_java_array({group_id: ibdf_group_id, artifact: ibdf_artifact_id, version: ibdf_version, classifier: ibdf_classifier}, 'IBDFFile')
     end
 
@@ -97,7 +97,7 @@ class TerminologyConverterController < ApplicationController
     @job_xml = ERB.new(File.open(j_xml, 'r') { |file| file.read }).result(binding)
     t_s = Time.now.strftime('%Y_%m_%dT%H_%M_%S')
     job = JenkinsStartBuild.perform_later("#{JenkinsStartBuild::PRISME_NAME_PREFIX}#{s_artifact_id}_#{t_s}", @job_xml, url, user, password)
-    PrismeBaseJob.save_user(job_id: job.job_id, user: current_user.email)
+    PrismeBaseJob.save_user(job_id: job.job_id, user: prisme_user.user_name)
     redirect_to action: 'index'
   end
 

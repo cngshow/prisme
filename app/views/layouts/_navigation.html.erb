@@ -32,7 +32,7 @@
           </li>
       <% end %>
       <li>
-        <% if current_user.nil? %>
+        <% if prisme_user.nil? %>
             <a href="<%= new_user_session_path %>" onclick="polling.checkPolling(polling.pollEnum.LOGIN);">Log in</a>
         <% else %>
             <a href="<%= destroy_user_session_path %>" onclick="polling.checkPolling(polling.pollEnum.LOGOUT);">Log out</a>
@@ -40,7 +40,7 @@
       </li>
     </ul>
     <div style="float:right; padding-top: 15px; padding-right: 15px">
-      <%= raw (current_user.nil? ? '' : "<Strong>Current User:</strong>&nbsp;#{current_user.email}") %>
+      <%= raw (prisme_user.nil? ? '' : "<Strong>Current User:</strong>&nbsp;#{prisme_user.user_name}") %>
     </div>
   </div>
 </nav>

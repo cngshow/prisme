@@ -21,7 +21,7 @@ class TerminologyDbBuilderController < ApplicationController
     metadata_version = params['metadata_version']
 
     job = TerminologyDatabaseBuilder.perform_later(db_name, db_version, db_description, artifact_classifier, classify, ibdf_files, metadata_version)
-    PrismeBaseJob.save_user(job_id: job.job_id, user: current_user.email)
+    PrismeBaseJob.save_user(job_id: job.job_id, user: prisme_user.user_name)
 
     redirect_to terminology_db_builder_url
   end

@@ -22,7 +22,7 @@ Rails.application.routes.draw do
 
   get 'list_users' => 'admin_user_edit#list'
   post 'admin_user_edit/update_user_roles'
-  match 'delete_user/:id' => 'admin_user_edit#delete_user', as: 'delete_user', via: [:get]
+  match 'delete_user' => 'admin_user_edit#delete_user', as: 'delete_user', via: [:get]
 
   match 'services/render_props' => 'services#render_props', :as => :services_render_props, via: [:get]
   resources :services
