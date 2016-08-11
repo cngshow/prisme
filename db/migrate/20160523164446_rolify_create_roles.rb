@@ -12,11 +12,6 @@ class RolifyCreateRoles < ActiveRecord::Migration
       t.references :role
     end
 
-    create_table(:ssoi_users_roles, :id => false) do |t|
-      t.references :ssoi_user
-      t.references :role
-    end
-
     add_index(:roles, :name)
     add_index(:roles, [ :name, :resource_type, :resource_id ])
     add_index(:users_roles, [ :user_id, :role_id ])
