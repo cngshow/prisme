@@ -46,7 +46,7 @@ class TerminologyConverterController < ApplicationController
       ibdf_group_id = ibdf_hash[:g]
       ibdf_artifact_id = ibdf_hash[:a]
       ibdf_version = ibdf_hash[:v]
-      ibdf_classifier = params[:ibdf_classifier]
+      ibdf_classifier = params[:addl_ibdf_classifier]
       addl_ibdf = JIsaacLibrary::create_ibdf_sdo_java_array({group_id: ibdf_group_id, artifact: ibdf_artifact_id, version: ibdf_version, classifier: ibdf_classifier}, 'IBDFFile')
     end
 
