@@ -6,6 +6,17 @@ class RolesController < ApplicationController
   skip_before_action :verify_authenticity_token
   force_ssl if: :ssl_configured_delegator? #,port: 8443
 
+  #http://localhost:3000/roles/get_ssoi_roles.json?id=cboden
+  def get_ssoi_roles
+    @ssoi_user = params[:id]
+    $log.debug("About to fetch the ssoi roles for ID #{@ssoi_user}")
+    @roles_array = SsoiUser.user_roles(@ssoi_user)
+    $log.debug("The roles are #{@roles_array}")
+    respond_to do |format|
+      format.html # get_ssoi_roles.html.erb
+      format.json { render :json => @roles_array }
+    end
+  end
 
   #sample invocation
   #http://localhost:3000/roles/get_roles.json?id=devtest@devtest.gov&password=devtest@devtest.gov
