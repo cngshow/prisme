@@ -24,7 +24,7 @@ class TerminologyDatabaseBuilder < PrismeBaseJob
     result_hash[:metadata_version] = metadata_version
     tag_name = ''
     begin
-      $log.debug("About to create a DB CONFIG.")
+      $log.debug('About to create a DB CONFIG.')
       tag_name = IsaacDBConfigurationCreator::create_db_configuration(name: db_name, version: db_version, description: db_description,
                                                                     result_classifier: artifact_classifier, classify_bool: classify,
                                                                     ibdf_files: ibdf_files, metadata_version: metadata_version,
