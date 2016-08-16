@@ -17,6 +17,7 @@ end
 
 class PrismeBaseJob < ActiveJob::Base
   queue_as :default
+  attr_reader :job_tag
 
   def lookup
     prisme_job = PrismeJob.find_by(job_id: self.job_id)
@@ -30,6 +31,7 @@ class PrismeBaseJob < ActiveJob::Base
       prisme_job.queue = self.queue_name
       prisme_job.job_name = self.class.to_s
       prisme_job.status = PrismeJobConstants::Status::STATUS_HASH[:NOT_QUEUED]
+
 
       if arguments && arguments.last.is_a?(Hash)
         hash_args = arguments.last
@@ -53,6 +55,8 @@ class PrismeBaseJob < ActiveJob::Base
         end
       end
     end
+    prisme_job.job_tag = @job_tag
+    $log.debug("JOB_TAG #{self} : setting tag to #{@job_tag}")
     prisme_job
   end
 
@@ -124,7 +128,7 @@ class PrismeBaseJob < ActiveJob::Base
   end
 
   def to_s
-    'Job: ' + self.class.to_s + ' , ID: ' + self.job_id.to_s
+    'Job: ' + self.class.to_s + ' , ID: ' + self.job_id.to_s + ' , TAG: ' + self.job_tag.to_s
   end
 
   def track_child_job
@@ -149,6 +153,7 @@ class PrismeBaseJob < ActiveJob::Base
         parent_ar.save!
       end
       active_record.save!
+      $log.debug("JOB_TAG: saved #{self}, tag in ar = #{active_record.job_tag}")
     end
 
   end

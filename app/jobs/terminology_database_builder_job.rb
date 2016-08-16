@@ -8,7 +8,8 @@ class TerminologyDatabaseBuilder < PrismeBaseJob
     classify = args.shift
     ibdf_files = args.shift
     metadata_version = args.shift
-
+    metadata_version = metadata_version.split('|')[2]
+    @job_tag = PrismeConstants::JobTags::TERMINOLOGY_DB_BUILDER
     # pull out the git authentication information
     git_props = Service.get_git_props
     git_url = git_props[PrismeService::GIT_REPOSITORY_URL]
@@ -22,9 +23,7 @@ class TerminologyDatabaseBuilder < PrismeBaseJob
     result_hash[:classify] = classify
     result_hash[:ibdf_files] = ibdf_files
     result_hash[:metadata_version] = metadata_version
-    tag_name = ''
     begin
-      $log.debug('About to create a DB CONFIG.')
       tag_name = IsaacDBConfigurationCreator::create_db_configuration(name: db_name, version: db_version, description: db_description,
                                                                     result_classifier: artifact_classifier, classify_bool: classify,
                                                                     ibdf_files: ibdf_files, metadata_version: metadata_version,
@@ -46,12 +45,14 @@ class TerminologyDatabaseBuilder < PrismeBaseJob
       # you MUST pass binding in order to have the erb process local variables
       @job_xml = ERB.new(File.open(j_xml, 'r') { |file| file.read }).result(binding)
       t_s = Time.now.strftime('%Y_%m_%dT%H_%M_%S')
-      job = JenkinsStartBuild.perform_later("#{JenkinsStartBuild::PRISME_NAME_PREFIX}DB_BUILDER_#{t_s}", @job_xml, url, user, password, track_child_job)
+      job_tag = PrismeConstants::JobTags::TERMINOLOGY_DB_BUILDER
+      job = JenkinsStartBuild.perform_later("#{JenkinsStartBuild::PRISME_NAME_PREFIX}DB_BUILDER_#{t_s}", @job_xml, url, user, password, job_tag, track_child_job)
       $log.debug("Jenkins start build called to build a db! #{job}")
       $log.debug("DB CONFIG=#{tag_name}")
     rescue => ex
       tag_name = ex.message
       $log.error("DB CONFIG failed. #{ex}")
+      $log.error(ex.backtrace.join("\n"))
       raise ex
     ensure
       save_result(tag_name, result_hash)

@@ -8,6 +8,7 @@ end
 
 
 class JenkinsCheckBuild < PrismeBaseJob
+
   class Deleted
     UNKNOWN = 'UNKNOWN'
     YES = 'YES'
@@ -33,6 +34,7 @@ class JenkinsCheckBuild < PrismeBaseJob
     name = args.shift
     attempt_number = args.shift
     job_creation_exception_thrown = args.shift
+    @job_tag = args.shift
     max_attempts = $PROPS['JENKINS.max_health_checks'].to_i
     $log.info("checking stats for #{name}")
     time = $PROPS['JENKINS.build_check_seconds'].to_i.seconds
@@ -57,7 +59,7 @@ class JenkinsCheckBuild < PrismeBaseJob
           $log.info("#{name} is still in Jenkin's queue.")
           result << "Jenkins job #{name} is in the build queue.\n"
           result_hash[:build] = BuildResult::INQUEUE
-          JenkinsCheckBuild.set(wait: time).perform_later(jenkins_config, name, attempt_number, false, track_child_job)
+          JenkinsCheckBuild.set(wait: time).perform_later(jenkins_config, name, attempt_number, false, @job_tag, track_child_job)
         else
           details = build.details #can throw NPE even though build is not nil
           if (details.isBuilding)
@@ -65,7 +67,7 @@ class JenkinsCheckBuild < PrismeBaseJob
             result_hash[:build] = BuildResult::BUILDING
             result << "Jenkins job #{name} is still building.\n"
             $log.info("#{name} is still being built by Jenkins.")
-            JenkinsCheckBuild.set(wait: time).perform_later(jenkins_config, name, attempt_number, false, track_child_job)
+            JenkinsCheckBuild.set(wait: time).perform_later(jenkins_config, name, attempt_number, false, @job_tag, track_child_job)
           else
             #set the result
             build_result = details.getResult
@@ -73,7 +75,7 @@ class JenkinsCheckBuild < PrismeBaseJob
               result << "Jenkins job #{name} is rebuilding.\n"
               result_hash[:build] = build_result.to_s
               #do rebuilding
-              JenkinsCheckBuild.set(wait: time).perform_later(jenkins_config, name, attempt_number, false, track_child_job)
+              JenkinsCheckBuild.set(wait: time).perform_later(jenkins_config, name, attempt_number, false, @job_tag, track_child_job)
             else
               #display the result and delete the job
               result << "Jenkins job #{name} has a build result of " + build_result.to_s + ".\n"
@@ -108,7 +110,7 @@ class JenkinsCheckBuild < PrismeBaseJob
       result_hash[:attempt_number] = attempt_number
       if (attempt_number <= max_attempts)
         $log.info("Attempting to gain the status of #{name} again.")
-        JenkinsCheckBuild.set(wait: time).perform_later(jenkins_config, name, attempt_number, false, track_child_job)
+        JenkinsCheckBuild.set(wait: time).perform_later(jenkins_config, name, attempt_number, false, @job_tag, track_child_job)
         raise JenkinsClient::JenkinsJavaError, ex
       end
     ensure
