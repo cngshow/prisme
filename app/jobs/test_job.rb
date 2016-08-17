@@ -17,7 +17,7 @@ class TestJob < PrismeBaseJob
 end
 
 #job = TestJob.set(wait_until: 30.seconds.from_now).perform_later
-#job = TestJob.set(wait_until: 1.seconds.from_now).perform_later
+#job = TestJob.set(wait_until: 1.seconds.from_now).perform_later({job_tag: 'flipper4'})
 #job = TestJob.perform_now
 #
 # load('./app/jobs/test_job.rb')

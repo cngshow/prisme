@@ -1,0 +1,139 @@
+<table id="data-table" class="prisme-table table-striped table-hover">
+  <thead>
+  <tr>
+    <% locals['fields'].keys.each do |col| %>
+    <th><%= raw locals['fields'][col] %></th>
+    <% end %>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td colspan="<%= locals['fields'].keys.length.to_s %>" style="text-align:center">There are no items to list...</td>
+  </tr>
+  </tbody>
+</table>
+<br/>
+
+<script>
+  function completedAt(row) {
+    var ret = format_epoch_in_local(row.leaf_data.completed_at);
+    var buildResult = row.leaf_data.jenkins_build_result;
+
+    switch (buildResult) {
+      case '<%= JenkinsCheckBuild::BuildResult::INQUEUE %>':
+      case '<%= JenkinsCheckBuild::BuildResult::IN_PROCESS %>':
+      case '<%= JenkinsCheckBuild::BuildResult::REBUILDING %>':
+      case '<%= JenkinsCheckBuild::BuildResult::SERVER_ERROR %>':
+        ret = buildResult;
+        break;
+    }
+    return ret;
+  }
+
+  function build_status_renderer(params) {
+    var ret = "\<span style=\"color: COLOR\"\>IMG" + params + "\<\/span\>";
+    var img = '';
+    var color = 'black';
+
+    switch (params) {
+      case '<%= JenkinsCheckBuild::BuildResult::INQUEUE %>':
+      case '<%= JenkinsCheckBuild::BuildResult::IN_PROCESS %>':
+      case '<%= JenkinsCheckBuild::BuildResult::REBUILDING %>':
+      case '<%= JenkinsCheckBuild::BuildResult::BUILDING %>':
+      default:
+        img = "\<img src=\"ajax-loader.gif\"\/>";
+        break;
+      case '<%= JenkinsCheckBuild::BuildResult::SUCCESS %>':
+        color = 'green';
+        break;
+      case '<%= JenkinsCheckBuild::BuildResult::SERVER_ERROR %>':
+      case '<%= JenkinsCheckBuild::BuildResult::FAILURE %>':
+      case '<%= JenkinsCheckBuild::BuildResult::ABORTED %>':
+      case '<%= JenkinsCheckBuild::BuildResult::UNKNOWN %>':
+      case '<%= JenkinsCheckBuild::BuildResult::UNSTABLE %>':
+        color = "red";
+        break;
+    }
+
+    ret = ret.replace("COLOR", color);
+    ret = ret.replace("IMG", img);
+    var span = $('<span>').css('color', color);
+    if (img !== '') {
+      img = $('<i>').addClass("fa fa-cog fa-spin fa-fw");
+      span.html(img).append(params);
+    } else {
+      span.text(params);
+    }
+
+    return span;
+  }
+
+  var fields = <%= raw locals['fields'].to_json %>;
+
+  function loadTable(tableId, data) {
+    $('#' + tableId + ' tbody').empty();
+
+    if (data.length > 0) {
+      $.each(data, function (index, row) {
+        var tr_data = $('<tr>');
+
+        $.each(fields, function (key, value) {
+          var buildResult = row.leaf_data.jenkins_build_result;
+
+          if (key === 'started_at') {
+            tr_data.append($('<td>').text(format_epoch_in_local(row.started_at)));
+          }
+          else if (key === 'leaf_data.jenkins_build_result') {
+            tr_data.append($('<td>').html(build_status_renderer(buildResult)));
+          }
+          else if (key === 'leaf_data.completed_at') {
+            tr_data.append($('<td>').text(completedAt(row)));
+          }
+          else if (key === 'ibdf_files') {
+            tr_data.append($('<td>').html(row.ibdf_files));
+          }
+          else {
+            tr_data.append($('<td>').text(eval('row.' + key)));
+          }
+        });
+        $('#' + tableId + ' tbody').append(tr_data);
+      });
+    }
+    else {
+      var rows = '<tr><td colspan="<%= locals['fields'].keys.length.to_s %>" style="text-align:center">There are no items to list...</td></tr>';
+      $('#' + tableId + ' tbody').html(rows);
+    }
+  }
+
+  function poll() {
+    console.log('calling poll - <%= locals['poll_key'] %>');
+    var row_limit = arguments[0];
+
+    if (row_limit === undefined) {
+      row_limit = $('#tc_filter_rows').find('option:selected').val();
+    }
+
+    $.getJSON(<%= locals['poll_route'] %>, {row_limit: row_limit}, function (data) {
+      loadTable('data-table', data);
+
+      <% if Rails.env.development? %>
+      if (polling.isPolling(<%= locals['poll_key'] %>)) {
+        $.getJSON(<%= locals['check_poll_route'] %>, {}, function (data) {
+          console.log(JSON.stringify(data));
+          if (data.poll === false) {
+            polling.unregisterPolling(<%= locals['poll_key'] %>);
+
+            //call final poll in case there is a timing issue
+            poll();
+          }
+        });
+      }
+      <% end %>
+    });
+  }
+
+  $(document).ready(function () {
+    //register for polling
+    polling.registerPolling(<%= locals['poll_key'] %>, poll, <%=($PROPS['JENKINS.build_check_seconds'].to_i / 2) * 1000%>);
+  });
+</script>

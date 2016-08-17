@@ -17,7 +17,10 @@ end
 
 class PrismeBaseJob < ActiveJob::Base
   queue_as :default
-  attr_reader :job_tag
+
+  def lookup_job_tag
+    lookup.job_tag
+  end
 
   def lookup
     prisme_job = PrismeJob.find_by(job_id: self.job_id)
@@ -53,10 +56,15 @@ class PrismeBaseJob < ActiveJob::Base
           $log.debug('------------- setting the root_job_id for ' + self.job_id + ' to ' + root_job_id)
           prisme_job.root_job_id = root_job_id
         end
+
+        if hash_args.has_key?(:job_tag)
+          job_tag = hash_args[:job_tag]
+          $log.debug('------------- setting the job_tag for ' + self.job_id + ' to ' + job_tag)
+          prisme_job.job_tag = job_tag
+        end
       end
     end
-    prisme_job.job_tag = @job_tag
-    $log.debug("JOB_TAG #{self} : setting tag to #{@job_tag}")
+
     prisme_job
   end
 
@@ -128,13 +136,19 @@ class PrismeBaseJob < ActiveJob::Base
   end
 
   def to_s
-    'Job: ' + self.class.to_s + ' , ID: ' + self.job_id.to_s + ' , TAG: ' + self.job_tag.to_s
+    'Job: ' + self.class.to_s + ' , ID: ' + self.job_id.to_s + ' , TAG: ' + self.lookup.job_tag.to_s
   end
 
-  def track_child_job
+  def track_child_job(job_tag = nil)
     job_ar = lookup
     ret = {parent_job_id: job_id, root_job_id: job_ar.root_job_id}
     ret[:calling_user] = job_ar.user if job_ar.user
+
+    if job_tag || !job_ar.job_tag.nil?
+      tag = job_tag ? job_tag : job_ar.job_tag
+      ret[:job_tag] = tag
+    end
+
     ret
   end
 

@@ -96,7 +96,7 @@ class TerminologyConverterController < ApplicationController
     # you MUST pass binding in order to have the erb process local variables
     @job_xml = ERB.new(File.open(j_xml, 'r') { |file| file.read }).result(binding)
     t_s = Time.now.strftime('%Y_%m_%dT%H_%M_%S')
-    job = JenkinsStartBuild.perform_later("#{JenkinsStartBuild::PRISME_NAME_PREFIX}#{s_artifact_id}_#{t_s}", @job_xml, url, user, password)
+    job = JenkinsStartBuild.perform_later("#{JenkinsStartBuild::PRISME_NAME_PREFIX}#{s_artifact_id}_#{t_s}", @job_xml, url, user, password, {job_tag: PrismeConstants::JobTags::TERMINOLOGY_CONVERTER})
     PrismeBaseJob.save_user(job_id: job.job_id, user: prisme_user.user_name)
     redirect_to action: 'index'
   end
@@ -150,7 +150,7 @@ class TerminologyConverterController < ApplicationController
 
   def ajax_load_build_data
     row_limit = params[:row_limit]
-    data = PrismeJob.job_name('JenkinsStartBuild').order(completed_at: :desc).limit(row_limit)
+    data = PrismeJob.job_tag(PrismeConstants::JobTags::TERMINOLOGY_CONVERTER).order(completed_at: :desc).limit(row_limit)
     ret = []
 
     data.each do |jsb|
@@ -180,7 +180,7 @@ class TerminologyConverterController < ApplicationController
   end
 
   def ajax_check_polling
-    prisme_job_has_running_jobs = PrismeJob.has_running_jobs?('JenkinsCheckBuild')
+    prisme_job_has_running_jobs = PrismeJob.has_running_jobs?(PrismeConstants::JobTags::TERMINOLOGY_CONVERTER, true)
     render json: {poll: prisme_job_has_running_jobs}
   end
 

@@ -51,7 +51,7 @@ class TerminologySourcePackagesController < ApplicationController
       row_data['result'] = result.to_s
       row_data['progress'] = progress.nil? ? 0 : (progress.to_f * 100).round
 
-      if (!row_data['started_at'].nil?)
+      if !row_data['started_at'].nil?
         row_data[:elapsed_time] = ApplicationHelper.convert_seconds_to_time(row_data['state_time'] - row_data['started_at'])
       else
         row_data[:elapsed_time] = ''
@@ -64,7 +64,7 @@ class TerminologySourcePackagesController < ApplicationController
   end
 
   def ajax_check_polling
-    prisme_job_has_running_jobs = PrismeJob.has_running_jobs?('TerminologyUploadTracker')
+    prisme_job_has_running_jobs = PrismeJob.has_running_jobs?(TerminologyUploadTracker.class_name)
     render json: {poll: prisme_job_has_running_jobs}
   end
 

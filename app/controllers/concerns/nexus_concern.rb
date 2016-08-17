@@ -126,8 +126,8 @@ class NexusOption
   # @param option_key [String] the key value being parsed
   # @return [String] the argument as a Ruby Hash
   def self.init_from_select_key(key)
+    raise ArgumentError.new('String passed in from select input is blank!') if key.scan(/\|/).length != 5
     vals = key.split('|')
-    raise ArgumentError.new('String passed in from select input is blank!') if vals.length != 6
     NexusOption.new({g: vals[0], a: vals[1], v: vals[2], r: vals[3], c: vals[4], p: vals[5]})
   end
 

@@ -1,5 +1,6 @@
-class TerminologyDatabaseBuilder < PrismeBaseJob
+require './app/controllers/concerns/nexus_concern'
 
+class TerminologyDatabaseBuilder < PrismeBaseJob
   def perform(*args)
     db_name = args.shift
     db_version = args.shift
@@ -8,8 +9,8 @@ class TerminologyDatabaseBuilder < PrismeBaseJob
     classify = args.shift
     ibdf_files = args.shift
     metadata_version = args.shift
-    metadata_version = metadata_version.split('|')[2]
-    @job_tag = PrismeConstants::JobTags::TERMINOLOGY_DB_BUILDER
+    metadata_version = NexusOption.init_from_select_key(metadata_version).v
+
     # pull out the git authentication information
     git_props = Service.get_git_props
     git_url = git_props[PrismeService::GIT_REPOSITORY_URL]
@@ -45,8 +46,7 @@ class TerminologyDatabaseBuilder < PrismeBaseJob
       # you MUST pass binding in order to have the erb process local variables
       @job_xml = ERB.new(File.open(j_xml, 'r') { |file| file.read }).result(binding)
       t_s = Time.now.strftime('%Y_%m_%dT%H_%M_%S')
-      job_tag = PrismeConstants::JobTags::TERMINOLOGY_DB_BUILDER
-      job = JenkinsStartBuild.perform_later("#{JenkinsStartBuild::PRISME_NAME_PREFIX}DB_BUILDER_#{t_s}", @job_xml, url, user, password, job_tag, track_child_job)
+      job = JenkinsStartBuild.perform_later("#{JenkinsStartBuild::PRISME_NAME_PREFIX}DB_BUILDER_#{t_s}", @job_xml, url, user, password, track_child_job)
       $log.debug("Jenkins start build called to build a db! #{job}")
       $log.debug("DB CONFIG=#{tag_name}")
     rescue => ex
