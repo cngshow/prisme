@@ -1,6 +1,6 @@
 <style>
   .modal-wide .modal-dialog {
-    width: 30%;
+    width: 50%;
   }
 </style>
 
@@ -10,7 +10,7 @@
   <h1>Terminology Database Builder</h1>
 </div>
 
-<%= render 'layouts/filter_table_poll_results', filter_id: 'dbb_filter_rows', filter_label: 'Filter Results', include_all_rows: true, poll: 'poll' %>
+<%= render 'layouts/filter_table_poll_results', filter_id: 'filter_rows', filter_label: 'Filter Results', include_all_rows: true, poll: 'poll' %>
 
 <%
   locals = {}
@@ -48,7 +48,7 @@
             <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
             <div class="input_div" title="The name to use for the maven artifact that will result from executing this generated pom file.">
               <%= label_tag 'db_name', 'Database Name' %><br>
-              <%= text_field_tag 'db_name', nil, required: true, data: {required: true}, placeholder: 'Enter the Name for this Database', maxlength: 75, size: 75, class: 'form-control'%>
+              <%= text_field_tag 'db_name', nil, required: true, data: {required: true}, placeholder: 'Enter the Name for this Database', maxlength: 75, size: 75, class: 'form-control' %>
             </div>
             <br>
             <div class="input_div" title="The version to use for the maven artifact that will result from executing this generated pom file.">
@@ -106,65 +106,65 @@
       </div>
     </div>
   </div>
-  <script>
-    function reset_form() {
-      // deselect any previously selected options and get the default width
-      var _ibdfFiles = $('#ibdf_files');
-      _ibdfFiles.val('').change();
+</div>
+<script>
+  function reset_form() {
+    // deselect any previously selected options and get the default width
+    var _ibdfFiles = $('#ibdf_files');
+    _ibdfFiles.val('').change();
 
-      // set the width of the search__field in order to NOT have the placeholder cut off. This is an issue with select2 multi-selects.
-      // this selector finds the group div (important to surround with div in case the form has multiple select2 drop downs)
-      var w = _ibdfFiles.attr('data-w');
-      _ibdfFiles.closest('div').find('input.select2-search__field').css('width', w);
+    // set the width of the search__field in order to NOT have the placeholder cut off. This is an issue with select2 multi-selects.
+    // this selector finds the group div (important to surround with div in case the form has multiple select2 drop downs)
+    var w = _ibdfFiles.attr('data-w');
+    _ibdfFiles.closest('div').find('input.select2-search__field').css('width', w);
 
-      //remove any validation errors and reset the form (textfields, textareas, etc.)
-      $("#myForm").validate().resetForm();
-      document.getElementById("myForm").reset();
-    }
+    //remove any validation errors and reset the form (textfields, textareas, etc.)
+    $("#myForm").validate().resetForm();
+    document.getElementById("myForm").reset();
+  }
 
-    function submitPackage() {
-      $('#ibdf_selections').val($('#ibdf_files').val());
-      var $btnSubmit = $("#btn_submit");
-      $btnSubmit.attr('onclick', 'return false;').html('<span><i class="fa fa-cog fa-spin fa-fw" aria-hidden="true"></i>Sending DB Build Request...</span>');
+  function submitPackage() {
+    $('#ibdf_selections').val($('#ibdf_files').val());
+    var $btnSubmit = $("#btn_submit");
+    $btnSubmit.attr('onclick', 'return false;').html('<span><i class="fa fa-cog fa-spin fa-fw" aria-hidden="true"></i>Sending DB Build Request...</span>');
 
-      // validate that the DB name will be unique
-      var db_name = $('#db_name').val();
-      var version = $('#db_version').val();
+    // validate that the DB name will be unique
+    var db_name = $('#db_name').val();
+    var version = $('#db_version').val();
 
-      $.getJSON(gon.routes.terminology_db_builder_check_tag_conflict_path, {db_name: db_name, version: version}, function (data) {
-        if (data.tag_conflict === true) {
-          bootbox.alert({
-            size: 'medium',
-            title: 'Database Name Error',
-            message: "The computed Databse Name is not unique.<br><br>Please change either the database name or database version to ensure uniqueness.",
-            callback: function () {
-              // reset the submit button
-              $btnSubmit.attr('onclick', 'submitPackage();').text('Create Database');
-            }
-          });
-        } else {
-          if ($("#myForm").valid()) {
-            $('#btn_submit_hidden').click();
-          } else {
+    $.getJSON(gon.routes.terminology_db_builder_check_tag_conflict_path, {db_name: db_name, version: version}, function (data) {
+      if (data.tag_conflict === true) {
+        bootbox.alert({
+          size: 'medium',
+          title: 'Database Name Error',
+          message: "The computed Databse Name is not unique.<br><br>Please change either the database name or database version to ensure uniqueness.",
+          callback: function () {
             // reset the submit button
             $btnSubmit.attr('onclick', 'submitPackage();').text('Create Database');
           }
+        });
+      } else {
+        if ($("#myForm").valid()) {
+          $('#btn_submit_hidden').click();
+        } else {
+          // reset the submit button
+          $btnSubmit.attr('onclick', 'submitPackage();').text('Create Database');
         }
-      });
-    }
-
-    $(document).ready(function () {
-      // call init_select2 to initialize all select inputs to use the select2 js library
-      init_select2();
-
-      // initialize the jquery validation plugin
-      $('#myForm').validate({
-        errorPlacement: function (error, element) {
-          var lbl = $("label[for='" + element.attr('id') + "']");
-          error.addClass('arrow_box');
-          error.insertAfter(lbl);
-        }
-      });
+      }
     });
-  </script>
-</div>
+  }
+
+  $(document).ready(function () {
+    // call init_select2 to initialize all select inputs to use the select2 js library
+    init_select2();
+
+    // initialize the jquery validation plugin
+    $('#myForm').validate({
+      errorPlacement: function (error, element) {
+        var lbl = $("label[for='" + element.attr('id') + "']");
+        error.addClass('arrow_box');
+        error.insertAfter(lbl);
+      }
+    });
+  });
+</script>

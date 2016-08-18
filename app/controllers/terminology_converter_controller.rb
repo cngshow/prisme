@@ -5,6 +5,7 @@ class TerminologyConverterController < ApplicationController
   before_action :auth_registered
   before_action :ensure_services_configured
   include TerminologyConverterHelper
+  include JenkinsJobConcern
 
   def index
     @sources = load_drop_down(nexus_params: {g: 'gov.vha.isaac.terminology.source.*'}).reverse!
@@ -150,29 +151,13 @@ class TerminologyConverterController < ApplicationController
 
   def ajax_load_build_data
     row_limit = params[:row_limit]
-    data = PrismeJob.job_tag(PrismeConstants::JobTags::TERMINOLOGY_CONVERTER).order(completed_at: :desc).limit(row_limit)
+    data = PrismeJob.job_tag(PrismeConstants::JobTags::TERMINOLOGY_CONVERTER).is_root(true).orphan(false).order(completed_at: :desc).limit(row_limit)
     ret = []
 
     data.each do |jsb|
       row_data = JSON.parse(jsb.to_json)
-      row_data['started_at'] = DateTime.parse(row_data['started_at']).to_time.to_i # todo nil check!!!
-      leaf_data = {}
-      has_orphan = jsb.descendants.orphan(true).first
-      leaf = jsb.descendants.completed(true).orphan(false).leaves.first
-      leaf_data['jenkins_check_job_id'] = leaf ? leaf.job_id : (has_orphan ? JenkinsCheckBuild::BuildResult::SERVER_ERROR : JenkinsCheckBuild::BuildResult::UNKNOWN)
-      leaf_data['jenkins_job_deleted'] = leaf ? JenkinsCheckBuild.jenkins_job_deleted(leaf) : (has_orphan ? JenkinsCheckBuild::BuildResult::SERVER_ERROR : JenkinsCheckBuild::BuildResult::IN_PROCESS)
-      leaf_data['jenkins_job_name'] = leaf ? JenkinsCheckBuild.jenkins_job_name(leaf) : (has_orphan ? JenkinsCheckBuild::BuildResult::SERVER_ERROR : JenkinsCheckBuild::BuildResult::IN_PROCESS)
-      leaf_data['jenkins_attempt_number'] = leaf ? JenkinsCheckBuild.attempt_number(leaf) : (has_orphan ? JenkinsCheckBuild::BuildResult::SERVER_ERROR : JenkinsCheckBuild::BuildResult::IN_PROCESS)
-      leaf_data['jenkins_build_result'] = leaf ? JenkinsCheckBuild.build_result(leaf) : (has_orphan ? JenkinsCheckBuild::BuildResult::SERVER_ERROR : JenkinsCheckBuild::BuildResult::IN_PROCESS)
-      leaf_data['completed_at'] = leaf ? leaf.completed_at.to_i : (has_orphan ? JenkinsCheckBuild::BuildResult::SERVER_ERROR : JenkinsCheckBuild::BuildResult::IN_PROCESS)
-
-      if (!row_data['started_at'].nil? && !leaf_data['completed_at'].nil? && leaf_data['completed_at'].is_a?(Numeric))
-        leaf_data[:elapsed_time] = ApplicationHelper.convert_seconds_to_time(leaf_data['completed_at'] - row_data['started_at'])
-      else
-        leaf_data[:elapsed_time] = ''
-      end
-
-      row_data['leaf_data'] = leaf_data
+      leaf_hash = append_check_build_leaf_data(jsb)
+      row_data['leaf_data'] = leaf_hash
       ret << row_data
     end
 

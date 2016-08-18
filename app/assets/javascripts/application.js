@@ -29,11 +29,26 @@ function flash_notify(options, settings) {
 }
 
 function format_epoch_in_local(epoch) {
-    var ret = epoch;
+    var ret = '';
 
-    if ($.isNumeric(epoch) && epoch > 0) {
-        var i = parseInt(epoch) * 1000;
-        ret = new Date(i).toLocaleString();
+    if (epoch !== undefined) {
+        epoch = epoch.toString();
+
+        if (epoch.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/)) {
+            ret = new Date(epoch).toLocaleString();
+        }
+        else if ($.isNumeric(epoch) && epoch > 0) {
+            //hack - epoch in seconds needs to be in millis for JS call below.
+            //this will accept either a 13 digit number representing the current time in millis
+            //or will be an epoch number in seconds. So if the length is <13 then add 3 zeros.
+            // This will be a bug starting on 09/26/33658 at 21:46:40 EST.
+            if (epoch.length < 13) {
+                epoch += '000'
+            }
+            ret = new Date(parseInt(epoch)).toLocaleString();
+        } else {
+            ret = epoch;
+        }
     }
     return ret;
 }
