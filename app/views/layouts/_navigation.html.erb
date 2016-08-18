@@ -7,7 +7,7 @@
       <li>
         <a href="<%= root_path %>"><span class="glyphicon glyphicon-home" onclick="polling.checkPolling(polling.pollEnum.WELCOME);"></span></a>
       </li>
-      <% if policy(:navigation).registered? %>
+      <% if policy(:navigation).admin? %>
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Terminology
               <span class="caret"></span></a>
