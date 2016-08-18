@@ -3,6 +3,7 @@ $CLASSPATH << "#{Rails.root}/lib/rails_common/logging/"
 # Do common initialization tasks in prisme
 #
 jars = Dir.glob('./lib/jars/*.jar')
+jars = Dir.glob('./lib/jars/*.jar')
 jars.each do |jar|
   require jar
 end
@@ -13,6 +14,7 @@ require './lib/rails_common/logging/logging'
 
 #above from rails common
 require './lib/prisme_service'
+require './lib/prisme_constants'
 require './lib/cipher'
 require './lib/jenkin_client'
 require './lib/rails_common/util/helpers'

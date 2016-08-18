@@ -8,6 +8,7 @@ end
 
 
 class JenkinsCheckBuild < PrismeBaseJob
+
   class Deleted
     UNKNOWN = 'UNKNOWN'
     YES = 'YES'

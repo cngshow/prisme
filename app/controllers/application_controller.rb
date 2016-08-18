@@ -46,7 +46,7 @@ class ApplicationController < ActionController::Base
     ssoi_user_name = request.headers['HTTP_ADSAMACCOUNTNAME']
     session[SSOI_HEADER] = nil
     header_hash = {}
-    return if ssoi_user_name.nil?
+    return if ssoi_user_name.to_s.strip.empty?
 
     unless SsoiUser.exists?(ssoi_user_name: ssoi_user_name)
       SsoiUser.create(ssoi_user_name: ssoi_user_name)

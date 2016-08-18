@@ -8,7 +8,7 @@ class NavigationPolicy < Struct.new(:user, :navigation, :ssoi_headers)
     cu = curr_user
 
     # promote the first user to an admin
-    if (User.count == 1 && !cu.nil? && cu.is_a?(User) && !cu.has_role?(Roles::SUPER_USER))
+    if User.count == 1 && !cu.nil? && cu.is_a?(User) && !cu.has_role?(Roles::SUPER_USER)
       user.add_role(Roles::SUPER_USER)
       user.save
     end

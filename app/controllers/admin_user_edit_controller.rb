@@ -6,6 +6,7 @@ class AdminUserEditController < ApplicationController
     devise_users = User.all.to_a
     ssoi_users = SsoiUser.all.to_a
     @user_list = devise_users + ssoi_users
+    @user_list.sort_by! {|user| user.user_name}
   end
 
   def update_user_roles
@@ -34,21 +35,29 @@ class AdminUserEditController < ApplicationController
   def delete_user
     ret = {remove_row: true, flash_options: {message: 'The user was deleted previously!'}, flash_settings: {type: 'success'}}
     uid, ssoi_user = parse_user_id(params[:user_row_id])
-    user = User.find(uid) unless ssoi_user
-    user = SsoiUser.find(uid) if ssoi_user
+    user = ssoi_user ? SsoiUser.find(uid) : User.find(uid)
 
     # if user is not looked up then another user has deleted them already
-    if (user)
+    if user
       ret = {remove_row: true, flash_options: {message: "User #{user.user_name} has been successfully deleted!"}, flash_settings: {type: 'success'}}
-      # do not allow user to delete the last user or themselves
+      # do not allow user to delete the last user, themselves, or the last super user
       if !ssoi_user && User.count == 1
         ret = {remove_row: false, flash_options: {message: 'You cannot delete the last user!'}, flash_settings: {type: 'warning'}}
-      elsif (prisme_user.id == uid.to_i) # todo test this!!!!
+      elsif prisme_user == user
         # the user cannot delete themselves
         ret = {remove_row: false, flash_options: {message: 'You cannot delete yourself!'}, flash_settings: {type: 'warning'}}
+      else
+        super_users = User.with_any_role(:super_user)
+        super_users << SsoiUser.with_any_role(:super_user)
+        super_users.flatten!
+
+        if super_users.count == 1 && super_users.first == user
+          # the user cannot delete the last super user
+          ret = {remove_row: false, flash_options: {message: 'You cannot the last super user!'}, flash_settings: {type: 'warning'}}
+        end
       end
       # delete the user if we are removing the row
-      if (ret[:remove_row])
+      if ret[:remove_row]
         user.destroy
       end
     end

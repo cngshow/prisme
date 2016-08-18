@@ -2,6 +2,7 @@ class TerminologyDbBuilderController < ApplicationController
   before_action :auth_registered
   before_action :ensure_services_configured
   include NexusConcern
+  include JenkinsJobConcern
 
   def index
     # retrieve the metadata versions dropdown
@@ -20,7 +21,7 @@ class TerminologyDbBuilderController < ApplicationController
     classify = boolean(params['classify'])
     metadata_version = params['metadata_version']
 
-    job = TerminologyDatabaseBuilder.perform_later(db_name, db_version, db_description, artifact_classifier, classify, ibdf_files, metadata_version)
+    job = TerminologyDatabaseBuilder.perform_later(db_name, db_version, db_description, artifact_classifier, classify, ibdf_files, metadata_version, {job_tag: PrismeConstants::JobTags::TERMINOLOGY_DB_BUILDER})
     PrismeBaseJob.save_user(job_id: job.job_id, user: prisme_user.user_name)
 
     redirect_to terminology_db_builder_url
@@ -38,14 +39,13 @@ class TerminologyDbBuilderController < ApplicationController
 
     begin
       row_limit = params[:row_limit]
-      data = PrismeJob.job_name('TerminologyDatabaseBuilder').orphan(false).order(completed_at: :desc).limit(row_limit)
+      data = PrismeJob.job_tag(PrismeConstants::JobTags::TERMINOLOGY_DB_BUILDER).is_root(true).orphan(false).order(completed_at: :desc).limit(row_limit)
 
-      data.each do |jsb|
-        row_data = JSON.parse(jsb.to_json)
-        row_data['started_at'] = row_data['started_at'].nil? ? nil : DateTime.parse(row_data['started_at']).to_time.to_i
-        row_data['completed_at'] = row_data['completed_at'].nil? ?  nil : DateTime.parse(row_data['completed_at']).to_time.to_i
-        # "ibdf_files":[{"g":"gov.vha.isaac.terminology.converted","a":"vhat-ibdf","v":"2016.01.07-loader-4.1"},{"g":"gov.vha.isaac.terminology.converted","a":"rf2-ibdf-us-extension","v":"20160301-loader-3.2","r":"","c":"Snapshot"}]
-        row_data['ibdf_files'] = TerminologyDatabaseBuilder.ibdf_files(jsb).inject('') { |r, i| r << "#{i['a']}-#{i['v']}<br>" }
+      data.each do |tdb|
+        row_data = JSON.parse(tdb.to_json)
+        row_data['ibdf_files'] = TerminologyDatabaseBuilder.ibdf_files(tdb).inject('') { |r, i| r << "#{i['a']}-#{i['v']}<br>" }
+        leaf_hash = append_check_build_leaf_data(tdb)
+        row_data['leaf_data'] = leaf_hash
         ret << row_data
       end
       render json: ret
@@ -58,7 +58,7 @@ class TerminologyDbBuilderController < ApplicationController
   end
 
   def ajax_check_polling
-    prisme_job_has_running_jobs = PrismeJob.has_running_jobs?('TerminologyDatabaseBuilder')
+    prisme_job_has_running_jobs = PrismeJob.has_running_jobs?(PrismeConstants::JobTags::TERMINOLOGY_DB_BUILDER, true)
     render json: {poll: prisme_job_has_running_jobs}
   end
 

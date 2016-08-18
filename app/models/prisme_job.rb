@@ -6,14 +6,16 @@ class PrismeJob < ActiveRecord::Base
   belongs_to :parent_job, :class_name => 'PrismeJob', :foreign_key => 'parent_job_id'
 
   scope :job_name, -> (job_name, exclude=false) {where("job_name #{exclude ? '!=' : '='} ?", job_name)}
+  scope :is_root, -> (bool) {where("parent_job_id is #{bool ? '' : 'not'} null")}
+  scope :job_tag, -> (job_tag) {where('job_tag = ?', job_tag)}
   scope :leaves, -> () {where(leaf: true)}
   scope :job_ids_in, -> (ids,include) {where("job_id #{include ? 'IN' : 'NOT IN'} (#{ids.map do |e| "'#{e}'" end.join(',')})")}
   scope :orphan, -> (bool) {where("status #{bool ? '=' : '!='} #{PrismeJobConstants::Status::STATUS_HASH[:ORPHANED]} ")}
   scope :completed, -> (bool) {where("status #{bool ? '>=' : '<'} #{PrismeJobConstants::Status::STATUS_HASH[:FAILED]}")}
   scope :completed_by, -> (time) {where("completed_at >= '#{time}'")}
 
-  def self.has_running_jobs?(job_name)
-    PrismeJob.job_name(job_name).completed(false).orphan(false).count > 0
+  def self.has_running_jobs?(name, job_tag = false)
+    (job_tag ? PrismeJob.job_tag(name) : PrismeJob.job_name(name)).completed(false).orphan(false).count > 0
   end
 
   def is_leaf?
