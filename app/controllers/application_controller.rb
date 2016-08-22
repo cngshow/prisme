@@ -1,12 +1,12 @@
 require './app/policies/navigation_policy'
 require './lib/rails_common/util/controller_helpers'
+require './lib/rails_common/roles/ssoi'
 
 class ApplicationController < ActionController::Base
   include ApplicationHelper
   include Pundit
   include CommonController
-  SSOI_USER = :ssoi_user
-  SSOI_HEADER = :ssoi_header
+  include SSOI
 
   after_action :verify_authorized, unless: :devise_controller?
   # Prevent CSRF attacks by raising an exception.
@@ -43,18 +43,15 @@ class ApplicationController < ActionController::Base
   end
 
   def read_ssoi_headers
-    ssoi_user_name = request.headers['HTTP_ADSAMACCOUNTNAME']
-    session[SSOI_HEADER] = nil
-    header_hash = {}
-    return if ssoi_user_name.to_s.strip.empty?
+    ssoi_user_name = ssoi_headers
+    return if ssoi_user_name.nil?
 
     unless SsoiUser.exists?(ssoi_user_name: ssoi_user_name)
       SsoiUser.create(ssoi_user_name: ssoi_user_name)
     end
 
     user = SsoiUser.find_by(ssoi_user_name: ssoi_user_name)
-    header_hash[SSOI_USER] = user
-    session[SSOI_HEADER] = header_hash
+    session[SSOI_ROOT][SSOI_USER] = user
   end
 
   def auth_registered
