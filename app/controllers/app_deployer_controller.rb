@@ -65,6 +65,8 @@ class AppDeployerController < ApplicationController
     war_cookie_params[:prisme_root] = root_url
     war_cookie_params[:prisme_roles_url] = URI(roles_get_roles_url).to_https if RolesController.ssl_configured?
     war_cookie_params[:prisme_roles_url] = roles_get_roles_url unless RolesController.ssl_configured?
+    war_cookie_params[:prisme_roles_ssoi_url] = URI(roles_get_ssoi_roles_url).to_https if RolesController.ssl_configured?
+    war_cookie_params[:prisme_roles_ssoi_url] = roles_get_ssoi_roles_url unless RolesController.ssl_configured?
     war_cookie_params[:war_group_id] = war_file.groupId
     war_cookie_params[:war_artifact_id] = war_file.artifactId
     war_cookie_params[:war_version] = war_file.version
