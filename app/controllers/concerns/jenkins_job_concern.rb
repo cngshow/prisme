@@ -9,7 +9,7 @@ module JenkinsJobConcern
     has_orphan = row.descendants.orphan(true).first
     leaf = row.descendants.completed(true).orphan(false).leaves.first
 
-    if !leaf.nil? && leaf.job_name.eql?(JenkinsCheckBuild.class_name)
+    if !leaf.nil? && leaf.job_name.eql?(JenkinsCheckBuild.to_s)
       leaf_data['jenkins_check_job_id'] = leaf ? leaf.job_id : (has_orphan ? JenkinsCheckBuild::BuildResult::SERVER_ERROR : JenkinsCheckBuild::BuildResult::UNKNOWN)
       leaf_data['jenkins_job_deleted'] = leaf ? JenkinsCheckBuild.jenkins_job_deleted(leaf) : (has_orphan ? JenkinsCheckBuild::BuildResult::SERVER_ERROR : JenkinsCheckBuild::BuildResult::IN_PROCESS)
       leaf_data['jenkins_job_name'] = leaf ? JenkinsCheckBuild.jenkins_job_name(leaf) : (has_orphan ? JenkinsCheckBuild::BuildResult::SERVER_ERROR : JenkinsCheckBuild::BuildResult::IN_PROCESS)
