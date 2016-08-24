@@ -7,4 +7,8 @@ module AdminUserEditHelper
     }
     ret.html_safe
   end
+
+  def no_match_row
+    '<tr valign="top"><td colspan="3" align="center">No Users found that match the filter criteria</td></tr>'.html_safe
+  end
 end

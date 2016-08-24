@@ -1,6 +1,13 @@
 <h1>Edit User Permissions</h1>
-<br>
-<hr>
+<fieldset class="classic-border" style="width: 450px">
+  <legend class="classic-border">Filter Criteria</legend>
+  <%= label_tag 'admin_role_review', 'Admin Role Review' %><br>
+  <% o = [['All Users (No Filter Applied)', 'all'], ['New Users Only', false], ['Reviewed Users Only', true]] %>
+  <%= select_tag 'admin_role_review', options_for_select(o, selected: session['user_admin_filters']['admin_role_review']), class: 'form-control' %>
+  <br>
+  <%= label_tag 'user_quick_search', 'User Search' %><br>
+  <%= text_field_tag 'user_quick_search', session['user_admin_filters']['user_quick_search'], class: 'form-control' %>
+</fieldset>
 <table class="prisme-table table-striped table-hover" id="user_edit_list_table">
   <thead>
   <tr>
@@ -10,29 +17,9 @@
   </tr>
   </thead>
   <tbody>
-  <% @user_list.each do |user| %>
-      <tr valign="top" id="user_row_<%= user.user_row_id %>">
-        <td id="user_name_td_<%= user.user_row_id %>"><%= h user.user_name %></td>
-        <%
-          user_roles = []
-          role_text = ''
-          Roles::ALL_ROLES.each do |role|
-            user_roles << role if user.has_role?(role)
-            role_text = role_text + "#{role.to_s.split('_').map(&:capitalize).join(' ')}, " if user.has_role?(role)
-          end
-        %>
-        <td style="text-align: left"><%= raw role_text.empty? ? 'No Roles Assigned' : role_text.chop.chop %></td>
-        <td style="text-align: left">
-          <a data-toggle="modal" data-target="#editModal" class="btn btn-primary" role="button" onclick='edit_user_roles("<%=user.user_row_id%>", <%= raw JSON.parse(user_roles.to_json) %>);'>
-            <i class="fa fa-edit fa-fw" aria-hidden="true"></i>&nbsp;Edit User Roles</a>
-          <!-- user cannot delete themselves -->
-          <% unless (prisme_user == user) %>
-              <a class="btn btn-danger" role="button" onclick="delete_user('<%=user.user_row_id%>', '<%= user.user_name %>');">
-                <i class="fa fa-trash fa-fw" aria-hidden="true"></i>&nbsp;Delete User</a>
-          <% end %>
-        </td>
-      </tr>
-  <% end %>
+  <tr valign="top">
+    <td colspan="3" align="center">Loading...Please Wait</td>
+  </tr>
   </tbody>
 </table>
 
@@ -180,6 +167,10 @@
           $.getJSON(gon.routes.delete_user_path, {user_row_id: user_id}, function (data) {
             if (data.remove_row === true) {
               $('table#user_edit_list_table tr#user_row_' + user_id).remove();
+              // if all rows are removed then insert the no_matches row
+              if ($("table#user_edit_list_table > tbody > tr").length === 0) {
+                $("table#user_edit_list_table").find('tbody').html('<%= no_match_row %>');
+              }
             }
             flash_notify(data.flash_options, data.flash_settings);
           });
@@ -243,7 +234,15 @@
     return ret;
   }
 
-  $(document).ready(function () {
+  function load_table() {
+    var admin_role_review = $('#admin_role_review').find('option:selected').val();
+    var user_quick_search = $('#user_quick_search').val();
+    $.get(gon.routes.load_user_list_path, {user_quick_search: user_quick_search, admin_role_review: admin_role_review}, function (data) {
+      $('table#user_edit_list_table').find('tbody').html(data);
+    });
+  }
+
+  $(function () {
     $('#btn_submit_form').on('click', function () {
       $('#user_edit_form').submit();
     });
@@ -256,5 +255,39 @@
     $('#cbx_<%= Roles::READ_ONLY%>').on('click', function () {
       return false;
     });
+    $('#admin_role_review').on('change', function () {
+      load_table();
+    });
+    $('#user_quick_search').on('keyup', function (event) {
+      var ret = false;
+      var c = event.which;
+      switch (true) {
+        case (event.ctrlKey && (c == 65 || c == 67)): //ctrl+A and ctrl+C
+        case (c == 9 || c == 37 || c == 39): //tab and left and right arrow
+          return true;
+        case (event.ctrlKey && (c == 86 || c == 88)): //ctrl+X and ctrl+V
+          ret = true;
+          break;
+        case (c == 8 || c == 46): //backspace or delete
+          ret = true; //need to check against variable value to see if different
+          break;
+        case (c >= 48 && c <= 57):  //numbers
+        case (c >= 96 && c <= 105): //numpad
+        case (c == 110 || c == 190):  //decimal pt, and period
+          ret = !event.shiftKey;
+          break;
+        case ((c >= 65 && c <= 90) || c == 189):  //a-z or dash
+          ret = true;
+          break;
+      }
+
+      if (ret) {
+        load_table();
+      } else {
+        event.preventDefault();
+      }
+    });
+
+    load_table();
   });
 </script>

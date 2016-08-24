@@ -61,7 +61,6 @@ gem 'bootstrap-growl-rails'
 gem 'activerecord-jdbch2-adapter'
 gem 'select2-rails'
 gem 'paperclip'
-# gem 'wannabe_bool'
 
 group :development do
   gem 'yard'

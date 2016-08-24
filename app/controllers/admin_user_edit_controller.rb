@@ -2,24 +2,52 @@ class AdminUserEditController < ApplicationController
   before_action :auth_admin
 
   def list
-    # todo sort the listing and add filtering
-    devise_users = User.all.to_a
-    ssoi_users = SsoiUser.all.to_a
-    @user_list = devise_users + ssoi_users
-    @user_list.sort_by! {|user| user.user_name}
+    unless session.has_key?(:user_admin_filters)
+      session['user_admin_filters'] = {}
+      session['user_admin_filters']['user_quick_search'] = ''
+      session['user_admin_filters']['admin_role_review'] = 'all'
+    end
+  end
+
+  def ajax_load_user_list
+    a = session.inspect
+    user_quick_search = session['user_admin_filters']['user_quick_search']
+    user_quick_search = params['user_quick_search'] if params['user_quick_search']
+    admin_role_review = session['user_admin_filters']['admin_role_review']
+    admin_role_review = params['admin_role_review'] if params['admin_role_review']
+
+    # default query - all users
+    devise_users = User.all
+    ssoi_users = SsoiUser.all
+
+    if user_quick_search && user_quick_search.length > 0
+      devise_users = User.filter_user_name(user_quick_search)
+      ssoi_users = SsoiUser.filter_user_name(user_quick_search)
+
+      unless admin_role_review.eql?('all')
+        devise_users = devise_users.filter_admin_role_check(boolean(admin_role_review))
+        ssoi_users = ssoi_users.filter_admin_role_check(boolean(admin_role_review))
+      end
+    else
+      unless admin_role_review.eql?('all')
+        devise_users = User.filter_admin_role_check(boolean(admin_role_review))
+        ssoi_users = SsoiUser.filter_admin_role_check(boolean(admin_role_review))
+      end
+    end
+    @user_list = devise_users.to_a + ssoi_users.to_a
+    @user_list.sort_by! { |user| user.user_name }
+
+    session['user_admin_filters']['user_quick_search'] = user_quick_search
+    session['user_admin_filters']['admin_role_review'] = admin_role_review
+    render :partial => 'users', :format => :html
   end
 
   def update_user_roles
     uid, ssoi_user = parse_user_id(params[:user_id_to_edit])
     user = User.find(uid) unless ssoi_user
     user = SsoiUser.find(uid) if ssoi_user
+    user.admin_role_check = true
     user.roles = []
-
-    if ssoi_user
-      user.admin_role_check = true
-    end
-
-    user.save
 
     # assign selected roles
     Roles::ALL_ROLES.each do |role|
@@ -28,6 +56,7 @@ class AdminUserEditController < ApplicationController
       end
     end
 
+    user.save
     flash_notify('Successfully updated the user roles!  These changes may take up to five minutes to propagate through the system.', {})
     redirect_to list_users_path
   end
