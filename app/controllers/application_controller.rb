@@ -51,7 +51,7 @@ class ApplicationController < ActionController::Base
     end
 
     user = SsoiUser.find_by(ssoi_user_name: ssoi_user_name)
-    session[SSOI_ROOT][SSOI_USER] = user
+    session[Roles::SESSION_ROLES_ROOT][SSOI_USER] = user
   end
 
   def auth_registered
