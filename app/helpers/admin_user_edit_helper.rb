@@ -1,4 +1,8 @@
 module AdminUserEditHelper
+  FILTER_GROUP = 'user_admin_filters'
+  QUICK_SEARCH = 'user_quick_search'
+  ROLE_REVIEW = 'admin_role_review'
+
   def role_checkbox(role)
     role = role.to_s if role.is_a? Symbol
     ret = %{

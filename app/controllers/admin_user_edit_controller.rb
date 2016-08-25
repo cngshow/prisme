@@ -2,18 +2,18 @@ class AdminUserEditController < ApplicationController
   before_action :auth_admin
 
   def list
-    unless session.has_key?(:user_admin_filters)
-      session['user_admin_filters'] = {}
-      session['user_admin_filters']['user_quick_search'] = ''
-      session['user_admin_filters']['admin_role_review'] = 'all'
+    unless session.has_key?(AdminUserEditHelper::FILTER_GROUP)
+      session[AdminUserEditHelper::FILTER_GROUP] = {}
+      session[AdminUserEditHelper::FILTER_GROUP][AdminUserEditHelper::QUICK_SEARCH] = ''
+      session[AdminUserEditHelper::FILTER_GROUP][AdminUserEditHelper::ROLE_REVIEW] = 'all'
     end
   end
 
   def ajax_load_user_list
-    user_quick_search = session['user_admin_filters']['user_quick_search']
-    user_quick_search = params['user_quick_search'] if params['user_quick_search']
-    admin_role_review = session['user_admin_filters']['admin_role_review']
-    admin_role_review = params['admin_role_review'] if params['admin_role_review']
+    user_quick_search = session[AdminUserEditHelper::FILTER_GROUP][AdminUserEditHelper::QUICK_SEARCH]
+    user_quick_search = params[AdminUserEditHelper::QUICK_SEARCH] if params[AdminUserEditHelper::QUICK_SEARCH]
+    admin_role_review = session[AdminUserEditHelper::FILTER_GROUP][AdminUserEditHelper::ROLE_REVIEW]
+    admin_role_review = params[AdminUserEditHelper::ROLE_REVIEW] if params[AdminUserEditHelper::ROLE_REVIEW]
 
     # default query - all users
     devise_users = User.all
@@ -36,8 +36,8 @@ class AdminUserEditController < ApplicationController
     @user_list = devise_users.to_a + ssoi_users.to_a
     @user_list.sort_by! { |user| user.user_name }
 
-    session['user_admin_filters']['user_quick_search'] = user_quick_search
-    session['user_admin_filters']['admin_role_review'] = admin_role_review
+    session[AdminUserEditHelper::FILTER_GROUP][AdminUserEditHelper::QUICK_SEARCH] = user_quick_search
+    session[AdminUserEditHelper::FILTER_GROUP][AdminUserEditHelper::ROLE_REVIEW] = admin_role_review
     render :partial => 'users', :format => :html
   end
 

@@ -3,10 +3,10 @@
   <legend class="classic-border">Filter Criteria</legend>
   <%= label_tag 'admin_role_review', 'Admin Role Review' %><br>
   <% o = [['All Users (No Filter Applied)', 'all'], ['New Users Only', false], ['Reviewed Users Only', true]] %>
-  <%= select_tag 'admin_role_review', options_for_select(o, selected: session['user_admin_filters']['admin_role_review']), class: 'form-control' %>
+  <%= select_tag 'admin_role_review', options_for_select(o, selected: session[AdminUserEditHelper::FILTER_GROUP][AdminUserEditHelper::ROLE_REVIEW]), class: 'form-control' %>
   <br>
   <%= label_tag 'user_quick_search', 'User Search' %><br>
-  <%= text_field_tag 'user_quick_search', session['user_admin_filters']['user_quick_search'], class: 'form-control' %>
+  <%= text_field_tag 'user_quick_search', session[AdminUserEditHelper::FILTER_GROUP][AdminUserEditHelper::QUICK_SEARCH], class: 'form-control' %>
 </fieldset>
 <table class="prisme-table table-striped table-hover" id="user_edit_list_table">
   <thead>
