@@ -10,7 +10,6 @@ class AdminUserEditController < ApplicationController
   end
 
   def ajax_load_user_list
-    a = session.inspect
     user_quick_search = session['user_admin_filters']['user_quick_search']
     user_quick_search = params['user_quick_search'] if params['user_quick_search']
     admin_role_review = session['user_admin_filters']['admin_role_review']
