@@ -1,0 +1,27 @@
+<h1>Warm things up a bit...<span id="counter"> 0 </span></h1>
+<table class="prisme-table table-striped table-hover" id="ssoi_headers">
+  <thead>
+   <tr>
+       <th width="10%">Header Key</th>
+       <th width="90%" style="text-align: left">Header Value</th>
+     </tr>
+   </thead>
+   <tbody>
+<%@headers.each do |k|%>
+    <tr><%=raw("<td>#{k.first}</td><td> #{k.last}</td>")%></tr>
+<%end%>
+ </tbody>
+</table>
+<script>
+  var num_calls = <%=@warmup_count%>;
+  $(function () {
+    for (var i = 0; i < num_calls; i++) {
+      $.get(gon.routes.utilities_warmup_path, {
+        counter: i, format: 'json'}, function (data) {
+        $('#counter').text(data);
+        console.log("Warmup fetch number " + i);
+        console.log("Warmup data is " + data.toString());
+      });
+    }
+  })
+</script>
