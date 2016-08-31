@@ -46,11 +46,7 @@ class ApplicationController < ActionController::Base
     ssoi_user_name = ssoi_headers
     return if ssoi_user_name.nil?
 
-    unless SsoiUser.exists?(ssoi_user_name: ssoi_user_name)
-      SsoiUser.create(ssoi_user_name: ssoi_user_name)
-    end
-
-    user = SsoiUser.find_by(ssoi_user_name: ssoi_user_name)
+    user = SsoiUser.where(ssoi_user_name: ssoi_user_name).first_or_create
     session[Roles::SESSION_ROLES_ROOT][SSOI::SSOI_USER] = user
   end
 
@@ -68,6 +64,5 @@ class ApplicationController < ActionController::Base
     application_server_configured = Service.service_exists? PrismeService::TOMCAT
     git_server_configured = Service.service_exists? PrismeService::GIT
     render :file => (trinidad? ? 'public/not_configured.html' : "#{Rails.root}/../not_configured.html") unless (application_server_configured && artifactory_configured && build_server_configured && git_server_configured)
-    return
   end
 end
