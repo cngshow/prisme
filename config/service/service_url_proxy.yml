@@ -8,7 +8,13 @@ proxy_pass:
  urls:
    - path: https://vaausappctt704.aac.va.gov:8080/komet_a/ #this is like our incoming url
      location: /server_1_rails_a/
+#   - path: wrongurl #this is like our incoming url
+#     location: /server_1_rails_a/
    - path: https://vaausappctt705.aac.va.gov:8080/komet_a/ #this is like our incoming url
+     location: /server_1_rails_a/
+   - path: https://short/ #this is like our incoming url
+     location: /server_1_rails_a/
+   - path: https://vaausappctt705.aac.va.gov:8080/longlonglonglonglonglonglonglonglonglonglonglonglonglonglong/komet_a/ #this is like our incoming url
      location: /server_1_rails_a/
    - path: https://vaausappctt704.aac.va.gov:8080/komet_b/ #this is like our incoming url
      location: /server_1_rails_b/
