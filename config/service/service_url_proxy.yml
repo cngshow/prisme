@@ -1,0 +1,20 @@
+#     #Location for komet_b
+#     <Location /server_1_rails_a/>
+#     ProxyPass https://vaausappctt704.aac.va.gov:8080/rails_komet_b/
+#     ProxyPassReverse https://vaausappctt704.aac.va.gov:8080/rails_komet_b/
+#     </Location>------------------------------------------------
+proxy_pass:
+ apache_url_proxy: https://vaauscttweb81.aac.va.gov/
+ urls:
+   - path: https://vaausappctt704.aac.va.gov:8080/komet_a/ #this is like our incoming url
+     location: /server_1_rails_a/
+   - path: https://vaausappctt705.aac.va.gov:8080/komet_a/ #this is like our incoming url
+     location: /server_1_rails_a/
+   - path: https://vaausappctt704.aac.va.gov:8080/komet_b/ #this is like our incoming url
+     location: /server_1_rails_b/
+   - path: https://vaausappctt.aac.va.gov:8080/komet_a/ #this is like our incoming url
+     location: /server_1_rails_a/
+   - path: https://vaausappctt7047.aac.va.gov:8080/komet_a/ #this is like our incoming url
+     location: /server_1_rails_a/
+   - path: https://vaausappctt70477.aac.va.gov:8080/komet_a/ #this is like our incoming url
+     location: /server_1_rails_a/
