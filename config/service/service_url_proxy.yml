@@ -16,7 +16,7 @@ proxy_pass:
      location: /server_1_rails_a/
    - path: https://vaausappctt705.aac.va.gov:8080/longlonglonglonglonglonglonglonglonglonglonglonglonglonglong/komet_a/ #this is like our incoming url
      location: /server_1_rails_a/
-   - path: https://vaausappctt704.aac.va.gov:8080/komet_b/ #this is like our incoming url
+   - path: https://vaausappctt704.aac.va.gov:8080/komet_b/ #We play with this one
      location: server_1_rails_fazzle
    - path: https://vaausappctt.aac.va.gov:8080/komet_a/ #this is like our incoming url
      location: /server_1_rails_a/
