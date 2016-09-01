@@ -30,7 +30,7 @@ test:
 
 production:
   <<: *default
-  <% if ((File.exists? '/app/prismeData/h2_prisme_production.mv.db) && !$rake)' %>
+  <% if ((File.exists? '/app/prismeData/h2_prisme_production.mv.db') && !$rake) %>
   database: /app/prismeData/h2_prisme_production
   <% else %>
   database: db/data/h2_prisme_production
