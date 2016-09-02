@@ -65,4 +65,11 @@ class ApplicationController < ActionController::Base
     git_server_configured = Service.service_exists? PrismeService::GIT
     render :file => (trinidad? ? 'public/not_configured.html' : "#{Rails.root}/../not_configured.html") unless (application_server_configured && artifactory_configured && build_server_configured && git_server_configured)
   end
+
+
+  def non_proxy_path(path_string:)
+    scheme = (URI root_url).scheme #we assume if the proxy is https we are too.
+    scheme + '://' + Socket.gethostname + path_string
+  end
+
 end
