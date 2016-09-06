@@ -62,11 +62,9 @@ class AppDeployerController < ApplicationController
     nexus_query_params[:r] = war_file.repo
     nexus_query_params[:c] = war_file.classifier unless war_file.classifier.empty?
     nexus_query_params[:p] = war_file.package
-    war_cookie_params[:prisme_root] = root_url
-    war_cookie_params[:prisme_roles_url] = URI(roles_get_roles_url).to_https if RolesController.ssl_configured?
-    war_cookie_params[:prisme_roles_url] = roles_get_roles_url unless RolesController.ssl_configured?
-    war_cookie_params[:prisme_roles_ssoi_url] = URI(roles_get_ssoi_roles_url).to_https if RolesController.ssl_configured?
-    war_cookie_params[:prisme_roles_ssoi_url] = roles_get_ssoi_roles_url unless RolesController.ssl_configured?
+    war_cookie_params[:prisme_root] = non_proxy_url(path_string: root_path)
+    war_cookie_params[:prisme_roles_url] =  non_proxy_url(path_string: roles_get_roles_path)
+    war_cookie_params[:prisme_roles_ssoi_url] = non_proxy_url(path_string: roles_get_ssoi_roles_path)
     war_cookie_params[:war_group_id] = war_file.groupId
     war_cookie_params[:war_artifact_id] = war_file.artifactId
     war_cookie_params[:war_version] = war_file.version

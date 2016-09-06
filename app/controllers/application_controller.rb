@@ -7,6 +7,7 @@ class ApplicationController < ActionController::Base
   include Pundit
   include CommonController
   include SSOI
+  include ServletSupport
 
   after_action :verify_authorized, unless: :devise_controller?
   # Prevent CSRF attacks by raising an exception.
@@ -65,4 +66,14 @@ class ApplicationController < ActionController::Base
     git_server_configured = Service.service_exists? PrismeService::GIT
     render :file => (trinidad? ? 'public/not_configured.html' : "#{Rails.root}/../not_configured.html") unless (application_server_configured && artifactory_configured && build_server_configured && git_server_configured)
   end
+
+
+  def non_proxy_url(path_string:)
+    path_string = '/' + path_string unless path_string.start_with? '/'
+    scheme = secure? ?  'https' : 'http'
+    path = scheme + '://' + true_address.to_s + ':'  + true_port.to_s + path_string
+    $log.debug("Non proxy path is #{path}")
+    path
+  end
+
 end
