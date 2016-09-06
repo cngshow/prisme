@@ -6,6 +6,15 @@ class RolesController < ApplicationController
   skip_before_action :verify_authenticity_token
   force_ssl if: :ssl_configured_delegator? #,port: 8443
 
+  def sso_logout
+    # remove the SSO user information from the session
+    clean_roles_session
+
+    # redirect to the logout page for SSO
+    logout_url = PrismeUtilities.ssoi_logout_path
+    redirect_to logout_url # external url
+  end
+
   #http://localhost:3000/roles/get_ssoi_roles.json?id=cboden
   def get_ssoi_roles
     @ssoi_user = params[:id]
@@ -58,12 +67,12 @@ class RolesController < ApplicationController
         hash = JSON.parse json
       rescue Exception => ex
         token_valid = false
-        $log.warn("An invalid token was recieved. The error is " + ex.message)
-        token_error = "Invalid Token!"
+        $log.warn("An invalid token was recieved. The error is #{ex.message}")
+        token_error = 'Invalid Token!'
         $log.error("Token parse failed! #{token_error}")
       end
       @user_id = hash['user'] if token_valid
-      $log.debug("TOKEN hash is " + hash.inspect)
+      $log.debug("TOKEN hash is #{hash.inspect}")
       $log.debug("User from token is #{@user_id}")
     end
     $log.debug("About to fetch the roles for ID #{@user_id}")
@@ -74,7 +83,7 @@ class RolesController < ApplicationController
     @authenticated = user.valid_password?(@password) unless (user.nil?)
     @authenticated = true if token_valid #we assume validity with a parseable_token
     $log.info("The user #{@user_id} tried to get roles but was not authenticated.") unless @authenticated
-    unless (user.nil? || !@authenticated)
+    unless user.nil? || !@authenticated
       user.roles.each do |role|
         @roles_array << role[:name]
       end
@@ -82,7 +91,7 @@ class RolesController < ApplicationController
     @token_hash[:roles] = @roles_array
     @token_hash[:issue_time] = Time.now.to_i
     @token_hash[:user] = @user_id
-    @token_hash[:denomination] = ["1 dollar", "5 dollars", "10 dollars", "20 dollars", "50 dollars", "100 dollars"].sample
+    @token_hash[:denomination] = ['1 dollar', '5 dollars', '10 dollars', '20 dollars', '50 dollars', '100 dollars'].sample
     token_string = CipherSupport.instance.stringify_token CipherSupport.instance.encrypt(unencrypted_string: @token_hash.to_json.to_s)
     respond_to do |format|
       format.text { render :text =>  token_string} if token_valid

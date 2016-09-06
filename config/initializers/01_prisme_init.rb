@@ -18,6 +18,7 @@ require './lib/prisme_constants'
 require './lib/cipher'
 require './lib/jenkin_client'
 require './lib/rails_common/util/helpers'
+require './lib/utilities/prisme_utilities'
 require './lib/rails_common/roles/roles'
 
 #System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");

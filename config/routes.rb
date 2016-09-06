@@ -11,6 +11,8 @@ Rails.application.routes.draw do
   #ids like cshupp@gmail.com aren't valid in a URL :-(
   #match 'roles/get_roles/:id' => 'roles#get_roles', :as => :get_roles, via: [:get]
 
+  get 'roles/sso_logout'
+
   devise_for :users
 
   #
