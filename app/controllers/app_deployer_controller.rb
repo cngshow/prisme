@@ -63,8 +63,9 @@ class AppDeployerController < ApplicationController
     nexus_query_params[:c] = war_file.classifier unless war_file.classifier.empty?
     nexus_query_params[:p] = war_file.package
     war_cookie_params[:prisme_root] = non_proxy_url(path_string: root_path)
-    war_cookie_params[:prisme_roles_url] =  non_proxy_url(path_string: roles_get_roles_path)
-    war_cookie_params[:prisme_roles_ssoi_url] = non_proxy_url(path_string: roles_get_ssoi_roles_path)
+    war_cookie_params[:prisme_roles_url] =  non_proxy_url(path_string: roles_get_roles_path) << '.json'
+    war_cookie_params[:prisme_roles_ssoi_url] = non_proxy_url(path_string: roles_get_ssoi_roles_path) << '.json'
+    war_cookie_params[:prisme_ssoi_logout_url] = non_proxy_url(path_string: utilities_prisme_config_path) << '.json'
     war_cookie_params[:war_group_id] = war_file.groupId
     war_cookie_params[:war_artifact_id] = war_file.artifactId
     war_cookie_params[:war_version] = war_file.version

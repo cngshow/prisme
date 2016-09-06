@@ -1,8 +1,7 @@
 require 'uri'
 
+#methods for Prisme, but not Komet go here, for Komet visibility see helpers.rb in rails common.
 module PrismeUtilities
-  APPLICATION_URLS = 'application_urls'
-  SSOI_LOGOUT = 'ssoi_logout'
 
   class << self
     attr_accessor :ssoi_logout_url

@@ -14,4 +14,9 @@ class UtilitiesController < ApplicationController
     end
   end
 
+  def prisme_config
+    @@config ||= PrismeUtilities.server_config
+    render :json => @@config
+  end
+
 end
