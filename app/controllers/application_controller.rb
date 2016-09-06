@@ -7,6 +7,7 @@ class ApplicationController < ActionController::Base
   include Pundit
   include CommonController
   include SSOI
+  include ServletSupport
 
   after_action :verify_authorized, unless: :devise_controller?
   # Prevent CSRF attacks by raising an exception.
@@ -67,9 +68,12 @@ class ApplicationController < ActionController::Base
   end
 
 
-  def non_proxy_path(path_string:)
-    scheme = (URI root_url).scheme #we assume if the proxy is https we are too.
-    scheme + '://' + Socket.gethostname + path_string
+  def non_proxy_url(path_string:)
+    path_string = '/' + path_string unless path_string.start_with? '/'
+    scheme = secure? ?  'https' : 'http'
+    path = scheme + '://' + true_address.to_s + ':'  + true_port.to_s + path_string
+    $log.debug("Non proxy path is #{path}")
+    path
   end
 
 end

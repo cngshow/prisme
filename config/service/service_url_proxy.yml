@@ -24,3 +24,5 @@ proxy_pass:
      location: /server_1_rails_a/
    - path: https://vaausappctt70477.aac.va.gov:8080/komet_a/ #this is like our incoming url
      location: /server_1_rails_a/
+   - path: https://vaauscttweb80.aac.va.gov:8080/isaac-rest
+     location: /isaac-rest
