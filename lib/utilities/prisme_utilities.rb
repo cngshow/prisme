@@ -105,7 +105,7 @@ module URI
       location = url_hash[PROXY_LOCATION]
       clone = self.clone
 
-      if clone.to_s.starts_with?(incoming_url)
+      if (clone.to_s.starts_with?(incoming_url) || (clone.to_s + '/').starts_with?(incoming_url))
         #we found our match!!
         apache_uri = URI(apache_path)
         clone.path << '/' unless clone.path.last.eql? '/'
