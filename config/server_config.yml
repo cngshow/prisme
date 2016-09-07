@@ -1,31 +1,20 @@
 application_urls:
   ssoi_logout: https://logon.dev2.iam.va.gov/centrallogin/centrallanding.aspx
 
-#     #Location for komet_b
-#     <Location /server_1_rails_a/>
-#     ProxyPass https://vaausappctt704.aac.va.gov:8080/rails_komet_b/
-#     ProxyPassReverse https://vaausappctt704.aac.va.gov:8080/rails_komet_b/
-#     </Location>------------------------------------------------
 proxy_config_root:
- apache_url_proxy: https://vaauscttweb81.aac.va.gov/
- proxy_urls:
-   - incoming_url_path: https://vaausappctt704.aac.va.gov:8080/komet_a #this is like our incoming url
-     proxy_location: /server_1_rails_a/
-#   - incoming_url_path: wrongurl #this is like our incoming url
-#     proxy_location /server_1_rails_a/
-   - incoming_url_path: https://vaausappctt705.aac.va.gov:8080/komet_a/ #this is like our incoming url
-     proxy_location: /server_1_rails_a/
-   - incoming_url_path: https://short/ #this is like our incoming url
-     proxy_location: /server_1_rails_a/
-   - incoming_url_path: https://vaausappctt705.aac.va.gov:8080/longlonglonglonglonglonglonglonglonglonglonglonglonglonglong/komet_a/ #this is like our incoming url
-     proxy_location: /server_1_rails_a/
-   - incoming_url_path: https://vaausappctt704.aac.va.gov:8080/komet_b #We play with this one
-     proxy_location: server_1_rails_fazzle
-   - incoming_url_path: https://vaausappctt.aac.va.gov:8080/komet_a/ #this is like our incoming url
-     proxy_location: /server_1_rails_a/
-   - incoming_url_path: https://vaausappctt7047.aac.va.gov:8080/komet_a/ #this is like our incoming url
-     proxy_location: /server_1_rails_a/
-   - incoming_url_path: https://vaausappctt70477.aac.va.gov:8080/komet_a/ #this is like our incoming url
-     proxy_location: /server_1_rails_a/
-   - path: https://vaauscttweb80.aac.va.gov:8080/isaac-rest
-     location: /isaac-rest
+  apache_url_proxy: https://vaauscttweb81.aac.va.gov/
+  proxy_urls:
+    - incoming_url_path: https://vaauscttdbs81.aac.va.gov:8443/nexus #this is like our incoming url
+      proxy_location: /nexus
+    - incoming_url_path: https://vauscttweb81.aac.va.gov:8080/login #this is like our incoming url
+      proxy_location: /jenkins
+    - incoming_url_path: https://vaauscttdbs80.aac.va.gov:8080/rails_prisme/ #this is like our incoming url
+      proxy_location: /prisme/
+    - incoming_url_path: https://vaauscttweb80.aac.va.gov:8080/rails_komet_a/ #this is like our incoming url
+      proxy_location: /komet/
+    - incoming_url_path: https://vaauscttweb80.aac.va.gov:8080/manager/ #We play with this one
+      proxy_location: /manager
+    - incoming_url_path: https://vaauscttdbs80.aac.va.gov:8080/git/ #this is like our incoming url
+      proxy_location: /git/
+    - incoming_url_path: https://vaauscttweb80.aac.va.gov:8080/isaac-rest
+      proxy_location: /isaac-rest
