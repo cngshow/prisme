@@ -1,4 +1,4 @@
-module ServletSupport
+module ServletConcern
 
   SERVLET_REQUEST = 'java.servlet_request'
 

@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
   include Pundit
   include CommonController
   include SSOI
-  include ServletSupport
+  include ServletConcern
 
   after_action :verify_authorized, unless: :devise_controller?
   # Prevent CSRF attacks by raising an exception.
@@ -34,8 +34,9 @@ class ApplicationController < ActionController::Base
       when JIsaacLibrary::GitFailureException
         render :file => (trinidad? ? 'public/git_not_available.html' : "#{Rails.root}/../git_not_available.html")
         return
+      else
+        raise exception
     end
-    raise exception
   end
 
   def setup_gon
