@@ -44,8 +44,14 @@ To pull the latest code do the following:
 You should now see an rails_common directory under the lib directory.
 
 In RubyMine you may see a message concerning rails_common being under source control. If/when you do, click the add root button. This will allow you to make changes within the rails_prisme project to the code in rails_common and commit those changes as well.
+<br>
+<hr>
 
-
+Now you need to run
+```
+mvn -U initialize
+```
+This will set up the ISAAC stuff and downloads all of the necessary jars
 
 <br>
 <hr>
