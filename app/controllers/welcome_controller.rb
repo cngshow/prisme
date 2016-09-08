@@ -64,7 +64,7 @@ class WelcomeController < ApplicationController
       tomcat_deployments[appserver].each_pair do |war, d|
         current_row[:available] = true
         next if [:available, :failed].include?(war)
-        link = URI(d[:link]).proxify.to_s
+        link = ssoi? ? URI(d[:link]).proxify.to_s : d[:link]
         current_row[:rows] << {war_name: war, state: d[:state], version: d[:version], session_count: d[:session_count].to_s, link: link}
       end
       ret << current_row

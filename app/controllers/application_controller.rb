@@ -18,6 +18,9 @@ class ApplicationController < ActionController::Base
   before_action :setup_gon, :read_ssoi_headers
   rescue_from Exception, :with => :internal_error
 
+  attr_reader :ssoi # a boolean if we have ssoi headers
+  alias ssoi? ssoi
+
   def internal_error(exception)
     $log.error(exception.message)
     $log.error(exception.class.to_s)
@@ -47,7 +50,8 @@ class ApplicationController < ActionController::Base
 
   def read_ssoi_headers
     ssoi_user_name = ssoi_headers
-    return if ssoi_user_name.nil?
+    @ssoi = !ssoi_user_name.to_s.strip.empty? #we are using ssoi
+    return unless ssoi?
 
     user = SsoiUser.where(ssoi_user_name: ssoi_user_name).first_or_create
     session[Roles::SESSION_ROLES_ROOT][SSOI::SSOI_USER] = user
