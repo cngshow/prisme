@@ -1,5 +1,4 @@
 var polling = (function () {
-    // privates
     var registrations = {};
     var PollEnum = {
         WELCOME_CONTROLLER: 'welcome_controller',//used in navigation

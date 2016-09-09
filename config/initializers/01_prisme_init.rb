@@ -18,6 +18,7 @@ require './lib/prisme_constants'
 require './lib/cipher'
 require './lib/jenkin_client'
 require './lib/rails_common/util/helpers'
+require './lib/utilities/prisme_utilities'
 require './lib/rails_common/roles/roles'
 
 #System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
@@ -78,3 +79,10 @@ unless STFU_MODE
     end
   end
 end
+
+# ensure super_user and admin for cboden for demo
+=begin
+cboden = SsoiUser.find_by_ssoi_user_name('cboden')
+cboden.add_role(Roles::SUPER_USER)
+cboden.add_role(Roles::ADMINISTRATOR)
+=end

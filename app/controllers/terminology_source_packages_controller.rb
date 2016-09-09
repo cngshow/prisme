@@ -64,7 +64,7 @@ class TerminologySourcePackagesController < ApplicationController
   end
 
   def ajax_check_polling
-    prisme_job_has_running_jobs = PrismeJob.has_running_jobs?(TerminologyUploadTracker.class_name)
+    prisme_job_has_running_jobs = PrismeJob.has_running_jobs?(TerminologyUploadTracker.to_s)
     render json: {poll: prisme_job_has_running_jobs}
   end
 

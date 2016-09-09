@@ -4,6 +4,10 @@ module PrismeUserConcern
   included do
     rolify
     scope :filter_admin_role_check, -> (bool) { where(admin_role_check: bool) }
+
+    def self.filter_user_name(name)
+      where("lower(#{self.to_s.eql?(SsoiUser.to_s) ? 'ssoi_user_name' : 'email'}) like ?", "%#{name.downcase}%")
+    end
   end
 
   # instance methods here

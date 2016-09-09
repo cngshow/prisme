@@ -1,12 +1,14 @@
 require './app/policies/navigation_policy'
 require './lib/rails_common/util/controller_helpers'
+require './lib/rails_common/roles/ssoi'
+require './lib/rails_common/util/servlet_support'
 
 class ApplicationController < ActionController::Base
   include ApplicationHelper
   include Pundit
   include CommonController
-  SSOI_USER = :ssoi_user
-  SSOI_HEADER = :ssoi_header
+  include SSOI
+  include ServletSupport
 
   after_action :verify_authorized, unless: :devise_controller?
   # Prevent CSRF attacks by raising an exception.
@@ -15,6 +17,9 @@ class ApplicationController < ActionController::Base
 
   before_action :setup_gon, :read_ssoi_headers
   rescue_from Exception, :with => :internal_error
+
+  attr_reader :ssoi # a boolean if we have ssoi headers
+  alias ssoi? ssoi
 
   def internal_error(exception)
     $log.error(exception.message)
@@ -33,8 +38,9 @@ class ApplicationController < ActionController::Base
       when JIsaacLibrary::GitFailureException
         render :file => (trinidad? ? 'public/git_not_available.html' : "#{Rails.root}/../git_not_available.html")
         return
+      else
+        raise exception
     end
-    raise exception
   end
 
   def setup_gon
@@ -43,18 +49,12 @@ class ApplicationController < ActionController::Base
   end
 
   def read_ssoi_headers
-    ssoi_user_name = request.headers['HTTP_ADSAMACCOUNTNAME']
-    session[SSOI_HEADER] = nil
-    header_hash = {}
-    return if ssoi_user_name.to_s.strip.empty?
+    ssoi_user_name = ssoi_headers
+    @ssoi = !ssoi_user_name.to_s.strip.empty? #we are using ssoi
+    return unless ssoi?
 
-    unless SsoiUser.exists?(ssoi_user_name: ssoi_user_name)
-      SsoiUser.create(ssoi_user_name: ssoi_user_name)
-    end
-
-    user = SsoiUser.find_by(ssoi_user_name: ssoi_user_name)
-    header_hash[SSOI_USER] = user
-    session[SSOI_HEADER] = header_hash
+    user = SsoiUser.where(ssoi_user_name: ssoi_user_name).first_or_create
+    session[Roles::SESSION_ROLES_ROOT][SSOI::SSOI_USER] = user
   end
 
   def auth_registered
@@ -71,6 +71,6 @@ class ApplicationController < ActionController::Base
     application_server_configured = Service.service_exists? PrismeService::TOMCAT
     git_server_configured = Service.service_exists? PrismeService::GIT
     render :file => (trinidad? ? 'public/not_configured.html' : "#{Rails.root}/../not_configured.html") unless (application_server_configured && artifactory_configured && build_server_configured && git_server_configured)
-    return
   end
+
 end

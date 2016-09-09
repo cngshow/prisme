@@ -35,7 +35,7 @@ class WelcomeController < ApplicationController
     json = JSON.parse PrismeJob.job_name('PrismeCleanupJob', true).order(scheduled_at: :desc).limit(row_limit).to_json
 
     json.each do |j|
-      if (!j['started_at'].nil? && !j['completed_at'].nil?)
+      if !j['started_at'].nil? && !j['completed_at'].nil?
         j[:elapsed_time] = ApplicationHelper.convert_seconds_to_time(Time.parse(j['completed_at']) - Time.parse(j['started_at']))
       else
         j[:elapsed_time] = 'N/A'
@@ -60,11 +60,12 @@ class WelcomeController < ApplicationController
       service_name = appserver[:service_name]
       current_row = {service_id: appserver[:service_id], service_name: service_name, available: false, rows: []}
 
-      # get all of the applications deployed at this appserver location
+      # get all of the applications deployed at this app server location
       tomcat_deployments[appserver].each_pair do |war, d|
         current_row[:available] = true
         next if [:available, :failed].include?(war)
-        current_row[:rows] << {war_name: war, state: d[:state], version: d[:version], session_count: d[:session_count].to_s, link: d[:link]}
+        link = ssoi? ? URI(d[:link]).proxify.to_s : d[:link]
+        current_row[:rows] << {war_name: war, state: d[:state], version: d[:version], session_count: d[:session_count].to_s, link: link}
       end
       ret << current_row
     end

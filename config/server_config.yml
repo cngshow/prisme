@@ -1,0 +1,20 @@
+application_urls:
+  ssoi_logout: https://logon.dev2.iam.va.gov/centrallogin/centrallanding.aspx
+
+proxy_config_root:
+  apache_url_proxy: https://vaauscttweb81.aac.va.gov/
+  proxy_urls:
+    - incoming_url_path: https://vaauscttdbs81.aac.va.gov:8443/nexus #this is like our incoming url
+      proxy_location: /nexus
+    - incoming_url_path: https://vauscttweb81.aac.va.gov:8080/login #this is like our incoming url
+      proxy_location: /jenkins
+    - incoming_url_path: https://vaauscttdbs80.aac.va.gov:8080/rails_prisme/ #this is like our incoming url
+      proxy_location: /prisme/
+    - incoming_url_path: https://vaauscttweb80.aac.va.gov:8080/rails_komet_a/ #this is like our incoming url
+      proxy_location: /komet/
+    - incoming_url_path: https://vaauscttweb80.aac.va.gov:8080/manager/ #We play with this one
+      proxy_location: /manager
+    - incoming_url_path: https://vaauscttdbs80.aac.va.gov:8080/git/ #this is like our incoming url
+      proxy_location: /git/
+    - incoming_url_path: https://vaauscttweb80.aac.va.gov:8080/isaac-rest
+      proxy_location: /isaac-rest
