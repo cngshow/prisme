@@ -8,7 +8,7 @@ jars.each do |jar|
   require jar
 end
 #from rails common
-require './lib/rails_common/props/prop_loader'
+#require './lib/rails_common/props/prop_loader' #in application.rb now
 require './lib/rails_common/logging/open_logging'
 require './lib/rails_common/logging/logging'
 
