@@ -190,35 +190,6 @@
               <args>install</args>
             </configuration>
           </execution>
-          <!--Dan how do I do a conditional execution?	The next two should only be run in test mode.-->
-          <execution>
-            <id>run migration for test db</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <jrubyVerbose>true</jrubyVerbose>
-              <jrubyJvmArgs>-Djava.awt.headless=true</jrubyJvmArgs>
-              <command>rake</command>
-              <args>db:rollback STEP=9999 RAILS_ENV=test db:migrate RAILS_ENV=test</args>
-            </configuration>
-          </execution>
-
-          <execution>
-            <id>run migration for production db</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <jrubyVerbose>true</jrubyVerbose>
-              <jrubyJvmArgs>-Djava.awt.headless=true</jrubyJvmArgs>
-              <command>rake</command>
-              <args>db:rollback STEP=9999 RAILS_ENV=production db:migrate RAILS_ENV=production</args>
-            </configuration>
-          </execution>
-
           <execution>
             <id>run tests</id>
             <phase>compile</phase>
