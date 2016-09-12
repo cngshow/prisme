@@ -1,3 +1,4 @@
+$CLASSPATH << './lib/jars/ojdbc7.jar'
 require File.expand_path('../boot', __FILE__)
 
 require 'rails'

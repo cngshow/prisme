@@ -8,12 +8,12 @@
   <parent>
     <groupId>gov.vha.isaac.ochre</groupId>
     <artifactId>isaac-parent</artifactId>
-    <version>3.10-SNAPSHOT</version><!--TODO Eliminate Snapshot if present -->
+    <version>3.12-SNAPSHOT</version><!--TODO Eliminate Snapshot if present -->
   </parent>
 
   <groupId>gov.vha.isaac.gui.rails</groupId>
   <artifactId>rails_prisme</artifactId>
-  <version>1.21-SNAPSHOT</version><!--TODO THIS IS THE ONLY PLACE SNAPSHOT CAN EXIST BEFORE MAKING A RELEASE!!-->
+  <version>1.22-SNAPSHOT</version><!--TODO THIS IS THE ONLY PLACE SNAPSHOT CAN EXIST BEFORE MAKING A RELEASE!!-->
   <packaging>pom</packaging>
 
   <name>ISAAC Rails PRISME</name>
@@ -23,8 +23,8 @@
   </description>
 
   <properties>
-    <rails_common.version>1.22-SNAPSHOT</rails_common.version> <!--TODO Put new rails common version here if it has been changed -->
-    <isaac.version>3.10-SNAPSHOT</isaac.version><!--TODO Eliminate Snapshot if present -->
+    <rails_common.version>1.23-SNAPSHOT</rails_common.version> <!--TODO Put new rails common version here if it has been changed -->
+    <isaac.version>3.12-SNAPSHOT</isaac.version><!--TODO Eliminate Snapshot if present -->
     <!-- railsMode is automatically set to 'test' or 'production' - 'test' if the version number ends with '-SNAPSHOT'
     or 'production' otherwise.	See ant execution below-->
   </properties>
@@ -67,6 +67,11 @@
       <groupId>org.codehaus.cargo</groupId>
       <artifactId>cargo-core-uberjar</artifactId>
       <version>1.4.19</version>
+    </dependency>
+    <dependency>
+      <groupId>com.oracle.jdbc</groupId>
+      <artifactId>ojdbc7</artifactId>
+      <version>12.1.0.2</version>
     </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
@@ -185,35 +190,6 @@
               <args>install</args>
             </configuration>
           </execution>
-          <!--Dan how do I do a conditional execution?	The next two should only be run in test mode.-->
-          <execution>
-            <id>run migration for test db</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <jrubyVerbose>true</jrubyVerbose>
-              <jrubyJvmArgs>-Djava.awt.headless=true</jrubyJvmArgs>
-              <command>rake</command>
-              <args>db:rollback STEP=9999 RAILS_ENV=test db:migrate RAILS_ENV=test</args>
-            </configuration>
-          </execution>
-
-          <execution>
-            <id>run migration for production db</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <jrubyVerbose>true</jrubyVerbose>
-              <jrubyJvmArgs>-Djava.awt.headless=true</jrubyJvmArgs>
-              <command>rake</command>
-              <args>db:rollback STEP=9999 RAILS_ENV=production db:migrate RAILS_ENV=production</args>
-            </configuration>
-          </execution>
-
           <execution>
             <id>run tests</id>
             <phase>compile</phase>
