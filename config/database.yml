@@ -1,39 +1,47 @@
-#drop all oracle tables and start over:
-# select 'drop table '||table_name||' cascade constraints;' from user_tables;
+#In most production applications oracle_database.yml should be used instead
+#jdbc:h2:C:/work/ETS/rails_prisme/db/data/h2_prisme_development
 default: &default
-# see https://github.com/jruby/activerecord-jdbc-adapter/issues/479 regarding statement_escape_processing
-#  statement_escape_processing: true
-#  adapter: jdbc
-#  driver: oracle.jdbc.driver.OracleDriver
-  adapter: oracle_enhanced
-  database: xe
+#  adapter: hsqldb
+  adapter: jdbch2
   pool: 1000
 
 development:
+  #adapter: sqlite3  #schema: prisme_development
   <<: *default
-  url: jdbc:oracle:thin:@localhost:1521:xe
-    #url: jdbc:oracle:thin:@<hostname>:<port>:<sid>
-    #to ask oracle it's sid:  select instance from v$thread;
-  username: rails_development
-  password: rails
+  database: db/data/h2_prisme_development
+  username: sa
+  password: sa
+  #url: jdbc:hsqldb:file:./db/data/prisme_development
+  #url: jdbc:derby:file:./db/data/prisme_development
+  #database: db/data/prisme_development.sqlite3
+  #timeout: 10000000
+# Warning: The database defined as "test" will be erased and
+# re-generated from your development database when you run "rake".
+# Do not set this db to the same as development or production.
 test:
   <<: *default
-  url: jdbc:oracle:thin:@localhost:1521:xe
-     #url: jdbc:oracle:thin:@<hostname>:<port>:<sid>
-     #to ask oracle it's sid:  select instance from v$thread;
-  username: rails_development
-  password: rails
+#  schema: prisme_test
+#  database: prisme_test
+#  url: jdbc:hsqldb:file:./db/data/prisme_test
+  <% if ((File.exists? '/app/prismeData/h2_prisme_test.mv.db') && !$rake) %>
+  database: /app/prismeData/h2_prisme_test
+  <% else %>
+  database: db/data/h2_prisme_test
+  <% end %>
 
 production:
   <<: *default
-  url: jdbc:oracle:thin:@localhost:1521:xe
-      #url: jdbc:oracle:thin:@<hostname>:<port>:<sid>
-      #to ask oracle it's sid:  select instance from v$thread;
-  username: rails_development
-  password: rails
+  <% if ((File.exists? '/app/prismeData/h2_prisme_production.mv.db') && !$rake) %>
+  database: /app/prismeData/h2_prisme_production
+  <% else %>
+  database: db/data/h2_prisme_production
+  <% end %>
 
-# create a user in oracle:
-#create user rails_development
-#IDENTIFIED BY rails;
-#grant create session to rails_development;
-#GRANT all PRIVILEGES to rails_development;
+  #cleanup
+
+#        invoke  active_record
+#        create    db/migrate/20160202175646_create_tests.rb
+#        create    app/models/test.rb
+#        invoke    test_unit
+#        create      test/models/test_test.rb
+#        create      test/fixtures/tests.yml
