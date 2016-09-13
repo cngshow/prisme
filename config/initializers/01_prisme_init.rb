@@ -40,13 +40,25 @@ unless ($rake || defined?(Rails::Generators))
 
   at_exit do
     #do cleanup
-    begin
-      $log.always('Shutdown called!  Rails Prisme has been ruthlessly executed :-(')
-      ActiveRecord::Base.connection.execute('SHUTDOWN')
-      $log.always('H2 database has been shutdown.')
-    rescue => ex
-      $log.error('H2 database was not shutdown, or was previously shutdown. ' + ex.message)
-      $log.info("If the message above states the database was closed then don't worry :-).")
+    if($database.eql?('H2'))
+      begin
+        $log.always('Shutdown called!  Rails Prisme has been ruthlessly executed :-(')
+        ActiveRecord::Base.connection.execute('SHUTDOWN')
+        $log.always('H2 database has been shutdown.')
+      rescue => ex
+        $log.error('H2 database was not shutdown, or was previously shutdown. ' + ex.message)
+        $log.info("If the message above states the database was closed then don't worry :-).")
+      end
+    else
+      #Oracle
+      begin
+        ActiveRecord::Base.connection.disconnect!
+        #ActiveRecord::Base.clear_active_connections!
+        #ActiveRecord::Base.clear_all_connections!
+        $log.always('Oracle database connections cleared.')
+      rescue => ex
+        $log.error('Oracle connections were not closed. ' + ex.message)
+      end
     end
   end
 
