@@ -64,22 +64,22 @@ This will set up the ISAAC stuff and downloads all of the necessary jars
 
 3 - Launch SQL Developer and connect to your local Express edition as **system** at the default port **1521** with the SID as **xe**.
 
-4 - Run the following commands to create the PRISME users changing the **!some_password!** to a secure password.
+4 - Run the following commands to create the PRISME users changing the **some_password** to a secure password.
 ```
 -- USER SQL
-CREATE USER PRISME_DEV IDENTIFIED BY !some_password! ;
+CREATE USER PRISME_DEV IDENTIFIED BY some_password ;
 -- ROLES
 GRANT "DBA" TO PRISME_DEV ;
 GRANT "CONNECT" TO PRISME_DEV ;
 
 -- USER SQL
-CREATE USER PRISME_TEST IDENTIFIED BY !some_password! ;
+CREATE USER PRISME_TEST IDENTIFIED BY some_password ;
 -- ROLES
 GRANT "DBA" TO PRISME_TEST ;
 GRANT "CONNECT" TO PRISME_TEST ;
 
 -- USER SQL
-CREATE USER PRISME_PROD IDENTIFIED BY !some_password! ;
+CREATE USER PRISME_PROD IDENTIFIED BY some_password ;
 -- ROLES
 GRANT "DBA" TO PRISME_PROD ;
 GRANT "CONNECT" TO PRISME_PROD ;
@@ -95,7 +95,7 @@ ALTER USER PRISME_TEST PROFILE PRISME_PROFILE;
 ALTER USER PRISME_PROD PROFILE PRISME_PROFILE;
 ```
 
-6 - Update the database.yml file in the PRISME application to reflect the connection to Oracle using the users and passwords established above in the respective environments.
+6 - Update the oracle_database.yml file in the PRISME application to reflect the connection to Oracle using the users and passwords established above in the respective environments.
 
 ```
 default: &default
@@ -107,7 +107,7 @@ development:
   <<: *default
   url: jdbc:oracle:thin:@localhost:1521:xe
   username: PRISME_DEV
-  password: !some_password!
+  password: some_password
 
 follow the bouncing ball for the rest...
 
@@ -119,6 +119,8 @@ rails console
 ```
 
 This should run the migrations creating all of the tables in your configured Oracle database based on your Rails environment. If you can open the rails console successfully then you are good to go.
+
+8 - On AITC boxes, move the oracle_database.yml file to /app/prismeData if you are using Oracle. Otherwise the H2 database will be the default.
 
 <br>
 <h1>Start up PRISME</h1>
