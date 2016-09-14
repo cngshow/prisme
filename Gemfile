@@ -36,7 +36,6 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 #PRISME gems
-#gem 'mongoid', '~> 5.0.0'
 gem 'bootstrap-sass', '~> 3.3.6'
 gem 'font-awesome-sass', '~> 4.6.2'
 gem 'trinidad', require: nil
@@ -46,22 +45,19 @@ gem 'gon'
 gem 'warbler', '>= 2.0.0.pre3'
 gem 'faraday', '~> 0.9.2'
 gem 'ci_reporter_test_unit'
-#gem 'jdbc-hsqldb', '~> 2.3'
-#gem 'jdbc-hsqldb', '~> 2.3'
-#gem 'activerecord-jdbchsqldb-adapter', '~> 1.3'
-#gem 'activerecord-jdbcderby-adapter'
-#gem 'activerecord-jdbc-adapter'
-gem 'activerecord-oracle_enhanced-adapter'
 gem 'sucker_punch', '~> 2.0.0'
 gem 'devise'
 gem 'pundit'
 gem 'rolify'
-#gem 'jdbc-h2', '1.4.181'
 gem 'will_paginate'
 gem 'bootstrap-growl-rails'
-#gem 'activerecord-jdbch2-adapter'
 gem 'select2-rails'
 gem 'paperclip'
+
+gem 'jdbc-h2', '1.4.181'
+gem 'activerecord-jdbch2-adapter'
+#We will use H2 for running rake tasks (tests) so we have no dependency on Oracle during the build.
+gem 'activerecord-oracle_enhanced-adapter'
 
 group :development do
   gem 'yard'

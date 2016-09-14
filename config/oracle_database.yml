@@ -1,0 +1,39 @@
+#drop all oracle tables and start over:
+# select 'drop table '||table_name||' cascade constraints;' from user_tables;
+default: &default
+# see https://github.com/jruby/activerecord-jdbc-adapter/issues/479 regarding statement_escape_processing
+#  statement_escape_processing: true
+#  adapter: jdbc
+#  driver: oracle.jdbc.driver.OracleDriver
+  adapter: oracle_enhanced
+  database: xe
+  pool: 1000
+
+development:
+  <<: *default
+  url: jdbc:oracle:thin:@localhost:1521:xe
+    #url: jdbc:oracle:thin:@<hostname>:<port>:<sid>
+    #to ask oracle it's sid:  select instance from v$thread;
+  username: rails_development
+  password: rails
+test:
+  <<: *default
+  url: jdbc:oracle:thin:@localhost:1521:xe
+     #url: jdbc:oracle:thin:@<hostname>:<port>:<sid>
+     #to ask oracle it's sid:  select instance from v$thread;
+  username: rails_development
+  password: rails
+
+production:
+  <<: *default
+  url: jdbc:oracle:thin:@localhost:1521:xe
+      #url: jdbc:oracle:thin:@<hostname>:<port>:<sid>
+      #to ask oracle it's sid:  select instance from v$thread;
+  username: rails_development
+  password: rails
+
+# create a user in oracle:
+#create user rails_development
+#IDENTIFIED BY rails;
+#grant create session to rails_development;
+#GRANT all PRIVILEGES to rails_development;
