@@ -17,7 +17,7 @@ module ServicesHelper
 
     case type
       when PrismeService::TYPE_PASSWORD
-        if (service_active_record)
+        if service_active_record
           hash[:value] = service_active_record.properties_hash[key]
         end
       when PrismeService::TYPE_URL
@@ -34,7 +34,7 @@ module ServicesHelper
     types = $SERVICE_TYPES.keys
     valid_types = []
     types.each do |type|
-      if ($SERVICE_TYPES[type]['singleton'])
+      if $SERVICE_TYPES[type]['singleton']
         service_exists = Service.exists?(service_type: type)
         valid_types << type unless service_exists
       else

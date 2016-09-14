@@ -14,23 +14,23 @@ development:
   url: jdbc:oracle:thin:@localhost:1521:xe
     #url: jdbc:oracle:thin:@<hostname>:<port>:<sid>
     #to ask oracle it's sid:  select instance from v$thread;
-  username: rails_development
-  password: rails
+  username: PRISME_DEV
+  password: !some_password!
 test:
   <<: *default
   url: jdbc:oracle:thin:@localhost:1521:xe
      #url: jdbc:oracle:thin:@<hostname>:<port>:<sid>
      #to ask oracle it's sid:  select instance from v$thread;
-  username: rails_development
-  password: rails
+  username: PRISME_TEST
+  password: !some_password!
 
 production:
   <<: *default
   url: jdbc:oracle:thin:@localhost:1521:xe
       #url: jdbc:oracle:thin:@<hostname>:<port>:<sid>
       #to ask oracle it's sid:  select instance from v$thread;
-  username: rails_development
-  password: rails
+  username: PRISME_PROD
+  password: !some_password!
 
 # create a user in oracle:
 #create user rails_development

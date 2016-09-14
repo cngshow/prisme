@@ -45,7 +45,6 @@ You should now see an rails_common directory under the lib directory.
 
 In RubyMine you may see a message concerning rails_common being under source control. If/when you do, click the add root button. This will allow you to make changes within the rails_prisme project to the code in rails_common and commit those changes as well.
 <br>
-<hr>
 
 Now you need to run
 ```
@@ -55,7 +54,76 @@ This will set up the ISAAC stuff and downloads all of the necessary jars
 
 <br>
 <hr>
+<h1>Oracle Setup</h1>
+
+1 - Download Oracle Express Edition for Oracle 12g at:  http://www.oracle.com/technetwork/database/database-technologies/express-edition/downloads/index.html 
+    Unzip the package and run the SETUP application. This will set up the database as a service and establish your system password for the database.
+
+2 - Download SQL Developer from Oracle at:  http://www.oracle.com/technetwork/developer-tools/sql-developer/downloads/index.html
+    This tool will allow you to connect to our Oracle database instances including your local express database. Unzip this file and locate the sqldeveloper application in the root directory to launch the tool.
+
+3 - Launch SQL Developer and connect to your local Express edition as **system** at the default port **1521** with the SID as **xe**.
+
+4 - Run the following commands to create the PRISME users changing the **!some_password!** to a secure password.
+```
+-- USER SQL
+CREATE USER PRISME_DEV IDENTIFIED BY !some_password! ;
+-- ROLES
+GRANT "DBA" TO PRISME_DEV ;
+GRANT "CONNECT" TO PRISME_DEV ;
+
+-- USER SQL
+CREATE USER PRISME_TEST IDENTIFIED BY !some_password! ;
+-- ROLES
+GRANT "DBA" TO PRISME_TEST ;
+GRANT "CONNECT" TO PRISME_TEST ;
+
+-- USER SQL
+CREATE USER PRISME_PROD IDENTIFIED BY !some_password! ;
+-- ROLES
+GRANT "DBA" TO PRISME_PROD ;
+GRANT "CONNECT" TO PRISME_PROD ;
+```
+
+5 - Create the PRISME_PROFILE for setting up session connections.
+
+```
+--create a profile and assign it to users
+CREATE PROFILE PRISME_PROFILE LIMIT SESSIONS_PER_USER 500;
+ALTER USER PRISME_DEV PROFILE PRISME_PROFILE;
+ALTER USER PRISME_TEST PROFILE PRISME_PROFILE;
+ALTER USER PRISME_PROD PROFILE PRISME_PROFILE;
+```
+
+6 - Update the database.yml file in the PRISME application to reflect the connection to Oracle using the users and passwords established above in the respective environments.
+
+```
+default: &default
+  adapter: oracle_enhanced
+  database: xe
+  pool: 1000
+
+development:
+  <<: *default
+  url: jdbc:oracle:thin:@localhost:1521:xe
+  username: PRISME_DEV
+  password: !some_password!
+
+follow the bouncing ball for the rest...
+
+```
+
+7 - Open up a terminal rails console in the rails root directory for PRISME (this step does not apply when setting up AITC boxes)
+```
+rails console
+```
+
+This should run the migrations creating all of the tables in your configured Oracle database based on your Rails environment. If you can open the rails console successfully then you are good to go.
+
+<br>
+<h1>Start up PRISME</h1>
 You can now bring up the server:
+
 ```
 startup.bat
 ```
