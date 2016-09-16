@@ -17,6 +17,7 @@ class ApplicationController < ActionController::Base
 
   before_action :setup_gon, :read_ssoi_headers
   rescue_from Exception, :with => :internal_error
+  rescue_from Pundit::NotAuthorizedError, Pundit::AuthorizationNotPerformedError, :with => :pundit_error
 
   attr_reader :ssoi # a boolean if we have ssoi headers
   alias ssoi? ssoi
@@ -28,10 +29,6 @@ class ApplicationController < ActionController::Base
     $log.error(exception.backtrace.join("\n"))
 
     case exception
-      when Pundit::AuthorizationNotPerformedError
-      when Pundit::NotAuthorizedError
-        render :file => (trinidad? ? 'public/not_authorized.html' : "#{Rails.root}/../not_authorized.html")
-        return
       when Faraday::ClientError
         render :file => (trinidad? ? 'public/nexus_not_available.html' : "#{Rails.root}/../nexus_not_available.html")
         return
