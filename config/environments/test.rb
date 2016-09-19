@@ -52,4 +52,5 @@ Rails.application.configure do
     self.paths['config/database'] = oracle_yaml if (File.exists?(oracle_yaml))
     $database = (File.exists?(oracle_yaml)) ? 'ORACLE' : 'H2'
   end
+  puts "********************************************** I am raking against #{$database}"
 end
