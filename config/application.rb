@@ -32,6 +32,7 @@ module RailsPrisme
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
     config.active_job.queue_adapter = :sucker_punch
+    puts "**************************************************************Rake is #{$rake}"
     unless $rake
       oracle_yaml = (RbConfig::CONFIG["host_os"].eql?('mswin32')) ? "#{Rails.root}/config/oracle_database.yml" :$PROPS['PRISME.data_directory'] + '/oracle_database.yml'
       self.paths['config/database'] = oracle_yaml if (File.exists?(oracle_yaml))
