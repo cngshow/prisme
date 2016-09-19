@@ -100,7 +100,7 @@
       });
     }
     else {
-      var rows = '<tr><td colspan="<%= locals['fields'].keys.length.to_s %>" style="text-align:center">There are no items to list...</td></tr>';
+      var rows = '<tr><td colspan="<%= locals['fields'].keys.length.to_s %>" class="text-center">There are no items to list...</td></tr>';
       $('#' + tableId + ' tbody').html(rows);
     }
   }
