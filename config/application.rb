@@ -19,6 +19,8 @@ require './lib/rails_common/props/prop_loader' #Grant visibility to $PROPS at th
 Bundler.require(*Rails.groups)
 
 module RailsPrisme
+  H2 = 'H2'
+  ORACLE = 'Oracle'
   class Application < Rails::Application
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
@@ -35,8 +37,7 @@ module RailsPrisme
 
     oracle_yaml = (RbConfig::CONFIG["host_os"].eql?('mswin32')) ? "#{Rails.root}/config/oracle_database.yml" :$PROPS['PRISME.data_directory'] + '/oracle_database.yml'
     self.paths['config/database'] = oracle_yaml if (File.exists?(oracle_yaml))
-    $database = (File.exists?(oracle_yaml)) ? 'ORACLE' : 'H2'
-    puts "********************************************** I am raking against #{$database}"
+    $database = (File.exists?(oracle_yaml)) ? RailsPrisme::ORACLE : RailsPrisme::H2
     #http://stackoverflow.com/questions/4204724/strategies-for-overriding-database-yml
   end
 end
