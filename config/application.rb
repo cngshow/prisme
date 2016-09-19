@@ -32,9 +32,12 @@ module RailsPrisme
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
     config.active_job.queue_adapter = :sucker_punch
-    oracle_yaml = (RbConfig::CONFIG["host_os"].eql?('mswin32')) ? "#{Rails.root}/config/oracle_database.yml" :$PROPS['PRISME.data_directory'] + '/oracle_database.yml'
-    self.paths['config/database'] = oracle_yaml if (File.exists?(oracle_yaml))
-    $database = (File.exists?(oracle_yaml)) ? 'ORACLE' : 'H2'
+    unless $rake
+      oracle_yaml = (RbConfig::CONFIG["host_os"].eql?('mswin32')) ? "#{Rails.root}/config/oracle_database.yml" :$PROPS['PRISME.data_directory'] + '/oracle_database.yml'
+      self.paths['config/database'] = oracle_yaml if (File.exists?(oracle_yaml))
+      $database = (File.exists?(oracle_yaml)) ? 'ORACLE' : 'H2'
+    end
+
     #http://stackoverflow.com/questions/4204724/strategies-for-overriding-database-yml
   end
 end
