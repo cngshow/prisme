@@ -117,6 +117,19 @@
                   </ul>
                 </td>
               </tr>
+              <tr>
+                <td width="30%">
+                  <%= role_checkbox(Roles::MANAGER) %>
+                </td>
+                <td width="70%">
+                  <p>The <strong>Manager</strong> role provides additional functionality to the Read Only role including:<br>
+                  <ul>
+                    <li>Add Comments</li>
+                    <li>Approve the Cancellation Process</li>
+                    <li>Deny the Cancellation Process and send it back to the initiator</li>
+                  </ul>
+                </td>
+              </tr>
               </tbody>
             </table>
         <% end %>
