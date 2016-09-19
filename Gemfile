@@ -50,7 +50,7 @@ gem 'devise'
 
 gem 'pundit'
 gem 'rolify'
-gem 'will_paginate'
+# gem 'will_paginate'
 gem 'bootstrap-growl-rails'
 gem 'select2-rails'
 gem 'paperclip'
