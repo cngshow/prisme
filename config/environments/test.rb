@@ -1,6 +1,4 @@
 Rails.application.configure do
-  puts "**************************************************************Rake is #{$rake}"
-
   # Settings specified here will take precedence over those in config/application.rb.
   config.relative_url_root = ENV['RAILS_RELATIVE_URL_ROOT']
   # The test environment is used exclusively to run your application's
@@ -49,4 +47,9 @@ Rails.application.configure do
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
+  unless $rake
+    oracle_yaml = (RbConfig::CONFIG["host_os"].eql?('mswin32')) ? "#{Rails.root}/config/oracle_database.yml" :$PROPS['PRISME.data_directory'] + '/oracle_database.yml'
+    self.paths['config/database'] = oracle_yaml if (File.exists?(oracle_yaml))
+    $database = (File.exists?(oracle_yaml)) ? 'ORACLE' : 'H2'
+  end
 end

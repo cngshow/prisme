@@ -37,4 +37,9 @@ Rails.application.configure do
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
+  unless $rake
+    oracle_yaml = (RbConfig::CONFIG["host_os"].eql?('mswin32')) ? "#{Rails.root}/config/oracle_database.yml" :$PROPS['PRISME.data_directory'] + '/oracle_database.yml'
+    self.paths['config/database'] = oracle_yaml if (File.exists?(oracle_yaml))
+    $database = (File.exists?(oracle_yaml)) ? 'ORACLE' : 'H2'
+  end
 end
