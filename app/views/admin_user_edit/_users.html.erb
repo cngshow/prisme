@@ -16,8 +16,8 @@
               role_text = "<em><b>#{role_text}</b></em>"
             end
           %>
-          <td style="text-align: left"><%= raw role_text.empty? ? 'No Roles Assigned' : role_text %></td>
-          <td style="text-align: left">
+          <td class="text-left"><%= raw role_text.empty? ? 'No Roles Assigned' : role_text %></td>
+          <td class="text-left">
             <a data-toggle="modal" data-target="#editModal" class="btn btn-primary" role="button" onclick='edit_user_roles("<%=user.user_row_id%>", <%= raw JSON.parse(user_roles.to_json) %>);'>
               <i class="fa fa-edit fa-fw" aria-hidden="true"></i>&nbsp;Edit User Roles</a>
             <!-- user cannot delete themselves -->

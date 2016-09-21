@@ -42,7 +42,7 @@
   <tr>
   </tr>
   <tr>
-    <td colspan="8" style="text-align:center">There are no items to list...</td>
+    <td colspan="8" class="text-center">There are no items to list...</td>
   </tr>
   </tbody>
 </table>
@@ -230,7 +230,7 @@
                   tr_data.append($('<td>').text(''));//progress
                   tr_data.append($('<td>').text(''));//state_time
                   tr_data.append($('<td>').text(''));//elapsed_time
-                  break inner_loop;
+                  break;
                 }
                 else if (field === 'progress') {
                   var title = row.progress < 100 ? row.title : '';
@@ -251,12 +251,11 @@
                   tr_data.append($('<td>').text(eval('row.' + field)));
                 }
               }
-          ;
           $('#' + tableId + ' tbody').append(tr_data);
         });
       }
       else {
-        var rows = '<tr><td colspan="8" style="text-align:center">There are no items to list...</td></tr>';
+        var rows = '<tr><td colspan="8" class="text-center">There are no items to list...</td></tr>';
         $('#' + tableId + ' tbody').html(rows);
       }
     }
