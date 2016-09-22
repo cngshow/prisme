@@ -8,7 +8,7 @@ Rails.application.routes.draw do
   get 'utilities/seed_services'
   get 'utilities/prisme_config'
 
-  
+
   get 'roles/get_roles'
   get 'roles/get_ssoi_roles'
   get 'roles/get_roles_token', defaults: { format: 'text' }
