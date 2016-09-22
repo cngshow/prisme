@@ -7,6 +7,6 @@ class CreateServices < ActiveRecord::Migration
 
       t.timestamps null: false
     end
-    add_index :services, [:name], name: "service_name"
+    add_index :services, [:name], name: 'service_name'
   end
 end
