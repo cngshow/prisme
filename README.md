@@ -138,11 +138,11 @@ http://localhost:3000
 <h2>Load Service and Service Properties for your environment</h2>
 There is seed data for the following environments:
 <ol>
-    <li>LOCALHOST - http://localhost:3000/utilities/seed_database?db=localhost</li>
-    <li>VA_DEV_DB - http://path_to_prisme:3000/utilities/seed_database?db=va_dev_db</li>
-    <li>AITC_DEV_DB - http://path_to_prisme:3000/utilities/seed_database?db=aitc_dev_db</li>
-    <li>AITC_SQA_DB - http://path_to_prisme:3000/utilities/seed_database?db=aitc_sqa_db</li>
-    <li>AITC_TEST_DB - http://path_to_prisme:3000/utilities/seed_database?db=aitc_test_db</li>
+    <li>LOCALHOST - http://localhost:port/rails_prisme/utilities/seed_services?db=localhost</li>
+    <li>VA_DEV_DB - http://path_to_prisme:port/rails_prisme/utilities/seed_services?db=va_dev_db</li>
+    <li>AITC_DEV_DB - http://path_to_prisme:port/rails_prisme/utilities/seed_services?db=aitc_dev_db</li>
+    <li>AITC_SQA_DB - http://path_to_prisme:port/rails_prisme/utilities/seed_services?db=aitc_sqa_db</li>
+    <li>AITC_TEST_DB - http://path_to_prisme:port/rails_prisme/utilities/seed_services?db=aitc_test_db</li>
 </ol>
 
 <p>If any of the data specifying the locations or credentials for any of these environments change then we will need to update the seed files accordingly. If, after running for your environment, you are not connecting to a given service then go into services and update the url(s) and user credentials and re-test.</p> 
