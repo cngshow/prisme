@@ -11,7 +11,7 @@ module SeedData
       {
           service: {name: 'Nexus Artifactory', description: 'Nexus Artifactory', service_type: PrismeService::NEXUS},
           props: [
-              {key: PrismeService::NEXUS_REPOSITORY_URL, value: 'https://vaausappctt702.aac.va.gov:8443/nexus/content/groups/everything/'},
+              {key: PrismeService::NEXUS_REPOSITORY_URL, value: 'https://vaausappctt702.aac.va.gov:8443/nexus/content/groups/public'},
               {key: PrismeService::NEXUS_PUBLICATION_URL, value: 'https://vaausappctt702.aac.va.gov:8443/nexus/content/repositories/termdata/'},
               {key: PrismeService::NEXUS_USER, value: 'devtest'},
               {key: PrismeService::NEXUS_PWD, value: '["jK\x90\xA1\x1Fk\x87\xB6\xAB\xA3\xC5\xE7~\xBA\x1AK", "k]\x95\xD8w\x15\xFE\xD3\xC7\xDC\xAC\x9E\x1C\xD0bG"]'}
