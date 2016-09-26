@@ -13,7 +13,7 @@ module PrismeUtilities
   end
 
   def self.server_config
-    # default the config file location basd on the data_directory property
+    # default the config file location based on the data_directory property
     config_file = "#{$PROPS['PRISME.data_directory']}/server_config.yml"
 
     # if the config file does not exist then fallback to the file in the config directory.

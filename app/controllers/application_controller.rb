@@ -48,7 +48,11 @@ class ApplicationController < ActionController::Base
   def read_ssoi_headers
     ssoi_user_name = ssoi_headers
     @ssoi = !ssoi_user_name.to_s.strip.empty? #we are using ssoi
-    return unless ssoi?
+    unless ssoi?
+      session[Roles::SESSION_ROLES_ROOT][SSOI::SSOI_USER] = nil
+      return
+      # clean_roles_session ??
+    end
 
     user = SsoiUser.where(ssoi_user_name: ssoi_user_name).first_or_create
     session[Roles::SESSION_ROLES_ROOT][SSOI::SSOI_USER] = user
