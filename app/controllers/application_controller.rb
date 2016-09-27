@@ -49,9 +49,8 @@ class ApplicationController < ActionController::Base
     ssoi_user_name = ssoi_headers
     @ssoi = !ssoi_user_name.to_s.strip.empty? #we are using ssoi
     unless ssoi?
-      session[Roles::SESSION_ROLES_ROOT][SSOI::SSOI_USER] = nil
+      clean_roles_session
       return
-      # clean_roles_session ??
     end
 
     user = SsoiUser.where(ssoi_user_name: ssoi_user_name).first_or_create
