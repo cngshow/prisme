@@ -4,3 +4,5 @@
   <li><%=role.name%></li>
 <%end%>
 <p> The user was authenticated = <%=@authenticated.to_s %></p>
+<br><p>The token is -- </p>
+<%=@roles_hash[:token] %>
