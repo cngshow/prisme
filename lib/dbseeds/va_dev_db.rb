@@ -11,7 +11,7 @@ module SeedData
       {
           service: {name: 'Nexus Artifactory', description: 'Nexus Artifactory', service_type: PrismeService::NEXUS},
           props: [
-              {key: PrismeService::NEXUS_REPOSITORY_URL, value: 'https://vadev.mantech.com:8080/nexus/content/groups/public'},
+              {key: PrismeService::NEXUS_REPOSITORY_URL, value: 'https://vadev.mantech.com:8080/nexus/content/groups/everything/'},
               {key: PrismeService::NEXUS_PUBLICATION_URL, value: 'https://vadev.mantech.com:8080/nexus/content/repositories/termdata/'},
               {key: PrismeService::NEXUS_USER, value: 'devtest'},
               {key: PrismeService::NEXUS_PWD, value: '["jK\x90\xA1\x1Fk\x87\xD7\xC3\xD8\xA8\x9A\x18\xD4fC"]'}

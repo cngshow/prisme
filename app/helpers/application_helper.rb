@@ -96,7 +96,7 @@ module ApplicationHelper
   def prisme_user
     ssoi_header_hash = session[Roles::SESSION_ROLES_ROOT]
     devise_user = current_user
-    ssoi_header_hash.nil? || ssoi_header_hash.empty? ? devise_user : ssoi_header_hash[SSOI::SSOI_USER]
+    @ssoi ? ssoi_header_hash[SSOI::SSOI_USER] : devise_user
   end
 end
 # load './app/helpers/application_helper.rb'
