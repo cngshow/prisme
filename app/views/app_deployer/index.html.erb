@@ -42,9 +42,9 @@
     <%= field_set_tag 'Application Deployment Summary' do %>
         <p>Please review the information below before submitting the deployment request.</p>
         <section>
-          <h4 style="font-style: italic; text-decoration: underline;">Application to Deploy</h4><div id="summary_application" style="padding-left: 20px; padding-bottom: 20px; font-weight: bold;"></div>
-          <h4 style="font-style: italic; text-decoration: underline;">Application Components</h4><div id="summary_component" style="padding-left: 20px; padding-bottom: 20px; font-weight: bold;"></div>
-          <h4 style="font-style: italic; text-decoration: underline;">Tomcat Server</h4><div id="summary_tomcat"  style="padding-left: 20px; padding-bottom: 20px; font-weight: bold;"></div>
+          <h4 class="text-italic text-underline">Application to Deploy</h4><div id="summary_application" class="app_deployer"></div>
+          <h4 class="text-italic text-underline">Application Components</h4><div id="summary_component" class="app_deployer"></div>
+          <h4 class="text-italic text-underline">Tomcat Server</h4><div id="summary_tomcat" class="app_deployer"></div>
         </section>
     <% end %>
 <% end %>

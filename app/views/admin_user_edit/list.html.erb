@@ -119,15 +119,14 @@
               </tr>
               <tr>
                 <td width="30%">
-                  <%= role_checkbox(Roles::FINAL_APPROVER) %>
+                  <%= role_checkbox(Roles::MANAGER) %>
                 </td>
                 <td width="70%">
-                  <p>The <strong>Final Approver</strong> role provides additional functionality to the Read Only role including:<br>
+                  <p>The <strong>Manager</strong> role provides additional functionality to the Read Only role including:<br>
                   <ul>
-                    <li>Reject New/Modified Terminology, Concepts, and Refsets</li>
-                    <li>Add Comments to a Rejected Task</li>
-                    <li>Update Request Status</li>
-                    <li>Give Final Approval for New/Modified terminology, Concepts, and Refsets</li>
+                    <li>Add Comments</li>
+                    <li>Approve the Cancellation Process</li>
+                    <li>Deny the Cancellation Process and send it back to the initiator</li>
                   </ul>
                 </td>
               </tr>

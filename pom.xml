@@ -8,12 +8,12 @@
   <parent>
     <groupId>gov.vha.isaac.ochre</groupId>
     <artifactId>isaac-parent</artifactId>
-    <version>3.11</version><!--TODO Eliminate Snapshot if present -->
+    <version>3.12</version><!--TODO Eliminate Snapshot if present -->
   </parent>
 
   <groupId>gov.vha.isaac.gui.rails</groupId>
   <artifactId>rails_prisme</artifactId>
-  <version>1.21</version><!--TODO THIS IS THE ONLY PLACE SNAPSHOT CAN EXIST BEFORE MAKING A RELEASE!!-->
+  <version>1.22</version><!--TODO THIS IS THE ONLY PLACE SNAPSHOT CAN EXIST BEFORE MAKING A RELEASE!!-->
   <packaging>pom</packaging>
 
   <name>ISAAC Rails PRISME</name>
@@ -23,8 +23,9 @@
   </description>
 
   <properties>
-    <rails_common.version>1.22</rails_common.version> <!--TODO Put new rails common version here if it has been changed -->
-    <isaac.version>3.11</isaac.version><!--TODO Eliminate Snapshot if present -->
+    <rails_common.version>1.26</rails_common.version> <!--TODO Put new rails common version here if it has been changed -->
+    <!--Open up the assembly.xml file in rails common if new directories are added. -->
+    <isaac.version>3.12</isaac.version><!--TODO Eliminate Snapshot if present -->
     <!-- railsMode is automatically set to 'test' or 'production' - 'test' if the version number ends with '-SNAPSHOT'
     or 'production' otherwise.	See ant execution below-->
   </properties>
@@ -61,12 +62,17 @@
     <dependency>
       <groupId>com.offbytwo.jenkins</groupId>
       <artifactId>jenkins-client</artifactId>
-      <version>0.3.4</version>
+      <version>0.3.5</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.cargo</groupId>
       <artifactId>cargo-core-uberjar</artifactId>
       <version>1.4.19</version>
+    </dependency>
+    <dependency>
+      <groupId>com.oracle.jdbc</groupId>
+      <artifactId>ojdbc7</artifactId>
+      <version>12.1.0.2</version>
     </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
