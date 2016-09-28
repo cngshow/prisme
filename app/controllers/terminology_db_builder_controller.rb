@@ -6,7 +6,7 @@ class TerminologyDbBuilderController < ApplicationController
 
   def index
     # retrieve the metadata versions dropdown
-    @metadata_versions = load_metadata_drop_down(nexus_params: {g: 'gov.vha.isaac.ochre.modules', a: 'metadata', repositoryId: 'releases'})
+    @metadata_versions = load_metadata_drop_down(nexus_params: {g: 'gov.vha.isaac.ochre.modules', a: 'ochre-metadata', repositoryId: 'releases'})
 
     # retrieve the list of ibdf options for the multi-select drop down
     @idbf_files = load_ibdf_drop_down(nexus_params: {g: 'gov.vha.isaac.terminology.converted', repositoryId: 'termdata'})
@@ -72,7 +72,7 @@ class TerminologyDbBuilderController < ApplicationController
     begin
       json = JSON.parse(response.body)
     rescue JSON::ParserError => ex
-      if (response.status.eql?(200))
+      if response.status.eql?(200)
         return response.body
       end
     end
