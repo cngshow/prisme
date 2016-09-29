@@ -85,14 +85,23 @@ GRANT "DBA" TO PRISME_PROD ;
 GRANT "CONNECT" TO PRISME_PROD ;
 ```
 
-5 - Create the PRISME_PROFILE for setting up session connections.
+5 - Create the PRISME_PROFILE for setting up session connections and connection idle_time.
 
 ```
 --create a profile and assign it to users
-CREATE PROFILE PRISME_PROFILE LIMIT SESSIONS_PER_USER 500;
+CREATE PROFILE PRISME_PROFILE
+    LIMIT SESSIONS_PER_USER 500
+    IDLE_TIME UNLIMITED;
+    
 ALTER USER PRISME_DEV PROFILE PRISME_PROFILE;
 ALTER USER PRISME_TEST PROFILE PRISME_PROFILE;
 ALTER USER PRISME_PROD PROFILE PRISME_PROFILE;
+
+--ALTER PROFILE PRISME_PROFILE 
+--  LIMIT IDLE_TIME UNLIMITED;
+
+--select * from user_resource_limits a 
+--where a.resource_name in ('IDLE_TIME','CONNECT_TIME');
 ```
 
 6 - Update the oracle_database.yml file in the PRISME application to reflect the connection to Oracle using the users and passwords established above in the respective environments.
