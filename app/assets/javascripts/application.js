@@ -31,7 +31,7 @@ function flash_notify(options, settings) {
 function format_epoch_in_local(epoch) {
     var ret = '';
 
-    if (epoch !== undefined) {
+    if (epoch !== undefined && epoch !== null) {
         epoch = epoch.toString();
 
         if (epoch.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/)) {

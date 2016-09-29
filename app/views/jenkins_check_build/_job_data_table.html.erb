@@ -31,7 +31,6 @@
   }
 
   function build_status_renderer(params) {
-    var ret = "\<span style=\"color: COLOR\"\>IMG" + params + "\<\/span\>";
     var img = '';
     var color = 'black';
 
@@ -41,7 +40,7 @@
       case '<%= JenkinsCheckBuild::BuildResult::REBUILDING %>':
       case '<%= JenkinsCheckBuild::BuildResult::BUILDING %>':
       default:
-        img = "\<img src=\"ajax-loader.gif\"\/>";
+        img = "building...";
         break;
       case '<%= JenkinsCheckBuild::BuildResult::SUCCESS %>':
         color = 'green';
@@ -55,8 +54,6 @@
         break;
     }
 
-    ret = ret.replace("COLOR", color);
-    ret = ret.replace("IMG", img);
     var span = $('<span>').css('color', color);
     if (img !== '') {
       img = $('<i>').addClass("fa fa-cog fa-spin fa-fw");

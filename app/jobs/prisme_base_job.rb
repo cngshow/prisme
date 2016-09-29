@@ -24,7 +24,7 @@ class PrismeBaseJob < ActiveJob::Base
 
   def lookup
     prisme_job = PrismeJob.find_by(job_id: self.job_id)
-
+# PrismeJob.find_or_create_by() todo?!
     unless prisme_job
       prisme_job = PrismeJob.new
       prisme_job.user = default_user if self.respond_to? :default_user
@@ -120,14 +120,15 @@ class PrismeBaseJob < ActiveJob::Base
     begin
       active_record = lookup
       active_record.last_error = exception.message
-      $log.error('Job failed: ' + self.to_s + '. Error message is: ' + exception.message)
-      $log.error(exception.backtrace.join("\n"))
       active_record.status = PrismeJobConstants::Status::STATUS_HASH[:FAILED]
       active_record.completed_at = Time.now
       update_parent_leaf_and_save(active_record)
     rescue => e
       $log.error(self.to_s + ' failed to rescue from an exception.  The error is ' + e.message)
       $log.error(e.backtrace.join("\n"))
+    ensure
+      $log.error('Job failed: ' + self.to_s + '. Error message is: ' + exception.message)
+      $log.error(exception.backtrace.join("\n"))
     end
   end
 
@@ -136,7 +137,10 @@ class PrismeBaseJob < ActiveJob::Base
   end
 
   def to_s
-    'Job: ' + self.class.to_s + ' , ID: ' + self.job_id.to_s + ' , TAG: ' + self.lookup.job_tag.to_s
+    # the following commented line was an issue:
+    # do not do a lookup in the to_s below as the lookup was what was throwing an exception! Bad mojo!
+    # 'Job: ' + self.class.to_s + ' , ID: ' + self.job_id.to_s + ' , TAG: ' + self.lookup.job_tag.to_s
+    'Job: ' + self.class.to_s + ' , ID: ' + self.job_id.to_s
   end
 
   def track_child_job(job_tag = nil)
