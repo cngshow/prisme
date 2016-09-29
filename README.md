@@ -46,7 +46,7 @@ You should now see an rails_common directory under the lib directory.
 In RubyMine you may see a message concerning rails_common being under source control. If/when you do, click the add root button. This will allow you to make changes within the rails_prisme project to the code in rails_common and commit those changes as well.
 <br>
 
-Now you need to run
+Now you need to run (after installing maven)
 ```
 mvn -U initialize
 ```
@@ -121,6 +121,20 @@ rails console
 This should run the migrations creating all of the tables in your configured Oracle database based on your Rails environment. If you can open the rails console successfully then you are good to go.
 
 8 - On AITC boxes, move the oracle_database.yml file to /app/prismeData if you are using Oracle. Otherwise the H2 database will be the default.
+
+What if you want to use H2?
+The standard database.yml file is configured for the H2 databse that was migrated into your war.  If you are deploying to a standard AITC box, just"
+```
+cd /app/prismeData
+mv oracle_database.yml oracle_database.yml.bak
+```
+the standard database.yml file (h2) will be used.
+**Caution** -- if you see in the prismeData directory both a production and test h2 database you have to know which one has your data. You can set which one is used
+by looking for the string 'production' and 'test' in the WEB-INF/web.xml file and changing it to whatever is appropriate.
+
+If do not have a prismeData directory on your system, after your deploy stop the app.  Enter into the WEB-INF directory of your deploy. in the config directory you will see
+oracle_database.yml.  Move it to a bak and restart.
+
 
 <br>
 <h1>Start up PRISME</h1>

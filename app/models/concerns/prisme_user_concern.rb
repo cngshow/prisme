@@ -1,6 +1,9 @@
 module PrismeUserConcern
   extend ActiveSupport::Concern
 
+  SSOI_USER = :ssoi
+  DEVISE_USER = :devise
+
   included do
     rolify
     scope :filter_admin_role_check, -> (bool) { where(admin_role_check: bool) }

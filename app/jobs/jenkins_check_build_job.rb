@@ -58,7 +58,7 @@ class JenkinsCheckBuild < PrismeBaseJob
           $log.info("#{name} is still in Jenkin's queue.")
           result << "Jenkins job #{name} is in the build queue.\n"
           result_hash[:build] = BuildResult::INQUEUE
-          JenkinsCheckBuild.set(wait: time).perform_later(jenkins_config, name, attempt_number, false, track_child_job)
+          JenkinsCheckBuild.set(wait: time).perform_later(jenkins_config, name, attempt_number + 1, false, track_child_job)
         else
           details = build.details #can throw NPE even though build is not nil
           if (details.isBuilding)
@@ -66,7 +66,7 @@ class JenkinsCheckBuild < PrismeBaseJob
             result_hash[:build] = BuildResult::BUILDING
             result << "Jenkins job #{name} is still building.\n"
             $log.info("#{name} is still being built by Jenkins.")
-            JenkinsCheckBuild.set(wait: time).perform_later(jenkins_config, name, attempt_number, false, track_child_job)
+            JenkinsCheckBuild.set(wait: time).perform_later(jenkins_config, name, attempt_number + 1, false, track_child_job)
           else
             #set the result
             build_result = details.getResult
@@ -74,7 +74,7 @@ class JenkinsCheckBuild < PrismeBaseJob
               result << "Jenkins job #{name} is rebuilding.\n"
               result_hash[:build] = build_result.to_s
               #do rebuilding
-              JenkinsCheckBuild.set(wait: time).perform_later(jenkins_config, name, attempt_number, false, track_child_job)
+              JenkinsCheckBuild.set(wait: time).perform_later(jenkins_config, name, attempt_number + 1, false, track_child_job)
             else
               #display the result and delete the job
               result << "Jenkins job #{name} has a build result of " + build_result.to_s + ".\n"
@@ -105,11 +105,13 @@ class JenkinsCheckBuild < PrismeBaseJob
     rescue java.lang.Exception => ex
       #something went wrong.  Increment attempt count and retry if appropriate.
       $log.error("Unable to get the build status of #{name}.  Message: " + ex.message)
-      attempt_number += 1
       result_hash[:attempt_number] = attempt_number
-      if (attempt_number <= max_attempts)
+      if (attempt_number < max_attempts)
         $log.info("Attempting to gain the status of #{name} again.")
-        JenkinsCheckBuild.set(wait: time).perform_later(jenkins_config, name, attempt_number, false, track_child_job)
+        JenkinsCheckBuild.set(wait: time).perform_later(jenkins_config, name, attempt_number + 1, false, track_child_job)
+        raise JenkinsClient::JenkinsJavaError, ex
+      else
+        result_hash[:build] = BuildResult::UNKNOWN
         raise JenkinsClient::JenkinsJavaError, ex
       end
     ensure

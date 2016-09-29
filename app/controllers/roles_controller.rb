@@ -19,11 +19,16 @@ class RolesController < ApplicationController
   def get_ssoi_roles
     @ssoi_user = params[:id]
     $log.debug("About to fetch the ssoi roles for ID #{@ssoi_user}")
-    @roles_array = SsoiUser.user_roles(@ssoi_user)
+    hash = SsoiUser.user_and_roles(@ssoi_user)
+    user = hash[:user]
+    @roles_array = hash[:roles]
     $log.debug("The roles are #{@roles_array}")
+    @roles_hash = {}
+    @roles_hash[:roles] = @roles_array
+    @roles_hash[:token] = build_user_token user
     respond_to do |format|
       format.html # get_ssoi_roles.html.erb
-      format.json { render :json => @roles_array }
+      format.json { render :json => @roles_hash }
     end
   end
 
@@ -43,9 +48,13 @@ class RolesController < ApplicationController
         @roles_array << role
       end
     end
+    @roles_hash = {}
+    @roles_hash[:roles] = @roles_array
+    @roles_hash[:token] = build_user_token user if @authenticated
+    @roles_hash[:token] = "Not Authenticated" unless @authenticated
     respond_to do |format|
       format.html # get_roles.html.erb
-      format.json { render :json => @roles_array }
+      format.json { render :json => @roles_hash }
     end
   end
 
@@ -102,6 +111,21 @@ class RolesController < ApplicationController
   end
 
   private
+
+  def build_user_token(user)
+    return "INVALID USER" if user.nil?
+    return "INVALID USER" unless user.is_a? PrismeUserConcern
+    id = user.id
+    type = (user.is_a? SsoiUser) ? PrismeUserConcern::SSOI_USER : PrismeUserConcern::DEVISE_USER
+    name = user.user_name
+    token_hash = {}
+    token_hash[:id] = id
+    token_hash[:type] = type
+    token_hash[:id] = name
+    CipherSupport.instance.stringify_token CipherSupport.instance.encrypt(unencrypted_string: token_hash.to_json.to_s)
+    #to decrypt:
+    # JSON.parse CipherSupport.instance.decrypt(encrypted_string: CipherSupport.instance.jsonize_token( the_result))
+  end
 
   def ssl_configured_delegator?
     RolesController.ssl_configured?
