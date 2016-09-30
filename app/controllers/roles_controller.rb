@@ -1,5 +1,5 @@
 require 'uri'
-
+require 'cgi'
 class RolesController < ApplicationController
 
   skip_after_action :verify_authorized
@@ -9,13 +9,11 @@ class RolesController < ApplicationController
   def sso_logout
     # remove the SSO user information from the session
     clean_roles_session
-
     # redirect to the logout page for SSO
     logout_url = PrismeUtilities.ssoi_logout_path
     redirect_to logout_url # external url
   end
 
-  #http://localhost:3000/roles/get_ssoi_roles.json?id=cboden
   def get_ssoi_roles
     @ssoi_user = params[:id]
     $log.debug("About to fetch the ssoi roles for ID #{@ssoi_user}")
@@ -34,6 +32,7 @@ class RolesController < ApplicationController
 
   #sample invocation
   #http://localhost:3000/roles/get_roles.json?id=devtest@devtest.gov&password=devtest@devtest.gov
+  #http://localhost:3000/roles/get_roles.json?id=cris@cris.com&password=cris@cris.com
   def get_roles
     @user_id = params[:id]
     @password = params[:password]
@@ -54,6 +53,36 @@ class RolesController < ApplicationController
     @roles_hash[:token] = "Not Authenticated" unless @authenticated
     respond_to do |format|
       format.html # get_roles.html.erb
+      format.json { render :json => @roles_hash }
+    end
+  end
+
+
+  # http://localhost:3000/roles/get_roles_by_token.json?token=%5B%22u%5Cf%5Cx8F%5CxB1X%5C%22%5CxC2%5CxEE%5CxFA%5CxE1%5Cx91%5CxBF3%5CxA9%5Cx16K%22%2C+%22~K%5CxC4%5CxEFXk%5Cx80%5CxB1%5CxA3%5CxF3%5Cx8D%5CxB1%5Cx7F%5CxBC%5Cx02K%22%2C+%22k%5Cf%5CxDC%5CxF7%5Cx19z%5Cx9C%5CxBA%5CxAF%5CxBF%5Cx83%5CxEE%5Cx15%5CxD9kN%22%5D
+  def get_roles_by_token
+    token = params[:token]
+    roles = []
+    @roles_hash = {}
+    @roles_hash[:roles] = roles
+    deconstruct_user_token token
+    @roles_hash[:token_parsed?] = @parsed
+    if (@parsed)
+      user = User.find_by(email: @user_name) if @user_type.eql? PrismeUserConcern::DEVISE_USER.to_s
+      user = SsoiUser.fetch_user(@user_name) if @user_type.eql? PrismeUserConcern::SSOI_USER.to_s
+      $log.debug("The user I found is #{user} with id #{user.id}, the id in the token is #{@user_id}, the user type is #{@user_type}, token name is #{@user_name}")
+      if(!user.nil? && user.id.eql?(@user_id))
+        @roles_hash[:user] = @user_name
+        @roles_hash[:type] = @user_type
+        @roles_hash[:id] = @user_id
+        user.roles.each do |role|
+          roles << role
+        end
+      else
+        $log.warn("The ids in the token do not match the id found in the database! No roles!")
+      end
+    end
+    respond_to do |format|
+      format.html # get_roles_by_token.html.erb
       format.json { render :json => @roles_hash }
     end
   end
@@ -121,10 +150,27 @@ class RolesController < ApplicationController
     token_hash = {}
     token_hash[:id] = id
     token_hash[:type] = type
-    token_hash[:id] = name
-    CipherSupport.instance.stringify_token CipherSupport.instance.encrypt(unencrypted_string: token_hash.to_json.to_s)
+    token_hash[:name] = name
+    CGI::escape CipherSupport.instance.encrypt(unencrypted_string: token_hash.to_json.to_s)
     #to decrypt:
     # JSON.parse CipherSupport.instance.decrypt(encrypted_string: CipherSupport.instance.jsonize_token( the_result))
+  end
+
+  def deconstruct_user_token(token)
+    @parsed = true
+    $log.debug("token is #{token}")
+    begin
+      result = CipherSupport.instance.decrypt(encrypted_string: (CGI::unescape token))
+      $log.debug(result)
+      hash = JSON.parse  result
+      @user_id = hash[:id.to_s].to_i
+      @user_type = hash[:type.to_s]
+      @user_name = hash[:name.to_s]
+    rescue Exception => ex
+      $log.warn("I could not parse the incoming token, #{ex.message}")
+      @parsed = false
+    end
+
   end
 
   def ssl_configured_delegator?

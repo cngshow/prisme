@@ -1,0 +1,10 @@
+<h1>Roles by token</h1>
+<p>The roles for user <%=@ssoi_user%>:</p>
+<%@roles_hash[:roles].each do |role|%>
+    <li><%=role.name%></li>
+<%end%>
+<br><p>The token is -- </p>
+<%=@roles_hash[:token] %>
+
+<br><p>Token parsed? -- </p>
+<%=@parsed %>
