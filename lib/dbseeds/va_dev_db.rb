@@ -20,7 +20,7 @@ module SeedData
       {
           service: {name: 'GIT', description: 'GIT Version Control', service_type: PrismeService::GIT},
           props: [
-              {key: PrismeService::GIT_REPOSITORY_URL, value: 'https://vadev.mantech.com:4848/git/r/repo_name.git'},
+              {key: PrismeService::GIT_REPOSITORY_URL, value: 'https://vadev.mantech.com:4848/git/r/contentConfigurations.git'},
               {key: PrismeService::GIT_USER, value: 'devtest'},
               {key: PrismeService::GIT_PWD, value: '["jK\x90\xA1\x1Fk\x87\xD7\xC3\xD8\xA8\x9A\x18\xD4fC"]'}
           ]
