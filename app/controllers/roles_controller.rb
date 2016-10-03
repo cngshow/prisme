@@ -4,26 +4,29 @@ class RolesController < ApplicationController
 
   skip_after_action :verify_authorized
   skip_before_action :verify_authenticity_token
-  force_ssl if: :ssl_configured_delegator? #,port: 8443
+  force_ssl if: :ssl_configured_delegator? # port: 8443
 
   def sso_logout
     # remove the SSO user information from the session
-    clean_roles_session
+    clear_user_session
+
     # redirect to the logout page for SSO
     logout_url = PrismeUtilities.ssoi_logout_path
-    redirect_to logout_url # external url
+    raise 'SSO logout url is not properly configured.' unless logout_url
+    redirect_to logout_url
   end
 
   def get_ssoi_roles
-    @ssoi_user = params[:id]
-    $log.debug("About to fetch the ssoi roles for ID #{@ssoi_user}")
-    hash = SsoiUser.user_and_roles(@ssoi_user)
-    user = hash[:user]
-    @roles_array = hash[:roles]
-    $log.debug("The roles are #{@roles_array}")
-    @roles_hash = {}
-    @roles_hash[:roles] = @roles_array
-    @roles_hash[:token] = build_user_token user
+    ssoi_user = params[:id]
+    user = SsoiUser.fetch_user(ssoi_user)
+    @roles_hash = {roles: [], token: 'Not Authenticated'}
+
+    if user
+      @roles_hash[:roles] = user.roles.map(&:name)
+      @roles_hash[:token] = build_user_token(user)
+      @roles_hash[:user] = ssoi_user
+    end
+
     respond_to do |format|
       format.html # get_ssoi_roles.html.erb
       format.json { render :json => @roles_hash }
@@ -34,23 +37,19 @@ class RolesController < ApplicationController
   #http://localhost:3000/roles/get_roles.json?id=devtest@devtest.gov&password=devtest@devtest.gov
   #http://localhost:3000/roles/get_roles.json?id=cris@cris.com&password=cris@cris.com
   def get_roles
-    @user_id = params[:id]
-    @password = params[:password]
-    $log.debug("About to fetch the roles for ID #{@user_id}")
-    @roles_array = []
-    user = User.find_by(email: @user_id)
-    @authenticated = false
-    @authenticated = user.valid_password?(@password) unless user.nil?
-    $log.info("The user #{@user_id} tried to get roles but was not authenticated.") unless @authenticated
-    unless (user.nil? || !@authenticated)
-      user.roles.each do |role|
-        @roles_array << role
-      end
+    user_id = params[:id]
+    password = params[:password]
+    user = User.find_by(email: user_id)
+    authenticated = (!user.nil? && user.valid_password?(password))
+    $log.info("The user #{user_id} tried to get roles but was not authenticated.") unless authenticated
+    @roles_hash = {user: user_id, roles: [], token: 'Not Authenticated'}
+
+    if authenticated
+      @roles_hash[:roles] = user.roles.map(&:name)
+      @roles_hash[:token] = build_user_token(user)
+      @roles_hash[:user] = user_id
     end
-    @roles_hash = {}
-    @roles_hash[:roles] = @roles_array
-    @roles_hash[:token] = build_user_token user if @authenticated
-    @roles_hash[:token] = "Not Authenticated" unless @authenticated
+
     respond_to do |format|
       format.html # get_roles.html.erb
       format.json { render :json => @roles_hash }
@@ -97,7 +96,7 @@ class RolesController < ApplicationController
     token_valid = true
     token_error = nil
     hash = nil
-    if (@token)
+    if @token
       json = CipherSupport.instance.jsonize_token @token
       $log.debug("token is #{@token}")
       begin
@@ -142,8 +141,8 @@ class RolesController < ApplicationController
   private
 
   def build_user_token(user)
-    return "INVALID USER" if user.nil?
-    return "INVALID USER" unless user.is_a? PrismeUserConcern
+    return 'INVALID USER' if user.nil?
+    return 'INVALID USER' unless user.is_a? PrismeUserConcern
     id = user.id
     type = (user.is_a? SsoiUser) ? PrismeUserConcern::SSOI_USER : PrismeUserConcern::DEVISE_USER
     name = user.user_name
