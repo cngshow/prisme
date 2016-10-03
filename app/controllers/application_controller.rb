@@ -1,6 +1,7 @@
 require './app/policies/navigation_policy'
 require './lib/rails_common/util/controller_helpers'
 require './lib/rails_common/roles/ssoi'
+require './lib/rails_common/roles/user_session'
 require './lib/rails_common/util/servlet_support'
 
 class ApplicationController < ActionController::Base
@@ -9,6 +10,7 @@ class ApplicationController < ActionController::Base
   include CommonController
   include SSOI
   include ServletSupport
+  include UserSession
 
   after_action :verify_authorized, unless: :devise_controller?
   # Prevent CSRF attacks by raising an exception.
@@ -21,6 +23,7 @@ class ApplicationController < ActionController::Base
 
   attr_reader :ssoi # a boolean if we have ssoi headers
   alias ssoi? ssoi
+  alias pundit_user prisme_user
 
   def internal_error(exception)
     $log.error(exception.message)
@@ -49,12 +52,12 @@ class ApplicationController < ActionController::Base
     ssoi_user_name = ssoi_headers
     @ssoi = !ssoi_user_name.to_s.strip.empty? #we are using ssoi
     unless ssoi?
-      clean_roles_session
+      clear_ssoi_user
       return
     end
 
     user = SsoiUser.where(ssoi_user_name: ssoi_user_name).first_or_create
-    session[Roles::SESSION_ROLES_ROOT][SSOI::SSOI_USER] = user
+    user_session(UserSession::SSOI_USER, user)
   end
 
   def auth_registered
@@ -72,5 +75,4 @@ class ApplicationController < ActionController::Base
     git_server_configured = Service.service_exists? PrismeService::GIT
     render :file => (trinidad? ? 'public/not_configured.html' : "#{Rails.root}/../not_configured.html") unless (application_server_configured && artifactory_configured && build_server_configured && git_server_configured)
   end
-
 end

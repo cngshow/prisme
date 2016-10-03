@@ -1,8 +1,7 @@
 <h1>Roles by user</h1>
-<p>The roles for user <%=@user_id%>:</p>
-<%@roles_array.each do |role|%>
-  <li><%=role.name%></li>
+<p>The roles for user <%=@roles_hash[:user]%>:</p>
+<%@roles_hash[:roles].each do |role|%>
+  <li><%=role%></li>
 <%end%>
-<p> The user was authenticated = <%=@authenticated.to_s %></p>
 <br><p>The token is -- </p>
 <%=@roles_hash[:token] %>

@@ -17,11 +17,11 @@ class TerminologyUploadTracker < PrismeBaseJob
     result = result_hash[:state]
     @done = false
     begin
-      $log.info("Files: " + files.inspect)
+      $log.info("Files: #{files.inspect}")
       if files #start the upload
         IsaacUploader.start_work(task: task)
       else
-        $log.debug("About to block and wait for the upload to finish.")
+        $log.debug('About to block and wait for the upload to finish.')
         task_result = nil
         begin
           task_result = IsaacUploader.fetch_result(task: task) #we block and wait
