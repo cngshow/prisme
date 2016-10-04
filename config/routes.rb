@@ -9,12 +9,13 @@ Rails.application.routes.draw do
   get 'utilities/prisme_config'
 
 
-  get 'roles/get_roles'
+  get 'roles/get_all_roles'
+  get 'roles/get_user_roles'
   get 'roles/get_ssoi_roles'
   get 'roles/get_roles_by_token'
-  get 'roles/get_roles_token', defaults: { format: 'text' }
+  # get 'roles/get_roles_token', defaults: { format: 'text' } used for a demo
   #ids like cshupp@gmail.com aren't valid in a URL :-(
-  #match 'roles/get_roles/:id' => 'roles#get_roles', :as => :get_roles, via: [:get]
+  #match 'roles/get_user_roles/:id' => 'roles#get_user_roles', :as => :get_user_roles, via: [:get]
 
   get 'roles/sso_logout'
 

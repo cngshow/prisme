@@ -16,6 +16,18 @@ class RolesController < ApplicationController
     redirect_to logout_url
   end
 
+  #sample invocation
+  #http://localhost:3000/roles/get_all_roles.json
+  def get_all_roles
+    @roles_hash = Roles::ALL_ROLES
+    respond_to do |format|
+      format.html # get_ssoi_roles.html.erb
+      format.json { render :json => @roles_hash }
+    end
+  end
+
+  #sample invocation
+  #http://localhost:3000/roles/get_ssoi_roles.json?id=cboden
   def get_ssoi_roles
     ssoi_user = params[:id]
     user = SsoiUser.fetch_user(ssoi_user)
@@ -36,7 +48,7 @@ class RolesController < ApplicationController
   #sample invocation
   #http://localhost:3000/roles/get_roles.json?id=devtest@devtest.gov&password=devtest@devtest.gov
   #http://localhost:3000/roles/get_roles.json?id=cris@cris.com&password=cris@cris.com
-  def get_roles
+  def get_user_roles
     user_id = params[:id]
     password = params[:password]
     user = User.find_by(email: user_id)
@@ -51,7 +63,7 @@ class RolesController < ApplicationController
     end
 
     respond_to do |format|
-      format.html # get_roles.html.erb
+      format.html # get_all_roles.html.erb
       format.json { render :json => @roles_hash }
     end
   end

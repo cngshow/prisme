@@ -1,7 +1,0 @@
-<h1>Roles by user</h1>
-<p>The roles for user <%=@roles_hash[:user]%>:</p>
-<%@roles_hash[:roles].each do |role|%>
-  <li><%=role%></li>
-<%end%>
-<br><p>The token is -- </p>
-<%=@roles_hash[:token] %>
