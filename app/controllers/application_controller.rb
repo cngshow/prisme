@@ -21,8 +21,6 @@ class ApplicationController < ActionController::Base
   rescue_from Exception, :with => :internal_error
   rescue_from Pundit::NotAuthorizedError, Pundit::AuthorizationNotPerformedError, :with => :pundit_error
 
-  attr_reader :ssoi # a boolean if we have ssoi headers
-  alias ssoi? ssoi
   alias pundit_user prisme_user
 
   def internal_error(exception)
@@ -50,14 +48,11 @@ class ApplicationController < ActionController::Base
 
   def read_ssoi_headers
     ssoi_user_name = ssoi_headers
-    @ssoi = !ssoi_user_name.to_s.strip.empty? #we are using ssoi
-    unless ssoi?
-      clear_ssoi_user
-      return
-    end
 
-    user = SsoiUser.where(ssoi_user_name: ssoi_user_name).first_or_create
-    user_session(UserSession::SSOI_USER, user)
+    unless ssoi_user_name.to_s.strip.empty?
+      SsoiUser.where(ssoi_user_name: ssoi_user_name).first_or_create
+      user_session(UserSession::SSOI_USER, ssoi_user_name)
+    end
   end
 
   def auth_registered

@@ -93,8 +93,12 @@ module ApplicationHelper
     ret
   end
 
+  def ssoi?
+    ! user_session(UserSession::SSOI_USER).nil?
+  end
+
   def prisme_user
-    @ssoi ? user_session(UserSession::SSOI_USER) : current_user
+    ssoi? ? SsoiUser.fetch_user(user_session(UserSession::SSOI_USER)) : current_user
   end
 end
 # load './app/helpers/application_helper.rb'
