@@ -46,8 +46,8 @@ class RolesController < ApplicationController
   end
 
   #sample invocation
-  #http://localhost:3000/roles/get_roles.json?id=devtest@devtest.gov&password=devtest@devtest.gov
-  #http://localhost:3000/roles/get_roles.json?id=cris@cris.com&password=cris@cris.com
+  #http://localhost:3000/roles/get_user_roles.json?id=devtest@devtest.gov&password=devtest@devtest.gov
+  #http://localhost:3000/roles/get_user_roles.json?id=cris@cris.com&password=cris@cris.com
   def get_user_roles
     user_id = params[:id]
     password = params[:password]
