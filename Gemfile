@@ -61,5 +61,6 @@ gem 'activerecord-jdbch2-adapter'
 gem 'activerecord-oracle_enhanced-adapter'
 
 group :development do
+  gem 'awesome_print', require:'ap'
   gem 'yard'
 end

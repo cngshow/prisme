@@ -5,7 +5,7 @@ module SeedData
           props: [
               {key: PrismeService::CARGO_REMOTE_USERNAME, value: 'devtest'},
               {key: PrismeService::CARGO_REMOTE_PASSWORD, value: '["jK\x90\xA1\x1Fk\x87\xB6\xAB\xA3\xC5\xE7~\xBA\x1AK", "k]\x95\xD8w\x15\xFE\xD3\xC7\xDC\xAC\x9E\x1C\xD0bG"]'},
-              {key: PrismeService::CARGO_REMOTE_URL, value: 'https://vaauscttdbs80.aac.va.gov:8080/manager'}
+              {key: PrismeService::CARGO_REMOTE_URL, value: 'https://vaauscttweb80.aac.va.gov:8080/manager'}
           ]
       },
       {

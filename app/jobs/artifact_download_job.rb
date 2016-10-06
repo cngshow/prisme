@@ -24,7 +24,7 @@ class ArtifactDownloadJob < PrismeBaseJob
 
   def cookie_war(war_path, cookie_file, hash)
     $log.info("Adding cookie info to war file #{war_path} into file #{cookie_file}")
-    $log.info("Cookie data is " + hash.inspect)
+    $log.info("Cookie data is #{hash.inspect}")
     Zip::File.open(war_path) do |zip|
       zip.get_output_stream(cookie_file) do |file_handle|
         file_handle.puts(hash.keys.map do |e|
@@ -36,7 +36,7 @@ class ArtifactDownloadJob < PrismeBaseJob
 
   def cookie_war_true_zip(war_path, cookie_file, hash)
     $log.info("Adding cookie info to war file #{war_path} into file #{cookie_file}")
-    $log.info("Cookie data is " + hash.inspect)
+    $log.info("Cookie data is #{hash.inspect}")
     path = war_path + '/' + cookie_file
     begin
       entry = JTFile.new(path)
@@ -91,9 +91,9 @@ class ArtifactDownloadJob < PrismeBaseJob
       md5_match = actual_md5.eql? md5
       if (!(sha1_match && md5_match))
         #come here if the file is not a match
-        error_msg = ""
-        error_msg << "SHA1 mismatch " unless sha1_match
-        error_msg << "MD5 mismatch" unless md5_match
+        error_msg = ''
+        error_msg << 'SHA1 mismatch ' unless sha1_match
+        error_msg << 'MD5 mismatch' unless md5_match
         $log.error("Checksum mismatch for #{war_name}. #{error_msg} ")
         raise StandardError, error_msg
       end
@@ -103,7 +103,7 @@ class ArtifactDownloadJob < PrismeBaseJob
       rescue => e
         $log.error("#{file_name} is not a valid war file!")
         $log.error(e.backtrace.join("\n"))
-        $log.error('Rethrowing: ' + e.message)
+        $log.error("Rethrowing: #{e.message}")
         raise e
       end
       context = nil
@@ -116,15 +116,15 @@ class ArtifactDownloadJob < PrismeBaseJob
         result << "The war will be deployed to the default context root.\n"
         #not all wars have a context.txt, but if we do we use it
       end
-      if (file_name =~ /.*isaac-rest.*/)
+      if file_name =~ /.*isaac-rest.*/
         hash = {}
         hash.merge!(war_cookie_params)
         hash.merge!(nexus_props)
         cookie_war_true_zip(file_name, 'WEB-INF/classes/prisme.properties', hash)
-        context = "/isaac-rest" #to_do pull this from the database someday.
+        context = '/isaac-rest' #to_do pull this from the database someday.
       else
         #we are Komet!
-        cookie_war_true_zip(file_name, 'WEB-INF/config/props/prisme.properties',war_cookie_params)
+        cookie_war_true_zip(file_name, 'WEB-INF/config/props/prisme.properties', war_cookie_params)
       end
       $log.debug("Kicking off next job (DeployWar) #{file_name} #{context}")
       #activeRecord instantiate new job

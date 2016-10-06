@@ -86,17 +86,19 @@ module ApplicationHelper
 
   def self.display_time(time)
     ret = ''
-    if (!time.nil?)
+    if time
       converted_time = time + session[:tzOffset].to_i.hours
       ret = converted_time.strftime('%m/%d/%Y %H:%M:%S') << ' ' << TimeUtils.offset_to_zone(session[:tzOffset])
     end
     ret
   end
 
+  def ssoi?
+    ! user_session(UserSession::SSOI_USER).nil?
+  end
+
   def prisme_user
-    ssoi_header_hash = session[Roles::SESSION_ROLES_ROOT]
-    devise_user = current_user
-    @ssoi ? ssoi_header_hash[SSOI::SSOI_USER] : devise_user
+    ssoi? ? SsoiUser.fetch_user(user_session(UserSession::SSOI_USER)) : current_user
   end
 end
 # load './app/helpers/application_helper.rb'
