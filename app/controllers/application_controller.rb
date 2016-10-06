@@ -18,7 +18,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
   before_action :setup_gon, :read_ssoi_headers
-  rescue_from Exception, :with => :internal_error
+  rescue_from Exception, java.lang.Throwable, :with => :internal_error
   rescue_from Pundit::NotAuthorizedError, Pundit::AuthorizationNotPerformedError, :with => :pundit_error
 
   alias pundit_user prisme_user
