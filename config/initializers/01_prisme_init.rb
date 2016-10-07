@@ -93,6 +93,16 @@ unless STFU_MODE
   end
 end
 
+version = "UNKNOWN"
+begin
+  version = IO.read('../version.txt')
+  $log.always("The version is #{version}")
+rescue
+  $log.warn("Could not read the version file!")
+end
+PRISME_VERSION = version
+
+
 # ensure super_user and admin for cboden for demo
 =begin
 cboden = SsoiUser.find_by_ssoi_user_name('cboden')
