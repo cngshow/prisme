@@ -150,7 +150,8 @@
               <overWriteReleases>true</overWriteReleases>
               <overWriteSnapshots>true</overWriteSnapshots>
             </configuration>
-          </execution>>
+          </execution>
+
           <execution>
             <id>place-jars</id>
             <phase>initialize</phase>
