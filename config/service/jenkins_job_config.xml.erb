@@ -68,7 +68,7 @@
   </rootModule>
   <rootPOM><%#= root_pom %></rootPOM>
   -->
-  <goals>-U -e -B clean deploy -DaltDeploymentRepository=vadev::default::<%=nexus_publication_url%></goals>
+  <goals>-U -e -B clean deploy -DaltDeploymentRepository=nexus::default::<%=nexus_publication_url%></goals>
   <aggregatorStyleBuild>true</aggregatorStyleBuild>
   <incrementalBuild>false</incrementalBuild>
   <ignoreUpstremChanges>true</ignoreUpstremChanges>
