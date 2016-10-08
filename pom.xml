@@ -241,7 +241,7 @@
             <configuration>
               <jrubyVerbose>true</jrubyVerbose>
               <jrubyJvmArgs>-Djava.awt.headless=true</jrubyJvmArgs>
-              <execArgs>RAILS_ENV=${railsMode} RAILS_RELATIVE_URL_ROOT=/rails_prisme PROJECT_VERSION="${project.version}"</execArgs>
+              <execArgs>RAILS_ENV=${railsMode} RAILS_RELATIVE_URL_ROOT=/rails_prisme PROJECT_VERSION=${project.version}</execArgs>
               <command>rake</command>
               <args>devops:build_war</args>
             </configuration>
