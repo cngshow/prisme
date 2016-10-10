@@ -7,6 +7,7 @@ jars = Dir.glob('./lib/jars/*.jar')
 jars.each do |jar|
   require jar
 end
+require './lib/rails_common/util/rescuable'
 #from rails common
 #require './lib/rails_common/props/prop_loader' #in application.rb now
 require './lib/rails_common/logging/open_logging'
@@ -91,6 +92,16 @@ unless STFU_MODE
     end
   end
 end
+
+version = "UNKNOWN"
+begin
+  version = IO.read('../version.txt')
+  $log.always("The version is #{version}")
+rescue
+  $log.warn("Could not read the version file!")
+end
+PRISME_VERSION = version
+
 
 # ensure super_user and admin for cboden for demo
 =begin

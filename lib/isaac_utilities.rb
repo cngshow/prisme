@@ -82,7 +82,7 @@ module IsaacDBConfigurationCreator
     end
     ibdf_j_a = JIsaacLibrary::ibdf_file_to_j_a(*ibdf_converted)
     begin
-      return JIsaacLibrary::DBConfigurationCreator.createDBConfiguration(name, version, description, result_classifier, classify_bool, ibdf_j_a, metadata_version, git_url, git_user, git_password)
+      return JIsaacLibrary::DBConfigurationCreator.createDBConfiguration(name, version, description, result_classifier, classify_bool, ibdf_j_a, metadata_version, git_url, git_user, git_password.to_java.toCharArray)
     rescue java.lang.Throwable => ex
       $log.error("Failed to create db configuration! " + ex.to_s)
       $log.error(ex.backtrace.join("\n"))
@@ -99,7 +99,7 @@ module IsaacDBConfigurationCreator
     git_user = git_props[PrismeService::GIT_USER]
     git_pass = git_props[PrismeService::GIT_PWD]
     if (@db_tag_list.nil? or @db_tag_list_dirty)
-      @db_tag_list = JIsaacLibrary::GitPublish.readTags(git_url, git_user, git_pass).to_a
+      @db_tag_list = JIsaacLibrary::GitPublish.readTags(git_url, git_user, git_pass.to_java.toCharArray).to_a
       @db_tag_list_dirty = false
     end
     @db_tag_list
@@ -177,7 +177,7 @@ module IsaacUploader
     end
     begin
       supported_converter_type = JIsaacLibrary::SupportedConverterTypes.valueOf(supported_converter_type) if (supported_converter_type.kind_of? String)
-      return JIsaacLibrary::SrcUploadCreator.createSrcUploadConfiguration(supported_converter_type, version, extension_name, files_to_upload, git_url, git_username, git_password, artifact_repository_url, repository_username, repository_password)
+      return JIsaacLibrary::SrcUploadCreator.createSrcUploadConfiguration(supported_converter_type, version, extension_name, files_to_upload, git_url, git_username, git_password.to_java.toCharArray, artifact_repository_url, repository_username, repository_password)
     rescue java.lang.Throwable => ex
       $log.error("Failed to upload files! " + ex.to_s)
       raise UploadException.new(ex)
@@ -402,7 +402,7 @@ module IsaacConverter
     converter_option_values.each_pair do |k, v|
       hash[k] = java.util.HashSet.new(v)
     end
-    JIsaacLibrary::ContentConverterCreator.createContentConverter(sdo_source_content, converter_version, additional_source_dependencies_sdo_j_a, additional_source_dependencies_ibdf_j_a, hash, git_url, git_user, git_pass)
+    JIsaacLibrary::ContentConverterCreator.createContentConverter(sdo_source_content, converter_version, additional_source_dependencies_sdo_j_a, additional_source_dependencies_ibdf_j_a, hash, git_url, git_user, git_pass.to_java.toCharArray)
   end
 
   # a = IsaacConverter::get_converter_for_source_artifact(artifactId: "vhat-src-data")
@@ -486,3 +486,4 @@ tag = IsaacConverter::create_content_converter(sdo_source_content: sdo_source_co
 # group_id = gov.vha.isaac.terminology.converters
 # artifact_id = loinc-mojo
 # version = 5.3-SNAPSHOT|
+#	 * WARNING -- this API is called by the PRISME JRuby libraries.  Please notify the Prisme team before changing the signature.
