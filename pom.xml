@@ -8,12 +8,12 @@
   <parent>
     <groupId>gov.vha.isaac.ochre</groupId>
     <artifactId>isaac-parent</artifactId>
-    <version>3.14-SNAPSHOT</version><!--TODO Eliminate Snapshot if present -->
+    <version>3.15-SNAPSHOT</version><!--TODO Eliminate Snapshot if present -->
   </parent>
 
   <groupId>gov.vha.isaac.gui.rails</groupId>
   <artifactId>rails_prisme</artifactId>
-  <version>1.26-SNAPSHOT</version><!--TODO THIS IS THE ONLY PLACE SNAPSHOT CAN EXIST BEFORE MAKING A RELEASE!!-->
+  <version>1.27-SNAPSHOT</version><!--TODO THIS IS THE ONLY PLACE SNAPSHOT CAN EXIST BEFORE MAKING A RELEASE!!-->
   <packaging>pom</packaging>
 
   <name>ISAAC Rails PRISME</name>
@@ -23,9 +23,9 @@
   </description>
 
   <properties>
-    <rails_common.version>1.31-SNAPSHOT</rails_common.version> <!--TODO Put new rails common version here if it has been changed -->
+    <rails_common.version>1.32-SNAPSHOT</rails_common.version> <!--TODO Put new rails common version here if it has been changed -->
     <!--Open up the assembly.xml file in rails common if new directories are added. -->
-    <isaac.version>3.14-SNAPSHOT</isaac.version><!--TODO Eliminate Snapshot if present -->
+    <isaac.version>3.15-SNAPSHOT</isaac.version><!--TODO Eliminate Snapshot if present -->
     <!-- railsMode is automatically set to 'test' or 'production' - 'test' if the version number ends with '-SNAPSHOT'
     or 'production' otherwise.	See ant execution below-->
   </properties>
@@ -150,7 +150,8 @@
               <overWriteReleases>true</overWriteReleases>
               <overWriteSnapshots>true</overWriteSnapshots>
             </configuration>
-          </execution>>
+          </execution>
+
           <execution>
             <id>place-jars</id>
             <phase>initialize</phase>
@@ -158,6 +159,7 @@
               <goal>copy-dependencies</goal>
             </goals>
             <configuration>
+              <!-- We really just want jenkins-client, cargo, and their transitive dependencies. -->
               <excludeArtifactIds>
                 jruby-complete,rake,bundler,rails_common,junit,log4j-slf4j-impl,log4j-jul,hamcrest-core,
               </excludeArtifactIds>
@@ -240,7 +242,7 @@
             <configuration>
               <jrubyVerbose>true</jrubyVerbose>
               <jrubyJvmArgs>-Djava.awt.headless=true</jrubyJvmArgs>
-              <execArgs>RAILS_ENV=${railsMode} RAILS_RELATIVE_URL_ROOT=/rails_prisme PROJECT_VERSION="${project.version}"</execArgs>
+              <execArgs>RAILS_ENV=${railsMode} RAILS_RELATIVE_URL_ROOT=/rails_prisme PROJECT_VERSION=${project.version}</execArgs>
               <command>rake</command>
               <args>devops:build_war</args>
             </configuration>
