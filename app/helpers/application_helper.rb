@@ -101,5 +101,3 @@ module ApplicationHelper
     ssoi? ? SsoiUser.fetch_user(user_session(UserSession::SSOI_USER)) : current_user
   end
 end
-# load './app/helpers/application_helper.rb'
-# include ApplicationHelper
