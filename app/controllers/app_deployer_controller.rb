@@ -139,7 +139,7 @@ class AppDeployerController < ApplicationController
 
   def get_isaac_cradle_zips
     url_string = $PROPS['ENDPOINT.nexus_lucene_search']
-    params = {g: 'gov.vha.isaac.db', r: 'All', p: 'cradle.zip'}
+    params = {g: 'gov.vha.isaac.db', r: 'All', e: 'lucene.zip'}
     conn = get_nexus_connection
     response = conn.get(url_string, params)
     json = nil
@@ -147,7 +147,7 @@ class AppDeployerController < ApplicationController
     begin
       json = JSON.parse response.body
     rescue JSON::ParserError => ex
-      if (response.status.eql?(200))
+      if response.status.eql?(200)
         return response.body
       end
     end
@@ -155,19 +155,34 @@ class AppDeployerController < ApplicationController
     return nil if json.nil?
     ret = []
 
-    if (json['totalCount'].to_i > 0)
+    if json['totalCount'].to_i > 0
       releases = json['data'].select { |ih| ih['version'] !~ /SNAPSHOT/ }
+      nexus_url = Service.get_artifactory_props[PrismeService::NEXUS_PUBLICATION_URL]
+      nexus_url << '/' unless nexus_url.last.eql? '/'
 
-      if (releases.length > 0)
+      if releases.length > 0
         releases.each do |artifact|
           g = artifact['groupId']
           a = artifact['artifactId']
           v = artifact['version']
           repo = artifact['latestReleaseRepositoryId']
-          c = artifact['artifactHits'].first['artifactLinks'].select { |al| al['extension'].eql?('cradle.zip') }.first['classifier']
-          ret << NexusArtifactSelectOption.new(groupId: g, artifactId: a, version: v, repo: repo, classifier: c, package: 'cradle.zip')
+          c = artifact['artifactHits'].first['artifactLinks'].select { |al| al['extension'].eql?('lucene.zip') }.first['classifier']
+
+          url = nexus_url.clone
+          url << g.gsub('.', '/') << '/'
+          url << a << '/'
+          url << v << '/'
+          url << a << '-' << v
+          url << '-' << c if c
+          url << '.cradle.zip'
+
+          if PrismeUtilities.uri_up?(uri: url)
+            ret << NexusArtifactSelectOption.new(groupId: g, artifactId: a, version: v, repo: repo, classifier: c, package: 'cradle.zip')
+          end
         end
-      else
+      end
+
+      if ret.empty?
         $log.info('no releases found!!')
       end
     else
