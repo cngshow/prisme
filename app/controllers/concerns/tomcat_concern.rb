@@ -8,7 +8,7 @@ module TomcatConcern
 
   # change_state(url: "http://localhost:8080/",username: "devtest",pwd: "devtest", context: "rails_komet_b", path: 'start')
   def change_state(tomcat_service_id:, context:, action:)
-    unless (VALID_ACTIONS.include?(action.to_sym))
+    unless VALID_ACTIONS.include?(action.to_sym)
       $log.error("Invalid action, #{action}, passed into change_state method. Valid actions are: #{VALID_ACTIONS.to_s}.")
       raise StandardError.new("Invalid action, #{action}, passed into change_state method. Valid actions are: #{VALID_ACTIONS.to_s}.")
     end
@@ -36,14 +36,14 @@ module TomcatConcern
   def get_connection(service_or_id:)
     conn = nil
 
-    if (service_or_id.is_a? Service)
+    if service_or_id.is_a? Service
       tomcat_service = service_or_id
     else
       tomcat_service = Service.find_by!(id: service_or_id)
     end
 
     # verify that we have a tomcat service
-    if (tomcat_service.service_type.eql?(PrismeService::TOMCAT))
+    if tomcat_service.service_type.eql?(PrismeService::TOMCAT)
       service_props = tomcat_service.properties_hash
       url = service_props[PrismeService::CARGO_REMOTE_URL]
       username = service_props[PrismeService::CARGO_REMOTE_USERNAME]
@@ -74,7 +74,7 @@ module TomcatConcern
       return {failed: ex.message}
     end
 
-    if (response.status.eql?(200))
+    if response.status.eql?(200)
       data = response.body
 
       # parse the response body
@@ -94,11 +94,11 @@ module TomcatConcern
         ret_hash[war][:version] = get_version(war: war, context: vars[0], tomcat_service: tomcat_service)
       end
 
-      if (ret_hash.empty?)
+      if ret_hash.empty?
         ret_hash = {available: true}
       end
 
-      $log.debug("Returning #{ret_hash}")
+      $log.trace("Returning #{ret_hash}")
       #      {"ROOT"=>{:context=>"/", :state=>"running", :session_count=>"0"}, "isaac-rest"=>{:context=>"/isaac-rest", :state=>"running
       # ", :session_count=>"0"}, "rails_komet_a"=>{:context=>"/rails_komet_a", :state=>"running", :session_count=>"0"}, "/usr/share/tomcat7-admin/host-manager"=>{:context=>"/host-manager", :state=>"running", :session_count=>"0"}, "rail
       # s_prisme"=>{:context=>"/rails_prisme", :state=>"running", :session_count=>"0"}, "/usr/share/tomcat7-admin/manager"=>{:context=>"/manager", :state=>"running", :session_count=>"0"}}
@@ -113,7 +113,7 @@ module TomcatConcern
     path = ''
     version = 'UNKNOWN'
     response = nil
-    if (war =~ /^isaac/)
+    if war =~ /^isaac/
       path = '/rest/1/system/systemInfo'
     else
       #komet via previous filtering
@@ -134,7 +134,7 @@ module TomcatConcern
       json['version'] = 'INVALID_JSON'
       json['restVersion'] = 'INVALID_JSON'
     end
-    if (war =~ /^isaac/)
+    if war =~ /^isaac/
       version = json['apiImplementationVersion'].to_s
       version = 'UNKNOWN' if version.empty? #assume a local run
     else

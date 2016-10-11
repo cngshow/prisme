@@ -5,8 +5,6 @@ class WelcomeController < ApplicationController
   skip_after_action :verify_authorized, :index, :reload_job_queue_list
 
   def index
-    $log.debug(prisme_user.to_s)
-
     # get tomcat deployments
     tomcat_deployments = tomcat_server_deployments
     @deployments = format_deployments_table_data(tomcat_deployments)
