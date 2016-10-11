@@ -26,8 +26,25 @@
 @import "font-awesome-sprockets";
 @import "font-awesome";
 
+.prisme-footer{
+  text-align: center;
+  height: 25px;
+  background-color: black;
+  color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  position:fixed;
+  bottom:0;
+  clear: both;
+  width: 98%;
+}
+
 // input div is used to size the div surrounding each input on the modal windows
 .input_div {
+  width: 525px;
+}
+
+.input_525 {
   width: 525px;
 }
 

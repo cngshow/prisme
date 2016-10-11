@@ -28,7 +28,7 @@ module SeedData
       {
           service: {name: 'Jenkins Build Server', description: 'Jenkins Build Server', service_type: PrismeService::JENKINS},
           props: [
-              {key: PrismeService::JENKINS_ROOT, value: 'https://vaauscttdbs81.aac.va.gov:8080'},
+              {key: PrismeService::JENKINS_ROOT, value: 'https://vaauscttdbs81.aac.va.gov:8080/jenkins'},
               {key: PrismeService::JENKINS_USER, value: 'devtest'},
               {key: PrismeService::JENKINS_PWD, value: '["jK\x90\xA1\x1Fk\x87\xB6\xAB\xA3\xC5\xE7~\xBA\x1AK", "k]\x95\xD8w\x15\xFE\xD3\xC7\xDC\xAC\x9E\x1C\xD0bG"]'}
           ]

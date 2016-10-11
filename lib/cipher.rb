@@ -17,12 +17,20 @@ class CipherSupport
   end
 
   def decrypt(encrypted_string:)
-    encrypted_string_array = eval encrypted_string
     result = ""
-    encrypted_string_array.each do |encrypted|
-      init
-      @decrypt.update(encrypted.to_s)
-      result << @decrypt.final
+    begin
+      encrypted_string_array = eval encrypted_string
+      encrypted_string_array.each do |encrypted|
+        init
+        @decrypt.update(encrypted.to_s)
+        result << @decrypt.final
+      end
+    rescue OpenSSL::Cipher::CipherError => ex
+      $log.error("I was unable to decrypt: ")
+      $log.error("#{encrypted_string}")
+      $log.error("Caller:")
+      $log.error(caller[0][/`.*'/][1..-2])
+      raise ex
     end
     result
   end

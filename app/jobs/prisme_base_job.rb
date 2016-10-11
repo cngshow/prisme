@@ -132,6 +132,11 @@ class PrismeBaseJob < ActiveJob::Base
     end
   end
 
+  rescue_from(java.lang.Exception) do |java_exception|
+    $log.error("A java exception was unhandled in the job lifecycle! #{java_exception}")
+    $log.error(java_exception.backtrace.join("\n"))
+  end
+
   def perform(*args)
     raise NotImplementedError.new('Please implement this in your base class!')
   end

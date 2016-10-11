@@ -41,6 +41,26 @@ module PrismeUtilities
     PrismeUtilities.ssoi_logout_url = URI.valid_url?(url_string: logout_url) ? logout_url : nil
   end
 
+  def self.uri_up?(uri:)
+    if uri.is_a? String
+      uri = URI uri
+    else
+      raise "URI must be a a String URI or a URI object" unless uri.is_a? URI
+    end
+    result = false
+    begin
+      path = uri.path.empty? ? '/' : uri.path
+      result = Net::HTTP.new(uri.host, uri.port)
+      result.use_ssl = uri.scheme.eql?('https')
+      result = (result.head(path).kind_of?(Net::HTTPSuccess))
+        # Net::HTTP.new(u, p).head('/').kind_of? Net::HTTPOK
+    rescue => ex
+      $log.warn("I could not check the URL #{uri.path} at port #{uri.port} against path #{uri.path} because #{ex}.")
+      result = false
+    end
+    result
+  end
+
 end
 
 module URI
