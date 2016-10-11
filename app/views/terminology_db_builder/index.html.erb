@@ -46,33 +46,32 @@
       <div class="modal-body">
         <%= form_tag terminology_db_builder_request_build_path, id: 'myForm' do %>
             <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
-            <div class="input_div" title="The name to use for the maven artifact that will result from executing this generated pom file.">
+            <div title="The name to use for the maven artifact that will result from executing this generated pom file.">
               <%= label_tag 'db_name', 'Database Name' %><br>
-              <%= text_field_tag 'db_name', nil, required: true, data: {required: true}, placeholder: 'Enter the Name for this Database', maxlength: 75, size: 75, class: 'form-control' %>
+              <%= text_field_tag 'db_name', nil, placeholder: 'Enter the Name for this Database', maxlength: 75, size: 75, class: 'form-control input_525' %>
             </div>
             <br>
-            <div class="input_div" title="The version to use for the maven artifact that will result from executing this generated pom file.">
+            <div title="The version to use for the maven artifact that will result from executing this generated pom file.">
               <%= label_tag 'db_version', 'Database Version' %><br>
-              <%= text_field_tag 'db_version', nil, required: true, data: {required: true}, placeholder: 'Enter the Database Version', maxlength: 75, size: 75, class: 'form-control' %>
+              <%= text_field_tag 'db_version', nil, placeholder: 'Enter the Database Version', maxlength: 75, size: 75, class: 'form-control input_525' %>
             </div>
             <br>
-            <div class="input_div" title="Describe the purpose / contents of the database being constructed.">
+            <div title="Describe the purpose / contents of the database being constructed.">
               <%= label_tag 'db_description', 'Database Description' %><br>
-              <%= text_area_tag 'db_description', nil, required: true, data: {required: true}, placeholder: 'Enter a Database Description', rows: '3', cols: 76, class: 'form-control' %>
+              <%= text_area_tag 'db_description', nil, placeholder: 'Enter a Database Description', rows: '3', cols: 76, class: 'form-control input_525' %>
             </div>
             <br>
-            <div class="input_div" title="The (optional) maven classifier to use for the maven artifact that will result from executing this generated pom file. Often used to denote variations of a database version such as 'snapshot', 'full', etc.">
+            <div title="The (optional) maven classifier to use for the maven artifact that will result from executing this generated pom file. Often used to denote variations of a database version such as 'snapshot', 'full', etc.">
               <%= label_tag 'artifact_classifier', 'Artifact Classifier' %><br>
-              <%= text_field_tag 'artifact_classifier', nil, placeholder: 'Artifact Classifier (optional)', maxlength: 75, size: 75, class: 'form-control' %>
+              <%= text_field_tag 'artifact_classifier', nil, placeholder: 'Artifact Classifier (optional)', maxlength: 75, size: 75, class: 'form-control input_525' %>
             </div>
             <br>
-            <div class="input_div" title="Execute the Description Logic Reasoner across the database to create an inferred view">
-              <%= label_tag 'classify', 'Classify the Database' %>
-              <br>
+            <div title="Execute the Description Logic Reasoner across the database to create an inferred view">
+              <%= label_tag 'classify', 'Classify the Database' %><br>
               <%= radio_button_tag 'classify', 'true', true %>&nbsp;True&nbsp;&nbsp;<%= radio_button_tag 'classify', 'false' %>&nbsp;False
             </div>
             <br>
-            <div class="input_div" title="The set of IBDF files to be included in the DB.  Do not include the metadata IBDF file from ISAAC, it is always included."><!-- this is important!! -->
+            <div title="The set of IBDF files to be included in the DB.  Do not include the metadata IBDF file from ISAAC, it is always included."><!-- this is important!! -->
               <%= label_tag 'ibdf_files', 'IBDF Files' %><br>
               <input type="hidden" name="ibdf_selections" id="ibdf_selections">
               <%= select_tag 'ibdf_files',
@@ -86,7 +85,7 @@
               %>
             </div>
             <br>
-            <div class="input_div" title=" The version of the metadata content to include in the DB.">
+            <div title=" The version of the metadata content to include in the DB.">
               <%= label_tag 'metadata_version', 'Metadata Version' %><br>
               <%= select_tag 'metadata_version',
                              options_from_collection_for_select(@metadata_versions, :option_key, :option_value),
@@ -158,8 +157,33 @@
     // call init_select2 to initialize all select inputs to use the select2 js library
     init_select2();
 
+    $.validator.addMethod( "alphas_only", function( value, element ) {
+      return this.optional( element ) || /^[a-z][a-z0-9-_.]+$/i.test( value );
+    }, "Only alphanumerics, dash, underscore, and periods are allowed and this must begin with an alpha character" );
+
+    $.validator.addMethod( "trim_whitespace", function( value, element ) {
+      return this.optional( element ) || /^\w+/i.test( value );
+    }, "You must enter a database description starting with an alpha character" );
+
     // initialize the jquery validation plugin
     $('#myForm').validate({
+      rules: {
+        db_name: {
+          required: true,
+          alphas_only: true
+        },
+        db_version: {
+          required: true,
+          alphas_only: true
+        },
+        db_description: {
+          required: true,
+          trim_whitespace: true
+        },
+        artifact_classifier: {
+          alphas_only: true
+        }
+      },
       errorPlacement: function (error, element) {
         var lbl = $("label[for='" + element.attr('id') + "']");
         error.addClass('arrow_box');
