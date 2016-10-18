@@ -39,7 +39,7 @@ class JenkinsStartBuild < PrismeBaseJob
       JenkinsCheckBuild.perform_later(jenkins_config, ex.to_s, 1, true, track_child_job)
       raise JenkinsClient::JenkinsJavaError, ex
     ensure
-       save_result(result, result_hash)
+      save_result(result, result_hash)
     end
   end
 end

@@ -13,7 +13,7 @@ class PrismeCleanupJob < PrismeBaseJob
               PrismeJobConstants::Status::STATUS_HASH[:ORPHANED],
     ]
     # delete all jobs that are x days old
-    cnt = PrismeJob.delete_all(['completed_at < ? AND (status = ? OR status= ? OR status=?)', *params])
+    cnt = PrismeJob.where('completed_at < ? AND (status = ? OR status= ? OR status=?)', *params).delete_all
     result = "PrismeCleanupJob deleted #{cnt} old records from the prisme_jobs table.\n"
     $log.info(result)
     result = ""
