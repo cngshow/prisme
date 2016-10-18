@@ -5,6 +5,8 @@ require 'uri'
 #general handler.  The general handler will assume it is tied to Nexus.
 module TomcatConcern
   VALID_ACTIONS = [:start, :stop, :undeploy]
+  ISAAC_SYSTEM_INFO_PATH = '/rest/1/system/systemInfo'
+  KOMET_VERSION_PATH = '/komet_dashboard/version'
 
   # change_state(url: "http://localhost:8080/",username: "devtest",pwd: "devtest", context: "rails_komet_b", path: 'start')
   def change_state(tomcat_service_id:, context:, action:)
@@ -91,7 +93,9 @@ module TomcatConcern
         ret_hash[war][:context] = vars[0]
         ret_hash[war][:state] = vars[1]
         ret_hash[war][:session_count] = vars[2]
-        ret_hash[war][:version] = get_version(war: war, context: vars[0], tomcat_service: tomcat_service)
+        version_hash = get_version_hash(war: war, context: vars[0], tomcat_service: tomcat_service)
+        ret_hash[war][:version] = version_hash[:version]
+        ret_hash[war][:isaac] = version_hash[:isaac] if version_hash[:isaac]
       end
 
       if ret_hash.empty?
@@ -108,16 +112,16 @@ module TomcatConcern
     end
   end
 
-  def get_version(war:, context:, tomcat_service:)
+  def get_version_hash(war:, context:, tomcat_service:)
     conn = get_connection(service_or_id: tomcat_service)
     path = ''
-    version = 'UNKNOWN'
     response = nil
+    version_hash = {version: 'UNKNOWN'}
     if war =~ /^isaac/
-      path = '/rest/1/system/systemInfo'
+      path = ISAAC_SYSTEM_INFO_PATH
     else
       #komet via previous filtering
-      path = '/komet_dashboard/version'
+      path = KOMET_VERSION_PATH
     end
     begin
       path = context + path
@@ -135,12 +139,14 @@ module TomcatConcern
       json['restVersion'] = 'INVALID_JSON'
     end
     if war =~ /^isaac/
-      version = json['apiImplementationVersion'].to_s
-      version = 'UNKNOWN' if version.empty? #assume a local run
+      version_hash[:isaac] = {}
+      version_hash[:version] = json['apiImplementationVersion'].to_s unless json['apiImplementationVersion'].to_s.empty?
+      version_hash[:isaac][:database] = json['isaacDbDependency']
+      version_hash[:isaac][:database_dependencies] = json['dbDependencies']
     else
-      version = json['version'].to_s
+      version_hash[:version] = json['version'].to_s
     end
-    version
+    version_hash
   end
 
   def tomcat_server_deployments
@@ -171,7 +177,7 @@ module TomcatConcern
             d.last[:link] = link
           end
         end
-
+$log.always("Cris #{data_hash.inspect}")
         tomcat_deployments[{url: url, service_name: tomcat.name, service_id: tomcat.id}] = data_hash
       end
     end
