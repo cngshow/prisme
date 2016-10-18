@@ -1,9 +1,3 @@
-require './lib/dbseeds/aitc_dev_db'
-require './lib/dbseeds/aitc_sqa_db'
-require './lib/dbseeds/aitc_test_db'
-require './lib/dbseeds/localhost'
-require './lib/dbseeds/va_dev_db'
-
 class UtilitiesController < ApplicationController
   skip_after_action :verify_authorized
   skip_before_action :verify_authenticity_token
@@ -32,23 +26,29 @@ class UtilitiesController < ApplicationController
     seeds = []
     valid_seeds = %w(localhost va_dev_db aitc_dev_db aitc_sqa_db aitc_test_db)
     db_seed = params[:db]
-
+    v = $VERBOSE
+    $VERBOSE = nil
     if valid_seeds.include?(db_seed)
       case db_seed
         when 'localhost'
+          load './lib/dbseeds/localhost.rb'
           seeds = SeedData::LOCALHOST
         when 'va_dev_db'
+          load './lib/dbseeds/va_dev_db.rb'
           seeds = SeedData::VA_DEV
         when 'aitc_dev_db'
+          load './lib/dbseeds/aitc_dev_db.rb'
           seeds = SeedData::AITC_DEV
         when 'aitc_test_db'
+          load './lib/dbseeds/aitc_test_db.rb'
           seeds = SeedData::AITC_TEST
         when 'aitc_sqa_db'
+          load './lib/dbseeds/aitc_sqa_db.rb'
           seeds = SeedData::AITC_SQA
         else
           ret = 'A valid key was passed but we have not created the corresponding file in the lib/dbseeds'
       end
-
+      $VERBOSE = v
       unless ret
         ret = write_service_seeds(seeds)
       end
