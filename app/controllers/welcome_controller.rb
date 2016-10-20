@@ -52,7 +52,6 @@ class WelcomeController < ApplicationController
   private
   def format_deployments_table_data(tomcat_deployments)
     ret = []
-
     tomcat_deployments.keys.each do |appserver|
       service_name = appserver[:service_name]
       current_row = {service_id: appserver[:service_id], service_name: service_name, available: false, rows: []}
@@ -62,7 +61,9 @@ class WelcomeController < ApplicationController
         current_row[:available] = true
         next if [:available, :failed].include?(war)
         link = ssoi? ? URI(d[:link]).proxify.to_s : d[:link]
-        current_row[:rows] << {war_name: war, state: d[:state], version: d[:version], session_count: d[:session_count].to_s, link: link}
+        hash = {war_name: war, state: d[:state], version: d[:version], session_count: d[:session_count].to_s, link: link}
+        hash[:isaac] = d[:isaac] if d[:isaac]
+        current_row[:rows] << hash
       end
       ret << current_row
     end

@@ -26,7 +26,35 @@
               <td<%= raw(row[:state].eql?('running') ? " data-href='#{row[:link]}'" : '') %>><%= row[:war_name] %></td>
               <td<%= raw(row[:state].eql?('running') ? " data-href='#{row[:link]}'" : '') %>><%= row[:state] %></td>
               <td<%= raw(row[:state].eql?('running') ? " data-href='#{row[:link]}'" : '') %>><%= row[:session_count] %></td>
-              <td<%= raw(row[:state].eql?('running') ? " data-href='#{row[:link]}'" : '') %>><%= row[:version] %></td>
+              <td<%= raw(row[:state].eql?('running') ? " data-href='#{row[:link]}'" : '') %>><%= row[:version] %>
+                <% if row[:isaac] %>
+                    <div class="prismetooltip" style="float: right">
+                      <span class="fa fa-info-circle"></span>
+                      <span class="tooltiptext">
+                        Isaac Database
+                        <% $log.always("Cris row = #{row[:isaac].inspect}") %>
+                        <ul>
+                          <li>artifact ID: <%= row[:isaac][:database]['artifactId'].to_s %></li>
+                          <li>version: <%= row[:isaac][:database]['version'].to_s %></li>
+                          <%= raw "<li>classifier: #{row[:isaac][:database]['classifier'].to_s}</li>" unless row[:isaac][:database]['classifier'].to_s.empty? %>
+
+                        </ul>
+                        <hr>
+                        Database Dependencies
+                        <% row[:isaac][:database_dependencies].each do |d| %>
+                            <ul>
+                              <li>artifact ID: <%= d['artifactId'].to_s %></li>
+                              <li>version: <%= d['version'].to_s %></li>
+                              <%= raw "<li>classifier: #{d['classifier'].to_s}</li>" unless d['classifier'].to_s.empty? %>
+                            </ul>
+                            <hr>
+                        <% end %>
+                        </span>
+                    </div>
+                <% else %>
+                <% end %>
+
+              </td>
               <td<%= raw(policy(:navigation).admin? ? '' : ' style="color: red; font-weight: bold"') %>>
                 <%= (policy(:navigation).admin?) ? action_button_bar(row, deployment[:service_id]) : 'Requires Super User Privileges' %>
               </td>
