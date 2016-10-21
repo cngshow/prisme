@@ -177,7 +177,7 @@ module TomcatConcern
             d.last[:link] = link
           end
         end
-$log.always("Cris #{data_hash.inspect}")
+        $log.debug("Tomcat deployment data_hash is #{data_hash.inspect}")
         tomcat_deployments[{url: url, service_name: tomcat.name, service_id: tomcat.id}] = data_hash
       end
     end

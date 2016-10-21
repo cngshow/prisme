@@ -27,12 +27,12 @@
               <td<%= raw(row[:state].eql?('running') ? " data-href='#{row[:link]}'" : '') %>><%= row[:state] %></td>
               <td<%= raw(row[:state].eql?('running') ? " data-href='#{row[:link]}'" : '') %>><%= row[:session_count] %></td>
               <td<%= raw(row[:state].eql?('running') ? " data-href='#{row[:link]}'" : '') %>><%= row[:version] %>
-                <% if row[:isaac] %>
+                <% if row[:isaac] && !row[:version].eql?('UNKNOWN') %>
                     <div class="prismetooltip" style="float: right">
                       <span class="fa fa-info-circle"></span>
                       <span class="tooltiptext">
                         Isaac Database
-                        <% $log.always("Cris row = #{row[:isaac].inspect}") %>
+                        <% $log.debug("isaac database data row = #{row[:isaac].inspect}") %>
                         <ul>
                           <li>artifact ID: <%= row[:isaac][:database]['artifactId'].to_s %></li>
                           <li>version: <%= row[:isaac][:database]['version'].to_s %></li>
