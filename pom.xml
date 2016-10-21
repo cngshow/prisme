@@ -23,7 +23,7 @@
   </description>
 
   <properties>
-    <rails_common.version>1.34-SNAPSHOT</rails_common.version> <!--TODO Put new rails common version here if it has been changed -->
+    <rails_common.version>1.35-SNAPSHOT</rails_common.version> <!--TODO Put new rails common version here if it has been changed -->
     <!--Open up the assembly.xml file in rails common if new directories are added. -->
     <isaac.version>3.16-SNAPSHOT</isaac.version><!--TODO Eliminate Snapshot if present -->
     <!-- railsMode is automatically set to 'test' or 'production' - 'test' if the version number ends with '-SNAPSHOT'
