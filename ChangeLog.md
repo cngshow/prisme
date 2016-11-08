@@ -3,6 +3,9 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2016/11/?? - 1.33:
+    *  
+
 * 2016/11/08 - 1.32: 
     * 508 bug fixes - Defect  #'s:
       - 414519 - Retested local. No fix needed - The Deployment and Job Queue are 'tabs', not tables. These are considered navigation elements and can be toggled 

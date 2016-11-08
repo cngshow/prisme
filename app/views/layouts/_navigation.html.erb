@@ -73,16 +73,13 @@
                 <a href="<%= roles_sso_logout_path %>" onclick="polling.checkPolling(polling.pollEnum.LOGOUT);">SSO Log out</a>
             <% else %>
 
-            <button type="button" class="prisme-link-button" id="logout" onclick="polling.checkPolling(polling
-                .pollEnum.LOGOUT('<%= destroy_user_session_path %>')" title="Logout" role="navigation">
+            <a href="<%= destroy_user_session_path %>" class="prisme-link-button" id="logout"
+               onclick="polling.checkPolling(polling.pollEnum.LOGOUT)" title="Logout" role="navigation">
               <div class="glyphicon glyphicon-log-out" title="Logout"></div>
               Logout
-            </button>
+            </a>
           <% end %>
         <% end %>
-
       </div>
     </div>
-
-
 </nav>
