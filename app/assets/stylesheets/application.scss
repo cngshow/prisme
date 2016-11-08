@@ -26,6 +26,101 @@
 @import "font-awesome-sprockets";
 @import "font-awesome";
 
+// PRISME Navigation styles
+.prisme-navbar{
+  display: flex;
+  height: 40px;
+  align-items: stretch;
+  background-color: rgb(228, 228, 228);
+  font-size: 18px;
+  font-weight: bold;
+  color: black;
+}
+.prisme-navbar .glyphicon{
+  top: initial;
+  padding-top: 2px;
+}
+.prisme-navbar a{
+  text-decoration: none;
+  color: black
+}
+.prisme-navbar button{
+  height: 24px;
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+}
+.prisme-navbar-header{
+  font-size: 24px;
+  flex: 0 0 auto;
+  align-items: center;
+  padding: 0px 10px;
+  display: flex;
+}
+.prisme-logo-prisme{
+  color:#183445;
+  margin-right: 4px;
+}
+.prisme-logo-tooling{
+  color:#414199;
+}
+.prisme-navbar-navigation .dropdown a:focus{
+  outline: thin dotted;
+  outline: 5px auto -webkit-focus-ring-color;
+  outline-offset: -2px;
+}
+.prisme-navbar-navigation{
+  margin-bottom: 0px;
+  border-left: 4px solid white;
+  color: black;
+  display: flex;
+  flex: 0 0 auto;
+  align-items: stretch;
+}
+.prisme-navbar-navigation > div{
+  border-right: 4px solid white;
+  border-bottom: 1px solid transparent;
+  padding: 0px 10px;
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  cursor: pointer;
+}
+.prisme-navbar-navigation > div:hover, .prisme-navbar-navigation > div:focus{
+  border-bottom: 1px solid black;
+}
+.prisme-navbar-tools{
+  display: flex;
+  flex: 1 1 auto;
+  justify-content: flex-end;
+}
+.prisme-navbar-tools > :first-child{
+  border-left: 4px solid white;
+}
+.prisme-navbar-tools > div{
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  padding: 0px 10px;
+  border-right: 4px solid white;
+  border-bottom: 1px solid transparent;
+  cursor: pointer;
+}
+.prisme-navbar-tools > div:hover, .prisme-navbar-tools > div:focus{
+  border-bottom: 1px solid black;
+}
+#prisme_user_preference_link{
+  margin-right: 0px;
+}
+.prisme-navbar-tools .glyphicon, .prisme-navbar-tools .fa{
+  margin-right: 5px;
+  padding-bottom: 4px;
+}
+.prisme-link-button{
+  background: none !important;
+  border: none;
+  padding: 0 !important;
+}
 .prisme-footer{
   text-align: center;
   height: 25px;
@@ -191,4 +286,23 @@ html, body {
 
 .prismetooltip:hover .tooltiptext {
   visibility: visible;
+}
+#prisme_navbar_navigation .nav a:hover, #prisme_navbar_navigation .nav a:focus {
+  border-bottom: 1px solid black;
+}
+#prisme_navbar_tools a:hover, #prisme_navbar_tools a:focus {
+  text-decoration: none;
+  color: black;
+}
+h1,
+.h1 {
+  font-size: 24px;
+  color: black;
+  flex: 0 0 auto;
+  align-items: center;
+  display: flex;
+  padding-bottom: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  color: black;
 }

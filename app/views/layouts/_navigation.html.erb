@@ -1,50 +1,88 @@
-<nav class="navbar navbar-default">
-  <div class="navbar-header">
-    <a class="navbar-brand" href="<%= root_path %>">PRISME</a>
-  </div>
-  <div>
-    <ul class="nav navbar-nav">
-      <li>
-        <a href="<%= root_path %>"><span class="glyphicon glyphicon-home" onclick="polling.checkPolling(polling.pollEnum.WELCOME);"></span></a>
-      </li>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
+<nav class="prisme-navbar" role="navigation">
+    <!-- Brand and toggle menu display -->
+    <div class="prisme-navbar-header" role="navigation">
+      <a href="<%= root_path %>"><h1> <div class="prisme-logo-prisme" aria-label="PRISME Home" title="PRISME Home"><span
+      class="glyphicon glyphicon-home" style="padding-right: 10px;"></span>PRISME</div></h1></a>
+    </div>
+
+    <div class="prisme-navbar-navigation" role="navigation">
+
+
       <% if policy(:navigation).admin? %>
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Terminology
+          <div class="dropdown" role="navigation">
+            <a style="cursor: default"  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="Terminology">Terminology
               <span class="caret"></span></a>
-            <ul class="dropdown-menu">
-              <li><a href="<%= terminology_source_packages_path %>" onclick="polling.checkPolling(polling.pollEnum.TERM_SOURCE);">Source Package Upload</a></li>
-              <li role="separator" class="divider"></li>
-              <li><a href="<%= terminology_converter_path %>" onclick="polling.checkPolling(polling.pollEnum.CONVERTER);">Convert Terminology</a></li>
-              <li role="separator" class="divider"></li>
-              <li><a href="<%= terminology_db_builder_path %>" onclick="polling.checkPolling(polling.pollEnum.DB_BUILDER);">Database Builder</a></li>
+
+            <ul class="dropdown-menu" aria-hidden="true" aria-label="submenu">
+              <li>
+                <a style="cursor: default" href="<%= terminology_source_packages_path %>" onclick="polling
+                    .checkPolling(polling.pollEnum.TERM_SOURCE);" title="Source Package Upload">
+                  Source Package Upload</a></li>
+              <li>
+                <a style="cursor: default" href="<%= terminology_converter_path %>" onclick="polling.checkPolling(polling.pollEnum
+                  .CONVERTER);" title="Convert Terminology">
+                  Convert Terminology</a></li>
+              <li>
+                <a style="cursor: default" href="<%= terminology_db_builder_path %>" onclick="polling.checkPolling(polling.pollEnum
+                  .DB_BUILDER);" title="Database Builder">
+                  Database Builder</a></li>
             </ul>
-          </li>
-          <li><a href="<%= app_deployer_path %>" onclick="polling.checkPolling(polling.pollEnum.DEPLOYER);">App Deployer</a></li>
+          </div>
       <% end %>
+
+      <div>
+        <a href="<%= app_deployer_path %>" onclick="polling.checkPolling(polling.pollEnum.DEPLOYER);"> <button type="button" class="prisme-link-button" onclick="polling
+            .checkPolling('<%= app_deployer_path %>')" title="App Deployer" role="navigation">App Deployer
+        </button></a>
+      </div>
+
       <% if policy(:navigation).admin? %>
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administration<span class="caret"></span></a>
-            <ul class="dropdown-menu">
-              <li><a href="<%= list_users_path %>" onclick="polling.checkPolling(polling.pollEnum.ADMIN_USER_EDIT);">Edit User Permissions</a></li>
-              <li role="separator" class="divider"></li>
-              <li><a href="<%= services_path %>" onclick="polling.checkPolling(polling.pollEnum.SERVICES);">Service Provisioning</a></li>
+          <div class="dropdown" role="navigation">
+            <a style="cursor: default"  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+               aria-expanded="false" title="Administration">Administration
+              <span class="caret"></span></a>
+
+            <ul class="dropdown-menu" aria-hidden="true" aria-label="submenu">
+              <li>
+                <a style="cursor: default" href="<%= list_users_path %>" onclick="polling.checkPolling(polling.pollEnum.ADMIN_USER_EDIT);
+                " title="Edit User Permissions">
+                  Edit User Permissions</a></li>
+              <li>
+                <a style="cursor: default" href="<%= services_path %>" onclick="polling.checkPolling(polling.pollEnum.SERVICES);" title="Service
+                Provisioning">
+                  Service Provisioning</a></li>
             </ul>
-          </li>
+          </div>
       <% end %>
-      <li>
+
+
+</div>
+
+  <div class="prisme-navbar-tools" role="navigation">
+
+     <div>
+      <div class="glyphicon glyphicon-user" title="User ID"></div> <%= raw (prisme_user.nil? ? '' : "<Strong>Current User:</strong>&nbsp;#{prisme_user.user_name}") %></div>
+
+      <div>
         <% if prisme_user.nil? %>
             <a href="<%= new_user_session_path %>" onclick="polling.checkPolling(polling.pollEnum.LOGIN);">Log in</a>
-        <% else %>
+          <% else %>
             <% if prisme_user.is_a?(SsoiUser) %>
                 <a href="<%= roles_sso_logout_path %>" onclick="polling.checkPolling(polling.pollEnum.LOGOUT);">SSO Log out</a>
             <% else %>
-              <a href="<%= destroy_user_session_path %>" onclick="polling.checkPolling(polling.pollEnum.LOGOUT);">Log out</a>
-            <% end %>
+
+            <button type="button" class="prisme-link-button" id="logout" onclick="polling.checkPolling(polling
+                .pollEnum.LOGOUT('<%= destroy_user_session_path %>')" title="Logout" role="navigation">
+              <div class="glyphicon glyphicon-log-out" title="Logout"></div>
+              Logout
+            </button>
+          <% end %>
         <% end %>
-      </li>
-    </ul>
-    <div style="float:right; padding-top: 15px; padding-right: 15px">
-      <%= raw (prisme_user.nil? ? '' : "<Strong>Current User:</strong>&nbsp;#{prisme_user.user_name}") %>
+
+      </div>
     </div>
-  </div>
+
+
 </nav>

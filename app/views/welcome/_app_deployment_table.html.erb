@@ -1,14 +1,14 @@
 <div id="<%= deployment[:service_id] %>">
-  <br>
-  <h4>Service Name:&nbsp;&nbsp;<%= deployment[:service_name] %></h4>
+
   <table class="prisme-table table-striped table-hover">
+    <caption>Service Name:&nbsp;&nbsp;<%= deployment[:service_name] %></caption>
     <thead>
     <tr>
-      <th width="50%">Application</th>
-      <th width="10%">State</th>
-      <th width="10%">Session Count</th>
-      <th width="10%">Version</th>
-      <th width="20%">Actions (Start/Stop/Undeploy)</th>
+      <th scope="col" width="50%">Application</th>
+      <th scope="col" width="10%">State</th>
+      <th scope="col" width="10%">Session Count</th>
+      <th scope="col" width="10%">Version</th>
+      <th scope="col" width="20%">Actions (Start/Stop/Undeploy)</th>
     </tr>
     </thead>
     <tbody>
@@ -24,9 +24,9 @@
         <% deployment[:rows].each do |row| %>
             <tr>
               <td<%= raw(row[:state].eql?('running') ? " data-href='#{row[:link]}'" : '') %>><%= row[:war_name] %></td>
-              <td<%= raw(row[:state].eql?('running') ? " data-href='#{row[:link]}'" : '') %>><%= row[:state] %></td>
-              <td<%= raw(row[:state].eql?('running') ? " data-href='#{row[:link]}'" : '') %>><%= row[:session_count] %></td>
-              <td<%= raw(row[:state].eql?('running') ? " data-href='#{row[:link]}'" : '') %>><%= row[:version] %>
+              <td><%= row[:state] %></td>
+              <td><%= row[:session_count] %></td>
+              <td><%= row[:version] %>
                 <% if row[:isaac] && !row[:version].eql?('UNKNOWN') %>
                     <div class="prismetooltip" style="float: right">
                       <span class="fa fa-info-circle"></span>
