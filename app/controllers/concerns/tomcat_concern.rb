@@ -166,10 +166,10 @@ module TomcatConcern
 
       # build the link for each deployment
       if data_hash.has_key?(:failed)
-        tomcat_deployments[{url: url, service_name: tomcat.name}] = {}
+        tomcat_deployments[{url: url, service_name: tomcat.name, service_desc: tomcat.description}] = {}
       else
         if data_hash.has_key? :available
-        #   the server is up and available but there are no rails or isaac deployments so we are just returrning that the server is available
+        #   the server is up and available but there are no rails or isaac deployments so we are just returning that the server is available
         else
           data_hash.each do |d|
             context = d.last[:context]
@@ -178,7 +178,7 @@ module TomcatConcern
           end
         end
         $log.debug("Tomcat deployment data_hash is #{data_hash.inspect}")
-        tomcat_deployments[{url: url, service_name: tomcat.name, service_id: tomcat.id}] = data_hash
+        tomcat_deployments[{url: url, service_name: tomcat.name, service_desc: tomcat.description, service_id: tomcat.id}] = data_hash
       end
     end
 
