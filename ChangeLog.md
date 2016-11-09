@@ -3,6 +3,9 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2016/11/?? - 1.35:
+    *
+
 * 2016/11/09 - 1.34:
     * Added a tooltip to show the description of a tomcat server instance
 
