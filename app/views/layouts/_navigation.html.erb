@@ -4,11 +4,9 @@
   <!-- Brand and toggle menu display -->
   <div class="prisme-navbar-header" role="navigation">
     <a href="<%= root_path %>">
-      <h1>
         <div class="prisme-logo-prisme" aria-label="PRISME Home" title="PRISME Home"><span
         class="glyphicon glyphicon-home" style="padding-right: 10px;"></span>PRISME
         </div>
-      </h1>
     </a>
   </div>
 
@@ -16,46 +14,43 @@
 
 
     <% if policy(:navigation).admin? %>
-        <div class="dropdown" role="navigation">
-          <a style="cursor: default" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="Terminology">Terminology
+        <div>
+          <a href="<%= app_deployer_path %>" class="prisme-link-button" onclick="polling.checkPolling(polling.pollEnum.DEPLOYER);" title="App Deployer" role="navigation">App Deployer</a>
+        </div>
+
+
+        <div class="dropdown" role="presentation">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="Terminology">Terminology
             <span class="caret"></span></a>
 
-          <ul class="dropdown-menu" aria-hidden="true" aria-label="submenu">
-            <li>
-              <a style="cursor: default" href="<%= terminology_source_packages_path %>" onclick="polling
+          <ul class="dropdown-menu" aria-hidden="true" aria-label="Terminology Submenu">
+            <li role="menuitem">
+              <a href="<%= terminology_source_packages_path %>" onclick="polling
                   .checkPolling(polling.pollEnum.TERM_SOURCE);" title="Source Package Upload">
                 Source Package Upload</a></li>
-            <li>
-              <a style="cursor: default" href="<%= terminology_converter_path %>" onclick="polling.checkPolling(polling.pollEnum
+            <li role="menuitem">
+              <a href="<%= terminology_converter_path %>" onclick="polling.checkPolling(polling.pollEnum
                   .CONVERTER);" title="Convert Terminology">
                 Convert Terminology</a></li>
-            <li>
-              <a style="cursor: default" href="<%= terminology_db_builder_path %>" onclick="polling.checkPolling(polling.pollEnum
+            <li role="menuitem">
+              <a href="<%= terminology_db_builder_path %>" onclick="polling.checkPolling(polling.pollEnum
                   .DB_BUILDER);" title="Database Builder">
                 Database Builder</a></li>
           </ul>
         </div>
 
-        <div>
-          <a href="<%= app_deployer_path %>" onclick="polling.checkPolling(polling.pollEnum.DEPLOYER);">
-            <button type="button" class="prisme-link-button" onclick="polling
-                .checkPolling('<%= app_deployer_path %>')" title="App Deployer" role="navigation">App Deployer
-            </button>
-          </a>
-        </div>
 
-        <div class="dropdown" role="navigation">
-          <a style="cursor: default" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-             aria-expanded="false" title="Administration">Administration
+        <div class="dropdown" role="presentation">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="Administration">Administration
             <span class="caret"></span></a>
 
-          <ul class="dropdown-menu" aria-hidden="true" aria-label="submenu">
-            <li>
-              <a style="cursor: default" href="<%= list_users_path %>" onclick="polling.checkPolling(polling.pollEnum.ADMIN_USER_EDIT);
+          <ul class="dropdown-menu" aria-hidden="true" aria-label="Administration Submenu">
+            <li role="menuitem">
+              <a href="<%= list_users_path %>" onclick="polling.checkPolling(polling.pollEnum.ADMIN_USER_EDIT);
               " title="Edit User Permissions">
                 Edit User Permissions</a></li>
-            <li>
-              <a style="cursor: default" href="<%= services_path %>" onclick="polling.checkPolling(polling.pollEnum.SERVICES);" title="Service
+            <li role="menuitem">
+              <a href="<%= services_path %>" onclick="polling.checkPolling(polling.pollEnum.SERVICES);" title="Service
                 Provisioning">
                 Service Provisioning</a></li>
           </ul>
