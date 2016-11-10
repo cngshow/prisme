@@ -320,6 +320,9 @@
             }
           });
         }
+
+        var placeholder = converter == 'SCT_EXTENSION' ? 'Enter the Extension Name (e.g. US)' : 'Enter the Extension Name (optional)';
+        $('#extension_name').attr('required', (converter == 'SCT_EXTENSION')).attr('placeholder', placeholder);
       });
 
       // call init_select2 to initialize all select inputs to use the select2 js library
