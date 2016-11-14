@@ -80,7 +80,7 @@ class RolesController < ApplicationController
     if (@parsed)
       user = User.find_by(email: @user_name) if @user_type.eql? PrismeUserConcern::DEVISE_USER.to_s
       user = SsoiUser.fetch_user(@user_name) if @user_type.eql? PrismeUserConcern::SSOI_USER.to_s
-      $log.debug("The user I found is #{user} with id #{user.id}, the id in the token is #{@user_id}, the user type is #{@user_type}, token name is #{@user_name}")
+      $log.info("The user I found is #{user} with id #{user.id}, the id in the token is #{@user_id}, the user type is #{@user_type}, token name is #{@user_name}")
       if(!user.nil? && user.id.eql?(@user_id))
         @roles_hash[:user] = @user_name
         @roles_hash[:type] = @user_type
