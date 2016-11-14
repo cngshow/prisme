@@ -54,7 +54,8 @@ class WelcomeController < ApplicationController
     ret = []
     tomcat_deployments.keys.each do |appserver|
       service_name = appserver[:service_name]
-      current_row = {service_id: appserver[:service_id], service_name: service_name, available: false, rows: []}
+      service_desc = appserver[:service_desc]
+      current_row = {service_id: appserver[:service_id], service_name: service_name, service_desc: service_desc, available: false, rows: []}
 
       # get all of the applications deployed at this app server location
       tomcat_deployments[appserver].each_pair do |war, d|
