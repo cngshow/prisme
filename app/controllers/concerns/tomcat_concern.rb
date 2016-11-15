@@ -6,7 +6,7 @@ require 'uri'
 module TomcatConcern
   VALID_ACTIONS = [:start, :stop, :undeploy]
   ISAAC_SYSTEM_INFO_PATH = '/rest/1/system/systemInfo'
-  KOMET_VERSION_PATH = '/komet_dashboard/version'
+  KOMET_VERSION_PATH = '/komet_dashboard/version?include_isaac=true'
 
   # change_state(url: "http://localhost:8080/",username: "devtest",pwd: "devtest", context: "rails_komet_b", path: 'start')
   def change_state(tomcat_service_id:, context:, action:)
@@ -96,13 +96,12 @@ module TomcatConcern
         version_hash = get_version_hash(war: war, context: vars[0], tomcat_service: tomcat_service)
         ret_hash[war][:version] = version_hash[:version]
         ret_hash[war][:isaac] = version_hash[:isaac] if version_hash[:isaac]
+        ret_hash[war][:komets_isaac_version] = version_hash[:isaac][:isaac_version] if (version_hash[:isaac] && version_hash[:isaac][:isaac_version])
       end
 
       if ret_hash.empty?
         ret_hash = {available: true}
       end
-
-      $log.trace("Returning #{ret_hash}")
       #      {"ROOT"=>{:context=>"/", :state=>"running", :session_count=>"0"}, "isaac-rest"=>{:context=>"/isaac-rest", :state=>"running
       # ", :session_count=>"0"}, "rails_komet_a"=>{:context=>"/rails_komet_a", :state=>"running", :session_count=>"0"}, "/usr/share/tomcat7-admin/host-manager"=>{:context=>"/host-manager", :state=>"running", :session_count=>"0"}, "rail
       # s_prisme"=>{:context=>"/rails_prisme", :state=>"running", :session_count=>"0"}, "/usr/share/tomcat7-admin/manager"=>{:context=>"/manager", :state=>"running", :session_count=>"0"}}
@@ -135,16 +134,20 @@ module TomcatConcern
     begin
       json = JSON.parse body
     rescue => ex
+      $log.error("JSON was not parsed! #{ex}")
       json['version'] = 'INVALID_JSON'
       json['restVersion'] = 'INVALID_JSON'
     end
+    version_hash[:isaac] = {}
     if war =~ /^isaac/
-      version_hash[:isaac] = {}
       version_hash[:version] = json['apiImplementationVersion'].to_s unless json['apiImplementationVersion'].to_s.empty?
       version_hash[:isaac][:database] = json['isaacDbDependency']
       version_hash[:isaac][:database_dependencies] = json['dbDependencies']
     else
       version_hash[:version] = json['version'].to_s
+      version_hash[:isaac][:isaac_version] = json['isaac_version']['apiImplementationVersion'].to_s rescue "unknown isaac version"
+      version_hash[:isaac][:database] = json['isaac_version']['isaacDbDependency'] rescue nil
+      version_hash[:isaac][:database_dependencies] = json['isaac_version']['dbDependencies'] rescue nil
     end
     version_hash
   end
@@ -169,7 +172,7 @@ module TomcatConcern
         tomcat_deployments[{url: url, service_name: tomcat.name, service_desc: tomcat.description}] = {}
       else
         if data_hash.has_key? :available
-        #   the server is up and available but there are no rails or isaac deployments so we are just returning that the server is available
+          #   the server is up and available but there are no rails or isaac deployments so we are just returning that the server is available
         else
           data_hash.each do |d|
             context = d.last[:context]
@@ -185,3 +188,6 @@ module TomcatConcern
     tomcat_deployments
   end
 end
+=begin
+load './app/controllers/concerns/tomcat_concern.rb'
+=end

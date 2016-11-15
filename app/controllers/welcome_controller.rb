@@ -64,6 +64,7 @@ class WelcomeController < ApplicationController
         link = ssoi? ? URI(d[:link]).proxify.to_s : d[:link]
         hash = {war_name: war, state: d[:state], version: d[:version], session_count: d[:session_count].to_s, link: link}
         hash[:isaac] = d[:isaac] if d[:isaac]
+        hash[:komets_isaac_version] = d[:komets_isaac_version] if d[:komets_isaac_version]
         current_row[:rows] << hash
       end
       ret << current_row
