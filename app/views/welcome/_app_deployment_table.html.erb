@@ -1,7 +1,8 @@
 <div id="<%= deployment[:service_id] %>">
 
   <table class="prisme-table table-striped table-hover">
-    <caption title='<%= deployment[:service_desc] %>'>Service Name:&nbsp;&nbsp;<%= deployment[:service_name] %></caption>
+    <caption title='<%= deployment[:service_desc] %>'>Service
+      Name:&nbsp;&nbsp;<%= deployment[:service_name] %></caption>
     <thead>
     <tr>
       <th scope="col" width="50%">Application</th>
@@ -31,29 +32,30 @@
                     <div class="prismetooltip" style="float: right">
                       <span class="fa fa-info-circle"></span>
                       <span class="tooltiptext">
-                        Isaac Database
+                        Isaac Database <%= fetch_komets_isaac(row: row) %>
                         <% $log.debug("isaac database data row = #{row[:isaac].inspect}") %>
                         <ul>
-                          <li>artifact ID: <%= row[:isaac][:database]['artifactId'].to_s %></li>
-                          <li>version: <%= row[:isaac][:database]['version'].to_s %></li>
-                          <%= raw "<li>classifier: #{row[:isaac][:database]['classifier'].to_s}</li>" unless row[:isaac][:database]['classifier'].to_s.empty? %>
+                          <li>artifact ID: <%= row[:isaac][:database]['artifactId'].to_s rescue 'unknown' %></li>
+                          <li>version: <%= row[:isaac][:database]['version'].to_s rescue 'unknown' %></li>
+                          <%= raw "<li>classifier: #{row[:isaac][:database]['classifier'].to_s}</li>" unless (row[:isaac][:database].nil? || row[:isaac][:database]['classifier'].to_s.empty?) %>
 
                         </ul>
                         <hr>
-                        Database Dependencies
-                        <% row[:isaac][:database_dependencies].each do |d| %>
-                            <ul>
-                              <li>artifact ID: <%= d['artifactId'].to_s %></li>
-                              <li>version: <%= d['version'].to_s %></li>
-                              <%= raw "<li>classifier: #{d['classifier'].to_s}</li>" unless d['classifier'].to_s.empty? %>
-                            </ul>
-                            <hr>
+                        <% unless row[:isaac][:database_dependencies].nil? %>
+                            Database Dependencies
+                            <% row[:isaac][:database_dependencies].each do |d| %>
+                              <ul>
+                                <li>artifact ID: <%= d['artifactId'].to_s %></li>
+                                <li>version: <%= d['version'].to_s %></li>
+                                <%= raw "<li>classifier: #{d['classifier'].to_s}</li>" unless d['classifier'].to_s.empty? %>
+                              </ul>
+                              <hr>
+                          <% end %>
                         <% end %>
                         </span>
                     </div>
                 <% else %>
                 <% end %>
-
               </td>
               <td<%= raw(policy(:navigation).admin? ? '' : ' style="color: red; font-weight: bold"') %>>
                 <%= (policy(:navigation).admin?) ? action_button_bar(row, deployment[:service_id]) : 'Requires Super User Privileges' %>
