@@ -4,8 +4,8 @@
   <!-- Brand and toggle menu display -->
   <div class="prisme-navbar-header" role="navigation">
     <a href="<%= root_path %>">
-        <div class="prisme-logo-prisme" aria-label="PRISME Home" title="PRISME Home"><span
-        class="glyphicon glyphicon-home" style="padding-right: 10px;"></span>PRISME
+        <div class="prisme-logo-prisme" aria-label="PRISME Home" title="PRISME Home">
+          <span class="glyphicon glyphicon-home" style="padding-right: 10px;"></span>PRISME
         </div>
     </a>
   </div>
@@ -71,8 +71,7 @@
           <a href="<%= new_user_session_path %>" onclick="polling.checkPolling(polling.pollEnum.LOGIN);">Log in</a>
       <% else %>
           <% if prisme_user.is_a?(SsoiUser) %>
-              <a href="<%= roles_sso_logout_path %>" onclick="polling.checkPolling(polling.pollEnum.LOGOUT);">SSO Log
-                out</a>
+              <a href="<%= roles_sso_logout_path %>" onclick="polling.checkPolling(polling.pollEnum.LOGOUT);">SSO Log out</a>
           <% else %>
 
               <a href="<%= destroy_user_session_path %>" class="prisme-link-button" id="logout"
@@ -85,3 +84,5 @@
     </div>
   </div>
 </nav>
+
+<%= render 'session_timeout/session_timeout_notification' %>

@@ -9,7 +9,12 @@ class WelcomeController < ApplicationController
     tomcat_deployments = tomcat_server_deployments
     @deployments = format_deployments_table_data(tomcat_deployments)
   end
-  
+
+  def session_timeout
+    clear_user_session
+    redirect_to ssoi? ? roles_sso_logout_path : destroy_user_session_path
+  end
+
   def tomcat_app_action
     tomcat_service_id = params[:tomcat_service_id]
     tomcat_app = params[:tomcat_app]
