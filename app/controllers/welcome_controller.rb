@@ -11,7 +11,6 @@ class WelcomeController < ApplicationController
   end
 
   def session_timeout
-    clear_user_session
     redirect_to ssoi? ? roles_sso_logout_path : destroy_user_session_path
   end
 
