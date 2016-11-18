@@ -57,7 +57,7 @@
                 <% else %>
                 <% end %>
               </td>
-              <td<%= raw(policy(:navigation).admin? ? '' : ' style="color: red; font-weight: bold"') %>>
+              <td<%= raw(policy(:navigation).admin? ? '' : ' style="color: #180606; font-weight: bold; background: white"') %>>
                 <%= (policy(:navigation).admin?) ? action_button_bar(row, deployment[:service_id]) : 'Requires Super User Privileges' %>
               </td>
             </tr>
