@@ -15,7 +15,7 @@
     <tbody>
     <% if deployment[:rows].empty? %>
         <tr>
-          <td colspan="5" style="color: <%= deployment[:available] ? 'green' : 'red' %>">
+          <td colspan="5" style="color: <%= deployment[:available] ? 'green' : '#180606' %>; background: white">
             <%= (deployment[:available] ?
                 'No supported applications are currently deployed to this server' :
                 'Failed to connect to Tomcat server. Either the server is unavailable or is mis-configured.') %>
