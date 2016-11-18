@@ -3,6 +3,9 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2016/11/?? - 1.36:
+    *
+
 * 2016/11/18 - 1.35:
    * 508 WAVE tool bug fixes - Defect  #'s:
          - 392182 - _app_deployment_table.html.erb Update font color and background for error message contrast issue
