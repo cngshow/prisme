@@ -4,6 +4,11 @@ Rails.application.routes.draw do
       request.xhr?
     end
   end
+
+  # javascript timer checking user session timeout
+  get 'welcome/session_timeout', as: :session_timeout
+  get 'welcome/renew_session', as: :renew_session, :constraints => OnlyAjaxRequest.new
+
   get 'utilities/warmup'
   get 'utilities/seed_services'
   get 'utilities/prisme_config'

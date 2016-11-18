@@ -19,4 +19,13 @@ module WelcomeHelper
     ret.gsub!('SERVICE_ID', service_id.to_s)
     ret.html_safe
   end
+
+  def fetch_komets_isaac(row:)
+    r_val = ''
+    if row.has_key? :komets_isaac_version
+      r_val = " -- #{row.fetch(:komets_isaac_version)}"
+    end
+    $log.error("komets_isaac is #{r_val}")
+    r_val
+  end
 end

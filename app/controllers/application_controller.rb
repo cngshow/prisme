@@ -11,6 +11,7 @@ class ApplicationController < ActionController::Base
   include SSOI
   include ServletSupport
   include UserSession
+  append_view_path 'lib/rails_common/views'
 
   after_action :verify_authorized, unless: :devise_controller?
   # Prevent CSRF attacks by raising an exception.
@@ -43,6 +44,9 @@ class ApplicationController < ActionController::Base
 
   def setup_gon
     gon.job_status_constants = PrismeJobConstants::Status::STATUS_HASH.invert
+    gon.last_round_trip = Time.now.to_i
+    gon.start_countdown_in = $PROPS['SSOI_TIMEOUT.start_countdown_in']
+    gon.countdown_mins = $PROPS['SSOI_TIMEOUT.countdown_mins']
     setup_routes
   end
 
