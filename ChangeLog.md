@@ -3,11 +3,15 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
-* 2016/11/?? - 1.35:
+* 2016/11/18 - 1.35:
    * 508 WAVE tool bug fixes - Defect  #'s:
          - 392182 - _app_deployment_table.html.erb Update font color and background for error message contrast issue
          - 392180, 392182 -  Related to this h2 heading missing and contrast issue also appeared running local, updated to h4 and change fore/back ground colors on _deployments.html.erb and _job_queue.html.erb
-               
+   * Fix and auth bug with deployment functionality
+   * Fix 413945 - sct extension validation issue
+   * Display metadata from komet about the DB komet is connected to
+   * Improved session timeout handling (show dialog before timeout)
+
 * 2016/11/09 - 1.34:
     * Added a tooltip to show the description of a tomcat server instance
 
