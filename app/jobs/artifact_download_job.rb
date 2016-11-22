@@ -55,6 +55,7 @@ class ArtifactDownloadJob < PrismeBaseJob
   def perform(*args)
     begin
       nexus_props = Service.get_artifactory_props
+      git_props =  Service.get_git_props
       baseurl = nexus_props[PrismeService::NEXUS_ROOT] + $PROPS['ENDPOINT.nexus_maven_content']
       nexus_query_params = args.shift
       war_cookie_params = args.shift
@@ -120,6 +121,7 @@ class ArtifactDownloadJob < PrismeBaseJob
         hash = {}
         hash.merge!(war_cookie_params)
         hash.merge!(nexus_props)
+        hash.merge!(git_props)
         cookie_war_true_zip(file_name, 'WEB-INF/classes/prisme.properties', hash)
         context = '/isaac-rest' #to_do pull this from the database someday.
       else
