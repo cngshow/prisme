@@ -45,6 +45,7 @@ Rails.application.routes.draw do
   match 'delete_user' => 'admin_user_edit#delete_user', as: 'delete_user', via: [:get]
 
   match 'services/render_props' => 'services#render_props', :as => :services_render_props, via: [:get]
+  match 'services/all_services_as_json' => 'services#all_services_as_json', :as => :all_services_as_json, via: [:get]
   resources :services
 
   get 'terminology_source_packages' => 'terminology_source_packages#index'
