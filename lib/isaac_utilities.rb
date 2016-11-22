@@ -78,7 +78,9 @@ module IsaacDBConfigurationCreator
     $log.info("Starting a db create...")
     ibdf_converted = ibdf_files.map do |ibdf|
       #the search symbols in nexus are: 'a' for artifact id, 'g' for group id, and 'v' for version
-      [ibdf[:g], ibdf[:a], ibdf[:v]]
+      ibdf_array = [ibdf[:g], ibdf[:a], ibdf[:v]] #to_do, check if a classifier shows up.
+      ibdf_array << ibdf[:c] unless ibdf[:c].nil?
+      ibdf_array
     end
     ibdf_j_a = JIsaacLibrary::ibdf_file_to_j_a(*ibdf_converted)
     begin

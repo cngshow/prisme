@@ -25,7 +25,6 @@ module WelcomeHelper
     if row.has_key? :komets_isaac_version
       r_val = " -- #{row.fetch(:komets_isaac_version)}"
     end
-    $log.error("komets_isaac is #{r_val}")
     r_val
   end
 end
