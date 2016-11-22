@@ -41,7 +41,12 @@ module PrismeUtilities
     PrismeUtilities.ssoi_logout_url = URI.valid_url?(url_string: logout_url) ? logout_url : nil
   end
 
-  def self.uri_up?(uri:)
+  #Tells if the given uri is up.  If basic authentication is required and not provided false will be returned.
+  #The method is light weight and only fetches the headers of a given url.
+  #Sample invocation:
+  #PrismeUtilities.uri_up?(uri: 'http://www.google.com')
+  #PrismeUtilities.uri_up?(uri: "https://vadev.mantech.com:8080/nexus/content/repositories/termdata/gov/vha/isaac/db/vets/1.0/vets-1.0-all.cradle.zip", user: 'user', password: 'password')
+  def self.uri_up?(uri:, user: nil, password: nil)
     if uri.is_a? String
       uri = URI uri
     else
@@ -52,7 +57,10 @@ module PrismeUtilities
       path = uri.path.empty? ? '/' : uri.path
       result = Net::HTTP.new(uri.host, uri.port)
       result.use_ssl = uri.scheme.eql?('https')
-      result = (result.head(path).kind_of?(Net::HTTPSuccess))
+      head = Net::HTTP::Head.new(path, nil)
+      head.basic_auth(user, password) if user
+      headers = result.request head
+      result = headers.kind_of?(Net::HTTPSuccess)
         # Net::HTTP.new(u, p).head('/').kind_of? Net::HTTPOK
     rescue => ex
       $log.warn("I could not check the URL #{uri.path} at port #{uri.port} against path #{uri.path} because #{ex}.")
@@ -76,7 +84,7 @@ module URI
   end
 
   #**
-  # this method takes the modifies matching url paths and returns the proxy path
+  # this method takes the modified matching url paths and returns the proxy path
   def proxify
     # proxy_mappings are loaded one time once all of the urls listed are valid.
     if URI.proxy_mappings.nil?
@@ -104,21 +112,21 @@ module URI
         URI.proxy_mappings = nil
         return self
       end
-      
+
       # sort the urls from longest to shortest for  proxifying
       URI.proxy_mappings[PROXY_URLS].sort! do |a, b|
         b[INCOMING_URL_PATH].length <=> a[INCOMING_URL_PATH].length
       end
-      
+
       # freeze the configuration
       URI.proxy_mappings.freeze
       $log.debug(URI.proxy_mappings.inspect)
     end
-    
+
     # ensure that the apache url has leading and trailing slashes
     apache_path = URI.proxy_mappings[APACHE_URL_PROXY].clone
     apache_path << '/' unless apache_path.last.eql? '/'
-    
+
     # iterate the incoming urls for a match that needs to be proxified
     URI.proxy_mappings[PROXY_URLS].each do |url_hash|
       incoming_url = url_hash[INCOMING_URL_PATH]
