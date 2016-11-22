@@ -175,8 +175,10 @@ class AppDeployerController < ApplicationController
           url << a << '-' << v
           url << '-' << c if c
           url << '.cradle.zip'
-
-          if PrismeUtilities.uri_up?(uri: url)
+          nexus_props = Service.get_artifactory_props
+          nexus_user = nexus_props[PrismeService::NEXUS_USER]
+          nexus_passwd = nexus_props[PrismeService::NEXUS_PWD]
+          if PrismeUtilities.uri_up?(uri: url, user: nexus_user, password: nexus_passwd)
             ret << NexusArtifactSelectOption.new(groupId: g, artifactId: a, version: v, repo: repo, classifier: c, package: 'cradle.zip')
           end
         end
