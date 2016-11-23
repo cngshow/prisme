@@ -15,7 +15,7 @@
 
     <% if policy(:navigation).admin? %>
         <div>
-          <a href="<%= app_deployer_path %>" class="prisme-link-button" onclick="polling.checkPolling(polling.pollEnum.DEPLOYER);" title="App Deployer" role="navigation">App Deployer</a>
+          <a href="<%= app_deployer_path %>" class="prisme-link-button" onclick="polling.checkPolling(polling.pollEnum.DEPLOYER);" title="Deploy Applications" role="navigation">Application Deployer</a>
         </div>
 
 
@@ -63,7 +63,10 @@
   <div class="prisme-navbar-tools" role="navigation">
 
     <div>
-      <div class="glyphicon glyphicon-user" title="User ID"></div> <%= raw (prisme_user.nil? ? '' : "<Strong>Current User:</strong>&nbsp;#{prisme_user.user_name}") %>
+      <a href="#userid" class="prisme-link-button" id="userid" title="Current User" role="navigation">
+        <div class="glyphicon glyphicon-user" title="Current User"></div>
+        <%= raw (prisme_user.nil? ? '' : "&nbsp;#{prisme_user.user_name}") %>
+      </a>
     </div>
 
     <div>
