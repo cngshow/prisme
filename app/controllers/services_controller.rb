@@ -79,13 +79,7 @@ class ServicesController < ApplicationController
   end
 
   def all_services_as_json
-    ret = []
-    Service.all.each do |service|
-      svc = service.attributes
-      svc['service_props'] = service.service_properties.as_json
-      ret << svc
-    end
-    render json: ret
+    render json: Service.get_all_services_props
   end
 
   private
