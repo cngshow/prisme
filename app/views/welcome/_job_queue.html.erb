@@ -93,7 +93,7 @@
     }
 
     $.getJSON(gon.routes.welcome_reload_job_queue_list_path, {row_limit: rowlimit}, function (data) {
-      loadTable('data-table', data);
+      loadTable('table-data', data);
     })
   }
 
