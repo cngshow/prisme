@@ -1,6 +1,8 @@
 class ServicesController < ApplicationController
   before_action :set_service, only: [:show, :edit, :update, :destroy]
-  before_action :auth_admin
+  before_action :auth_admin, except: [:all_services_as_json]
+  skip_after_action :verify_authorized, only: [:all_services_as_json]
+  skip_before_action :verify_authenticity_token, only: [:all_services_as_json]
 
   # GET /services
   # GET /services.json
@@ -78,14 +80,15 @@ class ServicesController < ApplicationController
     render partial: 'services/render_props'
   end
 
+  #sample invocation
+  #http://localhost:3000/services/all_services_as_json.json?security_token=%5B%22u%5Cf%5Cx92%5CxBC%5Cx17%7D%5CxD1%5CxE4%5CxFB%5CxE5%5Cx99%5CxA3%5C%22%5CxE8%5C%5CK%22%2C+%22%3E%5Cx16%5CxDE%5CxA8v%5Cx14%5CxFF%5CxD2%5CxC6%5CxDD%5CxAD%5Cx9F%5Cx1D%5CxD1cF%22%5D
   def all_services_as_json
-    ret = []
-    Service.all.each do |service|
-      svc = service.attributes
-      svc['service_props'] = service.service_properties.as_json
-      ret << svc
+    security_token = params['security_token']
+    if (CipherSupport.instance.valid_security_token?(token: security_token))
+      render json: Service.get_all_services_props
+    else
+      render json: {token_valid?: false}
     end
-    render json: ret
   end
 
   private

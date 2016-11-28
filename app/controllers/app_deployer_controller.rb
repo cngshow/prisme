@@ -68,6 +68,7 @@ class AppDeployerController < ApplicationController
     war_cookie_params[:prisme_roles_by_token_url] = non_proxy_url(path_string: roles_get_roles_by_token_path) << '.json'
     war_cookie_params[:prisme_config_url] = non_proxy_url(path_string: utilities_prisme_config_path) << '.json'
     war_cookie_params[:prisme_all_roles_url] =  non_proxy_url(path_string: roles_get_all_roles_path) << '.json'
+    war_cookie_params[:prisme_all_service_props_url] =  non_proxy_url(path_string: all_services_as_json_path) << '.json' << '?security_token=' + CipherSupport.instance.generate_security_token
     war_cookie_params[:war_group_id] = war_file.groupId
     war_cookie_params[:war_artifact_id] = war_file.artifactId
     war_cookie_params[:war_version] = war_file.version

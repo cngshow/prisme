@@ -39,6 +39,23 @@ class Service < ActiveRecord::Base
       Service.where(service_type: PrismeService::TOMCAT)
     end
 
+    def get_application_servers_props
+      props = {}
+      props[PrismeService::TOMCAT] = []
+      get_application_servers.each do |app_server|
+        props[PrismeService::TOMCAT] << app_server.properties_hash
+      end
+      props
+    end
+
+    def get_all_services_props
+      props = {}
+      props[PrismeService::GIT] = Service.get_git_props
+      props[PrismeService::NEXUS] = Service.get_artifactory_props
+      props[PrismeService::JENKINS] = Service.get_build_server_props
+      props.merge!(Service.get_application_servers_props)
+    end
+
     def service_exists?(service_type)
       @@exists_hash ||= {}
       @@exists_hash[service_type] = Service.exists?(service_type: service_type ) unless @@exists_hash[service_type] #once you exist you always exist (or we have a big bug)
@@ -81,6 +98,7 @@ class Service < ActiveRecord::Base
   end
 
 end
+# load('./app/models/service.rb')
 # a= Service.get_artifactory
 # p = a.service_properties
 # p[0].service
