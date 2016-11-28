@@ -1,3 +1,5 @@
+require 'cgi'
+
 class CipherSupport
   include Singleton
 
@@ -41,6 +43,27 @@ class CipherSupport
 
   def jsonize_token(s)
     s.gsub('#!#',', ')
+  end
+
+  def generate_security_token
+    token_hash = {'time' => Time.now.to_i}
+    CGI::escape encrypt(unencrypted_string: token_hash.to_json.to_s)
+  end
+
+  def valid_security_token?(token:)
+    parsed = true
+    date = nil
+    $log.debug("token is #{token}")
+    begin
+      result = decrypt(encrypted_string: (CGI::unescape token))
+      $log.debug(result)
+      hash = JSON.parse  result
+      date = hash['time']
+    rescue Exception => ex
+      $log.warn("I could not parse the incoming token, #{ex.message}")
+      parsed = false
+    end
+    parsed && !date.nil?
   end
 
   private
