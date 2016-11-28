@@ -3,6 +3,10 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2016/11/28 - 1.38:
+    * Backend work for future functions, updating dependency stack on isaac.
+    * fixed job queue table loading bug. The id was changed with 508 changes which broke the table
+
 * 2016/11/22 - 1.37:
     * navigation - 508 fix for redundant title error appearing in WAVE test tool
     * index files, aesthetic tweaks due navigation updates , buttons need some space above to not be flush with nav
