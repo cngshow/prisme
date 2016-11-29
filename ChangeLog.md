@@ -3,8 +3,8 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
-* 2016/11/?? - 1.39:
-    *
+* 2016/11/29 - 1.39:
+    * Just upstream dependency changes (ISAAC, rails_common)
 
 * 2016/11/28 - 1.38:
     * Backend work for future functions, updating dependency stack on isaac.
