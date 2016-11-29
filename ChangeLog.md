@@ -5,6 +5,7 @@ where provided, and the git commit history.
 
 * 2016/11/29 - 1.39:
     * Just upstream dependency changes (ISAAC, rails_common)
+    * 508 Bug Fix: Admin Service Provisioning: color contrast issues on destroy button - update to application.scss, add new btn-danger style
 
 * 2016/11/28 - 1.38:
     * Backend work for future functions, updating dependency stack on isaac.

@@ -22,10 +22,10 @@
         <td><%= link_to 'Edit', edit_service_path(service), class: 'btn btn-primary' %></td>
         <% if (is_disabled?(service.service_type)) %>
             <td>
-              <button type="button" class="btn btn-danger" disabled>Destroy</button>
+              <button type="button" class="btn prisme-btn-danger" disabled>Destroy</button>
             </td>
         <% else %>
-            <td><%= link_to 'Destroy', service, method: :delete, data: {confirm: 'Are you sure?'}, class: 'btn btn-danger', disabled: is_disabled?(service.service_type) %></td>
+            <td><%= link_to 'Destroy', service, method: :delete, data: {confirm: 'Are you sure?'}, class: 'btn prisme-btn-danger', disabled: is_disabled?(service.service_type) %></td>
         <% end %>
       </tr>
   <% end %>
