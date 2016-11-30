@@ -1,7 +1,7 @@
 class LogEventsController < ApplicationController
   before_action :set_log_event, only: [:show, :edit, :update, :destroy]
-  skip_after_action :verify_authorized
-  skip_before_action :verify_authenticity_token
+  skip_after_action :verify_authorized, only: [:log_event]
+  skip_before_action :verify_authenticity_token, only: [:log_event]
 
   # GET /log_events
   # GET /log_events.json
@@ -19,14 +19,23 @@ class LogEventsController < ApplicationController
     @log_event = LogEvent.new
   end
 
-  # GET /log_events/1/edit
-  def edit
+  #http://localhost:3000/log_event?application_name=isaac&level=1&tag=SOME_TAG&message=broken&security_token=%5B%22u%5Cf%5Cx92%5CxBC%5Cx17%7D%5CxD1%5CxE4%5CxFB%5CxE5%5Cx99%5CxA3%5C%22%5CxE8%5C%5CK%22%2C+%22%3E%5Cx16%5CxDE%5CxA8v%5Cx14%5CxFF%5CxD2%5CxC6%5CxDD%5CxAD%5Cx9F%5Cx1D%5CxD1cF%22%5D
+  def log_event
+    log_event = LogEvent.new(log_event_create_params)
+    log_event.hostname = true_address
+    if (log_event.save & valid_security_token?) # do not short circuit
+      render json: {event_logged: true}
+    else
+      failed_hash = {event_logged: false, validation_errors: log_event.errors}
+      failed_hash[:token_error] = @token_error unless @token_error.nil?
+      render json: failed_hash
+    end
   end
 
   # POST /log_events
   # POST /log_events.json
   def create
-    @log_event = LogEvent.new(log_event_params)
+    @log_event = LogEvent.new(log_event_create_params)
 
     respond_to do |format|
       if @log_event.save
@@ -41,9 +50,10 @@ class LogEventsController < ApplicationController
 
   # PATCH/PUT /log_events/1
   # PATCH/PUT /log_events/1.json
+  #no security token concerns on update.
   def update
     respond_to do |format|
-      if @log_event.update(log_event_params)
+      if @log_event.update(log_event_update_params)
         format.html { redirect_to @log_event, notice: 'Log event was successfully updated.' }
         format.json { render :show, status: :ok, location: @log_event }
       else
@@ -70,7 +80,20 @@ class LogEventsController < ApplicationController
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
-    def log_event_params
-      params.require(:log_event).permit(:hostname, :application_name, :level, :tag, :message, :acknowledged_by, :acknowledged_on, :ack_comment)
+    def log_event_create_params
+      params.permit(:application_name, :level, :tag, :message)
     end
+
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def log_event_update_params
+    params.permit(:acknowledged_by, :acknowledged_on, :ack_comment)
+  end
+
+  def valid_security_token?
+    token = params[:security_token]
+    valid = CipherSupport.instance.valid_security_token?(token: token)
+    @token_error = "Invalid security token!" unless valid
+    valid
+  end
+
 end
