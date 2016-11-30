@@ -34,8 +34,8 @@
     <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Terminology Conversion Request</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
+        <h2 class="modal-title">Terminology Conversion Request</h2>
       </div>
       <div class="modal-body">
         <%= form_tag(terminology_converter_request_build_url, id: 'myForm') do %>
@@ -55,7 +55,7 @@
             <br>
             <div id="term_source_details_div"></div>
             <div id="term_source_actions_div" class="modal-footer">
-              <div class="btn btn-primary btn-lg" onclick="submitPackage()" id="btn_submit">Submit Conversion Request</div>
+              <button class="btn btn-primary btn-lg" onclick="submitPackage()" id="btn_submit">Submit Conversion Request</button>
             </div>
         <% end %>
       </div>

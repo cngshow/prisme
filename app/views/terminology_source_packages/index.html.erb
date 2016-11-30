@@ -56,8 +56,8 @@
     <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Terminology Source Package Creation</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
+        <h2 class="modal-title">Terminology Source Package Creation</h2>
       </div>
       <div class="modal-body">
         <%= form_for(@package, remote: true, html: {multipart: true}) do %>
@@ -96,8 +96,8 @@
                 <div id="source_rows"></div>
                 <br>
               </fieldset>
-              <div class="btn btn-primary btn-lg" onclick="submitPackage()" id="btn_submit">Create Terminology Source Package</div>
-              <button id="btn_submit_hidden" style="display: none"></button>
+              <button class="btn btn-primary btn-lg" onclick="submitPackage()" id="btn_submit">Create Terminology Source Package</button>
+              <button id="btn_submit_hidden" aria-hidden="true" style="display: none;visibility:hidden;">Not In Use</button>
             </div>
         <% end %>
       </div>

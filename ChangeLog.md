@@ -3,8 +3,22 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2016/11/?? - 1.41:
+    *
+    
 *2016/11/30 -1.39:
     * place details on log events form dependent apps here
+
+* 2016/11/30 - 1.40:
+    * 508 scan - fix fix out-of-sequence heading and javascript event handler.
+    * 508 scan - fix out-of-sequence heading, broken, missing and/or duplicate labels when error are shown on form, missing fieldset and legend, unlabeled button, and javascript event handler.
+    * 508 scan - fix javascript event handler and out-of-sequence heading.
+    * 508 scan - fix broken labels
+
+* 2016/11/29 - 1.39:
+    * Just upstream dependency changes (ISAAC, rails_common)
+    * 508 Bug Fix: Admin Service Provisioning: color contrast issues on destroy button - update to application.scss, add new btn-danger style
+
 
 * 2016/11/28 - 1.38:
     * Backend work for future functions, updating dependency stack on isaac.

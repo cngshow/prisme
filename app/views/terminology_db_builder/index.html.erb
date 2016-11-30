@@ -41,39 +41,43 @@
     <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Database Build Request</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
+        <h3 class="modal-title">Database Build Request</h3>
       </div>
       <div class="modal-body">
         <%= form_tag terminology_db_builder_request_build_path, id: 'myForm' do %>
             <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
             <div title="The name to use for the maven artifact that will result from executing this generated pom file.">
-              <%= label_tag 'db_name', 'Database Name' %><br>
-              <%= text_field_tag 'db_name', nil, placeholder: 'Enter the Name for this Database', maxlength: 75, size: 75, class: 'form-control input_525' %>
+              <div style="display:inline-block"><span style="float: left" id="lbl_db_name"><h4>Database Name</h4></span></div>
+              <%= text_field_tag 'db_name', nil, 'aria-labelledby': 'lbl_db_name', placeholder: 'Enter the Name for this Database', maxlength: 75, size: 75, class: 'form-control input_525' %>
             </div>
             <br>
             <div title="The version to use for the maven artifact that will result from executing this generated pom file.">
-              <%= label_tag 'db_version', 'Database Version' %><br>
-              <%= text_field_tag 'db_version', nil, placeholder: 'Enter the Database Version', maxlength: 75, size: 75, class: 'form-control input_525' %>
+              <div style="display:inline-block"><span style="float: left" id="lbl_db_version"><h4>Database Version</h4></span></div>
+              <%= text_field_tag 'db_version', nil, 'aria-labelledby': 'lbl_db_version', placeholder: 'Enter the Database Version', maxlength: 75, size: 75, class: 'form-control input_525' %>
             </div>
             <br>
             <div title="Describe the purpose / contents of the database being constructed.">
-              <%= label_tag 'db_description', 'Database Description' %><br>
-              <%= text_area_tag 'db_description', nil, placeholder: 'Enter a Database Description', rows: '3', cols: 76, class: 'form-control input_525' %>
+              <div style="display:inline-block"><span style="float: left" id="lbl_db_description"><h4>Database Description</h4></span></div>
+              <%= text_area_tag 'db_description', nil, 'aria-labelledby': 'lbl_db_description',placeholder: 'Enter a Database Description', rows: '3', cols: 76, class: 'form-control input_525' %>
             </div>
             <br>
             <div title="The (optional) maven classifier to use for the maven artifact that will result from executing this generated pom file. Often used to denote variations of a database version such as 'snapshot', 'full', etc.">
-              <%= label_tag 'artifact_classifier', 'Artifact Classifier' %><br>
-              <%= text_field_tag 'artifact_classifier', nil, placeholder: 'Artifact Classifier (optional)', maxlength: 75, size: 75, class: 'form-control input_525' %>
+              <div style="display:inline-block"><span style="float: left" id="lbl_artifact_classifier"><h4>Artifact Classifier</h4></span></div>
+              <%= text_field_tag 'artifact_classifier', nil, 'aria-labelledby': 'lbl_artifact_classifier', placeholder: 'Artifact Classifier (optional)', maxlength: 75, size: 75, class: 'form-control input_525' %>
             </div>
             <br>
             <div title="Execute the Description Logic Reasoner across the database to create an inferred view">
-              <%= label_tag 'classify', 'Classify the Database' %><br>
-              <%= radio_button_tag 'classify', 'true', true %>&nbsp;True&nbsp;&nbsp;<%= radio_button_tag 'classify', 'false' %>&nbsp;False
+              <div style="display:inline-block"><span style="float: left" id="lbl_classify_group"><h4>Classify the Database</h4></span></div>
+              <fieldset class="classic-border" id="classify_group" aria-labelledby="lbl_classify_group">
+                <legend>Select True or False</legend>
+                <label class="checkbox"><%= radio_button_tag 'classify', 'true', true %>True</label>
+                <label class="checkbox"><%= radio_button_tag 'classify', 'false' %>False</label>
+              </fieldset>
             </div>
             <br>
             <div title="The set of IBDF files to be included in the DB.  Do not include the metadata IBDF file from ISAAC, it is always included."><!-- this is important!! -->
-              <%= label_tag 'ibdf_files', 'IBDF Files' %><br>
+              <div style="display:inline-block"><span style="float: left"id="ibdf_selections"><h4>IBDF Files</h4></span></div>
               <input type="hidden" name="ibdf_selections" id="ibdf_selections">
               <%= select_tag 'ibdf_files',
                              options_from_collection_for_select(@idbf_files, :option_key, :option_value),
@@ -82,12 +86,13 @@
                                        w: '525px',
                                        multi: true
                              },
-                             required: true
+                             required: true,
+                             'aria-labelledby': 'ibdf_selections'
               %>
             </div>
             <br>
             <div title=" The version of the metadata content to include in the DB.">
-              <%= label_tag 'metadata_version', 'Metadata Version' %><br>
+              <div style="display:inline-block"><span style="float: left"id="lbl_metadata_version"><h4>Metadata Version</h4></span></div>
               <%= select_tag 'metadata_version',
                              options_from_collection_for_select(@metadata_versions, :option_key, :option_value),
                              :class => 'select2-prisme form-control',
@@ -96,12 +101,13 @@
                                        w: '525px',
                                        singleSelect: true
                              },
-                             required: true
+                             required: true,
+                             'aria-labelledby': 'lbl_metadata_version'
               %>
             </div>
             <br>
-            <div class="btn btn-primary btn-lg" onclick="submitPackage()" id="btn_submit">Create Database</div>
-            <button id="btn_submit_hidden" style="display: none"></button>
+            <button class="btn btn-primary btn-lg" onclick="submitPackage()" id="btn_submit">Create Database</button>
+            <button id="btn_submit_hidden" aria-hidden="true" style="display: none;visibility:hidden;">Not In Use</button>
         <% end %>
       </div>
     </div>
@@ -186,9 +192,9 @@
         }
       },
       errorPlacement: function (error, element) {
-        var lbl = $("label[for='" + element.attr('id') + "']");
+        var span = $("span[id='lbl_" + element.attr('id') + "']");
         error.addClass('arrow_box');
-        error.insertAfter(lbl);
+        error.insertAfter(span);
       }
     });
   });
