@@ -3,6 +3,9 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+*2016/11/30 -1.39:
+    * place details on log events form dependent apps here
+
 * 2016/11/28 - 1.38:
     * Backend work for future functions, updating dependency stack on isaac.
     * fixed job queue table loading bug. The id was changed with 508 changes which broke the table

@@ -1,0 +1,21 @@
+## Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+#
+#one:
+#  hostname: MyString
+#  application_name: MyString
+#  level: 1
+#  tag: MyString
+#  message: MyText
+#  acknowledged_by: MyString
+#  acknowledged_on: 2016-11-30 10:55:55
+#  ack_comment: MyText
+#
+#two:
+#  hostname: MyString
+#  application_name: MyString
+#  level: 1
+#  tag: MyString
+#  message: MyText
+#  acknowledged_by: MyString
+#  acknowledged_on: 2016-11-30 10:55:55
+#  ack_comment: MyText
