@@ -3,6 +3,9 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2016/11/?? - 1.41:
+    *
+
 * 2016/11/30 - 1.40:
     * 508 scan - fix fix out-of-sequence heading and javascript event handler.
     * 508 scan - fix out-of-sequence heading, broken, missing and/or duplicate labels when error are shown on form, missing fieldset and legend, unlabeled button, and javascript event handler.
