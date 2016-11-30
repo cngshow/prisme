@@ -2,7 +2,7 @@
 
 <%= field_set_tag $SERVICE_TYPES[@service_type]['description'] do %>
     <% $SERVICE_TYPES[@service_type]['props'].each do |p| %>
-        <%= label_tag p['key'], p['label'] %><br>
+        <%= label_tag 'props[' + p['key']+']', p['label'] %><br>
         <%= text_field_tag 'props[' + p['key']+']', (param_props.nil? ? nil : param_props[p['key']]), get_input_type(@service_type, p['key']) %><br><br>
     <% end %>
 <% end %>
