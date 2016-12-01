@@ -12,6 +12,7 @@ require './lib/rails_common/util/rescuable'
 #require './lib/rails_common/props/prop_loader' #in application.rb now
 require './lib/rails_common/logging/open_logging'
 require './lib/rails_common/logging/logging'
+require './lib/rails_common/logging/prisme_log_event'
 
 #above from rails common
 require './lib/prisme_service'
@@ -41,9 +42,9 @@ unless ($rake || defined?(Rails::Generators))
 
   at_exit do
     #do cleanup
+    $log.always{PrismeLogEvent.notify(PrismeLogEvent::LIFECYCLE_TAG,'Shutdown called!  Rails Prisme has been ruthlessly executed :-(')}
     if($database.eql?('H2'))
       begin
-        $log.always('Shutdown called!  Rails Prisme has been ruthlessly executed :-(')
         ActiveRecord::Base.connection.execute('SHUTDOWN')
         $log.always('H2 database has been shutdown.')
       rescue => ex

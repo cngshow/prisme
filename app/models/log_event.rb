@@ -1,5 +1,6 @@
 class LogEvent < ActiveRecord::Base
-  LEVELS = {ALWAYS: 1, WARN: 2, ERROR: 3, FATAL: 4}
+
+  LEVELS = PrismeLogEvent::LEVELS
 
   validates_presence_of :application_name, :tag, :message, :hostname, :level
   validate :valid_level?
