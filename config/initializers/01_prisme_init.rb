@@ -102,7 +102,7 @@ rescue
   $log.warn("Could not read the version file!")
 end
 PRISME_VERSION = version
-
+$log.always{PrismeLogEvent.notify(PrismeLogEvent::LIFECYCLE_TAG, "#{Rails.application.class.parent_name} coming up!")}
 
 # ensure super_user and admin for cboden for demo
 =begin

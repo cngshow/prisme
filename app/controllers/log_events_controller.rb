@@ -24,10 +24,12 @@ class LogEventsController < ApplicationController
     log_event = LogEvent.new(log_event_create_params)
     log_event.hostname = true_address
     if (log_event.save & valid_security_token?) # do not short circuit
+      $log.info("saved a log event to the database")
       render json: {event_logged: true}
     else
       failed_hash = {event_logged: false, validation_errors: log_event.errors}
       failed_hash[:token_error] = @token_error unless @token_error.nil?
+      $log.warn("Failed to save log event #{log_event} to the database, #{failed_hash}")
       render json: failed_hash
     end
   end

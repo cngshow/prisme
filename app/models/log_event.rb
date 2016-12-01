@@ -10,3 +10,6 @@ class LogEvent < ActiveRecord::Base
     errors.add :level_error, "Invalid level. The level must be an integer corresponding to #{LEVELS.map do |k,v| [k, v.to_s] end}"
   end
 end
+
+#copy pastables:
+# LogEvent.destroy_all
