@@ -7,7 +7,7 @@ where provided, and the git commit history.
     *
     
 *2016/11/30 -1.39:
-    * place details on log events form dependent apps here
+    * Log events controller added. Log events model added.  Baseline of log event views added.
 
 * 2016/11/30 - 1.40:
     * 508 scan - fix fix out-of-sequence heading and javascript event handler.
