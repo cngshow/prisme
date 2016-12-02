@@ -3,11 +3,12 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
-* 2016/12/1 -2016/12/? - 1.41:
+* 2016/12/?? - PENDING
+    *
+
+* 2016/12/02 - 1.41:
     * Common code added to support both prisme and Komet's ability to log events to the event logger.
     * Front end GUI page being added for admins only, allowing admins to acknowledge and view events. (partially complete)
-    
-*2016/11/30 -1.39:
     * Log events controller added. Log events model added.  Baseline of log event views added.
 
 * 2016/11/30 - 1.40:
