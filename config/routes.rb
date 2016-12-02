@@ -5,6 +5,9 @@ Rails.application.routes.draw do
     end
   end
 
+  #resources :log_events
+  match 'log_event' => 'log_events#log_event', :as => :log_event, via: [:get, :put, :post]
+
   # javascript timer checking user session timeout
   get 'welcome/session_timeout', as: :session_timeout
   get 'welcome/renew_session', as: :renew_session, :constraints => OnlyAjaxRequest.new

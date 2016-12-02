@@ -1,0 +1,41 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Listing Log Events</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Hostname</th>
+      <th>Application name</th>
+      <th>Level</th>
+      <th>Tag</th>
+      <th>Message</th>
+      <th>Acknowledged by</th>
+      <th>Acknowledged on</th>
+      <th>Ack comment</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @log_events.each do |log_event| %>
+      <tr>
+        <td><%= log_event.hostname %></td>
+        <td><%= log_event.application_name %></td>
+        <td><%= log_event.level %></td>
+        <td><%= log_event.tag %></td>
+        <td><%= log_event.message %></td>
+        <td><%= log_event.acknowledged_by %></td>
+        <td><%= log_event.acknowledged_on %></td>
+        <td><%= log_event.ack_comment %></td>
+        <td><%= link_to 'Show', log_event %></td>
+        <td><%= link_to 'Edit', edit_log_event_path(log_event) %></td>
+        <td><%= link_to 'Destroy', log_event, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Log event', new_log_event_path %>
