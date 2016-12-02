@@ -36,7 +36,7 @@ class TerminologyDbBuilderController < ApplicationController
       tag_conflict = IsaacDBConfigurationCreator.tag_conflict?(name: db_name, version: version)
     rescue java.lang.Exception  => ex
       $log.error("Error in IsaacDBConfigurationCreator for db_name #{db_name} with version #{version}!! The error is: #{ex}")
-      $log.error("Because of this exception I will be returning true (indicating a git tag conflict) and the end user will not be able to proceed.")
+      $log.error('Because of this exception I will be returning true (indicating a git tag conflict) and the end user will not be able to proceed.')
       $log.error(ex.backtrace.join("\n"))
       tag_conflict = true
     end
