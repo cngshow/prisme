@@ -83,7 +83,9 @@ class LogEventsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def log_event_create_params
-      params.permit(:application_name, :level, :tag, :message)
+      hash = params.permit(:application_name, :level, :tag, :message, :security_token)
+      hash.delete(:security_token) # this prevents the annoying 'Unpermitted parameter: security_token'
+      hash
     end
 
   # Never trust parameters from the scary internet, only allow the white list through.

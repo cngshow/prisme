@@ -3,6 +3,9 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2016/12/04 - 1.42
+    * update isaac dependencies, which will correct a serious performance issue regression in the DB builder.
+
 * 2016/12/02 - 1.41:
     * Common code added to support both prisme and Komet's ability to log events to the event logger.
     * Front end GUI page being added for admins only, allowing admins to acknowledge and view events. (partially complete)
