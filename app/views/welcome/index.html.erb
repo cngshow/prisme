@@ -23,7 +23,7 @@
   <ul>
     <li><a href='#tp-deployments'>Deployments</a></li>
     <li><a href='#tp-job_queue'>Job Queue</a></li>
-    <% if policy(:navigation).admin? %>
+    <% if policy(:navigation).admin? && 'true'.eql?($PROPS['PRISME.show_log_events']) %>
       <li><a href='#tp-log_events' class="log-events-link">Log Events</a></li>
     <% end %>
   </ul>
@@ -33,7 +33,7 @@
   <div id="tp-job_queue">
     <%= render partial: 'job_queue' %>
   </div>
-  <% if policy(:navigation).admin? %>
+  <% if policy(:navigation).admin? && 'true'.eql?($PROPS['PRISME.show_log_events']) %>
     <div id="tp-log_events">
         <%= render partial: 'log_events' %>
       </div>
