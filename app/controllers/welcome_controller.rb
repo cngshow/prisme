@@ -61,7 +61,7 @@ class WelcomeController < ApplicationController
     end
     results = results_fatal + results_error + results_low_level
     results = results[0...row_limit] unless results.length < row_limit
-    render json: results[0...row_limit].to_json
+    render json: results.to_json
   end
 
   def reload_deployments
