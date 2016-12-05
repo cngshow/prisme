@@ -46,7 +46,8 @@ class ApplicationController < ActionController::Base
 
   def setup_gon
     gon.job_status_constants = PrismeJobConstants::Status::STATUS_HASH.invert
-    gon.log_event_level_constants = LogEvent::LEVELS.invert
+    gon.log_event_level_constants = LogEvent::LEVELS
+    gon.log_event_level_constants_inverted = LogEvent::LEVELS.invert
     gon.last_round_trip = Time.now.to_i
     gon.start_countdown_in = $PROPS['SSOI_TIMEOUT.start_countdown_in']
     gon.countdown_mins = $PROPS['SSOI_TIMEOUT.countdown_mins']

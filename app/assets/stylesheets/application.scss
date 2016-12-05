@@ -27,6 +27,10 @@
 @import "font-awesome";
 //@import "growlyflash";
 
+.tp_alert_bg {
+  background-color: #ffd0d0;
+}
+
 // PRISME Navigation styles
 .prisme-navbar{
   display: flex;
@@ -36,6 +40,7 @@
   font-size: 18px;
   font-weight: bold;
   color: black;
+  border-radius: 1em 1em 0 0;
 }
 .prisme-navbar .glyphicon{
   top: initial;
