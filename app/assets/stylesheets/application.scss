@@ -25,6 +25,7 @@
 @import "bootstrap";
 @import "font-awesome-sprockets";
 @import "font-awesome";
+//@import "growlyflash";
 
 // PRISME Navigation styles
 .prisme-navbar{
@@ -211,12 +212,20 @@ label.arrow_box:before {
 }
 // end jquery validator label validation error
 
+.modal-wide50 .modal-dialog {
+  width: 50%;
+}
+
 html, body {
   padding: 5px;
 }
 
 .prisme-table tr:hover {
   cursor: pointer;
+}
+
+.prisme-table tr.text-top {
+  vertical-align: text-top;
 }
 
 .prisme-table {

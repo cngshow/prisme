@@ -45,6 +45,12 @@ class WelcomeController < ApplicationController
     render json: json
   end
 
+  def reload_log_events
+    row_limit = params['row_limit'] ||= 15
+    json = JSON.parse LogEvent.all.order(created_at: :desc).limit(row_limit).to_a.to_json
+    render json: json
+  end
+
   def reload_deployments
     # reload the deployments
     index

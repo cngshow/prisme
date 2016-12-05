@@ -1,6 +1,6 @@
 class LogEventsController < ApplicationController
-  before_action :set_log_event, only: [:show, :edit, :update, :destroy]
-  skip_after_action :verify_authorized, only: [:log_event]
+  before_action :set_log_event, only: [:show, :update, :destroy, :acknowledge_log_event]
+  skip_after_action :verify_authorized, only: [:log_event, :acknowledge_log_event]
   skip_before_action :verify_authenticity_token, only: [:log_event]
 
   # GET /log_events
@@ -48,6 +48,28 @@ class LogEventsController < ApplicationController
         format.json { render json: @log_event.errors, status: :unprocessable_entity }
       end
     end
+  end
+
+  # this method is called from the gui via an ajax get to update and acknowledge the log event
+  def acknowledge_log_event
+    ret = {status: 'failure', message: 'Invalid log event id passed to acknowledge_event method.'}
+
+    if @log_event
+      @log_event.acknowledged_by = prisme_user.user_name
+      @log_event.acknowledged_on = Time.now
+      comment = params[:ack_comment] ||= ''
+      comment.gsub!("\n", '<br>')
+      @log_event.ack_comment = comment
+
+      if @log_event.save
+
+        # flash_notify ?!
+        ret = {status: 'success', message: 'Log Event was successfully acknowledged!'}
+      else
+        ret = {status: 'failure', message: 'An error occurred while attempting to acknowledge a log event.'}
+      end
+    end
+    render json: ret
   end
 
   # PATCH/PUT /log_events/1
