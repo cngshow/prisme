@@ -35,8 +35,9 @@ class ArtifactDownloadJob < PrismeBaseJob
   end
 
   def cookie_war_true_zip(war_path, cookie_file, hash)
-    $log.info("Adding cookie info to war file #{war_path} into file #{cookie_file}")
-    $log.info("Cookie data is #{hash.inspect}")
+    $log.always("Adding cookie info to war file #{war_path} into file #{cookie_file}")
+    $log.always("Cookie data is #{hash.inspect}")
+    writer = nil
     path = war_path + '/' + cookie_file
     begin
       entry = JTFile.new(path)
@@ -46,9 +47,23 @@ class ArtifactDownloadJob < PrismeBaseJob
         props << "#{k}=#{v}\n"
       end
       writer.write(props)
+      $log.always("Properties written to war file!")
+    rescue => ex
+        $log.error("Error during the cookie add!  #{ex}")
+        $log.error(ex.backtrace.join("\n"))
+        raise ex
     ensure
-      writer.close unless writer.nil?
-      JTVFS.umount
+      $log.always("Attempting to unmount the war file.")
+      begin
+        writer.close unless writer.nil?
+        JTVFS.umount
+        $log.always("Unmounted!")
+      rescue => ex
+        $log.error("Unmount failed! #{ex}")
+        $log.error(ex.backtrace.join("\n"))
+        raise ex
+      end
+
     end
   end
 

@@ -75,6 +75,7 @@ class PrismeBaseJob < ActiveJob::Base
     active_record.save!
   end
 
+
   def self.result_hash(ar)
     json = ar.json_data
     return JSON.parse json unless json.nil?
@@ -117,24 +118,13 @@ class PrismeBaseJob < ActiveJob::Base
   end
 
   rescue_from(StandardError) do |exception|
-    begin
-      active_record = lookup
-      active_record.last_error = exception.message
-      active_record.status = PrismeJobConstants::Status::STATUS_HASH[:FAILED]
-      active_record.completed_at = Time.now
-      update_parent_leaf_and_save(active_record)
-    rescue => e
-      $log.error(self.to_s + ' failed to rescue from an exception.  The error is ' + e.message)
-      $log.error(e.backtrace.join("\n"))
-    ensure
-      $log.error('Job failed: ' + self.to_s + '. Error message is: ' + exception.message)
-      $log.error(exception.backtrace.join("\n"))
-    end
+    terminate_from(exception)
   end
 
   rescue_from(java.lang.Exception) do |java_exception|
     $log.error("A java exception was unhandled in the job lifecycle! #{java_exception}")
     $log.error(java_exception.backtrace.join("\n"))
+    terminate_from(java_exception)
   end
 
   def perform(*args)
@@ -168,6 +158,23 @@ class PrismeBaseJob < ActiveJob::Base
   end
 
   private
+
+  def terminate_from(exception)
+    begin
+      active_record = lookup
+      active_record.last_error = exception.message
+      active_record.status = PrismeJobConstants::Status::STATUS_HASH[:FAILED]
+      active_record.completed_at = Time.now
+      update_parent_leaf_and_save(active_record)
+    rescue => e
+      $log.error(self.to_s + ' failed to rescue from an exception.  The error is ' + e.message)
+      $log.error(e.backtrace.join("\n"))
+    ensure
+      $log.error('Job failed: ' + self.to_s + '. Error message is: ' + exception.message)
+      $log.error(exception.backtrace.join("\n"))
+    end
+  end
+
   def update_parent_leaf_and_save(active_record)
     PrismeJob.transaction do
       parent_ar = active_record.parent_job
