@@ -3,8 +3,12 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
-* 2016/12/05 - 1.43
+* 2016/12/?? - 1.44 - PENDING
+    *
+
+* 2016/12/06 - 1.43
     * added log event tabpage on the home page with admin authentication and a prisme property to hide/show the information
+    * Updated isaac / DB builder libraries to pick up isaac bug fixes
 
 * 2016/12/04 - 1.42
     * update isaac dependencies, which will correct a serious performance issue regression in the DB builder.
