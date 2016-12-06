@@ -1,30 +1,16 @@
 class LogEventsController < ApplicationController
-  before_action :set_log_event, only: [:show, :edit, :update, :destroy]
+  before_action :auth_admin, except: [:log_event]
+  before_action :set_log_event, only: [:destroy, :acknowledge_log_event]
   skip_after_action :verify_authorized, only: [:log_event]
   skip_before_action :verify_authenticity_token, only: [:log_event]
-
-  # GET /log_events
-  # GET /log_events.json
-  def index
-    @log_events = LogEvent.all
-  end
-
-  # GET /log_events/1
-  # GET /log_events/1.json
-  def show
-  end
-
-  # GET /log_events/new
-  def new
-    @log_event = LogEvent.new
-  end
 
   #http://localhost:3000/log_event?application_name=isaac&level=1&tag=SOME_TAG&message=broken&security_token=%5B%22u%5Cf%5Cx92%5CxBC%5Cx17%7D%5CxD1%5CxE4%5CxFB%5CxE5%5Cx99%5CxA3%5C%22%5CxE8%5C%5CK%22%2C+%22%3E%5Cx16%5CxDE%5CxA8v%5Cx14%5CxFF%5CxD2%5CxC6%5CxDD%5CxAD%5Cx9F%5Cx1D%5CxD1cF%22%5D
   def log_event
     log_event = LogEvent.new(log_event_create_params)
     log_event.hostname = true_address
-    if (log_event.save & valid_security_token?) # do not short circuit
-      $log.info("saved a log event to the database")
+
+    if log_event.save & valid_security_token? # do not short circuit
+      $log.info('saved a log event to the database')
       render json: {event_logged: true}
     else
       failed_hash = {event_logged: false, validation_errors: log_event.errors}
@@ -34,35 +20,26 @@ class LogEventsController < ApplicationController
     end
   end
 
-  # POST /log_events
-  # POST /log_events.json
-  def create
-    @log_event = LogEvent.new(log_event_create_params)
+  # this method is called from the gui via an ajax get to update and acknowledge the log event
+  def acknowledge_log_event
+    ret = {status: 'failure', message: 'Invalid log event id passed to acknowledge_event method.'}
 
-    respond_to do |format|
+    if @log_event
+      @log_event.acknowledged_by = prisme_user.user_name
+      @log_event.acknowledged_on = Time.now
+      comment = params[:ack_comment] ||= ''
+      comment.gsub!("\n", '<br>')
+      @log_event.ack_comment = comment
+
       if @log_event.save
-        format.html { redirect_to @log_event, notice: 'Log event was successfully created.' }
-        format.json { render :show, status: :created, location: @log_event }
-      else
-        format.html { render :new }
-        format.json { render json: @log_event.errors, status: :unprocessable_entity }
-      end
-    end
-  end
 
-  # PATCH/PUT /log_events/1
-  # PATCH/PUT /log_events/1.json
-  #no security token concerns on update.
-  def update
-    respond_to do |format|
-      if @log_event.update(log_event_update_params)
-        format.html { redirect_to @log_event, notice: 'Log event was successfully updated.' }
-        format.json { render :show, status: :ok, location: @log_event }
+        # flash_notify ?!
+        ret = {status: 'success', message: 'Log Event was successfully acknowledged!'}
       else
-        format.html { render :edit }
-        format.json { render json: @log_event.errors, status: :unprocessable_entity }
+        ret = {status: 'failure', message: 'An error occurred while attempting to acknowledge a log event.'}
       end
     end
+    render json: ret
   end
 
   # DELETE /log_events/1

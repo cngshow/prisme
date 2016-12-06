@@ -20,20 +20,15 @@
   </tbody>
 </table>
 <br/>
-<style>
-  tr.queue {
-    vertical-align: text-top;
-  }
-</style>
 <script>
-  var fields = ['job_name', 'status', 'execution_times', 'elapsed_time', 'user', 'last_error', 'result'];
-
-  function loadTable(tableId, data) {
-    $('#' + tableId + ' tbody').empty();
+  function loadJobQueueTable(data) {
+    var fields = ['job_name', 'status', 'execution_times', 'elapsed_time', 'user', 'last_error', 'result'];
+    var tbody = $('#table-data').find('tbody');
+    tbody.empty();
 
     $.each(data, function (index, item) {
       // create the row adding a data-job_id attribute
-      var row = $('<tr>').addClass('queue').data('job_id', item['job_id']);
+      var row = $('<tr>').addClass('text-top').attr('data-job_id', item['job_id']);
 
       $.each(fields, function (index, field) {
         var item_value = item[field + ''];
@@ -80,12 +75,11 @@
           row.append($('<td>').text(item_value));
         }
       });
-      $('#' + tableId + ' tbody').append(row);
+      tbody.append(row);
     });
   }
 
   function reload() {
-    console.log('calling reload!');
     var rowlimit = arguments[0];
 
     if (rowlimit === undefined) {
@@ -93,7 +87,7 @@
     }
 
     $.getJSON(gon.routes.welcome_reload_job_queue_list_path, {row_limit: rowlimit}, function (data) {
-      loadTable('table-data', data);
+      loadJobQueueTable(data);
     })
   }
 

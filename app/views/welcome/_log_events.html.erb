@@ -1,0 +1,219 @@
+<h4>Log Events</h4>
+<%= render 'layouts/filter_table_poll_results', filter_id: 'le_filter_rows', filter_label: 'Filter Results', include_all_rows: false, poll: 'reload_log_events' %>
+
+<table id="table-log-event-data" class="prisme-table table-striped table-hover">
+  <thead>
+  <tr>
+    <th scope="col" width="15%">Host Name</th>
+    <th scope="col" width="100px">Application</th>
+    <th scope="col" width="100px">Log Level</th>
+    <th scope="col" width="10%">Log Tag</th>
+    <th scope="col" width="100px">Created Date</th>
+    <th scope="col" width="30%">Log Message</th>
+    <th scope="col" colspan="2">Acknowledgement</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td colspan="7" class="text-center" scope="col">There are no items to list...</td>
+  </tr>
+  </tbody>
+</table>
+<br/>
+<style>
+  .ack_label {
+    font-weight: bold;
+    text-align: right;
+    width: 175px;
+  }
+</style>
+<!-- acknowledgement modal -->
+<div id="ackModal" class="modal fade modal-wide50" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
+        <h3 class="modal-title">Log Event Acknowledgement</h3>
+      </div>
+      <div class="modal-body">
+        <table width="100%" class="prisme-table">
+          <tr>
+            <td class="ack_label">Hostname:</td>
+            <td><span id="modal_hostname"></span></td>
+          </tr>
+          <tr>
+            <td class="ack_label">Application Name:</td>
+            <td><span id="modal_application_name"></span></td>
+          </tr>
+          <tr>
+            <td class="ack_label">Level:</td>
+            <td><span id="modal_level"></span></td>
+          </tr>
+          <tr>
+            <td class="ack_label">Tag:</td>
+            <td><span id="modal_tag"></span></td>
+          </tr>
+          <tr>
+            <td class="ack_label">Message:</td>
+            <td><span id="modal_message"></span></td>
+          </tr>
+        </table>
+        <br>
+        <br>
+        <!-- ack form fields -->
+        <input type="hidden" id="ack_log_event_id" name="id">
+
+        <div title="Enter a comment for how/why this log event was acknowledged.">
+          <div style="display:inline-block"><span style="float: left" id="lbl_comment"><h4>Comment</h4></span></div>
+          <%= text_area_tag 'ack_comment', nil, 'aria-labelledby': 'lbl_comment', placeholder: 'Enter an OPTIONAL acknowledgement comment', rows: '3', cols: 76, class: 'form-control' %>
+        </div>
+        <br>
+        <div class="btn btn-primary btn-lg" role="button" onclick="submit_acknowledgement();">Save Acknowledgement</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    function loadLogEventsTable(data) {
+        var unack_error = false;
+        var fields = ['hostname', 'application_name', 'level', 'tag', 'created_at', 'message', 'acknowledgement'];
+        var tbody = $('#table-log-event-data').find('tbody');
+        tbody.empty();
+
+        $.each(data, function (index, item) {
+            // create the row adding a data-job_id attribute
+            var item_id = item['id'];
+            var row = $('<tr>').addClass('text-top').attr('data-log_event_data', JSON.stringify(item)).attr('data-log_event_id', item_id);
+
+            if (unack_error === false) {
+                unack_error = (item['acknowledged_by'] === null && parseInt(item['level']) > gon.log_event_level_constants['ERROR']);
+            }
+
+            $.each(fields, function (index, field) {
+                var item_value = item[field + ''];
+
+                if (field === 'level') {
+                    var row_level = $('<td>').text(gon.log_event_level_constants_inverted[item_value]);
+                    row.append(row_level);
+                } else if (field === 'created_at') {
+                    var log_create_dt = moment(item['created_at']).format('YYYY-MM-DD [at] HH:mm:ss');
+                    row.append($('<td>').html(log_create_dt));
+                } else if (field === 'acknowledgement') {
+                    var ack_col1 = '';
+                    var ack_col2 = '';
+
+                    if (item['acknowledged_by'] === null) {
+                        row.append($('<td>').attr('colspan', '2').html($('<div>').addClass('btn btn-primary btn-ack').attr('data-btn_ack_id', item_id).text('Acknowledge Event')));
+                    } else {
+                        row.append($('<td>').css('text-align', 'right').attr('width', "150px").html("Acknowledged By:<br>Acknowledged On:<br>Comment:"));
+                        var ack_col = item['acknowledged_by'] + '<br>';
+                        ack_col += moment(item['acknowledged_on']).format('YYYY-MM-DD [at] HH:mm:ss') + '<br>';
+                        ack_col += item['ack_comment'] + '<br>';
+                        row.append($('<td>').html(ack_col));
+                    }
+                }
+                else {
+                    row.append($('<td>').text(item_value));
+                }
+            });
+            tbody.append(row);
+        });
+
+        var tp_log_event = $('.log-events-link');
+        var tp_text = 'Log Events';
+
+        if (unack_error === true) {
+            tp_text += " **";
+            if (!tp_log_event.hasClass('tp_alert_bg')) {
+                tp_log_event.addClass('tp_alert_bg');
+            }
+        } else {
+            tp_log_event.removeClass('tp_alert_bg')
+        }
+
+        tp_log_event.text(tp_text);
+    }
+
+    function reload_log_events() {
+        var rowlimit = arguments[0];
+
+        if (rowlimit === undefined) {
+            rowlimit = $('#le_filter_rows').find('option:selected').val();
+        }
+
+        $.getJSON(gon.routes.welcome_reload_log_events_path, {row_limit: rowlimit}, function (data) {
+            loadLogEventsTable(data);
+
+            //set up the click events for unacknowledged log events
+            $('div').find('.btn-ack').each(function () {
+                $(this).on('click', function () {
+                    var log_event_data = $(this).parent().closest('tr').attr('data-log_event_data');
+                    show_ack_modal(log_event_data);
+                });
+            });
+        })
+    }
+
+    function show_ack_modal(data) {
+        var d = JSON.parse(data);
+        $('#modal_hostname').text(d['hostname']);
+        $('#modal_application_name').text(d['application_name']);
+        $('#modal_level').text((gon.log_event_level_constants[d['level']]));
+        $('#modal_tag').text(d['tag']);
+        $('#modal_message').text(d['message']);
+        $('#ack_comment').val('');
+        $('#ack_log_event_id').val(d['id']);
+        $('#ackModal').modal('show');
+    }
+
+    function delete_log_event(user_id, user_name) {
+        bootbox.confirm({
+            size: 'small',
+            title: 'Question?',
+            message: 'Are you sure you want delete <strong>' + user_name + '</strong>?',
+            callback: function (result) {
+                if (result) {
+                    $.getJSON(gon.routes.delete_user_path, {user_row_id: user_id}, function (data) {
+                        if (data.remove_row === true) {
+                            $('table#user_edit_list_table tr#user_row_' + user_id).remove();
+                            // if all rows are removed then insert the no_matches row
+                            if ($("table#user_edit_list_table > tbody > tr").length === 0) {
+                                $("table#user_edit_list_table").find('tbody').html('<%#= no_match_row %>');
+                            }
+                        }
+                        flash_notify(data.flash_options, data.flash_settings);
+                    });
+                }
+            }
+        });
+    }
+
+    function submit_acknowledgement() {
+        var params = {id: $('#ack_log_event_id').val(), ack_comment: $('#ack_comment').val()};
+        $('#ackModal').modal('hide');
+
+        $.post(gon.routes.acknowledge_log_event_path, params, function (data) {
+            reload_log_events();
+
+            if (data.status === 'success') {
+                flash_notify({message: data.message}, {type: 'success'});
+            } else {
+                flash_notify({message: data.message}, {type: 'alert'});
+            }
+        }, 'json');
+    }
+
+    $(document).ready(function () {
+        reload_log_events();
+
+        $('#ackModal').on('shown.bs.modal', function () {
+            $('#ack_comment').focus()
+        });
+
+        // register for polling
+        polling.registerPolling(polling.pollEnum.WELCOME_LOG_EVENTS, reload_log_events, 30000);
+    });
+</script>

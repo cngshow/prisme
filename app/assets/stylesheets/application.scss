@@ -25,6 +25,11 @@
 @import "bootstrap";
 @import "font-awesome-sprockets";
 @import "font-awesome";
+//@import "growlyflash";
+
+.tp_alert_bg {
+  background-color: #ffd0d0;
+}
 
 // PRISME Navigation styles
 .prisme-navbar{
@@ -35,6 +40,7 @@
   font-size: 18px;
   font-weight: bold;
   color: black;
+  border-radius: 1em 1em 0 0;
 }
 .prisme-navbar .glyphicon{
   top: initial;
@@ -211,12 +217,20 @@ label.arrow_box:before {
 }
 // end jquery validator label validation error
 
+.modal-wide50 .modal-dialog {
+  width: 50%;
+}
+
 html, body {
   padding: 5px;
 }
 
 .prisme-table tr:hover {
   cursor: pointer;
+}
+
+.prisme-table tr.text-top {
+  vertical-align: text-top;
 }
 
 .prisme-table {
