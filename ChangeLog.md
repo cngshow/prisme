@@ -9,6 +9,7 @@ where provided, and the git commit history.
 * 2016/12/06 - 1.43
     * added log event tabpage on the home page with admin authentication and a prisme property to hide/show the information
     * Updated isaac / DB builder libraries to pick up isaac bug fixes
+    * Fixed bug 428871 and removed UUID from Jenkins config file
 
 * 2016/12/04 - 1.42
     * update isaac dependencies, which will correct a serious performance issue regression in the DB builder.
