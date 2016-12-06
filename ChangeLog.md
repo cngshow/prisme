@@ -3,6 +3,9 @@ PRISME Changelog --isaac_contexts test 2
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2016/12/06 - 1.43
+  * added in lots of logging at the always level to chase the strange prisme.properties missing bug.
+  
 * 2016/12/05 - 1.43
     * added log event tabpage on the home page with admin authentication and a prisme property to hide/show the information
 
