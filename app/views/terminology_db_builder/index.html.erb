@@ -1,9 +1,3 @@
-<style>
-  .modal-wide .modal-dialog {
-    width: 50%;
-  }
-</style>
-
 <!-- Trigger the modal with a button -->
 </br>
 <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal" onclick="reset_form();">New Database Build Request</button>
@@ -35,7 +29,7 @@
 <%= render 'jenkins_check_build/job_data_table', locals: locals %>
 
 <!-- Modal -->
-<div id="myModal" class="modal fade modal-wide" role="dialog">
+<div id="myModal" class="modal fade modal-wide50" role="dialog">
   <div class="modal-dialog">
 
     <!-- Modal content-->
@@ -105,10 +99,10 @@
                              'aria-labelledby': 'lbl_metadata_version'
               %>
             </div>
-            <br>
-            <button class="btn btn-primary btn-lg" onclick="submitPackage()" id="btn_submit">Create Database</button>
-            <button id="btn_submit_hidden" aria-hidden="true" style="display: none;visibility:hidden;">Not In Use</button>
         <% end %>
+        <br>
+        <button class="btn btn-primary btn-lg" onclick="submitPackage()" id="btn_submit">Create Database</button>
+        <button id="btn_submit_hidden" aria-hidden="true" style="display: none;visibility:hidden;">Not In Use</button>
       </div>
     </div>
   </div>
@@ -148,6 +142,8 @@
             // reset the submit button
             $btnSubmit.attr('onclick', 'submitPackage();').text('Create Database');
           }
+        }).find('.modal-content').css({
+            'margin-top': "200px"
         });
       } else {
         if ($("#myForm").valid()) {
