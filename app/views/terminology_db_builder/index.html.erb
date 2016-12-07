@@ -102,7 +102,6 @@
         <% end %>
         <br>
         <button class="btn btn-primary btn-lg" onclick="submitPackage()" id="btn_submit">Create Database</button>
-        <button id="btn_submit_hidden" aria-hidden="true" style="display: none;visibility:hidden;">Not In Use</button>
       </div>
     </div>
   </div>
@@ -146,8 +145,9 @@
             'margin-top': "200px"
         });
       } else {
-        if ($("#myForm").valid()) {
-          $('#btn_submit_hidden').click();
+        var f = $("#myForm");
+        if (f.valid()) {
+            f.submit();
         } else {
           // reset the submit button
           $btnSubmit.attr('onclick', 'submitPackage();').text('Create Database');
