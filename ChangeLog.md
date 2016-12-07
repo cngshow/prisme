@@ -3,6 +3,9 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2016/12/?? - 1.45 - PENDING
+    *
+
 * 2016/12/07 - 1.44
     * added in lots of logging at the always level to chase the strange prisme.properties missing bug.
     * Fixed bug 428871 and removed UUID from Jenkins config file
