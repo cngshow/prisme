@@ -3,8 +3,9 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
-* 2016/12/?? - 1.46 - PENDING
-    *
+* 2016/12/13 - 1.46
+    * regression fix on db builder summary page
+    * point at latest ISAAC so db builder builds pull in up-to-date metadata
 
 * 2016/12/07 - 1.45
     * regression fix on db builder
