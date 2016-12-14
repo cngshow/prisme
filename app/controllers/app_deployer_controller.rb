@@ -63,14 +63,14 @@ class AppDeployerController < ApplicationController
     nexus_query_params[:c] = war_file.classifier unless war_file.classifier.empty?
     nexus_query_params[:p] = war_file.package
     war_cookie_params[:prisme_root] = non_proxy_url(path_string: root_path)
-    war_cookie_params[:prisme_roles_user_url] =  non_proxy_url(path_string: roles_get_user_roles_path) << '.json'
+    war_cookie_params[:prisme_roles_user_url] = non_proxy_url(path_string: roles_get_user_roles_path) << '.json'
     war_cookie_params[:prisme_roles_ssoi_url] = non_proxy_url(path_string: roles_get_ssoi_roles_path) << '.json'
     war_cookie_params[:prisme_roles_by_token_url] = non_proxy_url(path_string: roles_get_roles_by_token_path) << '.json'
     war_cookie_params[:prisme_config_url] = non_proxy_url(path_string: utilities_prisme_config_path) << '.json'
-    war_cookie_params[:prisme_all_roles_url] =  non_proxy_url(path_string: roles_get_all_roles_path) << '.json'
+    war_cookie_params[:prisme_all_roles_url] = non_proxy_url(path_string: roles_get_all_roles_path) << '.json'
     security_token = CipherSupport.instance.generate_security_token
-    war_cookie_params[:prisme_all_service_props_url] =  non_proxy_url(path_string: all_services_as_json_path) << '.json' << '?security_token=' + security_token
-    war_cookie_params[:prisme_notify_url] =  non_proxy_url(path_string: log_event_path) << '.json' << '?security_token=' + security_token
+    war_cookie_params[:prisme_all_service_props_url] = non_proxy_url(path_string: all_services_as_json_path) << '.json' << '?security_token=' + security_token
+    war_cookie_params[:prisme_notify_url] = non_proxy_url(path_string: log_event_path) << '.json' << '?security_token=' + security_token
     war_cookie_params[:war_group_id] = war_file.groupId
     war_cookie_params[:war_artifact_id] = war_file.artifactId
     war_cookie_params[:war_version] = war_file.version
@@ -78,8 +78,13 @@ class AppDeployerController < ApplicationController
     war_cookie_params[:war_classifier] = war_file.classifier unless war_file.classifier.empty?
     war_cookie_params[:war_package] = war_file.package
 
+    # check if isaac_db is passed to determine if this is a komet or an isaac deployment
     isaac_db = params['isaac_db']
-    unless (isaac_db.nil? || isaac_db.empty?)
+
+    if isaac_db.nil? || isaac_db.empty?
+      #we are komet!!
+      war_cookie_params[:isaac_root] = params['tomcat_isaac_rest']
+    else
       zip_file = NexusArtifactSelectOption.init_from_select_key(isaac_db)
       war_cookie_params[:db_group_id] = zip_file.groupId
       war_cookie_params[:db_artifact_id] = zip_file.artifactId
@@ -87,18 +92,65 @@ class AppDeployerController < ApplicationController
       war_cookie_params[:db_repo] = zip_file.repo
       war_cookie_params[:db_classifier] = zip_file.classifier
       war_cookie_params[:db_package] = zip_file.package
-    else
-      #we komet!!
-      war_cookie_params[:isaac_root] =  params['tomcat_isaac_rest']
     end
 
-    job = ArtifactDownloadJob.perform_later(nexus_query_params, war_cookie_params, war_name, tomcat_ar)
+    job = AppDeploymentJob.perform_later(nexus_query_params, war_cookie_params, war_name, tomcat_ar, {job_tag: PrismeConstants::JobTags::APP_DEPLOYER})
+    PrismeBaseJob.update_json_data(job_id: job.job_id, json_data: {message: "Deploying #{war_name}...Please wait"})
     PrismeBaseJob.save_user(job_id: job.job_id, user: prisme_user.user_name)
-    session[:select_tabpage] = 1
-    redirect_to root_path
+    redirect_to app_deployer_path
+  end
+
+  def reload_deployments
+    ret = []
+
+    begin
+      row_limit = params[:row_limit] ||= 15
+      data = PrismeJob.job_tag(PrismeConstants::JobTags::APP_DEPLOYER).is_root(true).orphan(false).order(completed_at: :desc).limit(row_limit)
+
+      data.each do |app_dep|
+        row_data = app_dep.as_json
+        row_data['started_at'] = row_data['started_at'].to_i
+        row_data['leaf_data'] = leaf_data(app_dep)
+        ret << row_data
+      end
+      render json: ret
+    rescue => ex
+      $log.error(ex.to_s)
+      $log.error(ex.backtrace.join("\n"))
+      raise ex
+    end
+  end
+
+  def ajax_check_polling
+    prisme_job_has_running_jobs = PrismeJob.has_running_jobs?(PrismeConstants::JobTags::APP_DEPLOYER, true)
+    render json: {poll: prisme_job_has_running_jobs}
   end
 
   private
+
+  def leaf_data(row)
+    leaf = row.descendants.leaves.first
+    ret_data = leaf ? leaf.as_json : {}
+
+    if ret_data.empty?
+      ret_data['running_msg'] = row['result']
+    else
+      ret_data['running_msg'] = JSON.parse(ret_data['json_data'])['message']
+    end
+
+    ret_data['orphaned_leaf'] = leaf.status == 3
+    ret_data['running'] = !ret_data['orphaned_leaf'] && (! ret_data['completed_at'] || (ret_data['completed_at'] && !ret_data['job_name'].eql?(DeployWarJob.name)))
+
+    if row['started_at'] && !ret_data['orphaned_leaf']
+      ret_data['completed_at'] = ret_data['completed_at'] ||= Time.now.to_i
+      ret_data['elapsed_time'] = ApplicationHelper.convert_seconds_to_time(ret_data['completed_at'] - row['started_at'].to_i)
+    else
+      ret_data['elapsed_time'] = ''
+    end
+
+    ret_data
+  end
+
   def get_nexus_wars(app:)
     url_string = $PROPS['ENDPOINT.nexus_lucene_search']
     params_hash = {'KOMET' => {g: 'gov.vha.isaac.gui.rails', a: 'rails_komet', repositoryId: 'releases', p: 'war'},

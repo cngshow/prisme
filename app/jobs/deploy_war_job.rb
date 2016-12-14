@@ -12,7 +12,7 @@ class DeployWarJob < PrismeBaseJob
       context = args.shift
       tomcat_ar = args.shift
 
-      unless (context.nil?)
+      unless context.nil?
         file_type = File.extname(file_name)
         file_dir = File.dirname(file_name)
         new_file = file_dir + context + file_type
@@ -30,11 +30,11 @@ class DeployWarJob < PrismeBaseJob
         runtime_config.setProperty(k, v)
         $log.debug("Added #{k} -- #{v} to the runtime config.")
       end
-      if(props[PrismeService::CARGO_REMOTE_URL].strip.start_with?("https"))
+      if props[PrismeService::CARGO_REMOTE_URL].strip.start_with?('https')
         runtime_config.setProperty(PrismeService::CARGO_PROTOCOL, 'https')
-        $log.info("Setting the cargo protocol to https.")
+        $log.info('Setting the cargo protocol to https.')
       end
-      tom_container = factory.createContainer("tomcat8x", type, runtime_config)
+      tom_container = factory.createContainer('tomcat8x', type, runtime_config)
       deployable_type = JCargo::DeployableType::WAR
       deployer_factory = JCargo::DefaultDeployableFactory.new
       remote_container = JCargo::Tomcat8xRemoteContainer.new(runtime_config)
@@ -42,7 +42,7 @@ class DeployWarJob < PrismeBaseJob
       deployer.setLogger(logger)
       #to_do: pull string below from ActiveRecord
       #url.registerListener(DeployListener.new)
-      war = deployer_factory.createDeployable(tom_container.getId(), file_name, deployable_type);
+      war = deployer_factory.createDeployable(tom_container.getId(), file_name, deployable_type)
       #to_do -- switch to undeploy/redeploy
       $log.info("About to deploy #{file_name}")
       #only allow one deployment at a time.TomcatRuntimeConfiguration
@@ -58,8 +58,8 @@ class DeployWarJob < PrismeBaseJob
       raise CargoSupport::CargoError.new(ex.message)
     ensure
       results = logger.results
-      results << "Deployed #{file_name}\n"
-      save_result results
+      results_hash = {tooltip: results, message: "Deployed #{file_name}"}
+      save_result results, results_hash
     end
   end
 end

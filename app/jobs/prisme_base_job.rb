@@ -70,7 +70,7 @@ class PrismeBaseJob < ActiveJob::Base
 
   def save_result(results, results_hash = nil)
     active_record = lookup
-    active_record.result= results
+    active_record.result = results
     active_record.json_data = results_hash.to_json
     active_record.save!
   end
@@ -149,6 +149,11 @@ class PrismeBaseJob < ActiveJob::Base
     end
 
     ret
+  end
+
+  def self.update_json_data(job_id:, json_data:)
+    return 0 unless json_data.is_a?(Hash) && ! json_data.empty?
+    PrismeJob.update(job_id, json_data: json_data.to_json)
   end
 
   def self.save_user(job_id:, user:)

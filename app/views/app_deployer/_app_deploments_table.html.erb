@@ -1,0 +1,116 @@
+<%= render('layouts/filter_table_poll_results', filter_id: 'deploy_filter_rows', filter_label: 'Filter Results', include_all_rows: false, poll: locals['poll_function_name']) if locals['poll_function_name'] %>
+
+<table id="data-table" class="prisme-table table-striped table-hover">
+  <thead>
+  <tr>
+    <% locals['fields'].keys.each do |col| %>
+        <% if col.eql?('leaf_data.running_msg') %>
+            <th><%= raw locals['fields'][col] %></th>
+        <% else %>
+            <th width="230px"><%= raw locals['fields'][col] %></th>
+        <% end %>
+    <% end %>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td colspan="<%= locals['fields'].keys.length.to_s %>" class="text-center">There are no items to list...</td>
+  </tr>
+  </tbody>
+</table>
+<br/>
+
+<script>
+    function loadTable(tableId, data) {
+        var fields = <%= raw locals['fields'].to_json %>;
+        var tbody = $('#' + tableId).find('tbody'); //table id needs to be generic as local
+        tbody.empty();
+
+        if (data.length > 0) {
+            $.each(data, function (index, row) {
+                var tr_data = $('<tr>');
+
+                $.each(fields, function (key, value) {
+                    var td_data = $('<td>');
+                    if (key === 'started_at') {
+                        td_data.text(format_epoch_in_local(row.started_at));
+                    }
+                    else if (key === 'leaf_data.completed_at') {
+                        td_data.text(format_epoch_in_local(row.completed_at));
+                    }
+                    else if (key === 'leaf_data.running_msg') {
+                        var span = $('<span>');
+                        var t = '';
+
+                        if (row['leaf_data'].running == true) {
+                            t += '<i class="fa fa-cog fa-spin fa-fw" aria-hidden="true"></i>';
+                        }
+
+                        if (row['leaf_data'].json_data == undefined) {
+                            t += row['leaf_data'].running_msg;
+                        } else {
+                            if (row['leaf_data'].orphaned_leaf === true) {
+                                t += 'Orphaned Job. Application Deployment Failed.'
+                            } else if (row['leaf_data'].status === 4) { //FAILURE
+                                t += 'Job Execution Failed.'
+                            } else {
+                                if (row['leaf_data'].job_name === 'DeployWarJob' && row['leaf_data'].running == false) {
+                                    span.attr('title', JSON.parse(row['leaf_data'].json_data).tooltip);
+                                    span.attr('data-toggle', 'tooltip');
+                                }
+                                t += row['leaf_data'].running_msg;
+                            }
+                        }
+
+                        span.html(t);
+                        td_data.html(span);
+                    }
+                    else {
+                        td_data.html(eval('row.' + key));
+                    }
+                    tr_data.append(td_data);
+                });
+                tbody.append(tr_data);
+            });
+        }
+        else {
+            var rows = '<tr><td colspan="<%= locals['fields'].keys.length.to_s %>" class="text-center">There are no items to list...</td></tr>';
+            $('#' + tableId + ' tbody').html(rows);
+        }
+    }
+
+    var _<%= locals['poll_function_name']%> = (function () {
+        var row_limit = arguments[0];
+
+        if (row_limit === undefined) {
+            row_limit = $('#deploy_filter_rows').find('option:selected').val();//generic local!!!
+        }
+
+        $.getJSON(<%= locals['poll_route'] %>, {row_limit: row_limit}, function (data) {
+            loadTable('data-table', data);
+
+            <% if Rails.env.development? %>
+            if (polling.isPolling(<%= locals['poll_key'] %>)) {
+                $.getJSON(<%= locals['check_poll_route'] %>, {}, function (data) {
+                    if (data.poll === false) {
+                        console.log("turn off polling");
+                        polling.unregisterPolling(<%= locals['poll_key'] %>);
+                        console.log("call poll once more");
+                        _<%= locals['poll_function_name']%>();
+                    }
+                });
+            }
+            <% end %>
+        });
+    });
+
+    $(document).ready(function () {
+        //register for polling
+        polling.registerPolling(<%= locals['poll_key'] %>, _<%= locals['poll_function_name'] %>, 5000);
+        $('span').tooltip({
+            'selector': '',
+            'placement': 'bottom',
+            'container':'body'
+        });
+    });
+</script>

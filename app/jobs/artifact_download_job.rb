@@ -69,6 +69,7 @@ class ArtifactDownloadJob < PrismeBaseJob
 
   def perform(*args)
     begin
+      context = nil
       nexus_props = Service.get_artifactory_props
       git_props =  Service.get_git_props
       baseurl = nexus_props[PrismeService::NEXUS_ROOT] + $PROPS['ENDPOINT.nexus_maven_content']
@@ -83,6 +84,10 @@ class ArtifactDownloadJob < PrismeBaseJob
       result << "Fetching war #{war_name}.\n"
       $log.debug("This job is doing URL #{warurl}.")
       $log.debug("This job is doing war #{war_name}.")
+
+      # update the job json data for polling display purposes
+      PrismeBaseJob.update_json_data(job_id: self.job_id, json_data: {message: result.gsub("\n", '<br>')})
+
       response = get_nexus_connection('*/*').get(warurl, {})
       file_name = "#{Rails.root}/tmp/#{war_name}"
       File.open(file_name, 'wb') { |fp| fp.write(response.body) }
@@ -122,7 +127,7 @@ class ArtifactDownloadJob < PrismeBaseJob
         $log.error("Rethrowing: #{e.message}")
         raise e
       end
-      context = nil
+
       begin
         context = z.get_entry('context.txt').get_input_stream.read
         $log.debug('The context root is ' + context)
@@ -145,9 +150,12 @@ class ArtifactDownloadJob < PrismeBaseJob
       end
       $log.debug("Kicking off next job (DeployWar) #{file_name} #{context}")
       #activeRecord instantiate new job
-      DeployWarJob.perform_later(file_name, context, tomcat_ar, track_child_job)
+      job = DeployWarJob.perform_later(file_name, context, tomcat_ar, track_child_job)
+      PrismeBaseJob.update_json_data(job_id: job.job_id, json_data: {message: "Deploying #{file_name}..."})
     ensure
-      save_result result
+      results_hash = {}
+      results_hash[:message] = "Downloaded #{war_name} from URL #{warurl}.<br>The war will be deployed to #{context ? 'context root ' + context : 'the root context.'}."
+      save_result result, results_hash
     end
   end
 end
