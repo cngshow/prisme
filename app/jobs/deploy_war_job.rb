@@ -62,6 +62,15 @@ class DeployWarJob < PrismeBaseJob
       save_result results, results_hash
     end
   end
+
+  def self.tooltip(ar)
+    result_hash(ar)[:tooltip.to_s]
+  end
+
+  def self.message(ar)
+    result_hash(ar)[:message.to_s]
+  end
+
 end
 #below moves to active record later (service libraries)
 # java.lang.System.getProperties.put('cargo.remote.username', 'devtest')

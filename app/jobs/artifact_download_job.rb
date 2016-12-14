@@ -158,6 +158,11 @@ class ArtifactDownloadJob < PrismeBaseJob
       save_result result, results_hash
     end
   end
+
+  def self.message(ar)
+    result_hash(ar)[:message.to_s]
+  end
+
 end
 # ArtifactDownloadJob.set(wait_until: 5.seconds.from_now).perform_later
 #  include NexusConcern
