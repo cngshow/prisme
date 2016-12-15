@@ -24,7 +24,7 @@
 <%= render 'app_deployer/app_deploments_table', locals: locals %>
 
 <!-- Modal -->
-<div id="app_deploy_modal" class="modal fade modal-wide50" role="dialog">
+<div id="app_deploy_modal" class="modal fade modal-wide75" role="dialog">
   <div class="modal-dialog">
 
     <!-- Modal content-->
@@ -65,13 +65,18 @@
                   <%= select_tag 'isaac_db', options_from_collection_for_select(@isaac_dbs, 'select_key', 'select_value'), {:prompt => '-- Select a terminology database --'} %>
                 </div>
                 <br>
-            <% end %>\
+            <% end %>
 
             <h3>Select the Tomcat Server</h3>
             <%= field_set_tag 'Select the Tomcat Server to Host this Deployment' do %>
-                <%= label_tag PrismeService::TOMCAT, 'Tomcat Server to Deploy to:' %><br>
-                <%= select_tag PrismeService::TOMCAT, options_from_collection_for_select(@tomcat_servers, 'select_key', 'select_value'), {:prompt => '-- Select the Tomcat Server --', required: true} %>
-                <%= select_tag PrismeService::TOMCAT, options_from_collection_for_select(@tomcat_servers.map do |e| e[:tomcat_ar] end.uniq, 'select_key', 'select_value'), {:prompt => '-- Select the Tomcat Server --', required: true} %>
+                <div id="komet_app_server">
+                  <%= label_tag "#{PrismeService::TOMCAT}_komet_app_server", 'Tomcat Server to Deploy to:' %><br>
+                  <%= select_tag "#{PrismeService::TOMCAT}_komet_app_server", options_from_collection_for_select(@tomcat_servers.map do |e| e[:tomcat_ar] end.uniq, 'select_key', 'select_value'), {:prompt => '--- Select the Tomcat Server  ---', required: true} %>
+                </div>
+                <div id="isaac_app_server">
+                  <%= label_tag "#{PrismeService::TOMCAT}_isaac_app_server", 'Tomcat Server / Context to Deploy to:' %><br>
+                  <%= select_tag "#{PrismeService::TOMCAT}_isaac_app_server", options_from_collection_for_select(@tomcat_servers, 'select_key', 'select_value'), {:prompt => '---  Select the Tomcat Server / ISAAC Context  ---', required: true} %>
+                </div>
             <% end %>
 
             <h3>Submit Deployment Request</h3>
@@ -101,6 +106,7 @@
 
     $(document).ready(function () {
         init_wizard();
+        $('#app_deployer_form').find('select').addClass('form-control').css('width','500px');
     });
 
     function init_wizard() {
@@ -122,18 +128,26 @@
                     if (selected_app_type === 'KOMET') {
                         $('#komet_wars').show();
                         $('#isaac_wars').hide();
+                        $('#komet_app_server').show();
+                        $('#isaac_app_server').hide();
                         document.getElementById("komet_war").required = true;
                         document.getElementById("tomcat_isaac_rest").required = true;
+                        document.getElementById("komet_app_server").required = true;
                         document.getElementById("isaac_war").required = false;
                         document.getElementById("isaac_db").required = false;
+                        document.getElementById("isaac_app_server").required = false;
                     }
                     else {
                         $('#komet_wars').hide();
                         $('#isaac_wars').show();
+                        $('#komet_app_server').hide();
+                        $('#isaac_app_server').show();
                         document.getElementById("komet_war").required = false;
                         document.getElementById("tomcat_isaac_rest").required = false;
+                        document.getElementById("komet_app_server").required = false;
                         document.getElementById("isaac_war").required = true;
                         document.getElementById("isaac_db").required = true;
+                        document.getElementById("isaac_app_server").required = true;
                     }
                     document.getElementById("komet_war").value = '';
                     document.getElementById("tomcat_isaac_rest").value = '';
@@ -166,7 +180,12 @@
                     $("#summary_component").html(step_ul);
                 }
                 if (currentIndex === 3) {
-                    var tomcat = $("#tomcat").find("option:selected").text();
+                    var tomcat = '';
+                    if (selected_app_type === 'KOMET') {
+                        tomcat = $("#tomcat_komet_app_server").find("option:selected").text();
+                    } else {
+                        tomcat = $("#tomcat_isaac_app_server").find("option:selected").text();
+                    }
                     step_ul.append($('<li>').text(tomcat));
                     $("#summary_tomcat").html(step_ul);
                 }
