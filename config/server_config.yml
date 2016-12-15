@@ -16,5 +16,25 @@ proxy_config_root:
       proxy_location: /manager
     - incoming_url_path: https://vaauscttdbs80.aac.va.gov:8080/git/ #this is like our incoming url
       proxy_location: /git/
-    - incoming_url_path: https://vaauscttweb80.aac.va.gov:8080/isaac-rest
-      proxy_location: /isaac-rest
+    - incoming_url_path: https://vaausappctt204.aac.va.gov:8080/isaac-rest-1
+      proxy_location: /isaac-rest-1
+    - incoming_url_path: https://vaausappctt204.aac.va.gov:8080/isaac-rest-2
+      proxy_location: /isaac-rest-2
+    - incoming_url_path: https://vaausappctt205.aac.va.gov:8080/isaac-rest-3
+      proxy_location: /isaac-rest-3
+    - incoming_url_path: https://vaausappctt205.aac.va.gov:8080/isaac-rest-4
+      proxy_location: /isaac-rest-4
+    - incoming_url_path: https://vaausappctt205.aac.va.gov:8080/komet_a
+      proxy_location: /1/komet_a
+    - incoming_url_path: http://localhost:3001/isaac-rest-billy_goat-local
+      proxy_location: /2/isaac-rest
+    - incoming_url_path: https://vadev.mantech.com:4848/isaac-rest-billy_goat
+      proxy_location: /1/isaac-rest
+    - incoming_url_path: https://vadev.mantech.com:4848/isaac-rest-freddy_cat
+      proxy_location: /2/isaac-rest
+    - incoming_url_path: http://localhost:3001/isaac-rest-freddy_cat-local
+      proxy_location: /3/isaac-rest
+    - incoming_url_path: http://localhost:3001/rails_komet_a
+      proxy_location: /3/rails_komet_a
+    - incoming_url_path: http://localhost:3001/rails_komet_b
+      proxy_location: /3/rails_komet_b

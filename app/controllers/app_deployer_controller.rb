@@ -30,16 +30,24 @@ class AppDeployerController < ApplicationController
 
     @tomcat_servers = []
     Service.where(service_type: PrismeService::TOMCAT).each do |active_record|
-      active_record.define_singleton_method(:select_value) do
-        self.name
+      PrismeUtilities.get_proxy_contexts(tomcat_ar: active_record, application_type: PrismeUtilities::ISAAC_APPLICATION).each do |context|
+        hash = {}
+        hash[:tomcat_ar] = active_record
+        hash[:context] = context
+        active_record.define_singleton_method(:select_value) do
+          active_record.name
+        end
+        hash.define_singleton_method(:select_value) do
+           active_record.name + '--' + context
+        end
+        hash.define_singleton_method(:select_key) do
+          active_record.id.to_s + '|' + context
+        end
+        active_record.define_singleton_method(:select_key) do
+          active_record.id.to_s
+        end
+        @tomcat_servers << hash unless context.nil?
       end
-      active_record.define_singleton_method(:select_key) do
-        self.id
-      end
-      active_record.define_singleton_method(:select_option) do
-        {key: select_key, value: select_value}
-      end
-      @tomcat_servers << active_record
     end
     $log.debug(@tomcat_servers.inspect)
   end
@@ -47,7 +55,8 @@ class AppDeployerController < ApplicationController
   def deploy_app
     # Should look something like this: url = 'http://vadev.mantech.com:8081/nexus/service/local/artifact/maven/content'
     # g a v r c war_cookie_params
-    tomcat_id = params[PrismeService::TOMCAT]
+    $log.fatal("params: #{params.inspect}")
+    tomcat_id , context = params[PrismeService::TOMCAT].split('|')
     tomcat_ar = Service.find_by(id: tomcat_id)
     application = params['application']
     war_param = application.eql?('KOMET') ? params['komet_war'] : params['isaac_war']
@@ -94,7 +103,7 @@ class AppDeployerController < ApplicationController
       war_cookie_params[:db_package] = zip_file.package
     end
 
-    job = AppDeploymentJob.perform_later(nexus_query_params, war_cookie_params, war_name, tomcat_ar, {job_tag: PrismeConstants::JobTags::APP_DEPLOYER})
+    job = AppDeploymentJob.perform_later(nexus_query_params, war_cookie_params, war_name, tomcat_ar, context, {job_tag: PrismeConstants::JobTags::APP_DEPLOYER})
     PrismeBaseJob.update_json_data(job_id: job.job_id, json_data: {message: "Deploying #{war_name}...Please wait"})
     PrismeBaseJob.save_user(job_id: job.job_id, user: prisme_user.user_name)
     redirect_to app_deployer_path
