@@ -70,12 +70,12 @@
             <h3>Select the Tomcat Server</h3>
             <%= field_set_tag 'Select the Tomcat Server to Host this Deployment' do %>
                 <div id="komet_app_server">
-                  <%= label_tag "#{PrismeService::TOMCAT}_komet_app_server", 'Tomcat Server to Deploy to:' %><br>
-                  <%= select_tag "#{PrismeService::TOMCAT}_komet_app_server", options_from_collection_for_select(@tomcat_servers.map do |e| e[:tomcat_ar] end.uniq, 'select_key', 'select_value'), {:prompt => '--- Select the Tomcat Server  ---', required: true} %>
+                  <%= label_tag 'tomcat_komet_app_server', 'Tomcat Server to Deploy to:' %><br>
+                  <%= select_tag 'tomcat_komet_app_server', options_from_collection_for_select(@tomcat_servers.map do |e| e[:tomcat_ar] end.uniq, 'select_key', 'select_value'), {:prompt => '--- Select the Tomcat Server  ---', required: true} %>
                 </div>
                 <div id="isaac_app_server">
-                  <%= label_tag "#{PrismeService::TOMCAT}_isaac_app_server", 'Tomcat Server / Context to Deploy to:' %><br>
-                  <%= select_tag "#{PrismeService::TOMCAT}_isaac_app_server", options_from_collection_for_select(@tomcat_servers, 'select_key', 'select_value'), {:prompt => '---  Select the Tomcat Server / ISAAC Context  ---', required: true} %>
+                  <%= label_tag 'tomcat_isaac_app_server', 'Tomcat Server / Context to Deploy to:' %><br>
+                  <%= select_tag 'tomcat_isaac_app_server', options_from_collection_for_select(@tomcat_servers, 'select_key', 'select_value'), {:prompt => '---  Select the Tomcat Server / ISAAC Context  ---', required: true} %>
                 </div>
             <% end %>
 
@@ -132,10 +132,10 @@
                         $('#isaac_app_server').hide();
                         document.getElementById("komet_war").required = true;
                         document.getElementById("tomcat_isaac_rest").required = true;
-                        document.getElementById("komet_app_server").required = true;
+                        document.getElementById("tomcat_komet_app_server").required = true;
                         document.getElementById("isaac_war").required = false;
                         document.getElementById("isaac_db").required = false;
-                        document.getElementById("isaac_app_server").required = false;
+                        document.getElementById("tomcat_isaac_app_server").required = false;
                     }
                     else {
                         $('#komet_wars').hide();
@@ -144,10 +144,10 @@
                         $('#isaac_app_server').show();
                         document.getElementById("komet_war").required = false;
                         document.getElementById("tomcat_isaac_rest").required = false;
-                        document.getElementById("komet_app_server").required = false;
+                        document.getElementById("tomcat_komet_app_server").required = false;
                         document.getElementById("isaac_war").required = true;
                         document.getElementById("isaac_db").required = true;
-                        document.getElementById("isaac_app_server").required = true;
+                        document.getElementById("tomcat_isaac_app_server").required = true;
                     }
                     document.getElementById("komet_war").value = '';
                     document.getElementById("tomcat_isaac_rest").value = '';
