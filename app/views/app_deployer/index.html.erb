@@ -177,6 +177,14 @@
             }
             ,
             onFinished: function (event, currentIndex) {
+                var btnFinish = $("li > a[href$='#finish']");
+                if (btnFinish.hasClass('valid-submit')) {
+                    return false;
+                } else {
+                    btnFinish.attr('disabled', true).addClass('btn btn-primary valid-submit');
+                    $("li > a[href$='#previous']").hide();
+                }
+
                 form.attr('action', '<%= app_deployer_deploy_app_path %>');
                 form.attr('method', 'post');
                 var action = form.attr('action');

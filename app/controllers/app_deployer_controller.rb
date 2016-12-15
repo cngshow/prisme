@@ -132,13 +132,13 @@ class AppDeployerController < ApplicationController
     leaf = row.descendants.leaves.first
     ret_data = leaf ? leaf.as_json : {}
 
-    if ret_data.empty?
+    if ret_data.empty? || ret_data['json_data'].nil?
       ret_data['running_msg'] = row['result']
     else
       ret_data['running_msg'] = JSON.parse(ret_data['json_data'])['message']
     end
 
-    ret_data['orphaned_leaf'] = leaf.status == 3
+    ret_data['orphaned_leaf'] = leaf.status == PrismeJobConstants::Status::STATUS_HASH[:ORPHANED]
     ret_data['running'] = !ret_data['orphaned_leaf'] && (! ret_data['completed_at'] || (ret_data['completed_at'] && !ret_data['job_name'].eql?(DeployWarJob.name)))
 
     if row['started_at'] && !ret_data['orphaned_leaf']
