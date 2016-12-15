@@ -77,7 +77,7 @@ class ArtifactDownloadJob < PrismeBaseJob
       war_name = args.shift
       tomcat_ar = args.shift
       context = args.shift
-      context = '/' + context unless context[0].eql? '/' #start with a '/'
+      context = '/' + context unless (context.nil? || context[0].eql?('/')) #start with a '/'
       warurl = "#{baseurl}?#{nexus_query_params.to_query}"
 
       result = String.new
@@ -149,7 +149,7 @@ class ArtifactDownloadJob < PrismeBaseJob
         #we are Komet!
         cookie_war_true_zip(file_name, 'WEB-INF/config/props/prisme.properties', war_cookie_params)
       end
-      $log.fatal("Kicking off next job (DeployWar) #{file_name} with context #{context}")
+      $log.info("Kicking off next job (DeployWar) #{file_name} with context #{context}")
       #activeRecord instantiate new job
       job = DeployWarJob.perform_later(file_name, context, tomcat_ar, track_child_job)
       PrismeBaseJob.update_json_data(job_id: job.job_id, json_data: {message: "Deploying #{file_name}..."})

@@ -34,7 +34,7 @@ module PrismeUtilities
     PrismeUtilities.proxy_urls.each do |k|
       uri = URI k['incoming_url_path']
       port = uri.port
-      $log.info(uri.host + " : " + port.to_s)
+      $log.trace(uri.host + " : " + port.to_s)
       contexts << uri.path if (host.eql?(uri.host) && port.to_s.eql?(port.to_s))
       $log.warn("server_config.yaml has a configuration with no context!  Prisme cannot use it for a deploy.") if uri.path.eql? '/'
     end

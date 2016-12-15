@@ -38,7 +38,7 @@ class AppDeployerController < ApplicationController
           active_record.name
         end
         hash.define_singleton_method(:select_value) do
-           active_record.name + '--' + context
+          active_record.name + '--' + context
         end
         hash.define_singleton_method(:select_key) do
           active_record.id.to_s + '|' + context
@@ -55,8 +55,13 @@ class AppDeployerController < ApplicationController
   def deploy_app
     # Should look something like this: url = 'http://vadev.mantech.com:8081/nexus/service/local/artifact/maven/content'
     # g a v r c war_cookie_params
-    $log.fatal("params: #{params.inspect}")
-    tomcat_id , context = params[PrismeService::TOMCAT].split('|')
+    tomcat_id, context = nil, nil
+    params.each do |k, v|
+      if ((k =~ /^#{PrismeService::TOMCAT}.*app_server$/) && !v.empty?)
+        tomcat_id, context = v.split('|')
+        break
+      end
+    end
     tomcat_ar = Service.find_by(id: tomcat_id)
     application = params['application']
     war_param = application.eql?('KOMET') ? params['komet_war'] : params['isaac_war']
@@ -148,7 +153,7 @@ class AppDeployerController < ApplicationController
     end
 
     ret_data['orphaned_leaf'] = leaf.status == PrismeJobConstants::Status::STATUS_HASH[:ORPHANED]
-    ret_data['running'] = !ret_data['orphaned_leaf'] && (! ret_data['completed_at'] || (ret_data['completed_at'] && !ret_data['job_name'].eql?(DeployWarJob.name)))
+    ret_data['running'] = !ret_data['orphaned_leaf'] && (!ret_data['completed_at'] || (ret_data['completed_at'] && !ret_data['job_name'].eql?(DeployWarJob.name)))
 
     if row['started_at'] && !ret_data['orphaned_leaf']
       ret_data['completed_at'] = ret_data['completed_at'] ||= Time.now.to_i
