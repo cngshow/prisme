@@ -69,7 +69,6 @@ class ArtifactDownloadJob < PrismeBaseJob
 
   def perform(*args)
     begin
-      context = nil
       nexus_props = Service.get_artifactory_props
       git_props =  Service.get_git_props
       baseurl = nexus_props[PrismeService::NEXUS_ROOT] + $PROPS['ENDPOINT.nexus_maven_content']
@@ -77,6 +76,8 @@ class ArtifactDownloadJob < PrismeBaseJob
       war_cookie_params = args.shift
       war_name = args.shift
       tomcat_ar = args.shift
+      context = args.shift
+      context = '/' + context unless context[0].eql? '/' #start with a '/'
       warurl = "#{baseurl}?#{nexus_query_params.to_query}"
 
       result = String.new
@@ -129,7 +130,7 @@ class ArtifactDownloadJob < PrismeBaseJob
       end
 
       begin
-        context = z.get_entry('context.txt').get_input_stream.read
+        context = z.get_entry('context.txt').get_input_stream.read if context.nil?
         $log.debug('The context root is ' + context)
         result << "The war will be deployed to context root #{context}.\n"
       rescue
@@ -143,12 +144,12 @@ class ArtifactDownloadJob < PrismeBaseJob
         hash.merge!(nexus_props)
         hash.merge!(git_props)
         cookie_war_true_zip(file_name, 'WEB-INF/classes/prisme.properties', hash)
-        context = '/isaac-rest' #to_do pull this from the database someday.
+        context = '/isaac-rest' if context.nil? #to_do pull this from the database someday.
       else
         #we are Komet!
         cookie_war_true_zip(file_name, 'WEB-INF/config/props/prisme.properties', war_cookie_params)
       end
-      $log.debug("Kicking off next job (DeployWar) #{file_name} #{context}")
+      $log.fatal("Kicking off next job (DeployWar) #{file_name} with context #{context}")
       #activeRecord instantiate new job
       job = DeployWarJob.perform_later(file_name, context, tomcat_ar, track_child_job)
       PrismeBaseJob.update_json_data(job_id: job.job_id, json_data: {message: "Deploying #{file_name}..."})

@@ -3,16 +3,65 @@ require 'uri'
 #methods for Prisme, but not Komet go here, for Komet visibility see helpers.rb in rails common.
 module PrismeUtilities
 
+  KOMET_APPLICATION = /^rails_komet/
+  ISAAC_APPLICATION = /^isaac-rest/
+  ALL_APPLICATION = /.*/
+  VALID_APPLICATIONS = [KOMET_APPLICATION, ISAAC_APPLICATION, ALL_APPLICATION]
+
   class << self
     attr_accessor :ssoi_logout_url
+    attr_accessor :config
   end
 
+  def self.localize_host(host)
+    host.gsub!('0:0:0:0:0:0:0:1', 'localhost')
+    host.gsub!('127.0.0.1', 'localhost')
+    host
+  end
+
+  def self.get_proxy_contexts(tomcat_ar:, application_type:)
+    raise ArgumentError.new "Application_type must be a member of PrismeUtilities::VALID_APPLICATIONS!" unless VALID_APPLICATIONS.include? application_type
+    uri = nil
+    tomcat_ar.service_properties.each do |sp|
+      if (sp.key.eql? PrismeService::CARGO_REMOTE_URL)
+        uri = URI sp.value
+        break
+      end
+    end
+    host = uri.host
+    port = uri.port
+    contexts = []
+    PrismeUtilities.proxy_urls.each do |k|
+      uri = URI k['incoming_url_path']
+      port = uri.port
+      $log.info(uri.host + " : " + port.to_s)
+      contexts << uri.path if (host.eql?(uri.host) && port.to_s.eql?(port.to_s))
+      $log.warn("server_config.yaml has a configuration with no context!  Prisme cannot use it for a deploy.") if uri.path.eql? '/'
+    end
+    $log.info("contexts has #{contexts}")
+    $log.warn("I could not find a valid proxy config for host #{host} with port #{port}.  Check prisme's server_config.yml") if contexts.empty?
+    contexts.map do |e| e[0].eql?('/') ? e.reverse.chop.reverse : e end.reject do |e| e.empty? end.reject do |e| e !~ application_type end
+  end
 
   def self.proxy_mappings
     URI.proxy_mappings
   end
 
+  def self.application_urls
+    server_config['application_urls']
+  end
+
+  def self.get_proxy
+    server_config['proxy_config_root']['apache_url_proxy']
+  end
+
+  def self.proxy_urls
+    server_config['proxy_config_root']['proxy_urls']
+  end
+
+
   def self.server_config
+    return PrismeUtilities.config unless PrismeUtilities.config.nil?
     # default the config file location based on the data_directory property
     config_file = "#{$PROPS['PRISME.data_directory']}/server_config.yml"
 
@@ -29,7 +78,13 @@ module PrismeUtilities
     end
 
     # read the config yml file
-    YAML.load_file(config_file)
+    begin
+      PrismeUtilities.config = YAML.load_file(config_file)
+    rescue => ex
+      $log.error("Error reading #{config_file}, error is #{ex}")
+      $log.error(ex.backtrace.join("\n"))
+    end
+    PrismeUtilities.config
   end
 
   def self.ssoi_logout_path
