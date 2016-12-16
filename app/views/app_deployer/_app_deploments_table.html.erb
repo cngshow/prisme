@@ -45,22 +45,11 @@
                         if (row['leaf_data'].running == true) {
                             t += '<i class="fa fa-cog fa-spin fa-fw" aria-hidden="true"></i>';
                         }
-
-                        if (row['leaf_data'].json_data == undefined) {
-                            t += row['leaf_data'].running_msg;
-                        } else {
-                            if (row['leaf_data'].orphaned_leaf === true) {
-                                t += 'Orphaned Job. Application Deployment Failed.'
-                            } else if (row['leaf_data'].status === 4) { //FAILURE
-                                t += 'Job Execution Failed.'
-                            } else {
-                                if (row['leaf_data'].job_name === 'DeployWarJob' && row['leaf_data'].running == false) {
-                                    span.attr('title', JSON.parse(row['leaf_data'].json_data).tooltip);
-                                    span.attr('data-toggle', 'tooltip');
-                                }
-                                t += row['leaf_data'].running_msg;
-                            }
+                        if (row['leaf_data'].tooltip !== '') {
+                            span.attr('title', row['leaf_data'].tooltip);
+                            span.attr('data-toggle', 'tooltip');
                         }
+                        t += row['leaf_data'].running_msg;
 
                         span.html(t);
                         td_data.html(span);

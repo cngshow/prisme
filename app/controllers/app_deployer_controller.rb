@@ -143,17 +143,36 @@ class AppDeployerController < ApplicationController
   private
 
   def leaf_data(row)
-    leaf = row.descendants.leaves.first
-    ret_data = leaf ? leaf.as_json : {}
+    ret_data = {}
 
-    if ret_data.empty? || ret_data['json_data'].nil?
-      ret_data['running_msg'] = row['result']
+    if row.status != PrismeJobConstants::Status::STATUS_HASH[:COMPLETED]
+      ar = row
     else
-      ret_data['running_msg'] = JSON.parse(ret_data['json_data'])['message']
+      leaf = row.descendants.leaves.first
+      ar = leaf
+      ret_data = leaf.as_json
     end
 
-    ret_data['orphaned_leaf'] = leaf.status == PrismeJobConstants::Status::STATUS_HASH[:ORPHANED]
-    ret_data['running'] = !ret_data['orphaned_leaf'] && (!ret_data['completed_at'] || (ret_data['completed_at'] && !ret_data['job_name'].eql?(DeployWarJob.name)))
+    ret_data['orphaned_leaf'] = ar['status'] == PrismeJobConstants::Status::STATUS_HASH[:ORPHANED]
+    ret_data['running'] = false
+    ret_data['tooltip'] = ''
+
+    case ar['status']
+      when PrismeJobConstants::Status::STATUS_HASH[:FAILED]
+        ret_data['running_msg'] = 'Job Execution Failed. See the tooltip for the error message.'
+        ret_data['tooltip'] = ar['last_error']
+      when PrismeJobConstants::Status::STATUS_HASH[:ORPHANED]
+        ret_data['running_msg'] = 'Job was orphaned. The application deployment failed.'
+      else
+        ret_data['running'] = !ret_data['job_name'].eql?(DeployWarJob.name) || ar['completed_at'].nil?
+
+        if ar['json_data'].nil?
+          ret_data['running_msg'] = ar['result']
+        else
+          ret_data['running_msg'] = JSON.parse(ar['json_data'])['message']
+          ret_data['tooltip'] = JSON.parse(ar['json_data'])['tooltip'] ||= ''
+        end
+    end
 
     if row['started_at'] && !ret_data['orphaned_leaf']
       ret_data['completed_at'] = ret_data['completed_at'] ||= Time.now.to_i
