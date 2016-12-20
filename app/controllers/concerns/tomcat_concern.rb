@@ -10,6 +10,7 @@ module TomcatConcern
 
   # change_state(url: "http://localhost:8080/",username: "devtest",pwd: "devtest", context: "rails_komet_b", path: 'start')
   def change_state(tomcat_service_id:, context:, action:)
+    $alog.always(prisme_user.user_name + " has issued to '#{Service.find(tomcat_service_id).description}' against context '#{context}' the action '#{action}'")
     unless VALID_ACTIONS.include?(action.to_sym)
       $log.error("Invalid action, #{action}, passed into change_state method. Valid actions are: #{VALID_ACTIONS.to_s}.")
       raise StandardError.new("Invalid action, #{action}, passed into change_state method. Valid actions are: #{VALID_ACTIONS.to_s}.")
@@ -28,9 +29,10 @@ module TomcatConcern
       $log.warn("Tomcat is unreachable! #{ex.message}")
       return {failed: ex.message}
     rescue => ex
-      $log.warn("Unexpected Exception: #{ex.message}")
+      [$log, $alog].each { |l| l.warn("Unexpected Exception: #{ex.message}")}
       return {failed: ex.message}
     end
+    $alog.always(prisme_user.user_name + " has a result of: #{response.body}")
     response.body
   end
 
