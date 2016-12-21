@@ -136,7 +136,7 @@ module TomcatConcern
     begin
       json = JSON.parse body
     rescue => ex
-      $log.error("JSON was not parsed! #{ex}")
+      $log.warn("JSON was not parsed! #{ex}")
       json['version'] = 'INVALID_JSON'
       json['restVersion'] = 'INVALID_JSON'
     end
