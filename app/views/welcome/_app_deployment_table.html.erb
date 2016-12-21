@@ -34,29 +34,20 @@
                     <div class="prismetooltip" style="float: left">
                       <span class="fa fa-info-circle">&nbsp;&nbsp;</span>
                       <span class="tooltiptext">
-                        Isaac Database <%= fetch_komets_isaac(row: row) %>
-                        <% $log.debug("isaac database data row = #{row[:isaac].inspect}") %>
+                        <span style="font-weight: bold; color: navy">Isaac Database <%= fetch_komets_isaac(row: row) %></span>
                         <ul>
-                          <li>artifact ID: <%= row[:isaac][:database]['artifactId'].to_s rescue 'unknown' %></li>
-                          <li>version: <%= row[:isaac][:database]['version'].to_s rescue 'unknown' %></li>
-                          <%= raw "<li>classifier: #{row[:isaac][:database]['classifier'].to_s}</li>" unless (row[:isaac][:database].nil? || row[:isaac][:database]['classifier'].to_s.empty?) %>
-
+                          <li><%= row[:isaac][:database]['artifactId'].to_s rescue 'Unknown' %>&nbsp;version:&nbsp;<%= row[:isaac][:database]['version'].to_s rescue 'Unknown' %>&nbsp;<%= raw "Classifier: #{row[:isaac][:database]['classifier'].to_s}" unless (row[:isaac][:database].nil? || row[:isaac][:database]['classifier'].to_s.empty?) %></li>
                         </ul>
-                        <hr>
                         <% unless row[:isaac][:database_dependencies].nil? %>
-                            Database Dependencies
+                            <span style="font-weight: bold; color: navy">Database Dependencies</span>
+                            <ol>
                             <% row[:isaac][:database_dependencies].each do |d| %>
-                              <ul>
-                                <li>artifact ID: <%= d['artifactId'].to_s %></li>
-                                <li>version: <%= d['version'].to_s %></li>
-                                <%= raw "<li>classifier: #{d['classifier'].to_s}</li>" unless d['classifier'].to_s.empty? %>
-                              </ul>
-                              <hr>
-                          <% end %>
+                              <li>Artifact:&nbsp;<%= d['artifactId'].to_s %>&nbsp;&nbsp;Version: <%= d['version'].to_s %>&nbsp;&nbsp;<%= raw "Classifier: #{d['classifier'].to_s}" unless d['classifier'].to_s.empty? %></li>
+                            <% end %>
+                            </ol>
                         <% end %>
                         </span>
                     </div>
-                <% else %>
                 <% end %>
               </td>
               <td><%= row[:state] %></td>
