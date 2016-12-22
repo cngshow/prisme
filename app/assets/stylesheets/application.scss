@@ -278,21 +278,17 @@ html, body {
  .prismetooltip {
    position: relative;
    display: inline-block;
-   border-bottom: 1px dotted black;
  }
 
 .prismetooltip .tooltiptext {
   visibility: hidden;
-  width: 350px;
-  background-color: #8CCCF1;
+  width: 600px;
+  background-color: cornsilk;
   color: black;
   text-align: left;
-  border-radius: 6px;
-  padding: 5px 0;
-  overflow:scroll; height:400px;
-  border-radius: 3px;
+  overflow:scroll;
   padding: 5px;
-  box-shadow: 10px 10px 5px #888888 ;
+  box-shadow: 9px 5px 5px #888888 ;
   /* Position the tooltip */
   position: absolute;
   z-index: 1;
