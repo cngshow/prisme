@@ -4,7 +4,8 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 where provided, and the git commit history.
 
 * 2016/12/?? - 1.47 - PENDING
-    * 
+   * Adding in more logging to find source of true zip error (no prisme.properties)
+   * prisme_admin.log file rats out who starts/stops/undeploys things via prisme
 
 * 2016/12/13 - 1.46
     * regression fix on db builder summary page
