@@ -6,7 +6,8 @@ where provided, and the git commit history.
 * 2016/12/?? - 1.47 - PENDING
    * Adding in more logging to find source of true zip error (no prisme.properties)
    * prisme_admin.log file rats out who starts/stops/undeploys things via prisme
-
+   * show log events property (prisme.properties) now defaults to true.  Log events GUI is available for all admins to see.
+   
 * 2016/12/13 - 1.46
     * regression fix on db builder summary page
     * point at latest ISAAC so db builder builds pull in up-to-date metadata
