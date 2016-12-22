@@ -3,10 +3,6 @@
     max-width: 1000px;
   }
 
-  .modal-wide .modal-dialog {
-    width: 50%; /* or whatever you wish */
-  }
-
   .inline_align_top_div {
     display: inline-block;
     vertical-align: top;
@@ -50,7 +46,7 @@
 <br/>
 
 <!-- Modal -->
-<div id="myModal" class="modal fade modal-wide" role="dialog">
+<div id="myModal" class="modal fade modal-wide50" role="dialog">
   <div class="modal-dialog">
 
     <!-- Modal content-->
@@ -215,9 +211,8 @@
       $('#btn_submit_hidden').click();
     }
 
-    var fields = ['user', 'uploaded_files', 'started_at', 'state', 'result', 'progress', 'state_time', 'elapsed_time'];
-
     function loadTable(tableId, data) {
+      var fields = ['user', 'uploaded_files', 'started_at', 'state', 'result', 'progress', 'state_time', 'elapsed_time'];
       $('#' + tableId).find('tbody').empty();
 
       if (data.length > 0) {
