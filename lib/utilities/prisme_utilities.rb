@@ -12,6 +12,27 @@ module PrismeUtilities
     URI.proxy_mappings
   end
 
+  def self.prisme_super_user
+    # default the config file location based on the data_directory property
+    config_file = "#{$PROPS['PRISME.data_directory']}/prisme_super_user.yml"
+
+    begin
+      # if the config file does not exist then fallback to the file in the config directory.
+      if File.exists?(config_file)
+        users = YAML.load_file(config_file)
+        users['users'].each do |u|
+          su = User.find_or_create_by(email: u['email'], admin_role_check: true)
+          su.password = u['password']
+          su.save!
+          su.add_role(Roles::SUPER_USER)
+        end
+      end
+    rescue => ex
+      $log.error("Administrative Users have not been created but PRISME will continue to start. The exception is #{ex}")
+      $log.error(ex.backtrace.join("\n"))
+    end
+  end
+
   def self.server_config
     # default the config file location based on the data_directory property
     config_file = "#{$PROPS['PRISME.data_directory']}/server_config.yml"
