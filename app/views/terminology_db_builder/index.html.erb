@@ -1,6 +1,8 @@
 <!-- Trigger the modal with a button -->
 </br>
-<button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal" onclick="reset_form();">New Database Build Request</button>
+<button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal" onclick="reset_form();">New
+  Database Build Request
+</button>
 <div class="page-header">
   <h1>Terminology Database Builder</h1>
 </div>
@@ -42,27 +44,32 @@
         <%= form_tag terminology_db_builder_request_build_path, id: 'myForm' do %>
             <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
             <div title="The name to use for the maven artifact that will result from executing this generated pom file.">
-              <div style="display:inline-block"><span style="float: left" id="lbl_db_name"><h4>Database Name</h4></span></div>
+              <div style="display:inline-block"><span style="float: left" id="lbl_db_name"><h4>Database Name</h4></span>
+              </div>
               <%= text_field_tag 'db_name', nil, 'aria-labelledby': 'lbl_db_name', placeholder: 'Enter the Name for this Database', maxlength: 75, size: 75, class: 'form-control input_525' %>
             </div>
             <br>
             <div title="The version to use for the maven artifact that will result from executing this generated pom file.">
-              <div style="display:inline-block"><span style="float: left" id="lbl_db_version"><h4>Database Version</h4></span></div>
+              <div style="display:inline-block">
+                <span style="float: left" id="lbl_db_version"><h4>Database Version</h4></span></div>
               <%= text_field_tag 'db_version', nil, 'aria-labelledby': 'lbl_db_version', placeholder: 'Enter the Database Version', maxlength: 75, size: 75, class: 'form-control input_525' %>
             </div>
             <br>
             <div title="Describe the purpose / contents of the database being constructed.">
-              <div style="display:inline-block"><span style="float: left" id="lbl_db_description"><h4>Database Description</h4></span></div>
-              <%= text_area_tag 'db_description', nil, 'aria-labelledby': 'lbl_db_description',placeholder: 'Enter a Database Description', rows: '3', cols: 76, class: 'form-control input_525' %>
+              <div style="display:inline-block">
+                <span style="float: left" id="lbl_db_description"><h4>Database Description</h4></span></div>
+              <%= text_area_tag 'db_description', nil, 'aria-labelledby': 'lbl_db_description', placeholder: 'Enter a Database Description', rows: '3', cols: 76, class: 'form-control input_525' %>
             </div>
             <br>
             <div title="The (optional) maven classifier to use for the maven artifact that will result from executing this generated pom file. Often used to denote variations of a database version such as 'snapshot', 'full', etc.">
-              <div style="display:inline-block"><span style="float: left" id="lbl_artifact_classifier"><h4>Artifact Classifier</h4></span></div>
+              <div style="display:inline-block">
+                <span style="float: left" id="lbl_artifact_classifier"><h4>Artifact Classifier</h4></span></div>
               <%= text_field_tag 'artifact_classifier', nil, 'aria-labelledby': 'lbl_artifact_classifier', placeholder: 'Artifact Classifier (optional)', maxlength: 75, size: 75, class: 'form-control input_525' %>
             </div>
             <br>
             <div title="Execute the Description Logic Reasoner across the database to create an inferred view">
-              <div style="display:inline-block"><span style="float: left" id="lbl_classify_group"><h4>Classify the Database</h4></span></div>
+              <div style="display:inline-block">
+                <span style="float: left" id="lbl_classify_group"><h4>Classify the Database</h4></span></div>
               <fieldset class="classic-border" id="classify_group" aria-labelledby="lbl_classify_group">
                 <legend>Select True or False</legend>
                 <label class="checkbox"><%= radio_button_tag 'classify', 'true', true %>True</label>
@@ -71,7 +78,8 @@
             </div>
             <br>
             <div title="The set of IBDF files to be included in the DB.  Do not include the metadata IBDF file from ISAAC, it is always included."><!-- this is important!! -->
-              <div style="display:inline-block"><span style="float: left" id="ibdf_selection_label"><h4>IBDF Files</h4></span></div>
+              <div style="display:inline-block">
+                <span style="float: left" id="ibdf_selection_label"><h4>IBDF Files</h4></span></div>
               <input type="hidden" name="ibdf_selections" id="ibdf_selections">
               <%= select_tag 'ibdf_files',
                              options_from_collection_for_select(@idbf_files, :option_key, :option_value),
@@ -86,7 +94,8 @@
             </div>
             <br>
             <div title=" The version of the metadata content to include in the DB.">
-              <div style="display:inline-block"><span style="float: left"id="lbl_metadata_version"><h4>Metadata Version</h4></span></div>
+              <div style="display:inline-block">
+                <span style="float: left" id="lbl_metadata_version"><h4>Metadata Version</h4></span></div>
               <%= select_tag 'metadata_version',
                              options_from_collection_for_select(@metadata_versions, :option_key, :option_value),
                              :class => 'select2-prisme form-control',
@@ -107,91 +116,108 @@
   </div>
 </div>
 <script>
-  function reset_form() {
-    // deselect any previously selected options and get the default width
-    var _ibdfFiles = $('#ibdf_files');
-    _ibdfFiles.val('').change();
+    function reset_form() {
+        // deselect any previously selected options and get the default width
+        var _ibdfFiles = $('#ibdf_files');
+        _ibdfFiles.val('').change();
 
-    // set the width of the search__field in order to NOT have the placeholder cut off. This is an issue with select2 multi-selects.
-    // this selector finds the group div (important to surround with div in case the form has multiple select2 drop downs)
-    var w = _ibdfFiles.attr('data-w');
-    _ibdfFiles.closest('div').find('input.select2-search__field').css('width', w);
+        // set the width of the search__field in order to NOT have the placeholder cut off. This is an issue with select2 multi-selects.
+        // this selector finds the group div (important to surround with div in case the form has multiple select2 drop downs)
+        var w = _ibdfFiles.attr('data-w');
+        _ibdfFiles.closest('div').find('input.select2-search__field').css('width', w);
 
-    //remove any validation errors and reset the form (textfields, textareas, etc.)
-    $("#myForm").validate().resetForm();
-    document.getElementById("myForm").reset();
-  }
+        //remove any validation errors and reset the form (textfields, textareas, etc.)
+        $("#myForm").validate().resetForm();
+        document.getElementById("myForm").reset();
+    }
 
-  function submitPackage() {
-    $('#ibdf_selections').val($('#ibdf_files').val());
-    var $btnSubmit = $("#btn_submit");
-    $btnSubmit.attr('onclick', 'return false;').html('<span><i class="fa fa-cog fa-spin fa-fw" aria-hidden="true"></i>Sending DB Build Request...</span>');
+    function submitPackage() {
+        $('#ibdf_selections').val($('#ibdf_files').val());
+        var $btnSubmit = $("#btn_submit");
+        $btnSubmit.attr('onclick', 'return false;').html('<span><i class="fa fa-cog fa-spin fa-fw" aria-hidden="true"></i>Sending DB Build Request...</span>');
 
-    // validate that the DB name will be unique
-    var db_name = $('#db_name').val();
-    var version = $('#db_version').val();
+        // validate that the DB name will be unique
+        var db_name = $('#db_name').val();
+        var version = $('#db_version').val();
+        var classifier = $('#classifier').val();
+        var params = {
+            db_name: db_name,
+            version: version,
+            classifier: classifier
+        };
 
-    $.getJSON(gon.routes.terminology_db_builder_check_tag_conflict_path, {db_name: db_name, version: version}, function (data) {
-      if (data.tag_conflict === true) {
+        $.getJSON(gon.routes.terminology_db_builder_check_tag_conflict_path, params, function (data) {
+            if (data.tag_conflict === true) {
+                validation_msg({title: 'Database Name Error', message: "The computed Database Name is not unique in GIT.<br><br>Please change either the database name or database version to ensure uniqueness."});
+            } else {
+                $.getJSON(gon.routes.terminology_db_builder_check_cradle_conflict_path, params, function (data) {
+                    if (data.nexus_conflict === true) {
+                        validation_msg({title: 'Database Artifact Error', message: data.message})
+                    } else {
+                        var f = $("#myForm");
+                        if (f.valid()) {
+                            f.submit();
+                        } else {
+                            // reset the submit button
+                            $btnSubmit.attr('onclick', 'submitPackage();').text('Create Database');
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    function validation_msg(data) {
+        var $btnSubmit = $("#btn_submit");
         bootbox.alert({
-          size: 'medium',
-          title: 'Database Name Error',
-          message: "The computed Database Name is not unique.<br><br>Please change either the database name or database version to ensure uniqueness.",
-          callback: function () {
-            // reset the submit button
-            $btnSubmit.attr('onclick', 'submitPackage();').text('Create Database');
-          }
+            size: 'medium',
+            title: data.title,
+            message: data.message,
+            callback: function () {
+                // reset the submit button
+                $btnSubmit.attr('onclick', 'submitPackage();').text('Create Database');
+            }
         }).find('.modal-content').css({
             'margin-top': "200px"
         });
-      } else {
-        var f = $("#myForm");
-        if (f.valid()) {
-            f.submit();
-        } else {
-          // reset the submit button
-          $btnSubmit.attr('onclick', 'submitPackage();').text('Create Database');
-        }
-      }
+    }
+
+    $(document).ready(function () {
+        // call init_select2 to initialize all select inputs to use the select2 js library
+        init_select2();
+
+        $.validator.addMethod("alphas_only", function (value, element) {
+            return this.optional(element) || /^[a-z][a-z0-9-_.]+$/i.test(value);
+        }, "Only alphanumerics, dash, underscore, and periods are allowed and this must begin with an alpha character");
+
+        $.validator.addMethod("trim_whitespace", function (value, element) {
+            return this.optional(element) || /^\w+/i.test(value);
+        }, "You must enter a database description starting with an alpha character");
+
+        // initialize the jquery validation plugin
+        $('#myForm').validate({
+            rules: {
+                db_name: {
+                    required: true,
+                    alphas_only: true
+                },
+                db_version: {
+                    required: true,
+                    alphas_only: true
+                },
+                db_description: {
+                    required: true,
+                    trim_whitespace: true
+                },
+                artifact_classifier: {
+                    alphas_only: true
+                }
+            },
+            errorPlacement: function (error, element) {
+                var span = $("span[id='lbl_" + element.attr('id') + "']");
+                error.addClass('arrow_box');
+                error.insertAfter(span);
+            }
+        });
     });
-  }
-
-  $(document).ready(function () {
-    // call init_select2 to initialize all select inputs to use the select2 js library
-    init_select2();
-
-    $.validator.addMethod( "alphas_only", function( value, element ) {
-      return this.optional( element ) || /^[a-z][a-z0-9-_.]+$/i.test( value );
-    }, "Only alphanumerics, dash, underscore, and periods are allowed and this must begin with an alpha character" );
-
-    $.validator.addMethod( "trim_whitespace", function( value, element ) {
-      return this.optional( element ) || /^\w+/i.test( value );
-    }, "You must enter a database description starting with an alpha character" );
-
-    // initialize the jquery validation plugin
-    $('#myForm').validate({
-      rules: {
-        db_name: {
-          required: true,
-          alphas_only: true
-        },
-        db_version: {
-          required: true,
-          alphas_only: true
-        },
-        db_description: {
-          required: true,
-          trim_whitespace: true
-        },
-        artifact_classifier: {
-          alphas_only: true
-        }
-      },
-      errorPlacement: function (error, element) {
-        var span = $("span[id='lbl_" + element.attr('id') + "']");
-        error.addClass('arrow_box');
-        error.insertAfter(span);
-      }
-    });
-  });
 </script>
