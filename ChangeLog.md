@@ -6,8 +6,9 @@ where provided, and the git commit history.
 * 2016/12/23 - 1.47 - PENDING
    * Added PRISME super user initialization code allowing AITC to create a super user in case they have lost their credentials
    * Adding in more logging to find source of true zip error (no prisme.properties)
-   * prisme_admin.log file rats out who starts/stops/undeploys things via prisme
-   * show log events property (prisme.properties) now defaults to true.  Log events GUI is available for all admins to see.
+   * The prisme_admin.log file rats out who starts/stops/undeploys things via prisme
+   * Show log events property (prisme.properties) now defaults to true.  Log events GUI is available for all admins to see.
+   * Added DB Builder validation checking Nexus artifacts as well as the computed GIT tag.
    
 * 2016/12/13 - 1.46
     * regression fix on db builder summary page
