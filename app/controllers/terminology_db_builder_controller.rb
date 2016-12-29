@@ -27,6 +27,29 @@ class TerminologyDbBuilderController < ApplicationController
     redirect_to terminology_db_builder_url
   end
 
+  def ajax_check_cradle_conflict
+    ret = {nexus_conflict: false}
+    db_name = params['db_name']
+    version = params['version']
+    classifier = params['classifier']
+
+    begin
+      zips = get_isaac_cradle_zips
+
+      if zips
+        zips.each do |zip|
+          if db_name.eql?(zip.artifactId) && version.eql?(zip.version) && classifier.eql?(zip.classifier)
+            ret = {nexus_conflict: true, message: 'The database name / version / classifier combination already exists in Nexus. The requested database cannot be built due to this conflict.'}
+          end
+        end
+      end
+    rescue => ex
+      ret = {nexus_conflict: true, message: "An exception was thrown attempting to reach Nexus. Therefore, the requested database cannot be built. The exception is:<br>#{ex}"}
+    end
+
+    render json: ret
+  end
+
   def ajax_check_tag_conflict
     db_name = params['db_name']
     version = params['version']
@@ -34,7 +57,7 @@ class TerminologyDbBuilderController < ApplicationController
     tag_conflict = nil
     begin
       tag_conflict = IsaacDBConfigurationCreator.tag_conflict?(name: db_name, version: version)
-    rescue java.lang.Exception  => ex
+    rescue java.lang.Exception => ex
       $log.error("Error in IsaacDBConfigurationCreator for db_name #{db_name} with version #{version}!! The error is: #{ex}")
       $log.error('Because of this exception I will be returning true (indicating a git tag conflict) and the end user will not be able to proceed.')
       $log.error(ex.backtrace.join("\n"))
