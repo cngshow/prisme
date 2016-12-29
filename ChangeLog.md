@@ -3,7 +3,7 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
-* 2016/12/23 - 1.47 - PENDING
+* 2016/12/29 - 1.48
    * Added PRISME super user initialization code allowing AITC to create a super user in case they have lost their credentials
    * Adding in more logging to find source of true zip error (no prisme.properties)
    * The prisme_admin.log file rats out who starts/stops/undeploys things via prisme
