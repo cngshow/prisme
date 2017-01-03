@@ -1,0 +1,878 @@
+---
+:SITES:
+  '1':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Cheyenne, WY
+    :TYPE: Production
+    :VA_SITE_ID: '442'
+  '2':
+    :GROUP_NAME: Phase 1 - Test
+    :MESSAGE_TYPE: P
+    :NAME: Martinsburg, WV
+    :TYPE: Production
+    :VA_SITE_ID: '443'
+  '4':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: St. Louis (Heartland-East HCS)
+    :TYPE: Production
+    :VA_SITE_ID: '444'
+  '5':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Manila OC, PI
+    :TYPE: Production
+    :VA_SITE_ID: '445'
+  '6':
+    :GROUP_NAME: Phase 4
+    :MESSAGE_TYPE: P
+    :NAME: Togus, ME
+    :TYPE: Production
+    :VA_SITE_ID: '446'
+  '7':
+    :GROUP_NAME: Phase 4
+    :MESSAGE_TYPE: P
+    :NAME: White River Junction, VT
+    :TYPE: Production
+    :VA_SITE_ID: '447'
+  '8':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Fort Harrison, MT
+    :TYPE: Production
+    :VA_SITE_ID: '448'
+  '9':
+    :GROUP_NAME: Phase 6
+    :MESSAGE_TYPE: P
+    :NAME: Fargo, ND
+    :TYPE: Production
+    :VA_SITE_ID: '449'
+  '10':
+    :GROUP_NAME: Phase 6
+    :MESSAGE_TYPE: P
+    :NAME: Sioux Falls, SD
+    :TYPE: Production
+    :VA_SITE_ID: '450'
+  '11':
+    :GROUP_NAME: Phase 6
+    :MESSAGE_TYPE: P
+    :NAME: Honolulu, HI
+    :TYPE: Production
+    :VA_SITE_ID: '451'
+  '12':
+    :GROUP_NAME: Phase 4
+    :MESSAGE_TYPE: P
+    :NAME: Wilmington, DE
+    :TYPE: Production
+    :VA_SITE_ID: '452'
+  '13':
+    :GROUP_NAME: Phase 6
+    :MESSAGE_TYPE: P
+    :NAME: Anchorage, AK (OPC)
+    :TYPE: Production
+    :VA_SITE_ID: '453'
+  '14':
+    :GROUP_NAME: Phase 6
+    :MESSAGE_TYPE: P
+    :NAME: Albuquerque, NM
+    :TYPE: Production
+    :VA_SITE_ID: '454'
+  '15':
+    :GROUP_NAME: Phase 6
+    :MESSAGE_TYPE: P
+    :NAME: Alexandria, LA
+    :TYPE: Production
+    :VA_SITE_ID: '455'
+  '16':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Altoona, PA
+    :TYPE: Production
+    :VA_SITE_ID: '456'
+  '17':
+    :GROUP_NAME: Phase 6
+    :MESSAGE_TYPE: P
+    :NAME: Amarillo, TX
+    :TYPE: Production
+    :VA_SITE_ID: '457'
+  '18':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Ann Arbor, MI
+    :TYPE: Production
+    :VA_SITE_ID: '458'
+  '19':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Atlanta, GA
+    :TYPE: Production
+    :VA_SITE_ID: '459'
+  '20':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Augusta, GA (C)
+    :TYPE: Production
+    :VA_SITE_ID: '460'
+  '21':
+    :GROUP_NAME: Phase 4
+    :MESSAGE_TYPE: P
+    :NAME: Baltimore, MD (HCS)
+    :TYPE: Production
+    :VA_SITE_ID: '461'
+  '22':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Battle Creek, MI
+    :TYPE: Production
+    :VA_SITE_ID: '462'
+  '23':
+    :GROUP_NAME: Phase 3
+    :MESSAGE_TYPE: P
+    :NAME: Bay Pines, FL
+    :TYPE: Production
+    :VA_SITE_ID: '463'
+  '24':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Beckley, WV
+    :TYPE: Production
+    :VA_SITE_ID: '464'
+  '25':
+    :GROUP_NAME: Phase 4
+    :MESSAGE_TYPE: P
+    :NAME: Bedford, MA
+    :TYPE: Production
+    :VA_SITE_ID: '465'
+  '26':
+    :GROUP_NAME: Phase 6
+    :MESSAGE_TYPE: P
+    :NAME: Big Spring, TX
+    :TYPE: Production
+    :VA_SITE_ID: '466'
+  '27':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Biloxi, MS (C)
+    :TYPE: Production
+    :VA_SITE_ID: '467'
+  '28':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Birmingham, AL
+    :TYPE: Production
+    :VA_SITE_ID: '468'
+  '29':
+    :GROUP_NAME: Phase 4
+    :MESSAGE_TYPE: P
+    :NAME: Boston-Jamaica Plain, MA (HCS)
+    :TYPE: Production
+    :VA_SITE_ID: '469'
+  '30':
+    :GROUP_NAME: Phase 4
+    :MESSAGE_TYPE: P
+    :NAME: Bronx, NY
+    :TYPE: Production
+    :VA_SITE_ID: '470'
+  '31':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Buffalo, NY (HCS)
+    :TYPE: Production
+    :VA_SITE_ID: '471'
+  '32':
+    :GROUP_NAME: Phase 4
+    :MESSAGE_TYPE: P
+    :NAME: Butler, PA
+    :TYPE: Production
+    :VA_SITE_ID: '472'
+  '33':
+    :GROUP_NAME: Phase 6
+    :MESSAGE_TYPE: P
+    :NAME: Boise, ID
+    :TYPE: Production
+    :VA_SITE_ID: '473'
+  '34':
+    :GROUP_NAME: Phase 4
+    :MESSAGE_TYPE: P
+    :NAME: Charleston, SC
+    :TYPE: Production
+    :VA_SITE_ID: '474'
+  '35':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Chicago Westside, IL
+    :TYPE: Production
+    :VA_SITE_ID: '475'
+  '36':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Chillicothe, OH
+    :TYPE: Production
+    :VA_SITE_ID: '476'
+  '37':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Cincinnati, OH
+    :TYPE: Production
+    :VA_SITE_ID: '477'
+  '38':
+    :GROUP_NAME: Phase 4
+    :MESSAGE_TYPE: P
+    :NAME: Clarksburg, WV
+    :TYPE: Production
+    :VA_SITE_ID: '478'
+  '39':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Cleveland, OH
+    :TYPE: Production
+    :VA_SITE_ID: '479'
+  '40':
+    :GROUP_NAME: Phase 4
+    :MESSAGE_TYPE: P
+    :NAME: Coatesville, PA
+    :TYPE: Production
+    :VA_SITE_ID: '480'
+  '41':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Columbia, SC
+    :TYPE: Production
+    :VA_SITE_ID: '481'
+  '42':
+    :GROUP_NAME: Phase 3
+    :MESSAGE_TYPE: P
+    :NAME: Miami, FL
+    :TYPE: Production
+    :VA_SITE_ID: '482'
+  '43':
+    :GROUP_NAME: Phase 3
+    :MESSAGE_TYPE: P
+    :NAME: West Palm Beach, FL
+    :TYPE: Production
+    :VA_SITE_ID: '483'
+  '44':
+    :GROUP_NAME: Phase 6
+    :MESSAGE_TYPE: P
+    :NAME: Dallas, TX (HCS)
+    :TYPE: Production
+    :VA_SITE_ID: '484'
+  '45':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Danville (Illiana HCS)
+    :TYPE: Production
+    :VA_SITE_ID: '485'
+  '46':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Dayton, OH
+    :TYPE: Production
+    :VA_SITE_ID: '486'
+  '47':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Detroit, MI
+    :TYPE: Production
+    :VA_SITE_ID: '487'
+  '48':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Denver, CO (HCS)
+    :TYPE: Production
+    :VA_SITE_ID: '488'
+  '49':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: North Chicago, IL
+    :TYPE: Production
+    :VA_SITE_ID: '489'
+  '50':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Dublin, GA
+    :TYPE: Production
+    :VA_SITE_ID: '490'
+  '51':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Durham, NC
+    :TYPE: Production
+    :VA_SITE_ID: '491'
+  '52':
+    :GROUP_NAME: Phase 4
+    :MESSAGE_TYPE: P
+    :NAME: East Orange, NJ (HCS)
+    :TYPE: Production
+    :VA_SITE_ID: '492'
+  '53':
+    :GROUP_NAME: Phase 4
+    :MESSAGE_TYPE: P
+    :NAME: Erie, PA
+    :TYPE: Production
+    :VA_SITE_ID: '493'
+  '54':
+    :GROUP_NAME: Phase 6
+    :MESSAGE_TYPE: P
+    :NAME: Fayetteville, AR
+    :TYPE: Production
+    :VA_SITE_ID: '494'
+  '55':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Fayetteville, NC
+    :TYPE: Production
+    :VA_SITE_ID: '495'
+  '56':
+    :GROUP_NAME: Phase 6
+    :MESSAGE_TYPE: P
+    :NAME: Fort Meade, SD
+    :TYPE: Production
+    :VA_SITE_ID: '496'
+  '57':
+    :GROUP_NAME: Phase 6
+    :MESSAGE_TYPE: P
+    :NAME: Fresno, CA
+    :TYPE: Production
+    :VA_SITE_ID: '497'
+  '58':
+    :GROUP_NAME: Phase 3
+    :MESSAGE_TYPE: P
+    :NAME: Gainesville, FL
+    :TYPE: Production
+    :VA_SITE_ID: '498'
+  '59':
+    :GROUP_NAME: Phase 6
+    :MESSAGE_TYPE: P
+    :NAME: Grand Junction, CO
+    :TYPE: Production
+    :VA_SITE_ID: '499'
+  '60':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Hines, IL
+    :TYPE: Production
+    :VA_SITE_ID: '500'
+  '61':
+    :GROUP_NAME: Phase 6
+    :MESSAGE_TYPE: P
+    :NAME: Houston, TX
+    :TYPE: Production
+    :VA_SITE_ID: '501'
+  '62':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Huntington, WV
+    :TYPE: Production
+    :VA_SITE_ID: '502'
+  '63':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Indianapolis, IN (C)
+    :TYPE: Production
+    :VA_SITE_ID: '503'
+  '64':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Iron Mountain, MI
+    :TYPE: Production
+    :VA_SITE_ID: '504'
+  '65':
+    :GROUP_NAME: Phase 4
+    :MESSAGE_TYPE: P
+    :NAME: Jackson, MS
+    :TYPE: Production
+    :VA_SITE_ID: '505'
+  '66':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Kansas City (Heartland-West HCS)
+    :TYPE: Production
+    :VA_SITE_ID: '506'
+  '67':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Hampton, VA
+    :TYPE: Production
+    :VA_SITE_ID: '507'
+  '68':
+    :GROUP_NAME: Phase 6
+    :MESSAGE_TYPE: P
+    :NAME: Las Vegas, NV
+    :TYPE: Production
+    :VA_SITE_ID: '508'
+  '69':
+    :GROUP_NAME: Phase 4
+    :MESSAGE_TYPE: P
+    :NAME: Lebanon, PA
+    :TYPE: Production
+    :VA_SITE_ID: '509'
+  '70':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Lexington, KY
+    :TYPE: Production
+    :VA_SITE_ID: '510'
+  '71':
+    :GROUP_NAME: Phase 6
+    :MESSAGE_TYPE: P
+    :NAME: Little Rock, AR (C)
+    :TYPE: Production
+    :VA_SITE_ID: '511'
+  '72':
+    :GROUP_NAME: Phase 6
+    :MESSAGE_TYPE: P
+    :NAME: Long Beach, CA
+    :TYPE: Production
+    :VA_SITE_ID: '512'
+  '73':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Louisville, KY
+    :TYPE: Production
+    :VA_SITE_ID: '513'
+  '74':
+    :GROUP_NAME: Phase 6
+    :MESSAGE_TYPE: P
+    :NAME: Loma Linda, CA
+    :TYPE: Production
+    :VA_SITE_ID: '514'
+  '75':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Madison, WI
+    :TYPE: Production
+    :VA_SITE_ID: '515'
+  '76':
+    :GROUP_NAME: Phase 4
+    :MESSAGE_TYPE: P
+    :NAME: Manchester, NH
+    :TYPE: Production
+    :VA_SITE_ID: '516'
+  '77':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Marion, IN (HCS)
+    :TYPE: Production
+    :VA_SITE_ID: '517'
+  '78':
+    :GROUP_NAME: Phase 6
+    :MESSAGE_TYPE: P
+    :NAME: Martinez, CA (HCS)
+    :TYPE: Production
+    :VA_SITE_ID: '518'
+  '79':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Memphis, TN
+    :TYPE: Production
+    :VA_SITE_ID: '519'
+  '80':
+    :GROUP_NAME: Phase 6
+    :MESSAGE_TYPE: P
+    :NAME: Minneapolis, MN
+    :TYPE: Production
+    :VA_SITE_ID: '520'
+  '81':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Montgomery, AL (HCS)
+    :TYPE: Production
+    :VA_SITE_ID: '521'
+  '82':
+    :GROUP_NAME: Phase 4
+    :MESSAGE_TYPE: P
+    :NAME: Montrose, NY
+    :TYPE: Production
+    :VA_SITE_ID: '522'
+  '83':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Mountain Home, TN
+    :TYPE: Production
+    :VA_SITE_ID: '523'
+  '84':
+    :GROUP_NAME: Phase 6
+    :MESSAGE_TYPE: P
+    :NAME: Muskogee, OK
+    :TYPE: Production
+    :VA_SITE_ID: '524'
+  '85':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Nashville, TN
+    :TYPE: Production
+    :VA_SITE_ID: '525'
+  '86':
+    :GROUP_NAME: Phase 6
+    :MESSAGE_TYPE: P
+    :NAME: New Orleans, LA
+    :TYPE: Production
+    :VA_SITE_ID: '526'
+  '87':
+    :GROUP_NAME: Phase 4
+    :MESSAGE_TYPE: P
+    :NAME: New York Harbor (HCS)
+    :TYPE: Production
+    :VA_SITE_ID: '527'
+  '88':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Northampton, MA
+    :TYPE: Production
+    :VA_SITE_ID: '528'
+  '89':
+    :GROUP_NAME: Phase 4
+    :MESSAGE_TYPE: P
+    :NAME: Northport, NY
+    :TYPE: Production
+    :VA_SITE_ID: '529'
+  '90':
+    :GROUP_NAME: Phase 6
+    :MESSAGE_TYPE: P
+    :NAME: Oklahoma City, OK
+    :TYPE: Production
+    :VA_SITE_ID: '530'
+  '91':
+    :GROUP_NAME: Phase 6
+    :MESSAGE_TYPE: P
+    :NAME: Omaha, NE (Central Plains HCS)
+    :TYPE: Production
+    :VA_SITE_ID: '531'
+  '93':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Asheville, NC
+    :TYPE: Production
+    :VA_SITE_ID: '532'
+  '94':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Palo Alto HCS
+    :TYPE: Production
+    :VA_SITE_ID: '533'
+  '95':
+    :GROUP_NAME: Phase 4
+    :MESSAGE_TYPE: P
+    :NAME: Philadelphia, PA
+    :TYPE: Production
+    :VA_SITE_ID: '534'
+  '96':
+    :GROUP_NAME: Phase 6
+    :MESSAGE_TYPE: P
+    :NAME: Phoenix, AZ
+    :TYPE: Production
+    :VA_SITE_ID: '535'
+  '97':
+    :GROUP_NAME: Phase 4
+    :MESSAGE_TYPE: P
+    :NAME: Pittsburgh HCS
+    :TYPE: Production
+    :VA_SITE_ID: '536'
+  '98':
+    :GROUP_NAME: Phase 1 - Test
+    :MESSAGE_TYPE: P
+    :NAME: Portland, OR (C)
+    :TYPE: Production
+    :VA_SITE_ID: '537'
+  '99':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Prescott, AZ
+    :TYPE: Production
+    :VA_SITE_ID: '538'
+  '100':
+    :GROUP_NAME: Phase 4
+    :MESSAGE_TYPE: P
+    :NAME: Providence, RI
+    :TYPE: Production
+    :VA_SITE_ID: '539'
+  '101':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Richmond, VA
+    :TYPE: Production
+    :VA_SITE_ID: '540'
+  '102':
+    :GROUP_NAME: Phase 6
+    :MESSAGE_TYPE: P
+    :NAME: Roseburg, OR
+    :TYPE: Production
+    :VA_SITE_ID: '541'
+  '103':
+    :GROUP_NAME: Phase 6
+    :MESSAGE_TYPE: P
+    :NAME: Reno, NV
+    :TYPE: Production
+    :VA_SITE_ID: '542'
+  '104':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Saginaw, MI
+    :TYPE: Production
+    :VA_SITE_ID: '543'
+  '105':
+    :GROUP_NAME: Phase 6
+    :MESSAGE_TYPE: P
+    :NAME: St Cloud, MN
+    :TYPE: Production
+    :VA_SITE_ID: '544'
+  '106':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Salem, VA
+    :TYPE: Production
+    :VA_SITE_ID: '545'
+  '107':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Salisbury, NC
+    :TYPE: Production
+    :VA_SITE_ID: '546'
+  '108':
+    :GROUP_NAME: Phase 1 - Test
+    :MESSAGE_TYPE: P
+    :NAME: Salt Lake City, UT
+    :TYPE: Production
+    :VA_SITE_ID: '547'
+  '109':
+    :GROUP_NAME: Phase 6
+    :MESSAGE_TYPE: P
+    :NAME: San Francisco, CA
+    :TYPE: Production
+    :VA_SITE_ID: '548'
+  '110':
+    :GROUP_NAME: Phase 6
+    :MESSAGE_TYPE: P
+    :NAME: Seattle, WA
+    :TYPE: Production
+    :VA_SITE_ID: '549'
+  '111':
+    :GROUP_NAME: Phase 6
+    :MESSAGE_TYPE: P
+    :NAME: San Diego, CA
+    :TYPE: Production
+    :VA_SITE_ID: '550'
+  '112':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Sheridan, WY
+    :TYPE: Production
+    :VA_SITE_ID: '551'
+  '113':
+    :GROUP_NAME: Phase 6
+    :MESSAGE_TYPE: P
+    :NAME: Shreveport, LA
+    :TYPE: Production
+    :VA_SITE_ID: '552'
+  '114':
+    :GROUP_NAME: Phase 6
+    :MESSAGE_TYPE: P
+    :NAME: Spokane, WA
+    :TYPE: Production
+    :VA_SITE_ID: '553'
+  '115':
+    :GROUP_NAME: Phase 6
+    :MESSAGE_TYPE: P
+    :NAME: San Antonio, TX
+    :TYPE: Production
+    :VA_SITE_ID: '554'
+  '116':
+    :GROUP_NAME: Phase 3
+    :MESSAGE_TYPE: P
+    :NAME: San Juan, PR
+    :TYPE: Production
+    :VA_SITE_ID: '555'
+  '117':
+    :GROUP_NAME: Phase 3
+    :MESSAGE_TYPE: P
+    :NAME: Tampa, FL
+    :TYPE: Production
+    :VA_SITE_ID: '556'
+  '118':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Temple, TX (Central Texas HCS)
+    :TYPE: Production
+    :VA_SITE_ID: '557'
+  '119':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Tomah, WI
+    :TYPE: Production
+    :VA_SITE_ID: '558'
+  '120':
+    :GROUP_NAME: Phase 6
+    :MESSAGE_TYPE: P
+    :NAME: Tucson, AZ
+    :TYPE: Production
+    :VA_SITE_ID: '559'
+  '121':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Tuscaloosa, AL
+    :TYPE: Production
+    :VA_SITE_ID: '560'
+  '122':
+    :GROUP_NAME: Phase 6
+    :MESSAGE_TYPE: P
+    :NAME: Walla Walla, WA
+    :TYPE: Production
+    :VA_SITE_ID: '561'
+  '123':
+    :GROUP_NAME: Phase 4
+    :MESSAGE_TYPE: P
+    :NAME: Washington, DC
+    :TYPE: Production
+    :VA_SITE_ID: '562'
+  '124':
+    :GROUP_NAME: Phase 4
+    :MESSAGE_TYPE: P
+    :NAME: West Haven, CT (HCS)
+    :TYPE: Production
+    :VA_SITE_ID: '563'
+  '125':
+    :GROUP_NAME: Phase 1 - Test
+    :MESSAGE_TYPE: P
+    :NAME: Los Angeles, CA (HCS)
+    :TYPE: Production
+    :VA_SITE_ID: '564'
+  '126':
+    :GROUP_NAME: Phase 6
+    :MESSAGE_TYPE: P
+    :NAME: White City, OR (DOM)
+    :TYPE: Production
+    :VA_SITE_ID: '565'
+  '127':
+    :GROUP_NAME: Phase 4
+    :MESSAGE_TYPE: P
+    :NAME: Wilkes Barre, PA
+    :TYPE: Production
+    :VA_SITE_ID: '566'
+  '128':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Milwaukee, WI
+    :TYPE: Production
+    :VA_SITE_ID: '567'
+  '129':
+    :GROUP_NAME: Phase 6
+    :MESSAGE_TYPE: P
+    :NAME: El Paso, TX
+    :TYPE: Production
+    :VA_SITE_ID: '568'
+  '130':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Columbus, OH (OPC)
+    :TYPE: Production
+    :VA_SITE_ID: '569'
+  '160':
+    :GROUP_NAME: DO NOT DEPLOY
+    :MESSAGE_TYPE: T
+    :NAME: Albany ACG
+    :TYPE: Production
+    :VA_SITE_ID: '570'
+  '161':
+    :GROUP_NAME: DO NOT DEPLOY
+    :MESSAGE_TYPE: T
+    :NAME: Albany ACT
+    :TYPE: Production
+    :VA_SITE_ID: '571'
+  '162':
+    :GROUP_NAME: DO NOT DEPLOY
+    :MESSAGE_TYPE: T
+    :NAME: Albany ACR
+    :TYPE: Production
+    :VA_SITE_ID: '572'
+  '163':
+    :GROUP_NAME: DO NOT DEPLOY
+    :MESSAGE_TYPE: T
+    :NAME: Salt Lake SCG
+    :TYPE: Production
+    :VA_SITE_ID: '573'
+  '164':
+    :GROUP_NAME: DO NOT DEPLOY
+    :MESSAGE_TYPE: T
+    :NAME: Salt Lake SCT
+    :TYPE: Production
+    :VA_SITE_ID: '574'
+  '165':
+    :GROUP_NAME: DO NOT DEPLOY
+    :MESSAGE_TYPE: T
+    :NAME: Salt Lake SCR
+    :TYPE: Production
+    :VA_SITE_ID: '575'
+  '166':
+    :GROUP_NAME: Phase 2 - Support
+    :MESSAGE_TYPE: P
+    :NAME: Platinum
+    :TYPE: Production
+    :VA_SITE_ID: '576'
+  '180':
+    :GROUP_NAME: DO NOT DEPLOY
+    :MESSAGE_TYPE: T
+    :NAME: CampMaster
+    :TYPE: Production
+    :VA_SITE_ID: '577'
+  '181':
+    :GROUP_NAME: DO NOT DEPLOY
+    :MESSAGE_TYPE: T
+    :NAME: ImageMaster
+    :TYPE: Production
+    :VA_SITE_ID: '578'
+  '188':
+    :GROUP_NAME: Phase 3
+    :MESSAGE_TYPE: P
+    :NAME: Orlando, FL
+    :TYPE: Production
+    :VA_SITE_ID: '579'
+  '189':
+    :GROUP_NAME: Phase 5
+    :MESSAGE_TYPE: P
+    :NAME: Valley Coastal Bend, TX
+    :TYPE: Production
+    :VA_SITE_ID: '580'
+  '190':
+    :GROUP_NAME: Phase 2 - Support
+    :MESSAGE_TYPE: P
+    :NAME: CHAMPVA
+    :TYPE: Production
+    :VA_SITE_ID: '581'
+  '191':
+    :GROUP_NAME: ''
+    :MESSAGE_TYPE: T
+    :NAME: STLVETSDEV
+    :TYPE: Internal
+    :VA_SITE_ID: '582'
+  '192':
+    :GROUP_NAME: ''
+    :MESSAGE_TYPE: T
+    :NAME: LEXPLT
+    :TYPE: Internal
+    :VA_SITE_ID: '583'
+  '193':
+    :GROUP_NAME: ''
+    :MESSAGE_TYPE: T
+    :NAME: MARTVETSDEV
+    :TYPE: SQA
+    :VA_SITE_ID: '584'
+  '194':
+    :GROUP_NAME: ''
+    :MESSAGE_TYPE: T
+    :NAME: BAYP11
+    :TYPE: SQA
+    :VA_SITE_ID: '585'
+  '195':
+    :GROUP_NAME: ''
+    :MESSAGE_TYPE: T
+    :NAME: CHEY59
+    :TYPE: Production
+    :VA_SITE_ID: '586'
+  '196':
+    :GROUP_NAME: ''
+    :MESSAGE_TYPE: T
+    :NAME: MIL2
+    :TYPE: Production
+    :VA_SITE_ID: '587'
