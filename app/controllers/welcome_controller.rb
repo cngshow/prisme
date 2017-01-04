@@ -74,6 +74,8 @@ class WelcomeController < ApplicationController
 
   private
   def format_deployments_table_data(tomcat_deployments)
+    is_admin_user = auth_admin?
+
     ret = []
     tomcat_deployments.keys.each do |appserver|
       service_name = appserver[:service_name]
@@ -84,11 +86,14 @@ class WelcomeController < ApplicationController
       tomcat_deployments[appserver].each_pair do |war, d|
         current_row[:available] = true
         next if [:available, :failed].include?(war)
-        link = ssoi? ? URI(d[:link]).proxify.to_s : d[:link]
-        hash = {war_name: war, state: d[:state], version: d[:version], session_count: d[:session_count].to_s, link: link}
-        hash[:isaac] = d[:isaac] if d[:isaac]
-        hash[:komets_isaac_version] = d[:komets_isaac_version] if d[:komets_isaac_version]
-        current_row[:rows] << hash
+
+        if is_admin_user || war =~ /komet/
+          link = ssoi? ? URI(d[:link]).proxify.to_s : d[:link]
+          hash = {war_name: war, state: d[:state], version: d[:version], session_count: d[:session_count].to_s, link: link}
+          hash[:isaac] = d[:isaac] if d[:isaac]
+          hash[:komets_isaac_version] = d[:komets_isaac_version] if d[:komets_isaac_version]
+          current_row[:rows] << hash
+        end
       end
       ret << current_row
     end
