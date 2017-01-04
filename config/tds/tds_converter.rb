@@ -20,4 +20,5 @@ hash[:SITES].keys.each do |index|
   sites << {'VA_SITE_ID' => hash[:SITES][index][:VA_SITE_ID].to_s,'NAME' => hash[:SITES][index][:NAME].to_s, 'SITE_TYPE' => hash[:SITES][index][:TYPE].to_s, 'MESSAGE_TYPE' => hash[:SITES][index][:MESSAGE_TYPE].to_s}
   # sites << {'VA_SITE_ID' => hash[:SITES][index][:VA_SITE_ID].to_s,'NAME' => hash[:SITES][index][:NAME].to_s, 'SITE_TYPE' => hash[:SITES][index][:TYPE].to_s}
 end
+#to yaml is only available in rails, run in console not scratch.
 File.open('C:\work\va-ctt\rails\rails_prisme\config\tds\site_data_message_type.yml','w') do |f| f.write sites.to_yaml end
