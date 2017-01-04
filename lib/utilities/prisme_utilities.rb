@@ -60,6 +60,7 @@ module PrismeUtilities
 
   def self.prisme_super_user
     users = load_yml_file("#{$PROPS['PRISME.data_directory']}/prisme_super_user.yml", "Administrative Users have not been created but PRISME will continue to start.")
+    return if users.nil?
     begin
       # if the config file does not exist then fallback to the file in the config directory.
       users['users'].each do |u|
