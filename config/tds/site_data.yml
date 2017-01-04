@@ -1,439 +1,439 @@
 ---
-- VA_SITE_ID: '442'
-  NAME: Cheyenne, WY
-  SITE_TYPE: Production
-- VA_SITE_ID: '443'
-  NAME: Martinsburg, WV
-  SITE_TYPE: Production
-- VA_SITE_ID: '444'
-  NAME: St. Louis (Heartland-East HCS)
-  SITE_TYPE: Production
-- VA_SITE_ID: '445'
-  NAME: Manila OC, PI
-  SITE_TYPE: Production
-- VA_SITE_ID: '446'
-  NAME: Togus, ME
-  SITE_TYPE: Production
-- VA_SITE_ID: '447'
-  NAME: White River Junction, VT
-  SITE_TYPE: Production
-- VA_SITE_ID: '448'
-  NAME: Fort Harrison, MT
-  SITE_TYPE: Production
-- VA_SITE_ID: '449'
-  NAME: Fargo, ND
-  SITE_TYPE: Production
-- VA_SITE_ID: '450'
-  NAME: Sioux Falls, SD
-  SITE_TYPE: Production
-- VA_SITE_ID: '451'
-  NAME: Honolulu, HI
-  SITE_TYPE: Production
-- VA_SITE_ID: '452'
-  NAME: Wilmington, DE
-  SITE_TYPE: Production
-- VA_SITE_ID: '453'
-  NAME: Anchorage, AK (OPC)
-  SITE_TYPE: Production
-- VA_SITE_ID: '454'
-  NAME: Albuquerque, NM
-  SITE_TYPE: Production
-- VA_SITE_ID: '455'
-  NAME: Alexandria, LA
-  SITE_TYPE: Production
-- VA_SITE_ID: '456'
-  NAME: Altoona, PA
-  SITE_TYPE: Production
-- VA_SITE_ID: '457'
-  NAME: Amarillo, TX
-  SITE_TYPE: Production
-- VA_SITE_ID: '458'
-  NAME: Ann Arbor, MI
-  SITE_TYPE: Production
-- VA_SITE_ID: '459'
-  NAME: Atlanta, GA
-  SITE_TYPE: Production
-- VA_SITE_ID: '460'
-  NAME: Augusta, GA (C)
-  SITE_TYPE: Production
-- VA_SITE_ID: '461'
-  NAME: Baltimore, MD (HCS)
-  SITE_TYPE: Production
-- VA_SITE_ID: '462'
-  NAME: Battle Creek, MI
-  SITE_TYPE: Production
-- VA_SITE_ID: '463'
-  NAME: Bay Pines, FL
-  SITE_TYPE: Production
-- VA_SITE_ID: '464'
-  NAME: Beckley, WV
-  SITE_TYPE: Production
-- VA_SITE_ID: '465'
-  NAME: Bedford, MA
-  SITE_TYPE: Production
-- VA_SITE_ID: '466'
-  NAME: Big Spring, TX
-  SITE_TYPE: Production
-- VA_SITE_ID: '467'
-  NAME: Biloxi, MS (C)
-  SITE_TYPE: Production
-- VA_SITE_ID: '468'
-  NAME: Birmingham, AL
-  SITE_TYPE: Production
-- VA_SITE_ID: '469'
-  NAME: Boston-Jamaica Plain, MA (HCS)
-  SITE_TYPE: Production
-- VA_SITE_ID: '470'
-  NAME: Bronx, NY
-  SITE_TYPE: Production
-- VA_SITE_ID: '471'
-  NAME: Buffalo, NY (HCS)
-  SITE_TYPE: Production
-- VA_SITE_ID: '472'
-  NAME: Butler, PA
-  SITE_TYPE: Production
-- VA_SITE_ID: '473'
-  NAME: Boise, ID
-  SITE_TYPE: Production
-- VA_SITE_ID: '474'
-  NAME: Charleston, SC
-  SITE_TYPE: Production
-- VA_SITE_ID: '475'
-  NAME: Chicago Westside, IL
-  SITE_TYPE: Production
-- VA_SITE_ID: '476'
-  NAME: Chillicothe, OH
-  SITE_TYPE: Production
-- VA_SITE_ID: '477'
-  NAME: Cincinnati, OH
-  SITE_TYPE: Production
-- VA_SITE_ID: '478'
-  NAME: Clarksburg, WV
-  SITE_TYPE: Production
-- VA_SITE_ID: '479'
-  NAME: Cleveland, OH
-  SITE_TYPE: Production
-- VA_SITE_ID: '480'
-  NAME: Coatesville, PA
-  SITE_TYPE: Production
-- VA_SITE_ID: '481'
-  NAME: Columbia, SC
-  SITE_TYPE: Production
-- VA_SITE_ID: '482'
-  NAME: Miami, FL
-  SITE_TYPE: Production
-- VA_SITE_ID: '483'
-  NAME: West Palm Beach, FL
-  SITE_TYPE: Production
-- VA_SITE_ID: '484'
-  NAME: Dallas, TX (HCS)
-  SITE_TYPE: Production
-- VA_SITE_ID: '485'
-  NAME: Danville (Illiana HCS)
-  SITE_TYPE: Production
-- VA_SITE_ID: '486'
-  NAME: Dayton, OH
-  SITE_TYPE: Production
-- VA_SITE_ID: '487'
-  NAME: Detroit, MI
-  SITE_TYPE: Production
-- VA_SITE_ID: '488'
-  NAME: Denver, CO (HCS)
-  SITE_TYPE: Production
-- VA_SITE_ID: '489'
-  NAME: North Chicago, IL
-  SITE_TYPE: Production
-- VA_SITE_ID: '490'
-  NAME: Dublin, GA
-  SITE_TYPE: Production
-- VA_SITE_ID: '491'
-  NAME: Durham, NC
-  SITE_TYPE: Production
-- VA_SITE_ID: '492'
-  NAME: East Orange, NJ (HCS)
-  SITE_TYPE: Production
-- VA_SITE_ID: '493'
-  NAME: Erie, PA
-  SITE_TYPE: Production
-- VA_SITE_ID: '494'
-  NAME: Fayetteville, AR
-  SITE_TYPE: Production
-- VA_SITE_ID: '495'
-  NAME: Fayetteville, NC
-  SITE_TYPE: Production
-- VA_SITE_ID: '496'
-  NAME: Fort Meade, SD
-  SITE_TYPE: Production
-- VA_SITE_ID: '497'
-  NAME: Fresno, CA
-  SITE_TYPE: Production
-- VA_SITE_ID: '498'
-  NAME: Gainesville, FL
-  SITE_TYPE: Production
-- VA_SITE_ID: '499'
-  NAME: Grand Junction, CO
-  SITE_TYPE: Production
-- VA_SITE_ID: '500'
-  NAME: Hines, IL
-  SITE_TYPE: Production
-- VA_SITE_ID: '501'
-  NAME: Houston, TX
-  SITE_TYPE: Production
-- VA_SITE_ID: '502'
-  NAME: Huntington, WV
-  SITE_TYPE: Production
-- VA_SITE_ID: '503'
-  NAME: Indianapolis, IN (C)
-  SITE_TYPE: Production
-- VA_SITE_ID: '504'
-  NAME: Iron Mountain, MI
-  SITE_TYPE: Production
-- VA_SITE_ID: '505'
-  NAME: Jackson, MS
-  SITE_TYPE: Production
-- VA_SITE_ID: '506'
-  NAME: Kansas City (Heartland-West HCS)
-  SITE_TYPE: Production
-- VA_SITE_ID: '507'
-  NAME: Hampton, VA
-  SITE_TYPE: Production
-- VA_SITE_ID: '508'
-  NAME: Las Vegas, NV
-  SITE_TYPE: Production
-- VA_SITE_ID: '509'
-  NAME: Lebanon, PA
-  SITE_TYPE: Production
-- VA_SITE_ID: '510'
-  NAME: Lexington, KY
-  SITE_TYPE: Production
-- VA_SITE_ID: '511'
-  NAME: Little Rock, AR (C)
-  SITE_TYPE: Production
-- VA_SITE_ID: '512'
-  NAME: Long Beach, CA
-  SITE_TYPE: Production
-- VA_SITE_ID: '513'
-  NAME: Louisville, KY
-  SITE_TYPE: Production
-- VA_SITE_ID: '514'
-  NAME: Loma Linda, CA
-  SITE_TYPE: Production
-- VA_SITE_ID: '515'
-  NAME: Madison, WI
-  SITE_TYPE: Production
-- VA_SITE_ID: '516'
-  NAME: Manchester, NH
-  SITE_TYPE: Production
-- VA_SITE_ID: '517'
-  NAME: Marion, IN (HCS)
-  SITE_TYPE: Production
-- VA_SITE_ID: '518'
-  NAME: Martinez, CA (HCS)
-  SITE_TYPE: Production
-- VA_SITE_ID: '519'
-  NAME: Memphis, TN
-  SITE_TYPE: Production
-- VA_SITE_ID: '520'
-  NAME: Minneapolis, MN
-  SITE_TYPE: Production
-- VA_SITE_ID: '521'
-  NAME: Montgomery, AL (HCS)
-  SITE_TYPE: Production
-- VA_SITE_ID: '522'
-  NAME: Montrose, NY
-  SITE_TYPE: Production
-- VA_SITE_ID: '523'
-  NAME: Mountain Home, TN
-  SITE_TYPE: Production
-- VA_SITE_ID: '524'
-  NAME: Muskogee, OK
-  SITE_TYPE: Production
-- VA_SITE_ID: '525'
-  NAME: Nashville, TN
-  SITE_TYPE: Production
-- VA_SITE_ID: '526'
-  NAME: New Orleans, LA
-  SITE_TYPE: Production
-- VA_SITE_ID: '527'
-  NAME: New York Harbor (HCS)
-  SITE_TYPE: Production
-- VA_SITE_ID: '528'
-  NAME: Northampton, MA
-  SITE_TYPE: Production
-- VA_SITE_ID: '529'
-  NAME: Northport, NY
-  SITE_TYPE: Production
-- VA_SITE_ID: '530'
-  NAME: Oklahoma City, OK
-  SITE_TYPE: Production
-- VA_SITE_ID: '531'
-  NAME: Omaha, NE (Central Plains HCS)
-  SITE_TYPE: Production
-- VA_SITE_ID: '532'
-  NAME: Asheville, NC
-  SITE_TYPE: Production
-- VA_SITE_ID: '533'
-  NAME: Palo Alto HCS
-  SITE_TYPE: Production
-- VA_SITE_ID: '534'
-  NAME: Philadelphia, PA
-  SITE_TYPE: Production
-- VA_SITE_ID: '535'
-  NAME: Phoenix, AZ
-  SITE_TYPE: Production
-- VA_SITE_ID: '536'
-  NAME: Pittsburgh HCS
-  SITE_TYPE: Production
-- VA_SITE_ID: '537'
-  NAME: Portland, OR (C)
-  SITE_TYPE: Production
-- VA_SITE_ID: '538'
-  NAME: Prescott, AZ
-  SITE_TYPE: Production
-- VA_SITE_ID: '539'
-  NAME: Providence, RI
-  SITE_TYPE: Production
-- VA_SITE_ID: '540'
-  NAME: Richmond, VA
-  SITE_TYPE: Production
-- VA_SITE_ID: '541'
-  NAME: Roseburg, OR
-  SITE_TYPE: Production
-- VA_SITE_ID: '542'
-  NAME: Reno, NV
-  SITE_TYPE: Production
-- VA_SITE_ID: '543'
-  NAME: Saginaw, MI
-  SITE_TYPE: Production
-- VA_SITE_ID: '544'
-  NAME: St Cloud, MN
-  SITE_TYPE: Production
-- VA_SITE_ID: '545'
-  NAME: Salem, VA
-  SITE_TYPE: Production
-- VA_SITE_ID: '546'
-  NAME: Salisbury, NC
-  SITE_TYPE: Production
-- VA_SITE_ID: '547'
-  NAME: Salt Lake City, UT
-  SITE_TYPE: Production
-- VA_SITE_ID: '548'
-  NAME: San Francisco, CA
-  SITE_TYPE: Production
-- VA_SITE_ID: '549'
-  NAME: Seattle, WA
-  SITE_TYPE: Production
-- VA_SITE_ID: '550'
-  NAME: San Diego, CA
-  SITE_TYPE: Production
-- VA_SITE_ID: '551'
-  NAME: Sheridan, WY
-  SITE_TYPE: Production
-- VA_SITE_ID: '552'
-  NAME: Shreveport, LA
-  SITE_TYPE: Production
-- VA_SITE_ID: '553'
-  NAME: Spokane, WA
-  SITE_TYPE: Production
-- VA_SITE_ID: '554'
-  NAME: San Antonio, TX
-  SITE_TYPE: Production
-- VA_SITE_ID: '555'
-  NAME: San Juan, PR
-  SITE_TYPE: Production
-- VA_SITE_ID: '556'
-  NAME: Tampa, FL
-  SITE_TYPE: Production
-- VA_SITE_ID: '557'
-  NAME: Temple, TX (Central Texas HCS)
-  SITE_TYPE: Production
-- VA_SITE_ID: '558'
-  NAME: Tomah, WI
-  SITE_TYPE: Production
-- VA_SITE_ID: '559'
-  NAME: Tucson, AZ
-  SITE_TYPE: Production
-- VA_SITE_ID: '560'
-  NAME: Tuscaloosa, AL
-  SITE_TYPE: Production
-- VA_SITE_ID: '561'
-  NAME: Walla Walla, WA
-  SITE_TYPE: Production
-- VA_SITE_ID: '562'
-  NAME: Washington, DC
-  SITE_TYPE: Production
-- VA_SITE_ID: '563'
-  NAME: West Haven, CT (HCS)
-  SITE_TYPE: Production
-- VA_SITE_ID: '564'
-  NAME: Los Angeles, CA (HCS)
-  SITE_TYPE: Production
-- VA_SITE_ID: '565'
-  NAME: White City, OR (DOM)
-  SITE_TYPE: Production
-- VA_SITE_ID: '566'
-  NAME: Wilkes Barre, PA
-  SITE_TYPE: Production
-- VA_SITE_ID: '567'
-  NAME: Milwaukee, WI
-  SITE_TYPE: Production
-- VA_SITE_ID: '568'
-  NAME: El Paso, TX
-  SITE_TYPE: Production
-- VA_SITE_ID: '569'
-  NAME: Columbus, OH (OPC)
-  SITE_TYPE: Production
-- VA_SITE_ID: '570'
-  NAME: Albany ACG
-  SITE_TYPE: Production
-- VA_SITE_ID: '571'
-  NAME: Albany ACT
-  SITE_TYPE: Production
-- VA_SITE_ID: '572'
-  NAME: Albany ACR
-  SITE_TYPE: Production
-- VA_SITE_ID: '573'
-  NAME: Salt Lake SCG
-  SITE_TYPE: Production
-- VA_SITE_ID: '574'
-  NAME: Salt Lake SCT
-  SITE_TYPE: Production
-- VA_SITE_ID: '575'
-  NAME: Salt Lake SCR
-  SITE_TYPE: Production
-- VA_SITE_ID: '576'
-  NAME: Platinum
-  SITE_TYPE: Production
-- VA_SITE_ID: '577'
-  NAME: CampMaster
-  SITE_TYPE: Production
-- VA_SITE_ID: '578'
-  NAME: ImageMaster
-  SITE_TYPE: Production
-- VA_SITE_ID: '579'
-  NAME: Orlando, FL
-  SITE_TYPE: Production
-- VA_SITE_ID: '580'
-  NAME: Valley Coastal Bend, TX
-  SITE_TYPE: Production
-- VA_SITE_ID: '581'
-  NAME: CHAMPVA
-  SITE_TYPE: Production
-- VA_SITE_ID: '582'
-  NAME: STLVETSDEV
-  SITE_TYPE: Internal
-- VA_SITE_ID: '583'
-  NAME: LEXPLT
-  SITE_TYPE: Internal
-- VA_SITE_ID: '584'
-  NAME: MARTVETSDEV
-  SITE_TYPE: SQA
-- VA_SITE_ID: '585'
-  NAME: BAYP11
-  SITE_TYPE: SQA
-- VA_SITE_ID: '586'
-  NAME: CHEY59
-  SITE_TYPE: Production
-- VA_SITE_ID: '587'
-  NAME: MIL2
-  SITE_TYPE: Production
+- va_site_id: '442'
+  name: Cheyenne, WY
+  site_type: Production
+- va_site_id: '443'
+  name: Martinsburg, WV
+  site_type: Production
+- va_site_id: '444'
+  name: St. Louis (Heartland-East HCS)
+  site_type: Production
+- va_site_id: '445'
+  name: Manila OC, PI
+  site_type: Production
+- va_site_id: '446'
+  name: Togus, ME
+  site_type: Production
+- va_site_id: '447'
+  name: White River Junction, VT
+  site_type: Production
+- va_site_id: '448'
+  name: Fort Harrison, MT
+  site_type: Production
+- va_site_id: '449'
+  name: Fargo, ND
+  site_type: Production
+- va_site_id: '450'
+  name: Sioux Falls, SD
+  site_type: Production
+- va_site_id: '451'
+  name: Honolulu, HI
+  site_type: Production
+- va_site_id: '452'
+  name: Wilmington, DE
+  site_type: Production
+- va_site_id: '453'
+  name: Anchorage, AK (OPC)
+  site_type: Production
+- va_site_id: '454'
+  name: Albuquerque, NM
+  site_type: Production
+- va_site_id: '455'
+  name: Alexandria, LA
+  site_type: Production
+- va_site_id: '456'
+  name: Altoona, PA
+  site_type: Production
+- va_site_id: '457'
+  name: Amarillo, TX
+  site_type: Production
+- va_site_id: '458'
+  name: Ann Arbor, MI
+  site_type: Production
+- va_site_id: '459'
+  name: Atlanta, GA
+  site_type: Production
+- va_site_id: '460'
+  name: Augusta, GA (C)
+  site_type: Production
+- va_site_id: '461'
+  name: Baltimore, MD (HCS)
+  site_type: Production
+- va_site_id: '462'
+  name: Battle Creek, MI
+  site_type: Production
+- va_site_id: '463'
+  name: Bay Pines, FL
+  site_type: Production
+- va_site_id: '464'
+  name: Beckley, WV
+  site_type: Production
+- va_site_id: '465'
+  name: Bedford, MA
+  site_type: Production
+- va_site_id: '466'
+  name: Big Spring, TX
+  site_type: Production
+- va_site_id: '467'
+  name: Biloxi, MS (C)
+  site_type: Production
+- va_site_id: '468'
+  name: Birmingham, AL
+  site_type: Production
+- va_site_id: '469'
+  name: Boston-Jamaica Plain, MA (HCS)
+  site_type: Production
+- va_site_id: '470'
+  name: Bronx, NY
+  site_type: Production
+- va_site_id: '471'
+  name: Buffalo, NY (HCS)
+  site_type: Production
+- va_site_id: '472'
+  name: Butler, PA
+  site_type: Production
+- va_site_id: '473'
+  name: Boise, ID
+  site_type: Production
+- va_site_id: '474'
+  name: Charleston, SC
+  site_type: Production
+- va_site_id: '475'
+  name: Chicago Westside, IL
+  site_type: Production
+- va_site_id: '476'
+  name: Chillicothe, OH
+  site_type: Production
+- va_site_id: '477'
+  name: Cincinnati, OH
+  site_type: Production
+- va_site_id: '478'
+  name: Clarksburg, WV
+  site_type: Production
+- va_site_id: '479'
+  name: Cleveland, OH
+  site_type: Production
+- va_site_id: '480'
+  name: Coatesville, PA
+  site_type: Production
+- va_site_id: '481'
+  name: Columbia, SC
+  site_type: Production
+- va_site_id: '482'
+  name: Miami, FL
+  site_type: Production
+- va_site_id: '483'
+  name: West Palm Beach, FL
+  site_type: Production
+- va_site_id: '484'
+  name: Dallas, TX (HCS)
+  site_type: Production
+- va_site_id: '485'
+  name: Danville (Illiana HCS)
+  site_type: Production
+- va_site_id: '486'
+  name: Dayton, OH
+  site_type: Production
+- va_site_id: '487'
+  name: Detroit, MI
+  site_type: Production
+- va_site_id: '488'
+  name: Denver, CO (HCS)
+  site_type: Production
+- va_site_id: '489'
+  name: North Chicago, IL
+  site_type: Production
+- va_site_id: '490'
+  name: Dublin, GA
+  site_type: Production
+- va_site_id: '491'
+  name: Durham, NC
+  site_type: Production
+- va_site_id: '492'
+  name: East Orange, NJ (HCS)
+  site_type: Production
+- va_site_id: '493'
+  name: Erie, PA
+  site_type: Production
+- va_site_id: '494'
+  name: Fayetteville, AR
+  site_type: Production
+- va_site_id: '495'
+  name: Fayetteville, NC
+  site_type: Production
+- va_site_id: '496'
+  name: Fort Meade, SD
+  site_type: Production
+- va_site_id: '497'
+  name: Fresno, CA
+  site_type: Production
+- va_site_id: '498'
+  name: Gainesville, FL
+  site_type: Production
+- va_site_id: '499'
+  name: Grand Junction, CO
+  site_type: Production
+- va_site_id: '500'
+  name: Hines, IL
+  site_type: Production
+- va_site_id: '501'
+  name: Houston, TX
+  site_type: Production
+- va_site_id: '502'
+  name: Huntington, WV
+  site_type: Production
+- va_site_id: '503'
+  name: Indianapolis, IN (C)
+  site_type: Production
+- va_site_id: '504'
+  name: Iron Mountain, MI
+  site_type: Production
+- va_site_id: '505'
+  name: Jackson, MS
+  site_type: Production
+- va_site_id: '506'
+  name: Kansas City (Heartland-West HCS)
+  site_type: Production
+- va_site_id: '507'
+  name: Hampton, VA
+  site_type: Production
+- va_site_id: '508'
+  name: Las Vegas, NV
+  site_type: Production
+- va_site_id: '509'
+  name: Lebanon, PA
+  site_type: Production
+- va_site_id: '510'
+  name: Lexington, KY
+  site_type: Production
+- va_site_id: '511'
+  name: Little Rock, AR (C)
+  site_type: Production
+- va_site_id: '512'
+  name: Long Beach, CA
+  site_type: Production
+- va_site_id: '513'
+  name: Louisville, KY
+  site_type: Production
+- va_site_id: '514'
+  name: Loma Linda, CA
+  site_type: Production
+- va_site_id: '515'
+  name: Madison, WI
+  site_type: Production
+- va_site_id: '516'
+  name: Manchester, NH
+  site_type: Production
+- va_site_id: '517'
+  name: Marion, IN (HCS)
+  site_type: Production
+- va_site_id: '518'
+  name: Martinez, CA (HCS)
+  site_type: Production
+- va_site_id: '519'
+  name: Memphis, TN
+  site_type: Production
+- va_site_id: '520'
+  name: Minneapolis, MN
+  site_type: Production
+- va_site_id: '521'
+  name: Montgomery, AL (HCS)
+  site_type: Production
+- va_site_id: '522'
+  name: Montrose, NY
+  site_type: Production
+- va_site_id: '523'
+  name: Mountain Home, TN
+  site_type: Production
+- va_site_id: '524'
+  name: Muskogee, OK
+  site_type: Production
+- va_site_id: '525'
+  name: Nashville, TN
+  site_type: Production
+- va_site_id: '526'
+  name: New Orleans, LA
+  site_type: Production
+- va_site_id: '527'
+  name: New York Harbor (HCS)
+  site_type: Production
+- va_site_id: '528'
+  name: Northampton, MA
+  site_type: Production
+- va_site_id: '529'
+  name: Northport, NY
+  site_type: Production
+- va_site_id: '530'
+  name: Oklahoma City, OK
+  site_type: Production
+- va_site_id: '531'
+  name: Omaha, NE (Central Plains HCS)
+  site_type: Production
+- va_site_id: '532'
+  name: Asheville, NC
+  site_type: Production
+- va_site_id: '533'
+  name: Palo Alto HCS
+  site_type: Production
+- va_site_id: '534'
+  name: Philadelphia, PA
+  site_type: Production
+- va_site_id: '535'
+  name: Phoenix, AZ
+  site_type: Production
+- va_site_id: '536'
+  name: Pittsburgh HCS
+  site_type: Production
+- va_site_id: '537'
+  name: Portland, OR (C)
+  site_type: Production
+- va_site_id: '538'
+  name: Prescott, AZ
+  site_type: Production
+- va_site_id: '539'
+  name: Providence, RI
+  site_type: Production
+- va_site_id: '540'
+  name: Richmond, VA
+  site_type: Production
+- va_site_id: '541'
+  name: Roseburg, OR
+  site_type: Production
+- va_site_id: '542'
+  name: Reno, NV
+  site_type: Production
+- va_site_id: '543'
+  name: Saginaw, MI
+  site_type: Production
+- va_site_id: '544'
+  name: St Cloud, MN
+  site_type: Production
+- va_site_id: '545'
+  name: Salem, VA
+  site_type: Production
+- va_site_id: '546'
+  name: Salisbury, NC
+  site_type: Production
+- va_site_id: '547'
+  name: Salt Lake City, UT
+  site_type: Production
+- va_site_id: '548'
+  name: San Francisco, CA
+  site_type: Production
+- va_site_id: '549'
+  name: Seattle, WA
+  site_type: Production
+- va_site_id: '550'
+  name: San Diego, CA
+  site_type: Production
+- va_site_id: '551'
+  name: Sheridan, WY
+  site_type: Production
+- va_site_id: '552'
+  name: Shreveport, LA
+  site_type: Production
+- va_site_id: '553'
+  name: Spokane, WA
+  site_type: Production
+- va_site_id: '554'
+  name: San Antonio, TX
+  site_type: Production
+- va_site_id: '555'
+  name: San Juan, PR
+  site_type: Production
+- va_site_id: '556'
+  name: Tampa, FL
+  site_type: Production
+- va_site_id: '557'
+  name: Temple, TX (Central Texas HCS)
+  site_type: Production
+- va_site_id: '558'
+  name: Tomah, WI
+  site_type: Production
+- va_site_id: '559'
+  name: Tucson, AZ
+  site_type: Production
+- va_site_id: '560'
+  name: Tuscaloosa, AL
+  site_type: Production
+- va_site_id: '561'
+  name: Walla Walla, WA
+  site_type: Production
+- va_site_id: '562'
+  name: Washington, DC
+  site_type: Production
+- va_site_id: '563'
+  name: West Haven, CT (HCS)
+  site_type: Production
+- va_site_id: '564'
+  name: Los Angeles, CA (HCS)
+  site_type: Production
+- va_site_id: '565'
+  name: White City, OR (DOM)
+  site_type: Production
+- va_site_id: '566'
+  name: Wilkes Barre, PA
+  site_type: Production
+- va_site_id: '567'
+  name: Milwaukee, WI
+  site_type: Production
+- va_site_id: '568'
+  name: El Paso, TX
+  site_type: Production
+- va_site_id: '569'
+  name: Columbus, OH (OPC)
+  site_type: Production
+- va_site_id: '570'
+  name: Albany ACG
+  site_type: Production
+- va_site_id: '571'
+  name: Albany ACT
+  site_type: Production
+- va_site_id: '572'
+  name: Albany ACR
+  site_type: Production
+- va_site_id: '573'
+  name: Salt Lake SCG
+  site_type: Production
+- va_site_id: '574'
+  name: Salt Lake SCT
+  site_type: Production
+- va_site_id: '575'
+  name: Salt Lake SCR
+  site_type: Production
+- va_site_id: '576'
+  name: Platinum
+  site_type: Production
+- va_site_id: '577'
+  name: CampMaster
+  site_type: Production
+- va_site_id: '578'
+  name: ImageMaster
+  site_type: Production
+- va_site_id: '579'
+  name: Orlando, FL
+  site_type: Production
+- va_site_id: '580'
+  name: Valley Coastal Bend, TX
+  site_type: Production
+- va_site_id: '581'
+  name: CHAMPVA
+  site_type: Production
+- va_site_id: '582'
+  name: STLVETSDEV
+  site_type: Internal
+- va_site_id: '583'
+  name: LEXPLT
+  site_type: Internal
+- va_site_id: '584'
+  name: MARTVETSDEV
+  site_type: SQA
+- va_site_id: '585'
+  name: BAYP11
+  site_type: SQA
+- va_site_id: '586'
+  name: CHEY59
+  site_type: Production
+- va_site_id: '587'
+  name: MIL2
+  site_type: Production
