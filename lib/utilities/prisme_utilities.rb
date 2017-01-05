@@ -12,23 +12,65 @@ module PrismeUtilities
     URI.proxy_mappings
   end
 
-  def self.prisme_super_user
-    # default the config file location based on the data_directory property
-    config_file = "#{$PROPS['PRISME.data_directory']}/prisme_super_user.yml"
-
+  def self.load_yml_file(config_file, error_message)
     begin
-      # if the config file does not exist then fallback to the file in the config directory.
       if File.exists?(config_file)
-        users = YAML.load_file(config_file)
-        users['users'].each do |u|
-          su = User.find_or_create_by(email: u['email'], admin_role_check: true)
-          su.password = u['password']
-          su.save!
-          su.add_role(Roles::SUPER_USER)
-        end
+        hash = YAML.load_file(config_file)
+      else
+        $log.debug("Config file #{config_file} does not exist!!")
       end
     rescue => ex
-      $log.error("Administrative Users have not been created but PRISME will continue to start. The exception is #{ex}")
+      $log.error(error_message)
+      $log.error(ex.backtrace.join("\n"))
+    end
+    hash
+  end
+
+  def self.synch_site_data(dump_data = false)
+    config_file = "#{$PROPS['PRISME.data_directory']}/site_data.yml"
+    sites = load_yml_file(config_file, "Site data might not all have been created but PRISME will continue to start.")
+    if sites.nil?
+      $log.info("No site yaml file avaliable for loading!")
+      return
+    end
+    created_sites = 0
+    skipped_sites = 0
+    sites.each do |site|
+      site = VaSite.new(site)
+      if (VaSite.exists? site.va_site_id)
+        skipped_sites += 1
+        $log.info("I am skipping the site from #{config_file} with site id #{site.va_site_id}.  It already exists")
+      else
+        saved = site.save
+        created_sites += 1 if saved
+        skipped_sites += 1 unless saved
+      end
+    end
+    $log.always("I created #{created_sites} sites in the va_sites table.")
+    $log.always("I skipped #{skipped_sites} sites in sites yml file. (Existing sites must be modified via the UI.)")
+    if dump_data
+      dump_file = File.basename(config_file,'.*')
+      dump_file = "#{$PROPS['PRISME.data_directory']}/#{dump_file}_#{Time.now.to_i}.yml"
+      File.open(dump_file,'w') do |f|
+        f.write(VaSite.all.to_a.map do |e| {'va_site_id' => e.va_site_id, 'name' => e.name, 'site_type' => e.site_type,  'message_type' => e.message_type} end.to_yaml)
+      end
+    end
+    {created_sites: created_sites, skipped_sites: skipped_sites}
+  end
+
+  def self.prisme_super_user
+    users = load_yml_file("#{$PROPS['PRISME.data_directory']}/prisme_super_user.yml", "Administrative Users have not been created but PRISME will continue to start.")
+    return if users.nil?
+    begin
+      # if the config file does not exist then fallback to the file in the config directory.
+      users['users'].each do |u|
+        su = User.find_or_create_by(email: u['email'], admin_role_check: true)
+        su.password = u['password']
+        su.save!
+        su.add_role(Roles::SUPER_USER)
+      end
+    rescue => ex
+      $log.error("Not all administrative Users have been created but PRISME will continue to start. The exception is #{ex}")
       $log.error(ex.backtrace.join("\n"))
     end
   end

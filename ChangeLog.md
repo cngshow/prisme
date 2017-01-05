@@ -3,6 +3,12 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2017/01/05 - 1.49
+   * Added in database code to build site table
+   * created model code for site table
+   * first pass at populating site table during initialization.  Pass assumes existence of site crud gui.  W/o it changes will be made to current impl.
+   * home page only allows admins to see isaac rest.
+
 * 2016/12/29 - 1.48
    * Added PRISME super user initialization code allowing AITC to create a super user in case they have lost their credentials
    * Adding in more logging to find source of true zip error (no prisme.properties)
