@@ -3,7 +3,7 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
-* 2017/01/?? - 1.49 - PENDING
+* 2017/01/05 - 1.49
    * Added in database code to build site table
    * created model code for site table
    * first pass at populating site table during initialization.  Pass assumes existence of site crud gui.  W/o it changes will be made to current impl.
