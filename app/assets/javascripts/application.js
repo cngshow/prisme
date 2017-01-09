@@ -22,7 +22,7 @@
 //= require moment/moment
 // this is for ajax_flash notifications
 //= require bootstrap-notify
-//= require growlyflash
+// require growlyflash
 // = require_tree .
 
 function flash_notify(options, settings) {
@@ -53,6 +53,7 @@ function format_epoch_in_local(epoch) {
     }
     return ret;
 }
+/*
 
 $(document).ajaxComplete(function (event, jqXHR, ajaxOptions) {
     // var h = jqXHR.getAllResponseHeaders();
@@ -69,6 +70,7 @@ $(document).ajaxComplete(function (event, jqXHR, ajaxOptions) {
         console.log('--- ' + JSON.stringify(flashes));
     }
 });
+*/
 
 function init_select2() {
     $('.select2-prisme').each(function (index, element) {
