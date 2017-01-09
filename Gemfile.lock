@@ -90,6 +90,9 @@ GEM
       json
       multi_json
       request_store (>= 1.0)
+    growlyflash (0.9.0)
+      coffee-rails (>= 3.2.1)
+      railties (>= 3.2, < 5.1)
     i18n (0.7.0)
     jbuilder (2.3.2)
       activesupport (>= 3.0.0, < 5)
@@ -221,6 +224,7 @@ DEPENDENCIES
   faraday (~> 0.9.2)
   font-awesome-sass (~> 4.6.2)
   gon
+  growlyflash
   jbuilder (~> 2.0)
   jdbc-h2 (= 1.4.181)
   jquery-rails (~> 4.1, >= 4.1.1)

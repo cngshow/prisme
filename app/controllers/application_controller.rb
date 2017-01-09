@@ -67,8 +67,16 @@ class ApplicationController < ActionController::Base
     authorize :navigation, :registered?
   end
 
+  def auth_registered?
+    auth_registered rescue false
+  end
+
   def auth_admin
     authorize :navigation, :admin?
+  end
+
+  def auth_admin?
+    auth_admin rescue false
   end
 
   def ensure_services_configured

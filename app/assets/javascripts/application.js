@@ -22,7 +22,8 @@
 //= require moment/moment
 // this is for ajax_flash notifications
 //= require bootstrap-notify
-//= require_tree .
+//= require growlyflash
+// = require_tree .
 
 function flash_notify(options, settings) {
     $.notify(options, settings);
@@ -52,6 +53,22 @@ function format_epoch_in_local(epoch) {
     }
     return ret;
 }
+
+$(document).ajaxComplete(function (event, jqXHR, ajaxOptions) {
+    // var h = jqXHR.getAllResponseHeaders();
+    // var res = h.match(/X-Greg/gi);
+    // console.log(h);
+    // var h2 = JSON.parse('{' + h + '}');
+
+    if (jqXHR.getResponseHeader('X-Greg') !== null) {
+        var flashes = JSON.parse(decodeURIComponent(jqXHR.getResponseHeader('X-Greg')));
+        // flash_notify(flashes.options, flashes.settings);
+        for (i = 0; i < flashes.length; i++) {
+            flash_notify(flashes[i].options, flashes[i].settings);
+        }
+        console.log('--- ' + JSON.stringify(flashes));
+    }
+});
 
 function init_select2() {
     $('.select2-prisme').each(function (index, element) {

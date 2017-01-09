@@ -1,0 +1,5 @@
+# add users by duplicating lines 4 and 5 and drop this file into the data directory specified in prisme.properties (currently /app/prismeData)
+# please note that you will need to restart PRISME in order to have these users created
+users:
+  - email: superuser@prisme.gov
+    password: 'hakuna-matata!'

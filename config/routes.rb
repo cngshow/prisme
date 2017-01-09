@@ -63,6 +63,7 @@ Rails.application.routes.draw do
   post 'terminology_db_builder/request_build'
   get 'terminology_db_builder/load_build_data' => 'terminology_db_builder#ajax_load_build_data'
   get 'terminology_db_builder/check_tag_conflict' => 'terminology_db_builder#ajax_check_tag_conflict'
+  get 'terminology_db_builder/check_cradle_conflict' => 'terminology_db_builder#ajax_check_cradle_conflict', :constraints => OnlyAjaxRequest.new
   get 'terminology_db_builder/check_polling' => 'terminology_db_builder#ajax_check_polling'
 
   # welcome controller routes

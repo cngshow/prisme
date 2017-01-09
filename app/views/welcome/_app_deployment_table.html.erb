@@ -1,21 +1,23 @@
 <div id="<%= deployment[:service_id] %>">
-
+  <% colspan = policy(:navigation).admin? ? 5 : 4 %>
   <table class="prisme-table table-striped table-hover">
     <caption title='<%= deployment[:service_desc] %>'>Service
       Name:&nbsp;&nbsp;<%= deployment[:service_name] %></caption>
     <thead>
     <tr>
-      <th scope="col" width="50%">Application</th>
+      <th scope="col" width="30%">Application</th>
+      <th scope="col">Version</th>
       <th scope="col" width="10%">State</th>
       <th scope="col" width="10%">Session Count</th>
-      <th scope="col" width="10%">Version</th>
-      <th scope="col" width="20%">Actions (Start/Stop/Undeploy)</th>
+      <% if policy(:navigation).admin? %>
+        <th scope="col" width="20%">Actions (Start/Stop/Undeploy)</th>
+      <% end %>
     </tr>
     </thead>
     <tbody>
     <% if deployment[:rows].empty? %>
         <tr>
-          <td colspan="5" style="color: <%= deployment[:available] ? 'green' : '#180606' %>; background: white">
+          <td colspan="<%= colspan %>" style="color: <%= deployment[:available] ? 'green' : '#180606' %>">
             <%= (deployment[:available] ?
                 'No supported applications are currently deployed to this server' :
                 'Failed to connect to Tomcat server. Either the server is unavailable or is mis-configured.') %>
@@ -24,41 +26,37 @@
     <% else %>
         <% deployment[:rows].each do |row| %>
             <tr>
-              <td<%= raw(row[:state].eql?('running') ? " data-href='#{row[:link]}'" : '') %>><%= row[:war_name] %></td>
-              <td><%= row[:state] %></td>
-              <td><%= row[:session_count] %></td>
+              <td<%= raw(row[:state].eql?('running') ? " data-href='#{row[:link]}'" : '') %>>
+                <span class="<%= row[:state].eql?('running') ? 'btn btn-primary' : 'not-running' %>"><%= row[:war_name] %></span>
+              </td>
               <td><%= row[:version] %>
                 <% if row[:isaac] && !row[:version].eql?('UNKNOWN') %>
-                    <div class="prismetooltip" style="float: right">
-                      <span class="fa fa-info-circle"></span>
+                    <div class="prismetooltip" style="float: left">
+                      <span class="fa fa-info-circle">&nbsp;&nbsp;</span>
                       <span class="tooltiptext">
-                        Isaac Database <%= fetch_komets_isaac(row: row) %>
-                        <% $log.debug("isaac database data row = #{row[:isaac].inspect}") %>
+                        <span style="font-weight: bold; color: navy">Isaac Database <%= fetch_komets_isaac(row: row) %></span>
                         <ul>
-                          <li>artifact ID: <%= row[:isaac][:database]['artifactId'].to_s rescue 'unknown' %></li>
-                          <li>version: <%= row[:isaac][:database]['version'].to_s rescue 'unknown' %></li>
-                          <%= raw "<li>classifier: #{row[:isaac][:database]['classifier'].to_s}</li>" unless (row[:isaac][:database].nil? || row[:isaac][:database]['classifier'].to_s.empty?) %>
-
+                          <li><%= row[:isaac][:database]['artifactId'].to_s rescue 'Unknown' %>&nbsp;version:&nbsp;<%= row[:isaac][:database]['version'].to_s rescue 'Unknown' %>&nbsp;<%= raw "Classifier: #{row[:isaac][:database]['classifier'].to_s}" unless (row[:isaac][:database].nil? || row[:isaac][:database]['classifier'].to_s.empty?) %></li>
                         </ul>
-                        <hr>
                         <% unless row[:isaac][:database_dependencies].nil? %>
-                            Database Dependencies
+                            <span style="font-weight: bold; color: navy">Database Dependencies</span>
+                            <ol>
                             <% row[:isaac][:database_dependencies].each do |d| %>
-                              <ul>
-                                <li>artifact ID: <%= d['artifactId'].to_s %></li>
-                                <li>version: <%= d['version'].to_s %></li>
-                                <%= raw "<li>classifier: #{d['classifier'].to_s}</li>" unless d['classifier'].to_s.empty? %>
-                              </ul>
-                              <hr>
-                          <% end %>
+                              <li>Artifact:&nbsp;<%= d['artifactId'].to_s %>&nbsp;&nbsp;Version: <%= d['version'].to_s %>&nbsp;&nbsp;<%= raw "Classifier: #{d['classifier'].to_s}" unless d['classifier'].to_s.empty? %></li>
+                            <% end %>
+                            </ol>
                         <% end %>
                         </span>
                     </div>
                 <% end %>
               </td>
-              <td<%= raw(policy(:navigation).admin? ? '' : ' style="color: #180606; font-weight: bold; background: white"') %>>
-                <%= (policy(:navigation).admin?) ? action_button_bar(row, deployment[:service_id]) : 'Requires Super User Privileges' %>
-              </td>
+              <td><%= row[:state] %></td>
+              <td><%= row[:session_count] %></td>
+              <% if policy(:navigation).admin? %>
+                <td>
+                  <%= action_button_bar(row, deployment[:service_id]) %>
+                </td>
+              <% end %>
             </tr>
         <% end %>
     <% end %>

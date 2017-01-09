@@ -1,6 +1,9 @@
 require 'json'
+# require './lib/rails_common/util/bootstrap_notifier'
 
 module ApplicationHelper
+  # include BootstrapNotifier
+
   NOTIFY = 'notify_'
 
   def flash_notify(msg, **addl_settings)

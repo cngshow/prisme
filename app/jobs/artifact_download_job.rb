@@ -1,4 +1,4 @@
-require 'zip'
+ require 'zip'
 require 'digest'
 require './app/controllers/concerns/nexus_concern'
 
@@ -60,7 +60,31 @@ class ArtifactDownloadJob < PrismeBaseJob
         $log.always("Unmounted!")
       rescue => ex
         $log.error("Unmount failed! #{ex}")
+        $log.error("Exception's class is: #{ex.class}")
         $log.error(ex.backtrace.join("\n"))
+        begin
+          #ex really should be a de.schlichtherle.truezip.fs.FsSyncException
+          if (ex.respond_to? :printStackTrace)
+            sw = java.io.StringWriter.new
+            pw = java.io.PrintWriter.new sw
+            ex.printStackTrace(pw)
+            $log.error("Stacktrace with all root causes:")
+            $log.error(sw.to_s)
+          else
+            #I got some exception I did not expect, let us hope it has a getCause
+            if (ex.respond_to? :getCause)
+              cause = ex.getCause
+              $log.error("Stacktrace with one root cause:")
+              $log.error(cause.backtrace.join("\n")) unless cause.nil?
+              $log.always("getCause returned nil") if cause.nil?
+            else
+              $log.error("No getCause for the above exception")
+            end
+          end
+        rescue => inner_ex
+          $log.error("Error trying to pull metadata from the previous exception. #{inner_ex}")
+          $log.error(inner_ex.backtrace.join("\n"))
+        end
         raise ex
       end
 
