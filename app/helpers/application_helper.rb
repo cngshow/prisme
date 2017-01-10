@@ -1,8 +1,6 @@
-require 'json'
-# require './lib/rails_common/util/bootstrap_notifier'
-
 module ApplicationHelper
-  # include BootstrapNotifier
+  include BootstrapNotifier
+=begin
 
   NOTIFY = 'notify_'
 
@@ -61,6 +59,7 @@ module ApplicationHelper
     end
     ret
   end
+=end
 
   def errors_to_flash(errors)
     retval = []

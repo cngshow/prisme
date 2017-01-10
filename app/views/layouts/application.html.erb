@@ -38,17 +38,8 @@ Copyright Notice
   </div>
 </main>
 <footer class="prisme-footer">
-  <%= render 'layouts/footer'%>
+  <%= render 'layouts/footer' %>
 </footer>
 </body>
 </html>
-<!--
-<script>
-  var msgs = JSON.parse('<%#= raw controller.show_flash %>');
-  for (var i = 0; i < msgs.length; i++) {
-    flash_notify(msgs[i].options, msgs[i].settings);
-  }
-
-  <%#= escape_javascript(render :partial => 'layouts/flashes') %>
-</script>
--->
+<%= render 'flashes/flash_notifications' %>

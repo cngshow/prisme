@@ -139,9 +139,6 @@
     </div>
   </div>
 </div>
-<%= javascript_tag do %>
-    <%= raw show_flash_notify %>
-<% end %>
 
 <script>
   function edit_user_roles(edit_user_id, edit_user_current_roles) {
@@ -173,7 +170,6 @@
                 $("table#user_edit_list_table").find('tbody').html('<%= no_match_row %>');
               }
             }
-            flash_notify(data.flash_options, data.flash_settings);
           });
         }
       }

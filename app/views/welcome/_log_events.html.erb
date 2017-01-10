@@ -169,40 +169,12 @@
         $('#ackModal').modal('show');
     }
 
-    function delete_log_event(user_id, user_name) {
-        bootbox.confirm({
-            size: 'small',
-            title: 'Question?',
-            message: 'Are you sure you want delete <strong>' + user_name + '</strong>?',
-            callback: function (result) {
-                if (result) {
-                    $.getJSON(gon.routes.delete_user_path, {user_row_id: user_id}, function (data) {
-                        if (data.remove_row === true) {
-                            $('table#user_edit_list_table tr#user_row_' + user_id).remove();
-                            // if all rows are removed then insert the no_matches row
-                            if ($("table#user_edit_list_table > tbody > tr").length === 0) {
-                                $("table#user_edit_list_table").find('tbody').html('<%#= no_match_row %>');
-                            }
-                        }
-                        flash_notify(data.flash_options, data.flash_settings);
-                    });
-                }
-            }
-        });
-    }
-
     function submit_acknowledgement() {
         var params = {id: $('#ack_log_event_id').val(), ack_comment: $('#ack_comment').val()};
         $('#ackModal').modal('hide');
 
         $.post(gon.routes.acknowledge_log_event_path, params, function (data) {
             reload_log_events();
-
-            if (data.status === 'success') {
-                flash_notify({message: data.message}, {type: 'success'});
-            } else {
-                flash_notify({message: data.message}, {type: 'alert'});
-            }
         }, 'json');
     }
 

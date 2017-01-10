@@ -22,9 +22,9 @@
 //= require moment/moment
 // this is for ajax_flash notifications
 //= require bootstrap-notify
-// require growlyflash
 // = require_tree .
 
+// JS method for bootstrap nootification flashes
 function flash_notify(options, settings) {
     $.notify(options, settings);
 }
