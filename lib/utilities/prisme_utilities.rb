@@ -74,7 +74,7 @@ module PrismeUtilities
         f.write(VaSite.all.to_a.map do |e| {'va_site_id' => e.va_site_id, 'name' => e.name, 'site_type' => e.site_type,  'message_type' => e.message_type} end.to_yaml)
       end
     end
-    {created_sites: created_sites, skipped_sites: skipped_sites, updated_sites: updated_sites}
+    {created_sites: created_sites, skipped_sites: skipped_sites, updated_sites: updated_sites, deleted_sites: deleted}
   end
 
   def self.prisme_super_user
