@@ -30,7 +30,7 @@ module PrismeUtilities
     persistent_site_file = "#{$PROPS['PRISME.data_directory']}/site_data.yml"
     site_file = './config/site_data.yml'
     config_file = File.exists?(persistent_site_file) ? persistent_site_file : site_file
-    sites = load_yml_file(config_file, "Site data might not have been created but PRISME will continue to start.")
+    sites = PrismeUtilities::load_yml_file(config_file, "Site data might not have been created but PRISME will continue to start.")
     if sites.nil?
       $log.info("No site yaml file avaliable for loading!")
       return
@@ -38,6 +38,12 @@ module PrismeUtilities
     created_sites = 0
     skipped_sites = 0
     updated_sites = 0
+    site_ids = sites.map do |site| site['va_site_id'] end
+    db_site_ids = VaSite.all.to_a.map do |e| e.va_site_id end
+    sites_to_delete = db_site_ids - site_ids
+    $log.always("Attempting to delete the following sites: #{sites_to_delete}")
+    deleted = VaSite.where('va_site_id in (?)', sites_to_delete).destroy_all.length
+    $log.always("Deleted #{deleted} sites.")
     sites.each do |site_hash|
       site = VaSite.new(site_hash)
       if (VaSite.exists? site.va_site_id)
