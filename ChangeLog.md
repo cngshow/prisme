@@ -4,7 +4,7 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 where provided, and the git commit history.
 
 * 2017/01/?? - 1.50 - PENDING
-   *
+   * Added in sync code to keep site table in sync with site_data.yml
 
 * 2017/01/05 - 1.49
    * Added in database code to build site table
