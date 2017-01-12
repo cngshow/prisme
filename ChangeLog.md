@@ -3,6 +3,9 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2017/01/?? - 1.51 - PENDING  
+   *
+
 * 2017/01/12 - 1.50  
    * Added in sync code to keep site table in sync with site_data.yml
    * Backend site work should be working now...  If I modify a couple sites I might get some log output.
