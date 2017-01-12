@@ -62,19 +62,37 @@ module PrismeUtilities
   end
 
   def self.synch_site_data(dump_data = false)
-    config_file = "#{$PROPS['PRISME.data_directory']}/site_data.yml"
-    sites = load_yml_file(config_file, "Site data might not all have been created but PRISME will continue to start.")
+    persistent_site_file = "#{$PROPS['PRISME.data_directory']}/site_data.yml"
+    site_file = './config/site_data.yml'
+    config_file = File.exists?(persistent_site_file) ? persistent_site_file : site_file
+    sites = PrismeUtilities::load_yml_file(config_file, "Site data might not have been created but PRISME will continue to start.")
     if sites.nil?
       $log.info("No site yaml file avaliable for loading!")
       return
     end
     created_sites = 0
     skipped_sites = 0
-    sites.each do |site|
-      site = VaSite.new(site)
+    updated_sites = 0
+    site_ids = sites.map do |site| site['va_site_id'] end
+    db_site_ids = VaSite.all.to_a.map do |e| e.va_site_id end
+    sites_to_delete = db_site_ids - site_ids
+    $log.always("Attempting to delete the following sites: #{sites_to_delete}")
+    deleted = VaSite.where('va_site_id in (?)', sites_to_delete).destroy_all.length
+    $log.always("Deleted #{deleted} sites.")
+    sites.each do |site_hash|
+      site = VaSite.new(site_hash)
       if (VaSite.exists? site.va_site_id)
-        skipped_sites += 1
-        $log.info("I am skipping the site from #{config_file} with site id #{site.va_site_id}.  It already exists")
+        db_site = VaSite.find(site.va_site_id)
+        if(db_site.eql? site)
+          skipped_sites += 1
+          $log.debug("I am skipping the site from #{config_file} with site id #{site.va_site_id}.  It already exists")
+        else
+          #we need to update db_site, and record the update
+          updated = db_site.update site_hash
+          updated_sites += 1 if updated
+          $log.always("I updated the site with site id #{db_site.va_site_id}")
+        end
+
       else
         saved = site.save
         created_sites += 1 if saved
@@ -82,6 +100,7 @@ module PrismeUtilities
       end
     end
     $log.always("I created #{created_sites} sites in the va_sites table.")
+    $log.always("I updated #{updated_sites} sites in the va_sites table.")
     $log.always("I skipped #{skipped_sites} sites in sites yml file. (Existing sites must be modified via the UI.)")
     if dump_data
       dump_file = File.basename(config_file,'.*')
@@ -90,7 +109,7 @@ module PrismeUtilities
         f.write(VaSite.all.to_a.map do |e| {'va_site_id' => e.va_site_id, 'name' => e.name, 'site_type' => e.site_type,  'message_type' => e.message_type} end.to_yaml)
       end
     end
-    {created_sites: created_sites, skipped_sites: skipped_sites}
+    {created_sites: created_sites, skipped_sites: skipped_sites, updated_sites: updated_sites, deleted_sites: deleted}
   end
 
   def self.prisme_super_user
