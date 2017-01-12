@@ -1,6 +1,7 @@
-require 'json'
-
 module ApplicationHelper
+  include BootstrapNotifier
+=begin
+
   NOTIFY = 'notify_'
 
   def flash_notify(msg, **addl_settings)
@@ -58,6 +59,7 @@ module ApplicationHelper
     end
     ret
   end
+=end
 
   def errors_to_flash(errors)
     retval = []

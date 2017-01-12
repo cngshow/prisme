@@ -64,3 +64,5 @@ group :development do
   gem 'awesome_print', require:'ap'
   gem 'yard'
 end
+
+# gem 'growlyflash'

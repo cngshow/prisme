@@ -56,24 +56,25 @@ class AdminUserEditController < ApplicationController
     end
 
     user.save
-    flash_notify('Successfully updated the user roles!  These changes may take up to five minutes to propagate through the system.', {})
+    flash_info(message: 'Successfully updated the user roles!  These changes may take up to five minutes to propagate through the system.')
     redirect_to list_users_path
   end
 
   def delete_user
-    ret = {remove_row: true, flash_options: {message: 'The user was deleted previously!'}, flash_settings: {type: 'success'}}
+    ret = {remove_row: true}
     uid, ssoi_user = parse_user_id(params[:user_row_id])
     user = ssoi_user ? SsoiUser.find(uid) : User.find(uid)
 
     # if user is not looked up then another user has deleted them already
     if user
-      ret = {remove_row: true, flash_options: {message: "User #{user.user_name} has been successfully deleted!"}, flash_settings: {type: 'success'}}
       # do not allow user to delete the last user, themselves, or the last super user
       if !ssoi_user && User.count == 1
-        ret = {remove_row: false, flash_options: {message: 'You cannot delete the last user!'}, flash_settings: {type: 'warning'}}
+        ret = {remove_row: false}
+        flash_alert(message: 'You cannot delete the last user!')
       elsif prisme_user == user
         # the user cannot delete themselves
-        ret = {remove_row: false, flash_options: {message: 'You cannot delete yourself!'}, flash_settings: {type: 'warning'}}
+        ret = {remove_row: false}
+        flash_alert(message: 'You cannot delete yourself!')
       else
         super_users = User.with_any_role(:super_user)
         super_users << SsoiUser.with_any_role(:super_user)
@@ -81,13 +82,18 @@ class AdminUserEditController < ApplicationController
 
         if super_users.count == 1 && super_users.first == user
           # the user cannot delete the last super user
-          ret = {remove_row: false, flash_options: {message: 'You cannot the last super user!'}, flash_settings: {type: 'warning'}}
+          ret = {remove_row: false}
+          flash_alert(message: 'You cannot delete the last super user!')
         end
       end
       # delete the user if we are removing the row
       if ret[:remove_row]
         user.destroy
+        flash_notify(message: "User #{user.user_name} has been successfully deleted!")
       end
+    else
+      ret = {remove_row: true}
+      flash_notify(message: 'The user was deleted previously!')
     end
     # return the results to the ajax call as json
     render json: ret

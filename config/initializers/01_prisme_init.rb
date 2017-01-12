@@ -8,12 +8,11 @@ jars.each do |jar|
   require jar
 end
 require './lib/rails_common/util/rescuable'
-#from rails common
-#require './lib/rails_common/props/prop_loader' #in application.rb now
 require './lib/rails_common/logging/open_logging'
 require './lib/rails_common/logging/logging'
 require './lib/rails_common/util/helpers'
 require './lib/rails_common/logging/prisme_log_event'
+require './lib/rails_common/util/bootstrap_notifier'#above roles (roles references these libs)
 require './lib/rails_common/roles/roles'
 
 #above from rails common

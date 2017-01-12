@@ -6,10 +6,6 @@ class LogEventsController < ApplicationController
 
   #http://localhost:3000/log_event?application_name=isaac&level=1&tag=SOME_TAG&message=broken&security_token=%5B%22u%5Cf%5Cx92%5CxBC%5Cx17%7D%5CxD1%5CxE4%5CxFB%5CxE5%5Cx99%5CxA3%5C%22%5CxE8%5C%5CK%22%2C+%22%3E%5Cx16%5CxDE%5CxA8v%5Cx14%5CxFF%5CxD2%5CxC6%5CxDD%5CxAD%5Cx9F%5Cx1D%5CxD1cF%22%5D
   def log_event
-    puts params.inspect
-    puts '----------------------'
-    puts request.body.read
-    puts '----------------------'
     log_event = LogEvent.new(log_event_create_params)
     log_event.hostname = true_address
 
@@ -26,8 +22,6 @@ class LogEventsController < ApplicationController
 
   # this method is called from the gui via an ajax get to update and acknowledge the log event
   def acknowledge_log_event
-    ret = {status: 'failure', message: 'Invalid log event id passed to acknowledge_event method.'}
-
     if @log_event
       @log_event.acknowledged_by = prisme_user.user_name
       @log_event.acknowledged_on = Time.now
@@ -36,14 +30,14 @@ class LogEventsController < ApplicationController
       @log_event.ack_comment = comment
 
       if @log_event.save
-
-        # flash_notify ?!
-        ret = {status: 'success', message: 'Log Event was successfully acknowledged!'}
+        flash_notify(message: 'Log Event was successfully acknowledged!')
       else
-        ret = {status: 'failure', message: 'An error occurred while attempting to acknowledge a log event.'}
+        flash_alert(message: 'An error occurred while attempting to acknowledge a log event.')
       end
+    else
+      flash_alert(message: 'Invalid log event id passed to acknowledge_event method.')
     end
-    render json: ret
+    render json: {}
   end
 
   # DELETE /log_events/1
@@ -77,7 +71,7 @@ class LogEventsController < ApplicationController
   def valid_security_token?
     token = params[:security_token]
     valid = CipherSupport.instance.valid_security_token?(token: token)
-    @token_error = "Invalid security token!" unless valid
+    @token_error = 'Invalid security token!' unless valid
     valid
   end
 

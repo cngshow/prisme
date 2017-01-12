@@ -100,6 +100,8 @@ class ArtifactDownloadJob < PrismeBaseJob
       war_cookie_params = args.shift
       war_name = args.shift
       tomcat_ar = args.shift
+      context = args.shift
+      context = '/' + context unless (context.nil? || context[0].eql?('/')) #start with a '/'
       warurl = "#{baseurl}?#{nexus_query_params.to_query}"
 
       result = String.new
@@ -107,6 +109,10 @@ class ArtifactDownloadJob < PrismeBaseJob
       result << "Fetching war #{war_name}.\n"
       $log.debug("This job is doing URL #{warurl}.")
       $log.debug("This job is doing war #{war_name}.")
+
+      # update the job json data for polling display purposes
+      PrismeBaseJob.update_json_data(job_id: self.job_id, json_data: {message: result.gsub("\n", '<br>')})
+
       response = get_nexus_connection('*/*').get(warurl, {})
       file_name = "#{Rails.root}/tmp/#{war_name}"
       File.open(file_name, 'wb') { |fp| fp.write(response.body) }
@@ -146,9 +152,9 @@ class ArtifactDownloadJob < PrismeBaseJob
         $log.error("Rethrowing: #{e.message}")
         raise e
       end
-      context = nil
+
       begin
-        context = z.get_entry('context.txt').get_input_stream.read
+        context = z.get_entry('context.txt').get_input_stream.read if context.nil?
         $log.debug('The context root is ' + context)
         result << "The war will be deployed to context root #{context}.\n"
       rescue
@@ -162,18 +168,26 @@ class ArtifactDownloadJob < PrismeBaseJob
         hash.merge!(nexus_props)
         hash.merge!(git_props)
         cookie_war_true_zip(file_name, 'WEB-INF/classes/prisme.properties', hash)
-        context = '/isaac-rest' #to_do pull this from the database someday.
+        context = '/isaac-rest' if context.nil? #to_do pull this from the database someday.
       else
         #we are Komet!
         cookie_war_true_zip(file_name, 'WEB-INF/config/props/prisme.properties', war_cookie_params)
       end
-      $log.debug("Kicking off next job (DeployWar) #{file_name} #{context}")
+      $log.info("Kicking off next job (DeployWar) #{file_name} with context #{context}")
       #activeRecord instantiate new job
-      DeployWarJob.perform_later(file_name, context, tomcat_ar, track_child_job)
+      job = DeployWarJob.perform_later(file_name, context, tomcat_ar, track_child_job)
+      PrismeBaseJob.update_json_data(job_id: job.job_id, json_data: {message: "Deploying #{file_name}..."})
     ensure
-      save_result result
+      results_hash = {}
+      results_hash[:message] = "Downloaded #{war_name} from URL #{warurl}.<br>The war will be deployed to #{context ? 'context root ' + context : 'the root context.'}."
+      save_result result, results_hash
     end
   end
+
+  def self.message(ar)
+    result_hash(ar)[:message.to_s]
+  end
+
 end
 # ArtifactDownloadJob.set(wait_until: 5.seconds.from_now).perform_later
 #  include NexusConcern

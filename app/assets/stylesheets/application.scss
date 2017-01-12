@@ -32,15 +32,16 @@
 }
 
 // PRISME Navigation styles
-.prisme-navbar{
+.prisme-navbar {
   display: flex;
-  height: 40px;
+  height: 60px;
   align-items: stretch;
   background-color: rgb(228, 228, 228);
   font-size: 18px;
   font-weight: bold;
   color: black;
   border-radius: 1em 1em 0 0;
+  border-bottom: 2px solid #6c6c6c;
 }
 .prisme-navbar .glyphicon{
   top: initial;
@@ -92,6 +93,9 @@
   align-items: center;
   cursor: pointer;
 }
+.prisme-navbar-navigation > div.dropdown.open > ul {
+  font-size: 18px;
+}
 .prisme-navbar-navigation > div:hover, .prisme-navbar-navigation > div:focus{
   border-bottom: 1px solid black;
 }
@@ -103,7 +107,7 @@
 .prisme-navbar-tools > :first-child{
   border-left: 4px solid white;
 }
-.prisme-navbar-tools > div{
+.prisme-navbar-tools > div {
   display: flex;
   flex: 0 0 auto;
   align-items: center;
@@ -111,6 +115,9 @@
   border-right: 4px solid white;
   border-bottom: 1px solid transparent;
   cursor: pointer;
+}
+.prisme-navbar-tools > div:last-child{
+  border-right: none;
 }
 .prisme-navbar-tools > div:hover, .prisme-navbar-tools > div:focus{
   border-bottom: 1px solid black;
@@ -136,8 +143,9 @@
   border-radius: 4px;
   position:fixed;
   bottom:0;
+  left:0;
   clear: both;
-  width: 98%;
+  width: 100%;
 }
 
 // input div is used to size the div surrounding each input on the modal windows
@@ -219,6 +227,10 @@ label.arrow_box:before {
 
 .modal-wide50 .modal-dialog {
   width: 50%;
+}
+
+.modal-wide75 .modal-dialog {
+  width: 75%;
 }
 
 html, body {

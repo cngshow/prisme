@@ -70,7 +70,7 @@ Rails.application.routes.draw do
   get 'welcome/tomcat_app_action' => 'welcome#tomcat_app_action'
   get 'welcome/reload_job_queue_list'
   get 'welcome/reload_deployments'
-  get 'welcome/reload_log_events' , :constraints => OnlyAjaxRequest.new
+  get 'welcome/reload_log_events', :constraints => OnlyAjaxRequest.new
 
   # NOTE: ensure that the first string passed is a unique string and will not match an action in the controller because
   # if Rails finds a match based on the name and based on the explicit mapping you use the action can get called TWICE!
@@ -79,6 +79,8 @@ Rails.application.routes.draw do
   # match 'toggle-admin', to: 'welcome#toggle_admin', via: [:get]
 
   get 'app_deployer' => 'app_deployer#index'
+  get 'app_deployer/reload_deployments', :constraints => OnlyAjaxRequest.new
+  get 'app_deployer/check_polling' => 'app_deployer#ajax_check_polling', :constraints => OnlyAjaxRequest.new
   post 'app_deployer/deploy_app'
 
   get 'terminology_converter' => 'terminology_converter#index'

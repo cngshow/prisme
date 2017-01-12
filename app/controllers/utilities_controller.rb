@@ -16,8 +16,7 @@ class UtilitiesController < ApplicationController
   end
 
   def prisme_config
-    @@config ||= PrismeUtilities.server_config
-    render :json => @@config
+    render :json => PrismeUtilities.server_config
   end
 
   # http://localhost:3000/utilities/seed_database?db=localhost
