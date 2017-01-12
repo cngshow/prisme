@@ -15,7 +15,7 @@ development:
     #url: jdbc:oracle:thin:@<hostname>:<port>:<sid>
     #to ask oracle it's sid:  select instance from v$thread;
   username: PRISME_DEV
-  password: prisme_dev123
+  password: some_password
 test:
   <<: *default
   url: jdbc:oracle:thin:@localhost:1521:xe
