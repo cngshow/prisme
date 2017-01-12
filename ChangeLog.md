@@ -3,6 +3,9 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2017/01/?? - 1.52 - PENDING  
+   *
+
 * 2017/01/12 - 1.51  
    * isaac contexts branch is merged in
 
