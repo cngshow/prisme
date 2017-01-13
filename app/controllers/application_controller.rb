@@ -20,7 +20,7 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
-  before_action :setup_gon, :read_ssoi_headers
+  before_action :validate_terminology_config, :setup_gon, :read_ssoi_headers
   rescue_from Exception, java.lang.Throwable, :with => :internal_error
   rescue_from Pundit::NotAuthorizedError, Pundit::AuthorizationNotPerformedError, :with => :pundit_error
 
@@ -88,4 +88,24 @@ class ApplicationController < ActionController::Base
 
     render :file => (trinidad? ? 'public/not_configured.html' : "#{Rails.root}/../not_configured.html") unless configured
   end
+
+  def validate_terminology_config
+    return unless $terminology_parse_errors
+    error_str = PrismeUtilities::terminology_config_errors.join("<br>")
+    erb = (trinidad? ? 'public/terminology_config_error.html.erb' : "#{Rails.root}/../terminology_config_error.html.erb")
+    erb_str = File.open(erb, 'r') { |file| file.read }
+    erb_str = ERB.new(erb_str).result(binding)
+    render html: erb_str.html_safe
+    return
+
+    # if exception.is_a?(Pundit::NotAuthorizedError) || exception.is_a?(Pundit::AuthorizationNotPerformedError)
+    #   erb = "#{Rails.root}/lib/rails_common/public/not_authorized.html.erb"
+    #   erb_str = File.open(erb, 'r') { |file| file.read }
+    #   erb_str = ERB.new(erb_str).result(binding)
+    #   render html: erb_str.html_safe
+    # else
+    #   raise exception
+    # end
+  end
+
 end

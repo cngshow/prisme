@@ -10,7 +10,28 @@ module PrismeUtilities
 
   class << self
     attr_accessor :ssoi_logout_url
-    attr_accessor :config
+    attr_accessor :config #server_config.yml
+    attr_accessor :terminology_config #TerminologyConfig.xml (Validated against TerminologyConfig.xsd)
+    attr_accessor :terminology_config_errors #TerminologyConfig.xml (Validated against TerminologyConfig.xsd).  Nil if all is good
+  end
+
+  def self.parse_terminology_config
+    persistent_terminology_file_root = "#{$PROPS['PRISME.data_directory']}/TerminologyConfig"
+    term_file_root = './config/tds/TerminologyConfig'
+    term_xml = File.exists?(persistent_terminology_file_root+'.xml') ? persistent_terminology_file_root + '.xml' : term_file_root + '.xml'
+    term_xsd = File.exists?(persistent_terminology_file_root+'.xsd') ? persistent_terminology_file_root + '.xsd' : term_file_root + '.xsd'
+    xsd = Nokogiri::XML::Schema(File.read(term_xsd))
+    doc = Nokogiri::XML(File.read(term_xml))
+    errors = []
+    xsd.validate(doc).each do |error|
+      $log.error("TerminologyConfig error  #{error.message}")
+      errors << error
+    end
+    PrismeUtilities::terminology_config_errors = errors
+    raise TerminologyConfigParseError.new(errors) unless errors.empty?
+    ## continue on to build data structure...
+    $log.info("TerminologyConfig passes xsd validation!")
+    #  PrismeUtilities::terminology_config = ??  # meet with Randy
   end
 
   def self.localize_host(host)
@@ -40,7 +61,13 @@ module PrismeUtilities
     end
     $log.info("contexts has #{contexts}")
     $log.warn("I could not find a valid proxy config for host #{host} with port #{port}.  Check prisme's server_config.yml") if contexts.empty?
-    contexts.map do |e| e[0].eql?('/') ? e.reverse.chop.reverse : e end.reject do |e| e.empty? end.reject do |e| e !~ application_type end
+    contexts.map do |e|
+      e[0].eql?('/') ? e.reverse.chop.reverse : e
+    end.reject do |e|
+      e.empty?
+    end.reject do |e|
+      e !~ application_type
+    end
   end
 
   def self.proxy_mappings
@@ -73,8 +100,12 @@ module PrismeUtilities
     created_sites = 0
     skipped_sites = 0
     updated_sites = 0
-    site_ids = sites.map do |site| site['va_site_id'] end
-    db_site_ids = VaSite.all.to_a.map do |e| e.va_site_id end
+    site_ids = sites.map do |site|
+      site['va_site_id']
+    end
+    db_site_ids = VaSite.all.to_a.map do |e|
+      e.va_site_id
+    end
     sites_to_delete = db_site_ids - site_ids
     $log.always("Attempting to delete the following sites: #{sites_to_delete}")
     deleted = VaSite.where('va_site_id in (?)', sites_to_delete).destroy_all.length
@@ -83,7 +114,7 @@ module PrismeUtilities
       site = VaSite.new(site_hash)
       if (VaSite.exists? site.va_site_id)
         db_site = VaSite.find(site.va_site_id)
-        if(db_site.eql? site)
+        if (db_site.eql? site)
           skipped_sites += 1
           $log.debug("I am skipping the site from #{config_file} with site id #{site.va_site_id}.  It already exists")
         else
@@ -103,10 +134,12 @@ module PrismeUtilities
     $log.always("I updated #{updated_sites} sites in the va_sites table.")
     $log.always("I skipped #{skipped_sites} sites in sites yml file. (Existing sites must be modified via the UI.)")
     if dump_data
-      dump_file = File.basename(config_file,'.*')
+      dump_file = File.basename(config_file, '.*')
       dump_file = "#{$PROPS['PRISME.data_directory']}/#{dump_file}_#{Time.now.to_i}.yml"
-      File.open(dump_file,'w') do |f|
-        f.write(VaSite.all.to_a.map do |e| {'va_site_id' => e.va_site_id, 'name' => e.name, 'site_type' => e.site_type,  'message_type' => e.message_type} end.to_yaml)
+      File.open(dump_file, 'w') do |f|
+        f.write(VaSite.all.to_a.map do |e|
+          {'va_site_id' => e.va_site_id, 'name' => e.name, 'site_type' => e.site_type, 'message_type' => e.message_type}
+        end.to_yaml)
       end
     end
     {created_sites: created_sites, skipped_sites: skipped_sites, updated_sites: updated_sites, deleted_sites: deleted}
@@ -206,6 +239,13 @@ module PrismeUtilities
     result
   end
 
+  class TerminologyConfigParseError < StandardError
+    def initialize(errors)
+      @errors = errors
+    end
+
+    attr_reader :errors
+  end
 end
 
 module URI
