@@ -22,3 +22,21 @@ hash[:SITES].keys.each do |index|
 end
 #to yaml is only available in rails, run in console not scratch.
 File.open('C:\work\va-ctt\rails\rails_prisme\config\tds\site_data.yml','w') do |f| f.write sites.to_yaml end
+#File.open('C:\temp\foo\va_groups.yml','w') do |f| f.write h.to_yaml end
+original = YAML.load_file './config/tds/site_data_original.yml'
+groups = {}
+original[:SITES].keys.each do |site_id|
+  gn = original[:SITES][site_id][:GROUP_NAME]
+  next if gn.empty?
+  groups[gn] ||= {}
+  groups[gn][:member_sites] ||= []
+  groups[gn][:member_sites] << original[:SITES][site_id][:VA_SITE_ID].to_i
+end
+g_to_yml = []
+index = 1
+groups.keys.each do |group_name|
+  g_to_yml << {'id' => index, 'name' => group_name, 'member_sites' => groups[group_name][:member_sites], 'member_groups' => nil}
+  index += 1
+end
+File.open('C:\work\va-ctt\rails\rails_prisme\config\tds\group_data.yml','w') do |f| f.write g_to_yml.to_yaml end
+
