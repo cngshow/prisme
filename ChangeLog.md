@@ -4,7 +4,7 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 where provided, and the git commit history.
 
 * 2017/01/?? - 1.52 - PENDING  
-   *
+   * Backend Group support added.  Explanation here: https://vadev.mantech.com:4848/git/commit/rails_prisme.git/eae42b62aa26e9e83298f8c6d4a4152d59ed9497
 
 * 2017/01/12 - 1.51  
    * isaac contexts branch is merged in
