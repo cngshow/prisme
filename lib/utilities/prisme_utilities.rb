@@ -10,7 +10,28 @@ module PrismeUtilities
 
   class << self
     attr_accessor :ssoi_logout_url
-    attr_accessor :config
+    attr_accessor :config #server_config.yml
+    attr_accessor :terminology_config #TerminologyConfig.xml (Validated against TerminologyConfig.xsd)
+    attr_accessor :terminology_config_errors #TerminologyConfig.xml (Validated against TerminologyConfig.xsd).  Nil if all is good
+  end
+
+  def self.parse_terminology_config
+    persistent_terminology_file_root = "#{$PROPS['PRISME.data_directory']}/TerminologyConfig"
+    term_file_root = './config/tds/TerminologyConfig'
+    term_xml = File.exists?(persistent_terminology_file_root+'.xml') ? persistent_terminology_file_root + '.xml' : term_file_root + '.xml'
+    term_xsd = File.exists?(persistent_terminology_file_root+'.xsd') ? persistent_terminology_file_root + '.xsd' : term_file_root + '.xsd'
+    xsd = Nokogiri::XML::Schema(File.read(term_xsd))
+    doc = Nokogiri::XML(File.read(term_xml))
+    errors = []
+    xsd.validate(doc).each do |error|
+      $log.error("TerminologyConfig error  #{error.message}")
+      errors << error
+    end
+    PrismeUtilities::terminology_config_errors = errors
+    raise TerminologyConfigParseError.new(errors) unless errors.empty?
+    ## continue on to build data structure...
+    $log.info("TerminologyConfig passes xsd validation!")
+    #  PrismeUtilities::terminology_config = ??  # meet with Randy
   end
 
   def self.localize_host(host)
@@ -40,7 +61,13 @@ module PrismeUtilities
     end
     $log.info("contexts has #{contexts}")
     $log.warn("I could not find a valid proxy config for host #{host} with port #{port}.  Check prisme's server_config.yml") if contexts.empty?
-    contexts.map do |e| e[0].eql?('/') ? e.reverse.chop.reverse : e end.reject do |e| e.empty? end.reject do |e| e !~ application_type end
+    contexts.map do |e|
+      e[0].eql?('/') ? e.reverse.chop.reverse : e
+    end.reject do |e|
+      e.empty?
+    end.reject do |e|
+      e !~ application_type
+    end
   end
 
   def self.proxy_mappings
@@ -61,6 +88,76 @@ module PrismeUtilities
     hash
   end
 
+  def self.synch_group_data(dump_data = false)
+    persistent_group_file = "#{$PROPS['PRISME.data_directory']}/group_data.yml"
+    group_file = './config/group_data.yml'
+    config_file = File.exists?(persistent_group_file) ? persistent_group_file : group_file
+    groups = PrismeUtilities::load_yml_file(config_file, "Group data might not have been created but PRISME will continue to start.")
+    if groups.nil?
+      $log.info("No group yaml file avaliable for loading!")
+      return
+    end
+    created_groups = 0
+    skipped_groups = 0
+    updated_sites = 0
+    group_ids = groups.map do |group|
+      group['id']
+    end
+    db_group_ids = VaGroup.all.to_a.map do |e|
+      e.id
+    end
+    groups_to_delete = db_group_ids - group_ids
+    $log.always("Attempting to delete the following groups: #{groups_to_delete}")
+    deleted = VaGroup.where('id in (?)', groups_to_delete).destroy_all.length
+    $log.always("Deleted #{deleted} groups.")
+    groups.each do |group_hash|
+      group = VaGroup.new(group_hash)
+      if (VaGroup.exists? group.id)
+        db_group = VaGroup.find(group.id)
+        if (db_group.eql? group)
+          skipped_groups += 1
+          $log.debug("I am skipping the group from #{config_file} with group id #{group.id}.  It already exists.")
+        else
+          #we need to update db_site, and record the update
+          begin
+            #todo Ask Greg wtf the creat_or_update method is...
+            db_group.update! name: group.name, member_sites: group.member_sites, member_groups: group.member_groups
+            updated_sites += 1
+            $log.always("I updated the group with group id #{db_group.id}")
+          rescue => ex
+            $log.always("Update failed for the group with group id #{db_group.id}")
+            $log.always(ex.message)
+          end
+        end
+      else
+        saved = true
+        begin
+          group.save!
+          $log.always("I saved the group with group id #{group.id}")
+        rescue =>ex
+          saved = false
+          $log.warn("Save failed for #{group.inspect}")
+          $log.warn(ex.message)
+        end
+        created_groups += 1 if saved
+        skipped_groups += 1 unless saved
+      end
+    end
+    if dump_data
+      dump_file = File.basename(config_file, '.*')
+      dump_file = "#{$PROPS['PRISME.data_directory']}/#{dump_file}_#{Time.now.to_i}.yml"
+      File.open(dump_file, 'w') do |f|
+        f.write(VaGroup.all.to_a.map do |e|
+          {'id' => e.va_site_id, 'name' => e.name, 'member_sites' => e.get_site_ids, 'member_groups' => e.get_group_ids}
+        end.to_yaml)
+      end
+    end
+    r_val = {created_groups: created_groups, skipped_groups: skipped_groups, updated_groups: updated_sites, deleted_groups: deleted}
+    $log.always("Group final results: #{r_val}")
+    r_val
+  end
+
+  #todo When the validators for the site model grow change to bang(!) methods like synch_group_data above
   def self.synch_site_data(dump_data = false)
     persistent_site_file = "#{$PROPS['PRISME.data_directory']}/site_data.yml"
     site_file = './config/site_data.yml'
@@ -73,8 +170,12 @@ module PrismeUtilities
     created_sites = 0
     skipped_sites = 0
     updated_sites = 0
-    site_ids = sites.map do |site| site['va_site_id'] end
-    db_site_ids = VaSite.all.to_a.map do |e| e.va_site_id end
+    site_ids = sites.map do |site|
+      site['va_site_id']
+    end
+    db_site_ids = VaSite.all.to_a.map do |e|
+      e.va_site_id
+    end
     sites_to_delete = db_site_ids - site_ids
     $log.always("Attempting to delete the following sites: #{sites_to_delete}")
     deleted = VaSite.where('va_site_id in (?)', sites_to_delete).destroy_all.length
@@ -83,7 +184,7 @@ module PrismeUtilities
       site = VaSite.new(site_hash)
       if (VaSite.exists? site.va_site_id)
         db_site = VaSite.find(site.va_site_id)
-        if(db_site.eql? site)
+        if (db_site.eql? site)
           skipped_sites += 1
           $log.debug("I am skipping the site from #{config_file} with site id #{site.va_site_id}.  It already exists")
         else
@@ -99,17 +200,18 @@ module PrismeUtilities
         skipped_sites += 1 unless saved
       end
     end
-    $log.always("I created #{created_sites} sites in the va_sites table.")
-    $log.always("I updated #{updated_sites} sites in the va_sites table.")
-    $log.always("I skipped #{skipped_sites} sites in sites yml file. (Existing sites must be modified via the UI.)")
     if dump_data
-      dump_file = File.basename(config_file,'.*')
+      dump_file = File.basename(config_file, '.*')
       dump_file = "#{$PROPS['PRISME.data_directory']}/#{dump_file}_#{Time.now.to_i}.yml"
-      File.open(dump_file,'w') do |f|
-        f.write(VaSite.all.to_a.map do |e| {'va_site_id' => e.va_site_id, 'name' => e.name, 'site_type' => e.site_type,  'message_type' => e.message_type} end.to_yaml)
+      File.open(dump_file, 'w') do |f|
+        f.write(VaSite.all.to_a.map do |e|
+          {'va_site_id' => e.va_site_id, 'name' => e.name, 'site_type' => e.site_type, 'message_type' => e.message_type}
+        end.to_yaml)
       end
     end
-    {created_sites: created_sites, skipped_sites: skipped_sites, updated_sites: updated_sites, deleted_sites: deleted}
+    r_val = {created_sites: created_sites, skipped_sites: skipped_sites, updated_sites: updated_sites, deleted_sites: deleted}
+    $log.always("Site final results: #{r_val}")
+    r_val
   end
 
   def self.prisme_super_user
@@ -206,6 +308,13 @@ module PrismeUtilities
     result
   end
 
+  class TerminologyConfigParseError < StandardError
+    def initialize(errors)
+      @errors = errors
+    end
+
+    attr_reader :errors
+  end
 end
 
 module URI
