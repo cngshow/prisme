@@ -54,6 +54,12 @@ This will set up the ISAAC stuff and downloads all of the necessary jars
 
 <br>
 <hr>
+<h1>Password Recovery</h1>
+In every war file there is the following file: WEB-INF/config/prisme_super_user.yml
+Copy this file to /app/prismeData, then edit it (self explanatory).  Restart prisme and log in.
+
+<br>
+<hr>
 <h1>Oracle Setup</h1>
 
 1 - Download Oracle Express Edition for Oracle 12g at:  http://www.oracle.com/technetwork/database/database-technologies/express-edition/downloads/index.html 
