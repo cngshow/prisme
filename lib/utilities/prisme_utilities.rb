@@ -15,25 +15,6 @@ module PrismeUtilities
     attr_accessor :terminology_config_errors #TerminologyConfig.xml (Validated against TerminologyConfig.xsd).  Nil if all is good
   end
 
-  def self.parse_terminology_config
-    persistent_terminology_file_root = "#{$PROPS['PRISME.data_directory']}/TerminologyConfig"
-    term_file_root = './config/tds/TerminologyConfig'
-    term_xml = File.exists?(persistent_terminology_file_root+'.xml') ? persistent_terminology_file_root + '.xml' : term_file_root + '.xml'
-    term_xsd = File.exists?(persistent_terminology_file_root+'.xsd') ? persistent_terminology_file_root + '.xsd' : term_file_root + '.xsd'
-    xsd = Nokogiri::XML::Schema(File.read(term_xsd))
-    doc = Nokogiri::XML(File.read(term_xml))
-    errors = []
-    xsd.validate(doc).each do |error|
-      $log.error("TerminologyConfig error  #{error.message}")
-      errors << error
-    end
-    PrismeUtilities::terminology_config_errors = errors
-    raise TerminologyConfigParseError.new(errors) unless errors.empty?
-    ## continue on to build data structure...
-    $log.info("TerminologyConfig passes xsd validation!")
-    #  PrismeUtilities::terminology_config = ??  # meet with Randy
-  end
-
   def self.localize_host(host)
     host.gsub!('0:0:0:0:0:0:0:1', 'localhost')
     host.gsub!('127.0.0.1', 'localhost')
@@ -306,14 +287,6 @@ module PrismeUtilities
       result = false
     end
     result
-  end
-
-  class TerminologyConfigParseError < StandardError
-    def initialize(errors)
-      @errors = errors
-    end
-
-    attr_reader :errors
   end
 end
 
