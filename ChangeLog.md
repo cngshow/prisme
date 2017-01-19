@@ -3,6 +3,9 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2017/01/?? - 1.53 - PENDING  
+   *
+
 * 2017/01/19 - 1.52  
    * Backend Group support added.  Explanation here: https://vadev.mantech.com:4848/git/commit/rails_prisme.git/eae42b62aa26e9e83298f8c6d4a4152d59ed9497
    * Password recovery instructions
