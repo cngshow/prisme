@@ -98,6 +98,11 @@
       <version>${isaac.version}</version>
     </dependency>
     <dependency>
+      <groupId>gov.vha.isaac.ochre.modules</groupId>
+      <artifactId>hl7-messaging</artifactId>
+      <version>${isaac.version}</version>
+    </dependency>
+    <dependency>
         <groupId>com.sun.xml.bind</groupId>
         <artifactId>jaxb-core</artifactId>
         <version>2.2.11</version>
