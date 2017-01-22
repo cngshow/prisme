@@ -1,318 +1,337 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <!-- in order to get your jars and rails_common run this -->
-  <!--So if you have anything checked out in rails common, check it first!-->
-  <!-- mvn initialize -->
+	<modelVersion>4.0.0</modelVersion>
+	<!-- in order to get your jars and rails_common run this -->
+	<!--So if you have anything checked out in rails common, check it first!-->
+	<!-- mvn initialize -->
 
-  <parent>
-    <groupId>gov.vha.isaac.ochre</groupId>
-    <artifactId>isaac-parent</artifactId>
-    <version>3.33-SNAPSHOT</version><!--TODO Eliminate Snapshot if present -->
-  </parent>
+	<parent>
+		<groupId>gov.vha.isaac.ochre</groupId>
+		<artifactId>isaac-parent</artifactId>
+		<version>3.33-SNAPSHOT</version><!--TODO Eliminate Snapshot if present -->
+	</parent>
 
-  <groupId>gov.vha.isaac.gui.rails</groupId>
-  <artifactId>rails_prisme</artifactId>
-  <version>1.53-SNAPSHOT</version><!--TODO THIS IS THE ONLY PLACE SNAPSHOT CAN EXIST BEFORE MAKING A RELEASE!!-->
-  <packaging>pom</packaging>
+	<groupId>gov.vha.isaac.gui.rails</groupId>
+	<artifactId>rails_prisme</artifactId>
+	<version>1.53-SNAPSHOT</version><!--TODO THIS IS THE ONLY PLACE SNAPSHOT CAN EXIST BEFORE MAKING A RELEASE!!-->
+	<packaging>pom</packaging>
 
-  <name>ISAAC Rails PRISME</name>
+	<name>ISAAC Rails PRISME</name>
 
-  <description>
-    This project is the Ruby on Rails web GUI for PRISME
-  </description>
+	<description>
+		This project is the Ruby on Rails web GUI for PRISME
+	</description>
 
-  <properties>
-    <rails_common.version>1.55-SNAPSHOT</rails_common.version> <!--TODO Put new rails common version here if it has been changed -->
-    <!--Open up the assembly.xml file in rails common if new directories are added. -->
-    <isaac.version>3.33-SNAPSHOT</isaac.version><!--TODO Eliminate Snapshot if present -->
-    <!-- railsMode is automatically set to 'test' or 'production' - 'test' if the version number ends with '-SNAPSHOT'
-    or 'production' otherwise.	See ant execution below-->
-  </properties>
+	<properties>
+		<rails_common.version>1.55-SNAPSHOT</rails_common.version> <!--TODO Put new rails common version here if it has been changed -->
+		<!--Open up the assembly.xml file in rails common if new directories are added. -->
+		<isaac.version>3.33-SNAPSHOT</isaac.version><!--TODO Eliminate Snapshot if present -->
+		<!-- railsMode is automatically set to 'test' or 'production' - 'test' if the version number ends with '-SNAPSHOT'
+		or 'production' otherwise.	See ant execution below-->
+	</properties>
 
-  <scm>
-    <url>https://github.com/VA-CTT/rails_prisme.git</url>
-  </scm>
+	<scm>
+		<url>https://github.com/VA-CTT/rails_prisme.git</url>
+	</scm>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.jruby</groupId>
-      <artifactId>jruby-complete</artifactId>
-      <version>9.0.4.0</version>
-    </dependency>
-    <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>rake</artifactId>
-      <version>10.4.2</version>
-      <type>gem</type>
-    </dependency>
-    <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>bundler</artifactId>
-      <version>1.11.2</version>
-      <type>gem</type>
-    </dependency>
-    <dependency>
-      <groupId>gov.vha.isaac.gui.rails</groupId>
-      <artifactId>rails_common</artifactId>
-      <version>${rails_common.version}</version>
-      <type>zip</type>
-      <optional>true</optional> <!-- Not needed at runtime / transitively -->
-    </dependency>
-    <dependency>
-      <groupId>com.offbytwo.jenkins</groupId>
-      <artifactId>jenkins-client</artifactId>
-      <version>0.3.5</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.cargo</groupId>
-      <artifactId>cargo-core-uberjar</artifactId>
-      <version>1.4.19</version>
-    </dependency>
-    <dependency>
-      <groupId>com.oracle.jdbc</groupId>
-      <artifactId>ojdbc7</artifactId>
-      <version>12.1.0.2</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>de.schlichtherle.truezip</groupId>
-      <artifactId>truezip-driver-zip</artifactId>
-      <version>7.7.9</version>
-    </dependency>
-    <dependency>
-      <groupId>de.schlichtherle.truezip</groupId>
-      <artifactId>truezip-file</artifactId>
-      <version>7.7.9</version>
-    </dependency>
-    <dependency>
-      <groupId>gov.vha.isaac.ochre.modules</groupId>
-      <artifactId>db-config-builder</artifactId>
-      <version>${isaac.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>gov.vha.isaac.ochre.modules</groupId>
-      <artifactId>hl7-messaging</artifactId>
-      <version>${isaac.version}</version>
-    </dependency>
-    <dependency>
-        <groupId>com.sun.xml.bind</groupId>
-        <artifactId>jaxb-core</artifactId>
-        <version>2.2.11</version>
-    </dependency>
-    <dependency> <!-- Route slf4j logging to jdk logging to rails can pick it up -->
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-jdk14</artifactId>
-        <version>1.7.13</version>
-    </dependency>
-  </dependencies>
+	<dependencies>
+		<dependency>
+			<groupId>org.jruby</groupId>
+			<artifactId>jruby-complete</artifactId>
+			<version>9.0.4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>rubygems</groupId>
+			<artifactId>rake</artifactId>
+			<version>10.4.2</version>
+			<type>gem</type>
+		</dependency>
+		<dependency>
+			<groupId>rubygems</groupId>
+			<artifactId>bundler</artifactId>
+			<version>1.11.2</version>
+			<type>gem</type>
+		</dependency>
+		<dependency>
+			<groupId>gov.vha.isaac.gui.rails</groupId>
+			<artifactId>rails_common</artifactId>
+			<version>${rails_common.version}</version>
+			<type>zip</type>
+			<optional>true</optional> <!-- Not needed at runtime / transitively -->
+		</dependency>
+		<dependency>
+			<groupId>com.offbytwo.jenkins</groupId>
+			<artifactId>jenkins-client</artifactId>
+			<version>0.3.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.cargo</groupId>
+			<artifactId>cargo-core-uberjar</artifactId>
+			<version>1.4.19</version>
+		</dependency>
+		<dependency>
+			<groupId>com.oracle.jdbc</groupId>
+			<artifactId>ojdbc7</artifactId>
+			<version>12.1.0.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>de.schlichtherle.truezip</groupId>
+			<artifactId>truezip-driver-zip</artifactId>
+			<version>7.7.9</version>
+		</dependency>
+		<dependency>
+			<groupId>de.schlichtherle.truezip</groupId>
+			<artifactId>truezip-file</artifactId>
+			<version>7.7.9</version>
+		</dependency>
+		<dependency>
+			<groupId>gov.vha.isaac.ochre.modules</groupId>
+			<artifactId>db-config-builder</artifactId>
+			<version>${isaac.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>gov.vha.isaac.ochre.modules</groupId>
+			<artifactId>hl7-messaging</artifactId>
+			<version>${isaac.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-core</artifactId>
+			<version>2.2.11</version>
+		</dependency>
+		<dependency> <!-- Route slf4j logging to jdk logging to rails can pick it up -->
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-jdk14</artifactId>
+			<version>1.7.13</version>
+		</dependency>
+	</dependencies>
 
-  <build>
-    <plugins>
+	<build>
+		<plugins>
+			<!-- Stomp any existing jar files in lib/jars to make sure an old version hanging around doesn't stomp us...-->
+			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>3.0.0</version>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>${basedir}/lib/jars/</directory>
+							<includes>
+								<include>**/*</include>
+							</includes>
+						</fileset>
+						<fileset>	<!-- Stomp this file that seems to be created during builds-->
+							<directory>${basedir}/db/data/</directory>
+							<includes>
+								<include>**/*</include>
+							</includes>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
+			<!-- Extract the rails_common code into the correct place here, overwriting any existing version -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>extract-rails_common</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>unpack-dependencies</goal>
+						</goals>
+						<configuration>
+							<includeArtifactIds>rails_common</includeArtifactIds>
+							<outputDirectory>${basedir}/lib/</outputDirectory>
+							<overWriteReleases>true</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+						</configuration>
+					</execution>
 
-      <!-- Stomp any existing jar files in lib/jars to make sure an old version hanging around doesn't stomp us...-->
-      <plugin>
-        <artifactId>maven-clean-plugin</artifactId>
-        <version>3.0.0</version>
-        <configuration>
-          <filesets>
-            <fileset>
-              <directory>${basedir}/lib/jars/</directory>
-              <includes>
-                <include>**/*</include>
-              </includes>
-            </fileset>
-            <fileset>  <!-- Stomp this file that seems to be created during builds-->
-              <directory>${basedir}/db/data/</directory>
-              <includes>
-                <include>**/*</include>
-              </includes>
-            </fileset>
-          </filesets>
-        </configuration>
-      </plugin>
-      <!-- Extract the rails_common code into the correct place here, overwriting any existing version -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>extract-rails_common</id>
-            <phase>initialize</phase>
-            <goals>
-              <goal>unpack-dependencies</goal>
-            </goals>
-            <configuration>
-              <includeArtifactIds>rails_common</includeArtifactIds>
-              <outputDirectory>${basedir}/lib/</outputDirectory>
-              <overWriteReleases>true</overWriteReleases>
-              <overWriteSnapshots>true</overWriteSnapshots>
-            </configuration>
-          </execution>
+					<execution>
+						<id>place-jars</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<!-- We really just want jenkins-client, cargo, and their transitive dependencies. -->
+							<excludeArtifactIds>
+								jruby-complete,rake,bundler,rails_common,junit,log4j-slf4j-impl,log4j-jul,hamcrest-core,
+							</excludeArtifactIds>
+							<overWriteReleases>true</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+							<stripVersion>true</stripVersion>
+							<outputDirectory>${basedir}/lib/jars/</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<plugin>
+				<!-- metadata we want in the output package Gets picked up by warble.rb-->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>write-pom-properties</id>
+						<phase>validate</phase>
+						<configuration>
+							<target>
+								<echoproperties destfile="${project.build.directory}/pom.properties" />
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 
-          <execution>
-            <id>place-jars</id>
-            <phase>initialize</phase>
-            <goals>
-              <goal>copy-dependencies</goal>
-            </goals>
-            <configuration>
-              <!-- We really just want jenkins-client, cargo, and their transitive dependencies. -->
-              <excludeArtifactIds>
-                jruby-complete,rake,bundler,rails_common,junit,log4j-slf4j-impl,log4j-jul,hamcrest-core,
-              </excludeArtifactIds>
-              <overWriteReleases>true</overWriteReleases>
-              <overWriteSnapshots>true</overWriteSnapshots>
-              <stripVersion>true</stripVersion>
-              <outputDirectory>${basedir}/lib/jars/</outputDirectory>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
+			<plugin>
+				<groupId>org.torquebox.mojo</groupId>
+				<artifactId>jruby9-exec-maven-plugin</artifactId>
+				<version>0.3.1</version>
+				<executions>
+					<execution>
+						<id>bundle install</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<jrubyVerbose>true</jrubyVerbose>
+							<jrubyJvmArgs>-Djava.awt.headless=true</jrubyJvmArgs>
+							<command>bundle</command>
+							<args>install</args>
+						</configuration>
+					</execution>
 
-      <plugin>
-        <groupId>org.torquebox.mojo</groupId>
-        <artifactId>jruby9-exec-maven-plugin</artifactId>
-        <version>0.3.1</version>
-        <executions>
-          <execution>
-            <id>bundle install</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <jrubyVerbose>true</jrubyVerbose>
-              <jrubyJvmArgs>-Djava.awt.headless=true</jrubyJvmArgs>
-              <command>bundle</command>
-              <args>install</args>
-            </configuration>
-          </execution>
-          <!--Dan how do I do a conditional execution?	The next two should only be run in test mode.-->
-          <execution>
-            <id>run migration for test db</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <jrubyVerbose>true</jrubyVerbose>
-              <jrubyJvmArgs>-Djava.awt.headless=true</jrubyJvmArgs>
-              <command>rake</command>
-              <args>db:rollback STEP=9999 RAILS_ENV=test db:migrate RAILS_ENV=test</args>
-            </configuration>
-          </execution>
+					<execution>
+						<id>run migration for test db</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<jrubyVerbose>true</jrubyVerbose>
+							<jrubyJvmArgs>-Djava.awt.headless=true</jrubyJvmArgs>
+							<command>rake</command>
+							<args>db:rollback STEP=9999 RAILS_ENV=test db:migrate RAILS_ENV=test</args>
+						</configuration>
+					</execution>
 
-          <execution>
-            <id>run migration for production db</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <jrubyVerbose>true</jrubyVerbose>
-              <jrubyJvmArgs>-Djava.awt.headless=true</jrubyJvmArgs>
-              <command>rake</command>
-              <args>db:rollback STEP=9999 RAILS_ENV=production db:migrate RAILS_ENV=production</args>
-            </configuration>
-          </execution>
+					<execution>
+						<id>run migration for production db</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<jrubyVerbose>true</jrubyVerbose>
+							<jrubyJvmArgs>-Djava.awt.headless=true</jrubyJvmArgs>
+							<command>rake</command>
+							<args>db:rollback STEP=9999 RAILS_ENV=production db:migrate RAILS_ENV=production</args>
+						</configuration>
+					</execution>
 
-          <execution>
-            <id>run tests</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <jrubyVerbose>true</jrubyVerbose>
-              <jrubyJvmArgs>-Djava.awt.headless=true</jrubyJvmArgs>
-              <command>rake</command>
-              <args>test:units</args>
-            </configuration>
-          </execution>
+					<execution>
+						<id>run tests</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<jrubyVerbose>true</jrubyVerbose>
+							<jrubyJvmArgs>-Djava.awt.headless=true</jrubyJvmArgs>
+							<command>rake</command>
+							<args>test:units</args>
+						</configuration>
+					</execution>
 
-          <execution>
-            <id>build war</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <jrubyVerbose>true</jrubyVerbose>
-              <jrubyJvmArgs>-Djava.awt.headless=true</jrubyJvmArgs>
-              <execArgs>RAILS_ENV=${railsMode} RAILS_RELATIVE_URL_ROOT=/rails_prisme PROJECT_VERSION=${project.version}</execArgs>
-              <command>rake</command>
-              <args>devops:build_war</args>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
+					<execution>
+						<id>build war</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<jrubyVerbose>true</jrubyVerbose>
+							<jrubyJvmArgs>-Djava.awt.headless=true</jrubyJvmArgs>
+							<execArgs>RAILS_ENV=${railsMode} RAILS_RELATIVE_URL_ROOT=/rails_prisme PROJECT_VERSION=${project.version}</execArgs>
+							<command>rake</command>
+							<args>devops:build_war</args>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 
-      <!-- Set a variable for the rails runtime mode based on whether we are building SNAPSHOT or not -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>config</id>
-            <phase>initialize</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <exportAntProperties>true</exportAntProperties>
-              <target name="set-build-type">
-                <condition property="railsMode" value="test" else="production">
-                  <matches string="${project.version}" pattern=".*-SNAPSHOT" />
-                </condition>
-              </target>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
+			<!-- Set a variable for the rails runtime mode based on whether we are building SNAPSHOT or not -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>config</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<exportAntProperties>true</exportAntProperties>
+							<target name="set-build-type">
+								<condition property="railsMode" value="test" else="production">
+									<matches string="${project.version}" pattern=".*-SNAPSHOT" />
+								</condition>
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 
-      <!-- Attach the war -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>attach-artifacts</id>
-            <phase>package</phase>
-            <goals>
-              <goal>attach-artifact</goal>
-            </goals>
-            <configuration>
-              <artifacts>
-                <artifact>
-                  <file>${project.build.directory}/rails_prisme.war</file>
-                  <type>war</type>
-                </artifact>
-              </artifacts>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
+			<!-- Attach the war -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-artifacts</id>
+						<phase>package</phase>
+						<goals>
+							<goal>attach-artifact</goal>
+						</goals>
+						<configuration>
+							<artifacts>
+								<artifact>
+									<file>${project.build.directory}/rails_prisme.war</file>
+									<type>war</type>
+								</artifact>
+							</artifacts>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 
-      <plugin>
-        <groupId>external.atlassian.jgitflow</groupId>
-        <artifactId>jgitflow-maven-plugin</artifactId>
-        <version>1.0-m4.3</version>
-        <dependencies>
-          <dependency>
-            <groupId>xerces</groupId>  <!-- workaround jgitflow https://ecosystem.atlassian.net/browse/MJF-251 -->
-            <artifactId>xercesImpl</artifactId>
-            <version>2.11.0</version>
-          </dependency>
-        </dependencies>
-      </plugin>
-    </plugins>
-  </build>
+			<plugin>
+				<groupId>external.atlassian.jgitflow</groupId>
+				<artifactId>jgitflow-maven-plugin</artifactId>
+				<version>1.0-m4.3</version>
+				<dependencies>
+					<dependency>
+						<groupId>xerces</groupId>	<!-- workaround jgitflow https://ecosystem.atlassian.net/browse/MJF-251 -->
+						<artifactId>xercesImpl</artifactId>
+						<version>2.11.0</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+		</plugins>
+	</build>
 </project>
