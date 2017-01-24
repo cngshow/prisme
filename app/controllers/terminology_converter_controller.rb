@@ -29,7 +29,7 @@ class TerminologyConverterController < ApplicationController
 
     # pull out the git authentication information
     git_props = Service.get_git_props
-    git_url = git_props[PrismeService::GIT_REPOSITORY_URL]
+    git_url = git_props[PrismeService::GIT_ROOT]
     git_user = git_props[PrismeService::GIT_USER]
     git_pass = git_props[PrismeService::GIT_PWD]
 
@@ -84,10 +84,8 @@ class TerminologyConverterController < ApplicationController
     end
 
     # these locals are used in erb call below! do not remove!
-    development = Rails.env.development?
-    git_failure = nil
-
-    # file to render
+    development = Rails.env.development? #used in PrismeService::JENKINS_XML
+    git_content_url = JIsaacLibrary::GitPublish.constructChangesetRepositoryURL git_url #used in PrismeService::JENKINS_XML
     props = Service.get_build_server_props
     j_xml = PrismeService::JENKINS_XML
     url = props[PrismeService::JENKINS_ROOT]
@@ -96,6 +94,8 @@ class TerminologyConverterController < ApplicationController
 
     # you MUST pass binding in order to have the erb process local variables
     @job_xml = ERB.new(File.open(j_xml, 'r') { |file| file.read }).result(binding)
+    $log.info("The jenkins xml is--")
+    $log.info(@job_xml)
     t_s = Time.now.strftime('%Y_%m_%dT%H_%M_%S')
     job = JenkinsStartBuild.perform_later("#{JenkinsStartBuild::PRISME_NAME_PREFIX}#{s_artifact_id}_#{t_s}", @job_xml, url, user, password, {job_tag: PrismeConstants::JobTags::TERMINOLOGY_CONVERTER})
     PrismeBaseJob.save_user(job_id: job.job_id, user: prisme_user.user_name)

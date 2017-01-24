@@ -20,7 +20,7 @@ module SeedData
       {
           service: {name: 'GIT', description: 'GIT Version Control', service_type: PrismeService::GIT},
           props: [
-              {key: PrismeService::GIT_REPOSITORY_URL, value: 'https://vaauscttdbs80.aac.va.gov:8080/git/r/contentConfigurations.git'},
+              {key: PrismeService::GIT_ROOT, value: 'https://vaauscttdbs80.aac.va.gov:8080/git/'},
               {key: PrismeService::GIT_USER, value: 'devtest'},
               {key: PrismeService::GIT_PWD, value: '["jK\x90\xA1\x1Fk\x87\xB6\xAB\xA3\xC5\xE7~\xBA\x1AK", "k]\x95\xD8w\x15\xFE\xD3\xC7\xDC\xAC\x9E\x1C\xD0bG"]'}
           ]

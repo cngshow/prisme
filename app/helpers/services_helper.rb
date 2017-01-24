@@ -24,6 +24,11 @@ module ServicesHelper
         hash.merge!(URL_INPUT)
       when PrismeService::TYPE_NUMBER
         hash.merge!(PORT_RANGE)
+      when PrismeService::TYPE_REGEX
+        regex = props.select {|t| t[PrismeService::TYPE_KEY].eql?(key)}.first[type]
+        default = props.select {|t| t[PrismeService::TYPE_KEY].eql?(key)}.first[PrismeService::TYPE_DEFAULT] rescue ''
+        length = props.select {|t| t[PrismeService::TYPE_KEY].eql?(key)}.first[PrismeService::TYPE_WIDGET_LENGTH] rescue '10'
+        hash.merge! pattern: regex, size: length.to_s, placeholder: default.to_s
       else
         hash.merge!(NO_SPACES)
     end
