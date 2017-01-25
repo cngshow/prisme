@@ -72,6 +72,7 @@ module TerminologyConfig
         @@subset_gui[domain[:Name]] << subset[:Name]
       end
     end
+    @@subset_gui.reject! do |k,v| v.empty? end
     @@subset_gui.deep_dup
   end
 
