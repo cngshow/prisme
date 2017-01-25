@@ -12,7 +12,7 @@ require './lib/rails_common/logging/open_logging'
 require './lib/rails_common/logging/logging'
 require './lib/rails_common/util/helpers'
 require './lib/rails_common/logging/prisme_log_event'
-require './lib/rails_common/util/bootstrap_notifier'#above roles (roles references these libs)
+require './lib/rails_common/util/bootstrap_notifier' #above roles (roles references these libs)
 require './lib/rails_common/roles/roles'
 
 #above from rails common
@@ -41,8 +41,8 @@ unless ($rake || defined?(Rails::Generators))
 
   at_exit do
     #do cleanup
-    $log.always{PrismeLogEvent.notify(PrismeLogEvent::LIFECYCLE_TAG,'Shutdown called!  Rails Prisme has been ruthlessly executed :-(')}
-    if($database.eql?('H2'))
+    $log.always { PrismeLogEvent.notify(PrismeLogEvent::LIFECYCLE_TAG, 'Shutdown called!  Rails Prisme has been ruthlessly executed :-(') }
+    if ($database.eql?('H2'))
       begin
         ActiveRecord::Base.connection.execute('SHUTDOWN')
         $log.always('H2 database has been shutdown.')
@@ -77,7 +77,7 @@ unless STFU_MODE
   #isaac utilities must be loaded after our appenders are set (if they are set.)
   require './lib/isaac_utilities'
 
-  java_import 'gov.vha.isaac.ochre.api.LookupService' do |p,c|
+  java_import 'gov.vha.isaac.ochre.api.LookupService' do |p, c|
     'JLookupService'
   end
 
@@ -101,7 +101,8 @@ rescue
   $log.warn("Could not read the version file!")
 end
 PRISME_VERSION = version
-$log.always{PrismeLogEvent.notify(PrismeLogEvent::LIFECYCLE_TAG, "#{Rails.application.class.parent_name} coming up!  The version is #{PRISME_VERSION}")}
+PRISME_EVIRONMENT = PrismeUtilities.aitc_environment.fetch(Socket.gethostname) rescue 'environment not known'
+$log.always { PrismeLogEvent.notify(PrismeLogEvent::LIFECYCLE_TAG, "#{Rails.application.class.parent_name} coming up!  The version is #{PRISME_VERSION}") }
 
 # ensure super_user and admin for cboden for demo
 =begin

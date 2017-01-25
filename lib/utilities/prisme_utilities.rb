@@ -11,6 +11,7 @@ module PrismeUtilities
   class << self
     attr_accessor :ssoi_logout_url
     attr_accessor :config #server_config.yml
+    attr_accessor :aitc_env #aitc_environment.yml
     attr_accessor :terminology_config #TerminologyConfig.xml (Validated against TerminologyConfig.xsd)
     attr_accessor :terminology_config_errors #TerminologyConfig.xml (Validated against TerminologyConfig.xsd).  Nil if all is good
   end
@@ -115,7 +116,7 @@ module PrismeUtilities
         begin
           group.save!
           $log.always("I saved the group with group id #{group.id}")
-        rescue =>ex
+        rescue => ex
           saved = false
           $log.warn("Save failed for #{group.inspect}")
           $log.warn(ex.message)
@@ -224,20 +225,32 @@ module PrismeUtilities
     server_config['proxy_config_root']['proxy_urls']
   end
 
+  def self.aitc_environment
+    return PrismeUtilities.aitc_env unless PrismeUtilities.aitc_env.nil?
+    env_file = which_file('aitc_environment.yml')
+    if env_file.nil?
+      $log.warn('No aitc environment yml file found!')
+      return nil
+    end
+    # read the config yml file
+    begin
+      PrismeUtilities.aitc_env = YAML.load_file(env_file)
+    rescue => ex
+      $log.error("Error reading #{env_file}, error is #{ex}")
+      $log.error(ex.backtrace.join("\n"))
+    end
+    PrismeUtilities.aitc_env
+  end
+
 
   def self.server_config
     return PrismeUtilities.config unless PrismeUtilities.config.nil?
     # default the config file location based on the data_directory property
-    config_file = "#{$PROPS['PRISME.data_directory']}/server_config.yml"
-
-    # if the config file does not exist then fallback to the file in the config directory.
-    unless File.exists?(config_file)
-      config_file = './config/server_config.yml'
-    end
+    config_file = which_file('server_config.yml')
 
     # now check that the actual config file to use exists. This should never fail but
     # in case it is deleted from source control we do not want to go any further
-    unless File.exists? config_file
+    if config_file.nil?
       $log.warn('No proxy mapping file found. Doing nothing!')
       return nil
     end
@@ -288,6 +301,25 @@ module PrismeUtilities
     end
     result
   end
+
+  private
+
+  #given a base file selects the prismeData variant over the config variant
+  def self.which_file(base_file)
+    # default the config file location based on the data_directory property
+    file = "#{$PROPS['PRISME.data_directory']}/#{base_file}"
+
+    # if the config file does not exist then fallback to the file in the config directory.
+    unless File.exists?(file)
+      file = "./config/#{base_file}"
+    end
+    unless File.exists? file
+      $log.warn("#{base_file} not found.")
+      return nil
+    end
+    file
+  end
+
 end
 
 module URI
@@ -383,6 +415,7 @@ module URI
   end
 end
 #load('./lib/utilities/prisme_utilities.rb')
+# PrismeUtilities.aitc_environment
 # URI('https://cris.com').proxify
 # URI.proxy_mappings = nil
 
