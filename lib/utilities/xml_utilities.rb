@@ -59,6 +59,22 @@ module TerminologyConfig
     domains
   end
 
+  #returns a HashWithIndifferentAccess where each key is the name, like 'Allergy' and the value is an array of subset names
+  #sample:
+# {"Allergy"=>["Reactions", "Reactants"], "Immunizations"=>["Immunization Procedure", "Skin Test"], "National Drug File"=>[], "Pharmacy"=>["Medication Routes"], "Orders"=>["Order Status", "Nature of Order"], "TIU"=>["TIU Status"
+# , "TIU Doctype", "TIU Role", "TIU SMD", "TIU Service", "TIU Setting", "TIU Titles"], "Vitals"=>["Vital Types", "Vital Categories", "Vital Qualifiers"]}
+  def self.subset_gui
+    @@subset_gui ||= HashWithIndifferentAccess.new
+    return @@subset_gui.deep_dup unless @@subset_gui.empty?
+    terminology_domains_active.each do |domain|
+      @@subset_gui[domain[:Name]] ||= []
+      domain[:Subset].each do |subset|
+        @@subset_gui[domain[:Name]] << subset[:Name]
+      end
+    end
+    @@subset_gui.deep_dup
+  end
+
   class TerminologyConfigParseError < StandardError
     def initialize(errors)
       @errors = errors
