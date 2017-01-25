@@ -78,7 +78,7 @@ module TerminologyConfig
 
   #Consider the xml above.  Since there is only one property it will resolve to hash. If there had been more than one it would have
   #resolved to an array of hashes.  I would rather have an array of length 1 hence the 'arrayitize' methods below
-  def arrayitize_subsets(domains)
+  def self.arrayitize_subsets(domains)
     domains.each do |d|
       d[:Subset] = [d[:Subset]] if d[:Subset].is_a? Hash
     end
