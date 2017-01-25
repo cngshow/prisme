@@ -6,6 +6,7 @@ where provided, and the git commit history.
 * 2017/01/?? - 1.53 - PENDING  
    * Git content url changes added.  With this change the db seed files must be rerun!!  Nil pointers will result if they aren't!
    * Komet get the aitc environment hash from prisme and displays the environment next to the version
+   * prisme displays environment next to version in the footer.
 
 * 2017/01/19 - 1.52  
    * Backend Group support added.  Explanation here: https://vadev.mantech.com:4848/git/commit/rails_prisme.git/eae42b62aa26e9e83298f8c6d4a4152d59ed9497
