@@ -28,10 +28,10 @@ class CipherSupport
         result << @decrypt.final
       end
     rescue OpenSSL::Cipher::CipherError => ex
-      $log.error("I was unable to decrypt: ")
-      $log.error("#{encrypted_string}")
-      $log.error("Caller:")
-      $log.error(caller[0][/`.*'/][1..-2])
+      $log.warn("I was unable to decrypt: ")
+      $log.warn("#{encrypted_string}")
+      $log.warn("Caller:")
+      $log.warn(caller[0][/`.*'/][1..-2])
       raise ex
     end
     result
