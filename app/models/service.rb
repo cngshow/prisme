@@ -13,7 +13,6 @@ class Service < ActiveRecord::Base
 
     def get_git_props
       hash = get_git.properties_hash
-      hash[PrismeService::GIT_ROOT] = URI(hash[PrismeService::GIT_REPOSITORY_URL]).base_url
       hash
     end
 

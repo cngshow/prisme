@@ -97,7 +97,7 @@ module IsaacDBConfigurationCreator
     #not thread safe!
     # pull out the git authentication information
     git_props = Service.get_git_props
-    git_url = git_props[PrismeService::GIT_REPOSITORY_URL]
+    git_url = git_props[PrismeService::GIT_ROOT]
     git_user = git_props[PrismeService::GIT_USER]
     git_pass = git_props[PrismeService::GIT_PWD]
     if (@db_tag_list.nil? or @db_tag_list_dirty)

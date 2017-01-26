@@ -1,4 +1,5 @@
 # it is CRITICAL that the keys specified here match the fixtures
+#See module PrismeService for valid types (bottom of the file)
 tomcat:
   label: Tomcat
   description: Tomcat Application Server
@@ -68,10 +69,13 @@ git:
   description: Git Repository
   singleton: true
   props:
-   - key: git_repository_url
-     tooltip: Enter the URL address and port for the Git Server (e.g. http://server_path:port) 
-     label: Git Repository URL:port
-     type: url
+   - key: git_root
+     tooltip: Enter the URL address, port  and initial context for the Git Server (e.g. http://server_path:port/context)
+     label: Git Repository URL:port/context
+     type: regular_expression
+     regular_expression: ^[h|H][t|T][t|T][p|P][s|S]?:\/\/[a-zA-Z0-9\.\-_]+:?\d*\/[a-zA-Z0-9\-_]+\/?$
+     default: http://path_to_server:port/context
+     widget_length: 75
      order_idx: 0
    - key: git_user
      tooltip: Enter the git user name for logging on to the Git Server

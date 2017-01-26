@@ -61,6 +61,7 @@ class TerminologyDbBuilderController < ApplicationController
       $log.error("Error in IsaacDBConfigurationCreator for db_name #{db_name} with version #{version}!! The error is: #{ex}")
       $log.error('Because of this exception I will be returning true (indicating a git tag conflict) and the end user will not be able to proceed.')
       $log.error(ex.backtrace.join("\n"))
+      flash_alert(message: ex.message)
       tag_conflict = true
     end
     render json: {tag_conflict: tag_conflict}

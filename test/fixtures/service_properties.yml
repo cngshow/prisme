@@ -4,6 +4,7 @@
 # bundle exec rake db:fixtures:load
 
 # tomcat service properties
+##THIS FILE IS NOT USED ANYMORE!  WE ARE USING DB SEED FILES!!!
 one:
   service: tomcat
   key: cargo.remote.username

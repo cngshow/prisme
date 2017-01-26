@@ -27,7 +27,6 @@ module PrismeService
 
   # git
   GIT_ROOT = 'git_root'
-  GIT_REPOSITORY_URL = 'git_repository_url'
   GIT_USER = 'git_user'
   GIT_PWD = 'git_pwd'
 
@@ -35,6 +34,9 @@ module PrismeService
   TYPE_PROPS = 'props'
   TYPE_PASSWORD = 'password'
   TYPE_URL = 'url'
+  TYPE_REGEX = 'regular_expression'
+  TYPE_DEFAULT = 'default'
+  TYPE_WIDGET_LENGTH = 'widget_length'
   TYPE_NUMBER = 'number'
   TYPE_TYPE = 'type'
   TYPE_KEY = 'key'

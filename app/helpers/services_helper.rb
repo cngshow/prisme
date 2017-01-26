@@ -1,7 +1,7 @@
 module ServicesHelper
-  PORT_RANGE = {min: 1, max: 9999, pattern: "\d*"}
+  PORT_RANGE = {min: 1, max: 9999, pattern: '\d*'}
   VALID_HOSTNAME = {pattern: '^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$'}
-  NO_SPACES = {pattern: '^[a-z0-9_-\.]$'}
+  NO_SPACES = {pattern: '^\S+'}
   URL_INPUT = {type: 'url', maxlength: 255, size: 75, placeholder: 'http://path_to_server:port', pattern: '^http://.*|^https://.*'}
 
 
@@ -24,6 +24,11 @@ module ServicesHelper
         hash.merge!(URL_INPUT)
       when PrismeService::TYPE_NUMBER
         hash.merge!(PORT_RANGE)
+      when PrismeService::TYPE_REGEX
+        regex = props.select {|t| t[PrismeService::TYPE_KEY].eql?(key)}.first[type]
+        default = props.select {|t| t[PrismeService::TYPE_KEY].eql?(key)}.first[PrismeService::TYPE_DEFAULT] rescue ''
+        length = props.select {|t| t[PrismeService::TYPE_KEY].eql?(key)}.first[PrismeService::TYPE_WIDGET_LENGTH] rescue '10'
+        hash.merge! pattern: regex, size: length.to_s, placeholder: default.to_s
       else
         hash.merge!(NO_SPACES)
     end

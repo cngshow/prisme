@@ -17,7 +17,7 @@ class JenkinsCheckBuild < PrismeBaseJob
   class BuildResult
     INQUEUE = 'INQUEUE'
     IN_PROCESS = 'In Process...'
-    SERVER_ERROR = 'SERVER ERROR' # set if we orphan a JenkinsCheckBuild job
+    SERVER_ERROR = 'SERVER ERROR' # set if we orphan, or fail a JenkinsCheckBuild job
     FAILURE = JBuildResult::FAILURE.to_s
     UNSTABLE = JBuildResult::UNSTABLE.to_s
     REBUILDING = JBuildResult::REBUILDING.to_s

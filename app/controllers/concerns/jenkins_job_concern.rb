@@ -1,13 +1,27 @@
 module JenkinsJobConcern
   # this method takes an array of database rows for a given job run and appends the JenkinsCheckBuild data to it
-  def append_check_build_leaf_data(row)
+  def append_check_build_leaf_data(prisme_job_ar_row)
     row_data = {}
-    started_at = row['started_at']
+    started_at = prisme_job_ar_row['started_at']
     row_data['started_at'] = started_at.nil? ? '' : started_at.to_i
 
     leaf_data = {}
-    has_orphan = row.descendants.orphan(true).first
-    leaf = row.descendants.completed(true).orphan(false).leaves.first
+    has_orphan = prisme_job_ar_row.descendants.orphan(true).first
+    leaf = prisme_job_ar_row.descendants.completed(true).orphan(false).leaves.first
+    execution_failure = prisme_job_ar_row.status.eql? PrismeJobConstants::Status::STATUS_HASH[:FAILED]
+    #failure_message = prisme_job_ar_row.result #may need to display this in the future
+    if execution_failure
+      leaf_data['jenkins_check_job_id'] = JenkinsCheckBuild::BuildResult::SERVER_ERROR
+      leaf_data['jenkins_job_deleted'] =  JenkinsCheckBuild::BuildResult::SERVER_ERROR
+      leaf_data['jenkins_job_name'] = JenkinsCheckBuild::BuildResult::SERVER_ERROR
+      leaf_data['jenkins_attempt_number'] = JenkinsCheckBuild::BuildResult::SERVER_ERROR
+      leaf_data['jenkins_build_result'] = JenkinsCheckBuild::BuildResult::SERVER_ERROR
+      leaf_data['completed_at'] = prisme_job_ar_row.completed_at.to_i
+      leaf_data[:elapsed_time] = ApplicationHelper.convert_seconds_to_time(leaf_data['completed_at'] - row_data['started_at'])
+      row_data['leaf_data'] = leaf_data
+      $log.always("A FAILURE #{row_data}")
+      return leaf_data
+    end
 
     if !leaf.nil? && leaf.job_name.eql?(JenkinsCheckBuild.to_s)
       leaf_data['jenkins_check_job_id'] = leaf ? leaf.job_id : (has_orphan ? JenkinsCheckBuild::BuildResult::SERVER_ERROR : JenkinsCheckBuild::BuildResult::UNKNOWN)

@@ -27,3 +27,4 @@ context.txt
 /db/schema.rb
 db/schema.rb
 /db/data/*
+/version.txt

@@ -13,7 +13,7 @@ class TerminologyDatabaseBuilder < PrismeBaseJob
 
     # pull out the git authentication information
     git_props = Service.get_git_props
-    git_url = git_props[PrismeService::GIT_REPOSITORY_URL]
+    git_url = git_props[PrismeService::GIT_ROOT]
     git_user = git_props[PrismeService::GIT_USER]
     git_pass = git_props[PrismeService::GIT_PWD]
     result_hash = {}
@@ -42,9 +42,12 @@ class TerminologyDatabaseBuilder < PrismeBaseJob
       # nexus url - these variables are in the local binding for the erb - DO NOT REMOVE!
       nexus_props = Service.get_artifactory_props
       nexus_publication_url = nexus_props[PrismeService::NEXUS_PUBLICATION_URL]
+      git_content_url = JIsaacLibrary::GitPublish.constructChangesetRepositoryURL git_url #used in PrismeService::JENKINS_XML
 
       # you MUST pass binding in order to have the erb process local variables
       @job_xml = ERB.new(File.open(j_xml, 'r') { |file| file.read }).result(binding)
+      $log.info("The jenkins xml is--")
+      $log.info(@job_xml)
       t_s = Time.now.strftime('%Y_%m_%dT%H_%M_%S')
       job = JenkinsStartBuild.perform_later("#{JenkinsStartBuild::PRISME_NAME_PREFIX}DB_BUILDER_#{t_s}", @job_xml, url, user, password, track_child_job)
       $log.debug("Jenkins start build called to build a db! #{job}")

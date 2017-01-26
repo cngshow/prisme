@@ -6,8 +6,9 @@ unless $rake
   PrismeUtilities.synch_group_data
   $terminology_parse_errors = false
   begin
-    PrismeUtilities.parse_terminology_config
-  rescue PrismeUtilities::TerminologyConfigParseError => ex
+    require './lib/utilities/xml_utilities'
+    TerminologyConfig.parse_terminology_config
+  rescue TerminologyConfig::TerminologyConfigParseError => ex
     #parse_terminology_config logs the errors already
     $terminology_parse_errors = true
   end
