@@ -3,6 +3,9 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2017/02/?? - 1.54 - PENDING  
+   *
+
 * 2017/01/26 - 1.53  
    * Git content url changes added.  With this change the db seed files must be rerun!!  Nil pointers will result if they aren't!
    * Komet get the aitc environment hash from prisme and displays the environment next to the version
