@@ -1,10 +1,8 @@
 class ChecksumController < ApplicationController
   include ChecksumDiscoveryConcern
+  
+  before_action :auth_registered
 
-  # todo figure out which before filter causes double render error
-  all_filters = self._process_action_callbacks.map(&:filter)
-  all_filters.each { |sym| skip_action_callback(sym) }
-  before_action :setup_gon
 
   def index
     @active_subsets = subset_tree_data.to_json
