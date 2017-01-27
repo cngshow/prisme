@@ -5,6 +5,10 @@ Rails.application.routes.draw do
     end
   end
 
+  get 'checksum/index', as: 'checksum'
+  get 'checksum/retrieve_sites'
+  # get 'discovery/index', as: 'discovery'
+
   #resources :log_events
   match 'log_event' => 'log_events#log_event', :as => :log_event, via: [:get, :put, :post]
   post 'log_events/acknowledge_log_event', as: :acknowledge_log_event, :constraints => OnlyAjaxRequest.new

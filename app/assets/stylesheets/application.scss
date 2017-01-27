@@ -18,6 +18,7 @@
  *= require select2-bootstrap
  * this is for styling of the ajax_flash notification code
  *= require animate
+ *= require_tree ../../../vendor/assets/stylesheets/jsTree
  *= require_tree .
  *= require_self
  */

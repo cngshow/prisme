@@ -1,0 +1,158 @@
+<div style='background-color: navy; border:2px solid grey; height: 45px; padding: 5px;'>
+  <div style='float: left; color: white; font-weight: bold; font-size: 20px; padding-left: 5px'>Terminology Checksum</div>
+  <div style='float: right'>
+    <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#siteSelectionModal">Request Checksum</button>
+  </div>
+</div>
+<br>
+<div class="row">
+  <div class="col-lg-4">
+    <div style='background-color: transparent; height: 50px; padding: 5px;'>
+      <div style='float: left; color: black; font-weight: bold; font-size: 16px; padding-left: 5px'>Subset Selection(s)</div>
+      <br>
+      <br>
+      <div id="subsets" style="border:2px solid black;"></div>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    <div style='background-color: transparent; height: 50px; padding: 5px;'>
+      <div style='float: left; color: black; font-weight: bold; font-size: 16px; padding-left: 5px'>Site Selection(s)</div>
+      <div style='float: right'>
+        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#siteSelectionModal">Select Site(s)</button>
+      </div>
+      <br>
+      <br>
+      <table id="tbl_site_selection" class="prisme-table table-striped table-hover">
+        <thead>
+        <tr>
+          <th>Site Name</th>
+          <th>Site Type</th>
+          <th width="25px">Remove</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td colspan="3" class="text-center" scope="col">No sites have been selected</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div id="siteSelectionModal" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="site_selections();">Select Site(s)</button>
+      </div>
+      <div class="modal-body" style="overflow:auto; max-height: 70vh;"><!-- style is for scrollable div -->
+        <div id="checksum">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+    function site_selections() {
+        var checked = $('#checksum').jstree('get_checked');
+        if (checked.length == 0) {
+            alert('kma...pick something...fix this!');
+            return false;
+        }
+
+        var groups = [];
+        var sites = [];
+
+        for (var i = 0, l = checked.length; i < l; i++) {
+            var id = $('#checksum').jstree(true).get_node(checked[i]).id;
+            var id_split = id.split('_');
+
+            if (id_split[0] === '<%= VaGroup.name %>') {
+                groups.push(id_split[1]);
+            }
+            if (id_split[0] === '<%= VaSite.name %>') {
+                sites.push(id_split[1]);
+            }
+        }
+
+        // make the ajax call to get all of the selected sites to load the selection table with
+        $.getJSON(gon.routes.checksum_retrieve_sites_path, {
+            groups: groups.toString(),
+            sites: sites.toString()
+        }, function (data) {
+            loadSiteSelectionTable(data);
+            $("#siteSelectionModal").find(".close").click()
+        });
+    }
+
+    function loadSiteSelectionTable(data) {
+        var fields = ['site_name', 'site_type'];
+        var tbody = $('#tbl_site_selection').find('tbody');
+        tbody.empty();
+
+        $.each(data, function (index, item) {
+            // create the row adding a data-job_id attribute
+            var row = $('<tr>').addClass('text-top').attr('data-va_site_id', item['va_site_id']).attr('data-msg_type', item['message_type']);
+
+            $.each(fields, function (index, field) {
+                var item_value = item[field + ''];
+
+                if (field === 'site_name') {
+                    var name = item['va_site_id'] + ' - ' + item['name'];
+                    row.append($('<td>').text(name));
+                }
+                else {
+                    row.append($('<td>').text(item_value));
+                }
+            });
+
+            var rm = '<a class="btn btn-default" role="button" onclick="remove_site(' + item["va_site_id"] + ');"><i class="fa fa-times fa-fw" aria-hidden="true"></i></a>';
+            row.append($('<td>').html(rm));
+            tbody.append(row);
+        });
+    }
+
+    function remove_site(site_id_row) {
+        var selector = $("tr[data-va_site_id='" + site_id_row + "']");
+        $(selector).remove();
+
+        if ($("table#tbl_site_selection > tbody > tr").length === 0) {
+            var no_rows = '<tr valign="top"><td colspan="3" align="center">No sites have been selected</td></tr>';
+            $("table#tbl_site_selection").find('tbody').html(no_rows);
+        }
+    }
+
+    $(document).ready(function () {
+        $('#checksum').jstree(
+            {
+                "checkbox": {
+                    "keep_selected_style": false
+                },
+                "plugins": ["checkbox"],
+
+                'core': {
+                    'data': [<%= raw @group_tree %>, <%= raw @site_tree %>],
+                    'themes': {"stripes": true}
+                }
+            });
+
+        $('#subsets').jstree(
+            {
+                "checkbox": {
+                    "keep_selected_style": false
+                },
+                "plugins": ["checkbox"],
+
+                'core': {
+                    'data': [<%= raw @active_subsets %>],
+                    'themes': {"stripes": true}
+                }
+            });
+    });
+</script>
