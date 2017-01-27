@@ -16,7 +16,9 @@ class UtilitiesController < ApplicationController
   end
 
   def prisme_config
-    render :json => PrismeUtilities.server_config
+    prisme_config = PrismeUtilities.server_config
+    prisme_config.merge!({'aitc_environment' => PrismeUtilities.aitc_environment})
+    render :json => prisme_config
   end
 
   # http://localhost:3000/utilities/seed_database?db=localhost

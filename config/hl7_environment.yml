@@ -1,0 +1,36 @@
+---
+DEV:
+  ets_application_id: 200ET1
+  ets_server: vaauscttdbs80.aac.va.gov
+  evie_server: Vaaacvies64.aac.dva.va.gov
+  evie_port: 8090
+  lvie_server: Vhaisfviev26.vha.med.va.gov
+  lvie_port: 8090
+INTEGRATION:
+  ets_application_id: 200ET10
+  ets_server: vaauscttdbs82.aac.va.gov
+  evie_server: Vaaacvies64.aac.dva.va.gov
+  evie_port: 8090
+  lvie_server: Vhaisfviev26.vha.med.va.gov
+  lvie_port: 8090
+SQA:
+  ets_application_id: 200ET20
+  ets_server: vaausdbsctt700.aac.va.gov
+  evie_server: Vaaacvies64.aac.dva.va.gov
+  evie_port: 8090
+  lvie_server: Vhaisfviev26.vha.med.va.gov
+  lvie_port: 8090
+PRE-PROD:
+  ets_application_id: 200ET30
+  ets_server: vaausdbsctt402.aac.va.gov
+  evie_server: Vaaacviep44.aac.dva.va.gov
+  evie_port: 8090
+  lvie_server: vhadvrvie402v2.vha.med.va.gov 
+  lvie_port: 8090
+PROD:
+  ets_application_id: 200ETS
+  ets_server: vaausdbsctt202.aac.va.gov
+  evie_server: Vaaacviev24.aac.dva.va.gov
+  evie_port: 8090
+  lvie_server: some.server.vha.med.va.gov
+  lvie_port: 8090

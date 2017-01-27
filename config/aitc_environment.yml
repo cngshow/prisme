@@ -1,0 +1,26 @@
+---
+vaauscttdbs80.aac.va.gov: DEV
+vaauscttdbs81.aac.va.gov: DEV
+vaauscttweb80.aac.va.gov: DEV
+vaauscttweb81.aac.va.gov: DEV
+vaausappctt402.aac.va.gov: PRE-PROD
+vaausappctt403.aac.va.gov: PRE-PROD
+vaausappctt404.aac.va.gov: PRE-PROD
+vaausappctt405.aac.va.gov: PRE-PROD
+vaausdbsctt402.aac.va.gov: PRE-PROD
+vaausappctt202.aac.va.gov: PROD
+vaausappctt203.aac.va.gov: PROD
+vaausappctt204.aac.va.gov: PROD
+vaausappctt205.aac.va.gov: PROD
+vaausdbsctt202.aac.va.gov: PROD
+vaausappctt701.aac.va.gov: INTEGRATION
+vaausappctt702.aac.va.gov: INTEGRATION
+vaausappctt703.aac.va.gov: INTEGRATION
+vaausappctt704.aac.va.gov: INTEGRATION
+vaausdbsctt700.aac.va.gov: INTEGRATION
+vaauscttdbs82.aac.va.gov: TEST
+vaauscttweb82.aac.va.gov: TEST
+vaauscttweb83.aac.va.gov: TEST
+vaauscttweb84.aac.va.gov: TEST
+vaauscttweb85.aac.va.gov: TEST
+MSI: DEV_BOX
