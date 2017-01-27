@@ -4,7 +4,8 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 where provided, and the git commit history.
 
 * 2017/02/?? - 1.54 - PENDING  
-   *
+   *439581 GUI - Present list of selectable sites for checksum
+   *439584 GUI - Display list of selectable subsets for checksum
 
 * 2017/01/26 - 1.53  
    * Git content url changes added.  With this change the db seed files must be rerun!!  Nil pointers will result if they aren't!
