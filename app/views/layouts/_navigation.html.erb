@@ -11,7 +11,23 @@
   </div>
 
   <div class="prisme-navbar-navigation" role="navigation">
+    <div class="dropdown" role="presentation">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="Deployment Tools">Deployment Tools
+        <span class="caret"></span></a>
 
+      <ul class="dropdown-menu" aria-hidden="true" aria-label="Checksum">
+        <li role="menuitem">
+          <a href="<%= checksum_path %>" onclick="polling.checkPolling(polling.pollEnum.CHECKSUM);"  title="Terminology Checksum">
+            Checksum
+          </a>
+        </li>
+        <li role="menuitem">
+          <!--<a href="<%#= discovery_list_path %>" onclick="polling.checkPolling(polling.pollEnum.DISCOVERY);" title="Terminology Discovery">-->
+            Discovery
+          <!--</a>-->
+        </li>
+      </ul>
+    </div>
 
     <% if policy(:navigation).admin? %>
         <div>

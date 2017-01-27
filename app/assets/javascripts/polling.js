@@ -9,6 +9,8 @@ var polling = (function () {
         CONVERTER: 'converter',
         DB_BUILDER: 'db_builder',
         DEPLOYER: 'deployer',
+        CHECKSUM: 'checksum',
+        DISCOVERY: 'discovery',
         ADMIN_USER_EDIT: 'admin_user_edit',
         SERVICES: 'services',
         LOGIN: 'log_in',
