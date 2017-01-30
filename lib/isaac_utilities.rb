@@ -5,6 +5,33 @@ module JIsaacLibrary
   include_package 'gov.vha.isaac.ochre.pombuilder.upload' #UploadFileInfo, SrcUploadCreator
   include_package 'gov.vha.isaac.ochre.api.util' #WorkExecutors, #NamedThreadFactory
   include_package 'gov.vha.isaac.ochre.pombuilder' #GitPublish
+
+  def self.fetch_result(task:)
+    result = :uninitialized
+    JIsaacLibrary::WorkExecutors.get().getExecutor().execute(
+        -> do
+          begin
+            result = task.get
+            if (result.kind_of? java.lang.Exception)
+              $log.error("Task.get tossed an exception! #{result}")
+              $log.error(result.backtrace.join("\n"))
+            else
+              $log.info("The result from task.get is #{result}")
+            end
+          rescue => ex
+            $log.error("Safe execute failed #{ex}")
+            $log.error(ex.backtrace.join("\n"))
+            result = ex.message if result.eql? :uninitialized
+          end
+        end
+    )
+    while (result.eql?(:uninitialized))
+      sleep 1
+    end
+    $log.info("Returning a result of #{result}")
+    return result
+  end
+
   #invoke as follows:
   #ibdf_file_to_j_a(["org.foo","loinc","5.0"],["org.foo","loinc","3.0","some_classifier"],...)
   #JIsaacLibrary::ibdf_file_to_j_a(["org.foo","loinc","5.0"],["org.foo","loinc","3.0","some_classifier"])
@@ -191,29 +218,9 @@ module IsaacUploader
     JIsaacLibrary::WorkExecutors.get().getExecutor().execute(task)
   end
 
+  #convenience method
   def self.fetch_result(task:)
-    result = :uninitialized
-    JIsaacLibrary::WorkExecutors.get().getExecutor().execute(
-        -> do
-          begin
-            result = task.get
-            if (result.kind_of? java.lang.Exception)
-              $log.error("Task.get tossed an exception! #{result}")
-              $log.error(result.backtrace.join("\n"))
-            else
-              $log.info("The result from task.get is #{result}")
-            end
-          rescue => ex
-            $log.error("Safe execute failed #{ex}")
-            $log.error(ex.backtrace.join("\n"))
-          end
-        end
-    )
-    while (result.eql?(:uninitialized))
-      sleep 1
-    end
-    $log.info("Returning a result of #{result}")
-    return result
+    JIsaacLibrary.fetch_result(task: task)
   end
 
   class UploadObserver

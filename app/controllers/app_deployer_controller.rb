@@ -87,6 +87,7 @@ class AppDeployerController < ApplicationController
     war_cookie_params[:prisme_notify_url] = non_proxy_url(path_string: log_event_path) << '.json' << '?security_token=' + security_token
     war_cookie_params[:war_group_id] = war_file.groupId
     war_cookie_params[:war_artifact_id] = war_file.artifactId
+    war_cookie_params[:war_uuid] = SecureRandom.uuid
     war_cookie_params[:war_version] = war_file.version
     war_cookie_params[:war_repo] = war_file.repo
     war_cookie_params[:war_classifier] = war_file.classifier unless war_file.classifier.empty?
