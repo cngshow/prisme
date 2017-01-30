@@ -2,19 +2,24 @@ class UuidProp < ActiveRecord::Base
   validates_uniqueness_of :uuid
   self.primary_key = 'uuid'
 
-  KOMET_NAME = :komet_name
-  LAST_EDITED_BY = :last_edited_by
-  LAST_READ_ON = :last_read_on
+  ISAAC_WAR_ID = 'WarId'
 
-  UUID_KEYS = [
-      KOMET_NAME,
-      LAST_EDITED_BY,
-      LAST_READ_ON,
-  ]
+  module Keys
+    KOMET_NAME = :komet_name
+    LAST_EDITED_BY = :last_edited_by
+    LAST_READ_ON = :last_read_on
+
+    ALL = [
+        KOMET_NAME,
+        LAST_EDITED_BY,
+        LAST_READ_ON,
+    ]
+  end
+
 
   def self.uuid(uuid:)
     prop = UuidProp.find_or_create_by(uuid: uuid)
-    prop.save_json_data!(key: LAST_READ_ON, value: Time.now.to_i)
+    prop.save_json_data!(key: Keys::LAST_READ_ON, value: Time.now.to_i)
     prop
   end
 
@@ -46,6 +51,13 @@ class UuidProp < ActiveRecord::Base
   end
 
   def valid(key)
-    raise ArgumentError.new("Please provide a valid UUID key. Valid keys are #{UUID_KEYS.inspect}.") unless UUID_KEYS.include?(key)
+    raise ArgumentError.new("Please provide a valid UUID key. Valid keys are #{Keys::ALL.inspect}.") unless Keys::ALL.include?(key)
   end
 end
+
+=begin
+load('./app/models/uuid_prop.rb')
+bo = UuidProp.uuid(uuid: 'bo')
+bo.save_json_data(key: UuidProp::Keys::KOMET_NAME, value: 'kma')
+bo.get(key: UuidProp::Keys::KOMET_NAME)
+=end
