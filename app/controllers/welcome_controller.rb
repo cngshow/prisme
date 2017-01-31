@@ -87,11 +87,12 @@ class WelcomeController < ApplicationController
         war_uuid = tomcat_deployments[appserver][war][:war_id]
         current_row[:available] = true
         next if [:available, :failed].include?(war)#todo comment wtf is happening here.  This line in tomcat concern might help :  ret_hash = {available: true}
-        hash = {war_uuid: war_uuid}
+        hash = {war_uuid: war_uuid, uuid_name: uuid_name(uuid: war_uuid)}
 
         if war =~ /komet/
           isaac_war_uuid = d[:isaac][:war_id] if d[:isaac]
           hash[:isaac_war_uuid] = isaac_war_uuid
+          hash[:isaac_war_name] = uuid_name(uuid: isaac_war_uuid)
         end
 
         if is_admin_user || war =~ /komet/
@@ -107,9 +108,10 @@ class WelcomeController < ApplicationController
     ret
   end
 
+  private
   def uuid_name(uuid:)
     return '' unless uuid
     prop = UuidProp.uuid(uuid: uuid)
-    prop.get(key: UuidProp::Keys::NAME) ||= ''
+    prop.get(key: UuidProp::Keys::NAME).to_s
   end
 end
