@@ -31,8 +31,8 @@
                 <span class="<%= row[:state].eql?('running') ? 'btn btn-primary' : 'not-running' %>"><%= row[:war_name] %></span>
               </td>
               <td>
-                <% if row[:war_uuid] %>
-                    <% if row[:uuid_name] %>
+                <% unless row[:war_uuid].to_s.empty? %>
+                    <% unless row[:uuid_name].to_s.empty? %>
                         <% if row[:isaac_war_uuid] %>
                             <%= row[:uuid_name] %> --> <%= row[:isaac_war_name] %>
                         <% else %>
