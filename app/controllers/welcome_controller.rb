@@ -110,7 +110,7 @@ class WelcomeController < ApplicationController
 
   private
   def uuid_name(uuid:)
-    return '' unless uuid
+    return '' if uuid.to_s.empty?
     prop = UuidProp.uuid(uuid: uuid)
     prop.get(key: UuidProp::Keys::NAME).to_s
   end

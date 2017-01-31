@@ -33,14 +33,14 @@
               <td>
                 <% unless row[:war_uuid].to_s.empty? %>
                     <% unless row[:uuid_name].to_s.empty? %>
-                        <% if row[:isaac_war_uuid] %>
+                        <% if row[:isaac_war_uuid] && row[:isaac_war_name] %>
                             <%= row[:uuid_name] %> --> <%= row[:isaac_war_name] %>
                         <% else %>
                             <%= row[:uuid_name] %>
                         <% end %>
-                        <button class="btn btn-default btn-sm" style="float: right" id="<%= row[:war_uuid] %>" onclick="greg(this)">Rename</button>
+                        <button class="btn btn-default btn-sm" style="float: right" id="<%= row[:war_uuid] %>" data-uuid_name="<%= row[:uuid_name] %>" onclick="greg(this)">Rename</button>
                     <% else %>
-                        <button class="btn btn-default btn-sm" style="float: right" id="<%= row[:war_uuid] %>" onclick="greg(this)">Name</button>
+                        <button class="btn btn-default btn-sm" style="float: right" id="<%= row[:war_uuid] %>" data-uuid_name="<%= row[:uuid_name] %>" onclick="greg(this)">Set Name</button>
                     <% end %>
                 <% else %>
                     N/A
@@ -48,9 +48,6 @@
               </td>
               <td>
                 <%= row[:version] %>
-                <%#= row[:war_uuid] %><%#= row[:uuid_name] %>
-                <%#= "isaac uuid = #{row[:isaac_war_uuid]}" if row[:isaac_war_uuid]%>
-                <%#= "isaac name = #{row[:isaac_war_name]}" if row[:isaac_war_name]%>
                 <% if row[:isaac] && !row[:version].eql?('UNKNOWN') %>
                     <div class="prismetooltip" style="float: left">
                       <span class="fa fa-info-circle">&nbsp;&nbsp;</span>
@@ -103,10 +100,18 @@
 
 <script type="text/javascript" charset="utf-8">
     function greg(elem) {
+//        turn off polling
         input = $('#war_name');
-        input.val('greg');
         input.data('uuid', elem.id);
-        $('#warNameModal').modal('toggle');
+        input.val($(elem).data('uuid_name'));
+        $('#warNameModal').modal('show');
+        input.focus();
 //        alert(elem.id);
     }
+    $(document).ready(function () {
+        $("#warNameModal").on("hidden.bs.modal", function () {
+            // put your default event here
+            console.log("closing......");
+        });
+    });
 </script>

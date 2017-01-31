@@ -1,0 +1,8 @@
+<%= locals.inspect %>
+<% if locals['uuid'] %>
+    <% key = locals['uuid_prop_key']
+       name = UuidProp.uuid(uuid: locals['uuid']).get(key: key) %>
+    <span id="<%= locals['uuid'] %>" class="uuid_prop_name" data-uuid_prop_key="<%= key %>">
+    <%= name %>
+  </span>
+<% end %>
