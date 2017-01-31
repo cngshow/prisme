@@ -144,7 +144,7 @@ module TomcatConcern
     version_hash[:isaac] = {}
     if war =~ /^isaac/
       version_hash[:version] = json['apiImplementationVersion'].to_s unless json['apiImplementationVersion'].to_s.empty?
-      version_hash[:war_id] = 'isaac_id' + json[UuidProp::ISAAC_WAR_ID].to_s unless json[UuidProp::ISAAC_WAR_ID].to_s.empty?
+      version_hash[:war_id] = 'isaac_id' # json[UuidProp::ISAAC_WAR_ID].to_s unless json[UuidProp::ISAAC_WAR_ID].to_s.empty?
       version_hash[:isaac][:database] = json['isaacDbDependency']
       version_hash[:isaac][:database_dependencies] = json['dbDependencies']
     else

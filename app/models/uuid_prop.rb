@@ -6,12 +6,12 @@ class UuidProp < ActiveRecord::Base
   KOMET_WAR_ID = 'war_uuid'
 
   module Keys
-    KOMET_NAME = :komet_name
+    NAME = :name
     LAST_EDITED_BY = :last_edited_by
     LAST_READ_ON = :last_read_on
 
     ALL = [
-        KOMET_NAME,
+        NAME,
         LAST_EDITED_BY,
         LAST_READ_ON,
     ]

@@ -75,7 +75,7 @@ class WelcomeController < ApplicationController
   private
   def format_deployments_table_data(tomcat_deployments)
     is_admin_user = auth_admin?
-
+    $log.error("#{tomcat_deployments.inspect}")
     ret = []
     tomcat_deployments.keys.each do |appserver|
       service_name = appserver[:service_name]
@@ -84,12 +84,19 @@ class WelcomeController < ApplicationController
 
       # get all of the applications deployed at this app server location
       tomcat_deployments[appserver].each_pair do |war, d|
+        war_uuid = tomcat_deployments[appserver][war][:war_id]
         current_row[:available] = true
         next if [:available, :failed].include?(war)#todo comment wtf is happening here.  This line in tomcat concern might help :  ret_hash = {available: true}
+        hash = {war_uuid: war_uuid}
+
+        if war =~ /komet/
+          isaac_war_uuid = d[:isaac][:war_id] if d[:isaac]
+          hash[:isaac_war_uuid] = isaac_war_uuid
+        end
 
         if is_admin_user || war =~ /komet/
           link = ssoi? ? URI(d[:link]).proxify.to_s : d[:link]
-          hash = {war_name: war, state: d[:state], version: d[:version], session_count: d[:session_count].to_s, link: link}
+          hash.merge!({war_name: war, state: d[:state], version: d[:version], session_count: d[:session_count].to_s, link: link})
           hash[:isaac] = d[:isaac] if d[:isaac]
           hash[:komets_isaac_version] = d[:komets_isaac_version] if d[:komets_isaac_version]
           current_row[:rows] << hash
@@ -98,5 +105,11 @@ class WelcomeController < ApplicationController
       ret << current_row
     end
     ret
+  end
+
+  def uuid_name(uuid:)
+    return '' unless uuid
+    prop = UuidProp.uuid(uuid: uuid)
+    prop.get(key: UuidProp::Keys::NAME) ||= ''
   end
 end

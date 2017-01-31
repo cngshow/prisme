@@ -29,7 +29,11 @@
               <td<%= raw(row[:state].eql?('running') ? " data-href='#{row[:link]}'" : '') %>>
                 <span class="<%= row[:state].eql?('running') ? 'btn btn-primary' : 'not-running' %>"><%= row[:war_name] %></span>
               </td>
-              <td><%= row[:version] %>
+              <td>
+                <%#= render 'uuid_prop', locals: {'uuid' => row[:uuid], 'uuid_prop_key' => row[:uuid_prop_key]} %>
+                <%= row[:version] %><br>
+                uuid=<%= row[:war_uuid] %>
+                <%= "isaac uuid = #{row[:isaac_war_uuid]}" if row[:isaac_war_uuid]%>
                 <% if row[:isaac] && !row[:version].eql?('UNKNOWN') %>
                     <div class="prismetooltip" style="float: left">
                       <span class="fa fa-info-circle">&nbsp;&nbsp;</span>
