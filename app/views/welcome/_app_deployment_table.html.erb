@@ -32,14 +32,16 @@
               </td>
               <td>
                 <% if row[:war_uuid] %>
-                    <% if row[:isaac_war_uuid] %>
-                        <%= row[:uuid_name] %> --> <%= row[:isaac_war_name] %>
+                    <% if row[:uuid_name] %>
+                        <% if row[:isaac_war_uuid] %>
+                            <%= row[:uuid_name] %> --> <%= row[:isaac_war_name] %>
+                        <% else %>
+                            <%= row[:uuid_name] %>
+                        <% end %>
+                        <button class="btn btn-default btn-sm" style="float: right" id="<%= row[:war_uuid] %>" onclick="greg(this)">Rename</button>
                     <% else %>
-                        <%= row[:uuid_name] %>
+                        <button class="btn btn-default btn-sm" style="float: right" id="<%= row[:war_uuid] %>" onclick="greg(this)">Name</button>
                     <% end %>
-                    <!--<a id="SERVICE_ID-undeploy-DEPLOYMENT_ID" class="btn btn-default" role="button" onclick="tomcat_app(this, SERVICE_ID, 'undeploy', 'DEPLOYMENT');"><i class="fa fa-trash-o fa-fw" aria-hidden="true"></i>&nbsp;Undeploy</a>-->
-
-                    <button class="btn btn-default btn-sm" style="float: right" id="<%= row[:war_uuid] %>" onclick="greg(this)">Rename</button>
                 <% else %>
                     N/A
                 <% end %>
