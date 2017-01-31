@@ -40,6 +40,15 @@ class UuidProp < ActiveRecord::Base
 
   end
 
+  def save_json_hash(**hash)
+    update_json_hash(hash)
+    save
+  end
+
+  def save_json_hash!(**hash)
+    update_json_hash(hash)
+    save!
+  end
 
   def save_json_data(key:, value:)
     update_json(key, value)
@@ -64,6 +73,13 @@ class UuidProp < ActiveRecord::Base
     self.json_data = h.to_json
   end
 
+  def update_json_hash(**hash)
+    hash.keys.each do |k| valid(k) end
+    h = uuid_json_data
+    h.merge!(hash)
+    self.json_data = h.to_json
+  end
+
   def uuid_json_data
     HashWithIndifferentAccess.new(JSON.parse(json_data)) rescue HashWithIndifferentAccess.new
   end
@@ -76,6 +92,9 @@ end
 =begin
 load('./app/models/uuid_prop.rb')
 bo = UuidProp.uuid(uuid: 'bo')
-bo.save_json_data(key: UuidProp::Keys::KOMET_NAME, value: 'kma')
-bo.get(key: UuidProp::Keys::KOMET_NAME)
+bo.save_json_data(key: UuidProp::Keys::NAME, value: 'kma')
+bo.get(key: UuidProp::Keys::NAME)
+
+ma =  UuidProp.uuid(uuid: 'ma')
+ma.save_json_hash(UuidProp::Keys::NAME => 'kool_aid', UuidProp::Keys::LAST_EDITED_BY => 'Cris')
 =end
