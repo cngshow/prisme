@@ -7,11 +7,13 @@ class UuidProp < ActiveRecord::Base
 
   module Keys
     NAME = :name
+    DESCRIPTION = :description
     LAST_EDITED_BY = :last_edited_by
     LAST_READ_ON = :last_read_on
 
     ALL = [
         NAME,
+        DESCRIPTION,
         LAST_EDITED_BY,
         LAST_READ_ON,
     ]
@@ -97,4 +99,11 @@ bo.get(key: UuidProp::Keys::NAME)
 
 ma =  UuidProp.uuid(uuid: 'ma')
 ma.save_json_hash(UuidProp::Keys::NAME => 'kool_aid', UuidProp::Keys::LAST_EDITED_BY => 'Cris')
+
+UuidProp.destroy_all
+
+
+a = UuidProp.all.to_a
+a.first.save_json_data(key: UuidProp::Keys::NAME, value: 'I love ponies')
+a.last.save_json_data(key: UuidProp::Keys::NAME, value: 'I want pizza')
 =end

@@ -63,8 +63,10 @@ class AppDeployerController < ApplicationController
       end
     end
     tomcat_ar = Service.find_by(id: tomcat_id)
-    application = params['application']
-    war_param = application.eql?('KOMET') ? params['komet_war'] : params['isaac_war']
+    application_type = params[:application]
+    application_name = params[:application_name]
+    application_description = params[:application_description]
+    war_param = application_type.eql?('KOMET') ? params['komet_war'] : params['isaac_war']
     war_file = NexusArtifactSelectOption.init_from_select_key(war_param)
     war_name = war_file.select_value
     war_cookie_params = {}
@@ -88,6 +90,7 @@ class AppDeployerController < ApplicationController
     war_cookie_params[:war_group_id] = war_file.groupId
     war_cookie_params[:war_artifact_id] = war_file.artifactId
     war_cookie_params[:war_uuid] = SecureRandom.uuid
+    name_war(war_cookie_params[:war_uuid],application_name, application_description)
     war_cookie_params[:war_version] = war_file.version
     war_cookie_params[:war_repo] = war_file.repo
     war_cookie_params[:war_classifier] = war_file.classifier unless war_file.classifier.empty?
@@ -142,6 +145,19 @@ class AppDeployerController < ApplicationController
   end
 
   private
+
+  def name_war(uuid, name, description)
+    uuid_active_record = UuidProp.uuid(uuid: uuid)
+    begin
+      uuid_active_record.save_json_hash!(UuidProp::Keys::NAME => name, UuidProp::Keys::DESCRIPTION => description, UuidProp::Keys::LAST_EDITED_BY => prisme_user.user_name)
+    rescue => ex
+      $log.warn("The name war failed for uuid #{uuid}")
+      $log.warn("The name would have been #{name}")
+      $log.warn("The deploy will continue, the user will have to name from the home screen...")
+      $log.warn(ex.message)
+      $log.warn(ex.backtrace.join("\n"))
+    end
+  end
 
   def leaf_data(row)
     ret_data = {}
