@@ -99,6 +99,7 @@ module TomcatConcern
         ret_hash[war][:version] = version_hash[:version]
         ret_hash[war][:isaac] = version_hash[:isaac] if version_hash[:isaac]
         ret_hash[war][:komets_isaac_version] = version_hash[:isaac][:isaac_version] if (version_hash[:isaac] && version_hash[:isaac][:isaac_version])
+        ret_hash[war][:war_id] = version_hash[:war_id]
       end
 
       if ret_hash.empty?
@@ -143,11 +144,14 @@ module TomcatConcern
     version_hash[:isaac] = {}
     if war =~ /^isaac/
       version_hash[:version] = json['apiImplementationVersion'].to_s unless json['apiImplementationVersion'].to_s.empty?
+      version_hash[:war_id] = json[UuidProp::ISAAC_WAR_ID].to_s unless json[UuidProp::ISAAC_WAR_ID].to_s.empty?
       version_hash[:isaac][:database] = json['isaacDbDependency']
       version_hash[:isaac][:database_dependencies] = json['dbDependencies']
     else
       version_hash[:version] = json['version'].to_s
+      version_hash[:war_id] = json[UuidProp::KOMET_WAR_ID].to_s unless json[UuidProp::KOMET_WAR_ID].to_s.empty?
       version_hash[:isaac][:isaac_version] = json['isaac_version']['apiImplementationVersion'].to_s rescue "unknown isaac version"
+      version_hash[:isaac][:war_id] = json['isaac_version'][UuidProp::ISAAC_WAR_ID].to_s rescue nil
       version_hash[:isaac][:database] = json['isaac_version']['isaacDbDependency'] rescue nil
       version_hash[:isaac][:database_dependencies] = json['isaac_version']['dbDependencies'] rescue nil
     end
@@ -182,7 +186,7 @@ module TomcatConcern
             d.last[:link] = link
           end
         end
-        $log.debug("Tomcat deployment data_hash is #{data_hash.inspect}")
+        $log.trace("Tomcat deployment data_hash is #{data_hash.inspect}")
         tomcat_deployments[{url: url, service_name: tomcat.name, service_desc: tomcat.description, service_id: tomcat.id}] = data_hash
       end
     end

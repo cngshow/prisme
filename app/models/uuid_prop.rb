@@ -2,7 +2,8 @@ class UuidProp < ActiveRecord::Base
   validates_uniqueness_of :uuid
   self.primary_key = 'uuid'
 
-  ISAAC_WAR_ID = 'WarId'
+  ISAAC_WAR_ID = 'warId'
+  KOMET_WAR_ID = 'war_uuid'
 
   module Keys
     KOMET_NAME = :komet_name
@@ -16,12 +17,29 @@ class UuidProp < ActiveRecord::Base
     ]
   end
 
+  class << self
+    #put class methods here...
+    def cleanup(older_than_in_days = 90)
+      begin
+        older_than_in_days = older_than_in_days.days.ago
+        $log.info("Cleaning up all records in uuid prop table older than #{older_than_in_days}.")
+        cnt = UuidProp.where('updated_at < ?', *[older_than_in_days]).delete_all
+        $log.info("#{cnt} uuid props deleted.")
+      rescue => ex
+        $log.warn("Cleanup in uuid prop table failed. #{ex}")
+        $log.warn(ex.backtrace.join("\n"))
+      end
+      cnt
+    end
 
-  def self.uuid(uuid:)
-    prop = UuidProp.find_or_create_by(uuid: uuid)
-    prop.save_json_data!(key: Keys::LAST_READ_ON, value: Time.now.to_i)
-    prop
+    def uuid(uuid:)
+      prop = UuidProp.find_or_create_by(uuid: uuid)
+      prop.save_json_data!(key: Keys::LAST_READ_ON, value: Time.now.to_i)
+      prop
+    end
+
   end
+
 
   def save_json_data(key:, value:)
     update_json(key, value)
@@ -51,7 +69,7 @@ class UuidProp < ActiveRecord::Base
   end
 
   def valid(key)
-    raise ArgumentError.new("Please provide a valid UUID key. Valid keys are #{Keys::ALL.inspect}.") unless Keys::ALL.include?(key)
+    raise ArgumentError.new("Please provide a valid UUID key. Valid keys are #{Keys::ALL.inspect}.") unless Keys::ALL.include?(key.to_sym)
   end
 end
 

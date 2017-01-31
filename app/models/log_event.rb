@@ -13,7 +13,7 @@ class LogEvent < ActiveRecord::Base
   def self.cleanup(older_than_in_days = 90)
     begin
       older_than_in_days = older_than_in_days.days.ago
-      $log.info("Cleaning up all records in log event table older than #{older_than_in_days} days.")
+      $log.info("Cleaning up all records in log event table older than #{older_than_in_days}.")
       cnt = LogEvent.where('created_at < ?', *[older_than_in_days]).delete_all
       $log.info("#{cnt} log events deleted.")
     rescue => ex

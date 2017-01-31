@@ -85,7 +85,7 @@ class WelcomeController < ApplicationController
       # get all of the applications deployed at this app server location
       tomcat_deployments[appserver].each_pair do |war, d|
         current_row[:available] = true
-        next if [:available, :failed].include?(war)
+        next if [:available, :failed].include?(war)#todo comment wtf is happening here.  This line in tomcat concern might help :  ret_hash = {available: true}
 
         if is_admin_user || war =~ /komet/
           link = ssoi? ? URI(d[:link]).proxify.to_s : d[:link]

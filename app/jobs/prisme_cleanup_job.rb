@@ -5,7 +5,8 @@ class PrismeCleanupJob < PrismeBaseJob
   end
 
   def perform(*args)
-    LogEvent.cleanup($PROPS['PRISME.log_event_trim_trim'].to_i)
+    LogEvent.cleanup($PROPS['PRISME.log_event_trim'].to_i)
+    UuidProp.cleanup($PROPS['PRISME.uuid_props_trim'].to_i)
     $log.info("cleaning #{self}")
     first_run = args.shift
     params = [$PROPS['PRISME.job_queue_trim'].to_i.days.ago,
