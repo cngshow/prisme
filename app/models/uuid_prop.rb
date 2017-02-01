@@ -36,9 +36,11 @@ class UuidProp < ActiveRecord::Base
     end
 
     def uuid(uuid:)
-      prop = UuidProp.find_or_create_by(uuid: uuid)
-      prop.save_json_data!(key: Keys::LAST_READ_ON, value: Time.now.to_i)
-      prop
+      if uuid
+        prop = UuidProp.find_or_create_by(uuid: uuid)
+        prop.save_json_data!(key: Keys::LAST_READ_ON, value: Time.now.to_i)
+        prop
+      end
     end
 
   end
@@ -77,7 +79,9 @@ class UuidProp < ActiveRecord::Base
   end
 
   def update_json_hash(**hash)
-    hash.keys.each do |k| valid(k) end
+    hash.keys.each do |k|
+      valid(k)
+    end
     h = uuid_json_data
     h.merge!(hash)
     self.json_data = h.to_json
