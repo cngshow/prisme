@@ -45,6 +45,23 @@ class WelcomeController < ApplicationController
     render json: json
   end
 
+  def rename_war
+    ret = {status: 'failure'}
+=begin
+
+    uuid = params[:uuid]
+    war_name = params[:war_name]
+    prop = UuidProp.uuid(uuid: uuid)
+
+    if prop
+      prop.save_json_data!(key: UuidProp::Keys::NAME, value: war_name)
+      ret = prop.as_json
+    end
+=end
+
+    render json: ret
+  end
+
   def reload_log_events
     row_limit = (params['row_limit'] ||= 15).to_i
     results_fatal = []
@@ -86,7 +103,7 @@ class WelcomeController < ApplicationController
       tomcat_deployments[appserver].each_pair do |war, d|
         war_uuid = tomcat_deployments[appserver][war][:war_id]
         current_row[:available] = true
-        next if [:available, :failed].include?(war)#todo comment wtf is happening here.  This line in tomcat concern might help :  ret_hash = {available: true}
+        next if [:available, :failed].include?(war) #todo comment wtf is happening here.  This line in tomcat concern might help :  ret_hash = {available: true}
         hash = {war_uuid: war_uuid, uuid_name: uuid_name(uuid: war_uuid)}
 
         if war =~ /komet/

@@ -16,6 +16,7 @@ Rails.application.routes.draw do
   # javascript timer checking user session timeout
   get 'welcome/session_timeout', as: :session_timeout
   get 'welcome/renew_session', as: :renew_session, :constraints => OnlyAjaxRequest.new
+  get 'welcome/rename_war', as: :rename_war, :constraints => OnlyAjaxRequest.new
 
   get 'utilities/warmup'
   get 'utilities/seed_services'

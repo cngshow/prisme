@@ -4,6 +4,7 @@
     background: none;
     border-width: 0px;
   }
+
   #tabs-nohdr .ui-tabs-nav {
     padding-left: 0px;
     background: transparent;
@@ -12,6 +13,7 @@
     -webkit-border-radius: 0px;
     border-radius: 0px;
   }
+
   #tabs-nohdr .ui-tabs-panel {
     background: #dcedf5;
     border-width: 0px 1px 1px 1px;
@@ -24,7 +26,7 @@
     <li><a href='#tp-deployments'>Deployments</a></li>
     <li><a href='#tp-job_queue'>Job Queue</a></li>
     <% if policy(:navigation).admin? && 'true'.eql?($PROPS['PRISME.show_log_events']) %>
-      <li><a href='#tp-log_events' class="log-events-link">Log Events</a></li>
+        <li><a href='#tp-log_events' class="log-events-link">Log Events</a></li>
     <% end %>
   </ul>
   <div id="tp-deployments">
@@ -34,53 +36,57 @@
     <%= render partial: 'job_queue' %>
   </div>
   <% if policy(:navigation).admin? && 'true'.eql?($PROPS['PRISME.show_log_events']) %>
-    <div id="tp-log_events">
+      <div id="tp-log_events">
         <%= render partial: 'log_events' %>
       </div>
   <% end %>
 </div>
 
 <script>
-  function deployments_poll() {
-    console.log('polling deployments...');
-    $.get('<%= welcome_reload_deployments_path %>', {}, function (data) {
-      $('#tp-deployments').html(data);
-    });
-  }
+    var awaiting_poll_results = false;
 
-  function tomcat_app(elem, tomcat_service_id, action, app) {
-    var btn = '#' + elem.id + ' > i';
-    if ($(btn).hasClass('processing')) {
-      console.log('stop clicking on the ' + action + ' button!!!!');
-      return false;
+    function deployments_poll() {
+        console.log('polling deployments...');
+        awaiting_poll_results = true;
+        $.get('<%= welcome_reload_deployments_path %>', {}, function (data) {
+            $('#tp-deployments').html(data);
+            awaiting_poll_results = false;
+        });
     }
 
-    // change the icon to the spinner and make the ajax call
-    $(btn).removeClass();
-    $(btn).addClass('fa fa-cog fa-spin fa-fw');
+    function tomcat_app(elem, tomcat_service_id, action, app) {
+        var btn = '#' + elem.id + ' > i';
+        if ($(btn).hasClass('processing')) {
+            console.log('stop clicking on the ' + action + ' button!!!!');
+            return false;
+        }
 
-    //find all buttons in the div to add the prisme_processing class to so that the user cannot, for example, start and undeploy the app at the same time
-    var clean_id = 'div#' + tomcat_service_id.toString() + '-' + app.split('.').join('_') + ', i';
-    $(clean_id).addClass('processing');
+        // change the icon to the spinner and make the ajax call
+        $(btn).removeClass();
+        $(btn).addClass('fa fa-cog fa-spin fa-fw');
 
-    $.ajax({
-      url: gon.routes.welcome_tomcat_app_action_path,
-      type: 'GET',
-      data: {tomcat_service_id: tomcat_service_id, tomcat_action: action, tomcat_app: app},
-      success: function (data) {
-        $("#tp-deployments").html(data);
-      }
+        //find all buttons in the div to add the prisme_processing class to so that the user cannot, for example, start and undeploy the app at the same time
+        var clean_id = 'div#' + tomcat_service_id.toString() + '-' + app.split('.').join('_') + ', i';
+        $(clean_id).addClass('processing');
+
+        $.ajax({
+            url: gon.routes.welcome_tomcat_app_action_path,
+            type: 'GET',
+            data: {tomcat_service_id: tomcat_service_id, tomcat_action: action, tomcat_app: app},
+            success: function (data) {
+                $("#tp-deployments").html(data);
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        $("#tabs").tabs();
+        <% if session[:select_tabpage] %>
+        $("#tabs").tabs("option", "active", <%= session[:select_tabpage] %>);
+        <% session.delete(:select_tabpage) %>
+        <% end %>
+
+        //register for polling
+        polling.registerPolling(polling.pollEnum.WELCOME_DEPLOYMENTS, deployments_poll, 30000);
     });
-  }
-
-  $(document).ready(function () {
-    $("#tabs").tabs();
-    <% if session[:select_tabpage] %>
-      $("#tabs").tabs("option", "active", <%= session[:select_tabpage] %>);
-      <% session.delete(:select_tabpage) %>
-    <% end %>
-
-    //register for polling
-    polling.registerPolling(polling.pollEnum.WELCOME_DEPLOYMENTS, deployments_poll, 30000);
-  });
 </script>
