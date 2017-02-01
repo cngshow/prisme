@@ -16,7 +16,7 @@ class UuidProp < ActiveRecord::Base
         DESCRIPTION,
         LAST_EDITED_BY,
         LAST_READ_ON,
-    ]
+    ].freeze
   end
 
   class << self
