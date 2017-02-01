@@ -47,18 +47,13 @@ class WelcomeController < ApplicationController
 
   def rename_war
     ret = {status: 'failure'}
-=begin
-
     uuid = params[:uuid]
     war_name = params[:war_name]
+    war_descr = params[:war_description] #war_description
     prop = UuidProp.uuid(uuid: uuid)
-
     if prop
-      prop.save_json_data!(key: UuidProp::Keys::NAME, value: war_name)
-      ret = prop.as_json
+      ret = {status: 'success'} if prop.save_json_hash(UuidProp::Keys::NAME => war_name, UuidProp::Keys::DESCRIPTION => war_descr)
     end
-=end
-
     render json: ret
   end
 
@@ -92,7 +87,6 @@ class WelcomeController < ApplicationController
   private
   def format_deployments_table_data(tomcat_deployments)
     is_admin_user = auth_admin?
-    $log.error("#{tomcat_deployments.inspect}")
     ret = []
     tomcat_deployments.keys.each do |appserver|
       service_name = appserver[:service_name]
@@ -104,7 +98,7 @@ class WelcomeController < ApplicationController
         war_uuid = tomcat_deployments[appserver][war][:war_id]
         current_row[:available] = true
         next if [:available, :failed].include?(war) #todo comment wtf is happening here.  This line in tomcat concern might help :  ret_hash = {available: true}
-        hash = {war_uuid: war_uuid, uuid_name: uuid_name(uuid: war_uuid)}
+        hash = {war_uuid: war_uuid}.merge(uuid_hash(uuid: war_uuid))
 
         if war =~ /komet/
           isaac_war_uuid = d[:isaac][:war_id] if d[:isaac]
@@ -117,7 +111,7 @@ class WelcomeController < ApplicationController
           hash.merge!({war_name: war, state: d[:state], version: d[:version], session_count: d[:session_count].to_s, link: link})
           hash[:isaac] = d[:isaac] if d[:isaac]
           hash[:komets_isaac_version] = d[:komets_isaac_version] if d[:komets_isaac_version]
-          current_row[:rows] << hash
+          current_row[:rows] << HashWithIndifferentAccess.new(hash)
         end
       end
       ret << current_row
@@ -126,9 +120,20 @@ class WelcomeController < ApplicationController
   end
 
   private
+
   def uuid_name(uuid:)
     return '' if uuid.to_s.empty?
     prop = UuidProp.uuid(uuid: uuid)
     prop.get(key: UuidProp::Keys::NAME).to_s
+  end
+
+  def uuid_hash(uuid:)
+    return {} if uuid.to_s.empty?
+    record = UuidProp.uuid(uuid: uuid)
+    h = HashWithIndifferentAccess.new
+    UuidProp::Keys::ALL.each do |k|
+      h[k] = record.get(key: k)
+    end
+    h
   end
 end

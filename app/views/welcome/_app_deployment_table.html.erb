@@ -30,17 +30,17 @@
               <td <%= raw(row[:state].eql?('running') ? " data-href='#{row[:link]}'" : '') %>>
                 <span class="<%= row[:state].eql?('running') ? 'btn btn-primary' : 'not-running' %>"><%= row[:war_name] %></span>
               </td>
-              <td>
+              <td title="<%=row[UuidProp::Keys::DESCRIPTION].to_s%>">
                 <% unless row[:war_uuid].to_s.empty? %>
-                    <% unless row[:uuid_name].to_s.empty? %>
+                    <% unless row[UuidProp::Keys::NAME].to_s.empty? %>
                         <% if row[:isaac_war_uuid] && row[:isaac_war_name] %>
-                            <%= row[:uuid_name] %> --> <%= row[:isaac_war_name] %>
+                            <%= row[UuidProp::Keys::NAME] %> <span>&#8594;</span> <%= row[:isaac_war_name] %>
                         <% else %>
-                            <%= row[:uuid_name] %>
+                            <%= row[UuidProp::Keys::NAME] %>
                         <% end %>
-                        <button class="btn btn-default btn-sm" style="float: right" id="<%= row[:war_uuid] %>" data-uuid_name="<%= row[:uuid_name] %>" onclick="renameDeployment(this)">Rename</button>
+                        <button class="btn btn-default btn-sm" style="float: right" id="<%= row[:war_uuid] %>" data-uuid_name="<%=row[UuidProp::Keys::NAME] %>" data-uuid_description="<%= row[UuidProp::Keys::DESCRIPTION] %>" onclick="renameDeployment(this)">Rename</button>
                     <% else %>
-                        <button class="btn btn-default btn-sm" style="float: right" id="<%= row[:war_uuid] %>" data-uuid_name="<%= row[:uuid_name] %>" onclick="renameDeployment(this)">Set Name</button>
+                        <button class="btn btn-default btn-sm" style="float: right" id="<%= row[:war_uuid] %>" data-uuid_name="" data-uuid_description="" onclick="renameDeployment(this)">Set Name</button>
                     <% end %>
                 <% else %>
                     N/A
@@ -91,8 +91,13 @@
         <button type="button" class="btn btn-primary" id="btn_submit_form" onclick="submitRenameDeployment();">Rename Application</button>
       </div>
       <div class="modal-body" style="overflow:auto; max-height: 70vh;"><!-- style is for scrollable div -->
-        <label for="war_name">Application Name:</label>
-        <input type="text" name="war_name" id="war_name" size="500" required/>
+        <div id="application_name_desc" style="width: 500px">
+          <%= label_tag 'application_name', 'Application Name:' %><br>
+          <%= text_field_tag 'war_name', nil, id: 'war_name', placeholder: 'Enter an Application Name', maxlength: 45, size: 45, class: 'form-control', required: true %>
+          <br>
+          <%= label_tag 'war_description', 'Application Description:' %><br>
+          <%= text_area_tag 'war_description', nil, id: 'war_description',placeholder: 'Please describe this application deployment', size: '500x5', class: 'form-control' %>
+        </div>
       </div>
     </div>
   </div>
@@ -106,12 +111,10 @@
     function submitRenameDeployment() {
         var input = $('#war_name');
         var war_name = $.trim(input.val());
+        var war_description = $.trim($('#war_description').val());
 
         if (war_name.length > 0) {
-            $.getJSON(gon.routes.rename_war_path, {uuid: $(input).data('uuid'), war_name: war_name}, function () {
-                alert('returned from ajax');
-                // update the name for the row or let polling handle it?
-
+            $.getJSON(gon.routes.rename_war_path, {uuid: $(input).data('uuid'), war_name: war_name, war_description: war_description}, function () {
                 $('#warNameModal').modal('hide');
             });
         } else {
@@ -133,11 +136,13 @@
         polling.unregisterPolling(polling.pollEnum.WELCOME_DEPLOYMENTS);
 
         //set the war name and uuid into the text input and display the modal for editing
-        input = $('#war_name');
-        console.log("element id is " + elem.id);
-        input.data('uuid', elem.id);
-        input.val($(elem).data('uuid_name'));
+        var name_input = $('#war_name');
+        name_input.data('uuid', elem.id);
+        name_input.val($(elem).data('<%=UuidProp::Keys::NAME.to_s%>'));
+        var descr = $('#war_description');
+        descr.val($(elem).data('<%=UuidProp::Keys::DESCRIPTION.to_s%>'));
         $('#warNameModal').modal('show');
+
     }
 
     $(document).ready(function () {

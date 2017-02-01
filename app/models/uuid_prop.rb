@@ -1,15 +1,16 @@
 class UuidProp < ActiveRecord::Base
   validates_uniqueness_of :uuid
+  validates_presence_of :uuid
   self.primary_key = 'uuid'
 
   ISAAC_WAR_ID = 'warId'
   KOMET_WAR_ID = 'war_uuid'
 
   module Keys
-    NAME = :name
-    DESCRIPTION = :description
-    LAST_EDITED_BY = :last_edited_by
-    LAST_READ_ON = :last_read_on
+    NAME = :uuid_name
+    DESCRIPTION = :uuid_description
+    LAST_EDITED_BY = :uuid_last_edited_by
+    LAST_READ_ON = :uuid_last_read_on
 
     ALL = [
         NAME,
@@ -105,5 +106,8 @@ UuidProp.destroy_all
 
 a = UuidProp.all.to_a
 a.first.save_json_data(key: UuidProp::Keys::NAME, value: 'I love ponies')
+a.first.save_json_data(key: UuidProp::Keys::DESCRIPTION, value: 'I love Greg')
 a.last.save_json_data(key: UuidProp::Keys::NAME, value: 'I want pizza')
+a.last.save_json_data(key: UuidProp::Keys::DESCRIPTION, value: 'I want Cris')
+a.first.get(key: UuidProp::Keys::DESCRIPTION)
 =end
