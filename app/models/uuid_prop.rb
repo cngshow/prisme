@@ -42,7 +42,6 @@ class UuidProp < ActiveRecord::Base
         prop
       end
     end
-
   end
 
   def save_json_hash(**hash)
