@@ -17,7 +17,7 @@ Rails.application.routes.draw do
   get 'welcome/session_timeout', as: :session_timeout
   get 'welcome/renew_session', as: :renew_session, :constraints => OnlyAjaxRequest.new
   get 'welcome/rename_war', as: :rename_war, :constraints => OnlyAjaxRequest.new
-  get 'welcome/check_isaac_dependency', as: :check_isaac_dependency, :constraints => OnlyAjaxRequest.new
+  get 'welcome/check_isaac_dependency', as: :check_isaac_dependency
 
   get 'utilities/warmup'
   get 'utilities/seed_services'

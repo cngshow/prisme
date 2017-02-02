@@ -18,7 +18,7 @@ class WelcomeController < ApplicationController
     tomcat_service_id = params[:tomcat_service_id]
     tomcat_app = params[:tomcat_app]
     tomcat_action = params[:tomcat_action]
-
+    uuid = params[:war_uuid]
     # get the Service name for displaying in the flash
     service = Service.find(tomcat_service_id)
     service_name = service.name
@@ -28,16 +28,27 @@ class WelcomeController < ApplicationController
     flash_state = flash_state.strip
     flash_state << " on #{service_name}"
     flash_notify(message: flash_state)
+    foo = @change_state_succeded
+    if (@change_state_succeded)
+      $log.info("Updating the model for uuid #{uuid} to have state #{tomcat_action}") if uuid
+      UuidProp.uuid(uuid: uuid, state: tomcat_action)
+    end
     reload_deployments
   end
 
   def check_isaac_dependency
     war_uuid = params[:war_uuid]
-    return false unless war_uuid
-
+    unless war_uuid
+      render json: {dependency: false}
+      return
+    end
     prop = UuidProp.uuid(uuid: war_uuid)
     dependency = prop.running_dependency?
-    render json: {dependency: dependency}
+    if dependency #either false or a string containing the name of the dependent
+      render json: {dependency: true, name: dependency}
+    else
+      render json: {dependency: false, name: dependency}
+    end
   end
 
   def reload_job_queue_list

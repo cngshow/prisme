@@ -8,6 +8,7 @@ module TomcatConcern
   ISAAC_SYSTEM_INFO_PATH = '/rest/1/system/systemInfo'
   KOMET_VERSION_PATH = '/komet_dashboard/version?include_isaac=true'
   RUNNING_STATE = 'running'
+  STATE_CHANGE_SUCCEDED = 'OK'
 
   # change_state(url: "http://localhost:8080/",username: "devtest",pwd: "devtest", context: "rails_komet_b", path: 'start')
   def change_state(tomcat_service_id:, context:, action:)
@@ -31,9 +32,11 @@ module TomcatConcern
       return {failed: ex.message}
     rescue => ex
       [$log, $alog].each { |l| l.warn("Unexpected Exception: #{ex.message}")}
+      @change_state_succeded = false
       return {failed: ex.message}
     end
     $alog.always(prisme_user.user_name + " has a result of: #{response.body}")
+    @change_state_succeded = response.body.strip.start_with?(STATE_CHANGE_SUCCEDED)
     response.body
   end
 
