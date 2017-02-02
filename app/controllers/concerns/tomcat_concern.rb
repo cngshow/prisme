@@ -7,6 +7,7 @@ module TomcatConcern
   VALID_ACTIONS = [:start, :stop, :undeploy]
   ISAAC_SYSTEM_INFO_PATH = '/rest/1/system/systemInfo'
   KOMET_VERSION_PATH = '/komet_dashboard/version?include_isaac=true'
+  RUNNING_STATE = 'running'
 
   # change_state(url: "http://localhost:8080/",username: "devtest",pwd: "devtest", context: "rails_komet_b", path: 'start')
   def change_state(tomcat_service_id:, context:, action:)
