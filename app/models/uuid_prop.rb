@@ -48,7 +48,7 @@ class UuidProp < ActiveRecord::Base
 
   def running_dependency?
     UuidProp.all.each do |uuid_prop|
-      return uuid_prop.get(key: Keys::NAME) if ( (uuid_prop.get(key: Keys::DEPENDENT_UUID).eql?(uuid)) && uuid_prop.get(key: Keys::STATE).eql?('running'))
+      return uuid_prop.get(key: Keys::NAME) if ( (uuid_prop.get(key: Keys::DEPENDENT_UUID).eql?(uuid)) && uuid_prop.get(key: Keys::STATE).eql?(TomcatConcern::RUNNING_STATE))
     end
     return false
   end
