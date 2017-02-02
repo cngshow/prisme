@@ -72,7 +72,7 @@
               <td><%= row[:session_count] %></td>
               <% if policy(:navigation).admin? %>
                   <td>
-                    <%= action_button_bar(row, deployment[:service_id]) %>
+                    <%= action_button_bar(row, deployment[:service_id], row[:war_uuid]) %>
                   </td>
               <% end %>
             </tr>

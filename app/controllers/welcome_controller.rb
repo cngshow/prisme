@@ -31,6 +31,15 @@ class WelcomeController < ApplicationController
     reload_deployments
   end
 
+  def check_isaac_dependency
+    war_uuid = params[:war_uuid]
+    return false unless war_uuid
+
+    prop = UuidProp.uuid(uuid: war_uuid)
+    dependency = prop.running_dependency?
+    render json: {dependency: dependency}
+  end
+
   def reload_job_queue_list
     row_limit = params['row_limit'] ||= 15
     json = JSON.parse PrismeJob.job_name('PrismeCleanupJob', true).order(scheduled_at: :desc).limit(row_limit).to_json
