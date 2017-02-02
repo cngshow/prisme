@@ -10,14 +10,9 @@ class UuidProp < ActiveRecord::Base
     NAME = :uuid_name
     DESCRIPTION = :uuid_description
     LAST_EDITED_BY = :uuid_last_edited_by
-    LAST_READ_ON = :uuid_last_read_on
-
-    ALL = [
-        NAME,
-        DESCRIPTION,
-        LAST_EDITED_BY,
-        LAST_READ_ON,
-    ].freeze
+    DEPENDENT_UUID = :uuid_dependent
+    STATE = :uuid_state
+    TIME = :uuid_time
   end
 
   class << self
@@ -35,13 +30,27 @@ class UuidProp < ActiveRecord::Base
       cnt
     end
 
-    def uuid(uuid:)
+    def uuid(uuid:, dependent_uuid: nil, state: nil)
       if uuid
         prop = UuidProp.find_or_create_by(uuid: uuid)
-        prop.save_json_data!(key: Keys::LAST_READ_ON, value: Time.now.to_i)
+        last_certain_update = prop.get(key: Keys::TIME).to_i #converts nil to zero
+        now = Time.now.to_i
+        hash = {}
+        hash[Keys::TIME] = now if ((now - last_certain_update) > 1.day.seconds.to_i)
+        hash[Keys::DEPENDENT_UUID] = dependent_uuid if dependent_uuid
+        hash[Keys::STATE] = state if state
+        prop.save_json_hash!(hash)
         prop
       end
     end
+  end
+#UuidProp.uuid(uuid: cris).running_dependency?
+
+  def running_dependency?
+    UuidProp.all.each do |uuid_prop|
+      return uuid_prop.get(key: Keys::NAME) if ( (uuid_prop.get(key: Keys::DEPENDENT_UUID).eql?(uuid)) && uuid_prop.get(key: Keys::STATE).eql?('running'))
+    end
+    return false
   end
 
   def save_json_hash(**hash)
@@ -91,7 +100,8 @@ class UuidProp < ActiveRecord::Base
   end
 
   def valid(key)
-    raise ArgumentError.new("Please provide a valid UUID key. Valid keys are #{Keys::ALL.inspect}.") unless Keys::ALL.include?(key.to_sym)
+    valid_keys = Keys.constants.map do |e| Keys.const_get(e) end
+    raise ArgumentError.new("Please provide a valid UUID key. Valid keys are #{valid_keys}.") unless valid_keys.include?(key.to_sym)
   end
 end
 

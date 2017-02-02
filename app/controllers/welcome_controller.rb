@@ -131,8 +131,8 @@ class WelcomeController < ApplicationController
     return {} if uuid.to_s.empty?
     record = UuidProp.uuid(uuid: uuid)
     h = HashWithIndifferentAccess.new
-    UuidProp::Keys::ALL.each do |k|
-      h[k] = record.get(key: k)
+    UuidProp::Keys.constants.each do |k|
+      h[UuidProp::Keys.const_get(k)] = record.get(key: UuidProp::Keys.const_get(k))
     end
     h
   end

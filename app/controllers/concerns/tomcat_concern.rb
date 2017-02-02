@@ -95,7 +95,7 @@ module TomcatConcern
         ret_hash[war][:context] = vars[0]
         ret_hash[war][:state] = vars[1]
         ret_hash[war][:session_count] = vars[2]
-        version_hash = get_version_hash(war: war, context: vars[0], tomcat_service: tomcat_service)
+        version_hash = get_version_hash(war: war, context: vars[0], tomcat_service: tomcat_service, state: ret_hash[war][:state])
         ret_hash[war][:version] = version_hash[:version]
         ret_hash[war][:isaac] = version_hash[:isaac] if version_hash[:isaac]
         ret_hash[war][:komets_isaac_version] = version_hash[:isaac][:isaac_version] if (version_hash[:isaac] && version_hash[:isaac][:isaac_version])
@@ -114,7 +114,8 @@ module TomcatConcern
     end
   end
 
-  def get_version_hash(war:, context:, tomcat_service:)
+  def get_version_hash(war:, context:, tomcat_service:, state:)
+    $log.error("State is #{state}")
     conn = get_connection(service_or_id: tomcat_service)
     path = ''
     response = nil
@@ -147,11 +148,14 @@ module TomcatConcern
       version_hash[:war_id] = json[UuidProp::ISAAC_WAR_ID].to_s unless json[UuidProp::ISAAC_WAR_ID].to_s.empty?
       version_hash[:isaac][:database] = json['isaacDbDependency']
       version_hash[:isaac][:database_dependencies] = json['dbDependencies']
+      UuidProp.uuid(uuid: version_hash[:war_id], state: state)
     else
       version_hash[:version] = json['version'].to_s
       version_hash[:war_id] = json[UuidProp::KOMET_WAR_ID].to_s unless json[UuidProp::KOMET_WAR_ID].to_s.empty?
       version_hash[:isaac][:isaac_version] = json['isaac_version']['apiImplementationVersion'].to_s rescue "unknown isaac version"
       version_hash[:isaac][:war_id] = json['isaac_version'][UuidProp::ISAAC_WAR_ID].to_s rescue nil
+      #record my dependency
+      UuidProp.uuid(uuid: version_hash[:war_id], dependent_uuid: version_hash[:isaac][:war_id], state: state)
       version_hash[:isaac][:database] = json['isaac_version']['isaacDbDependency'] rescue nil
       version_hash[:isaac][:database_dependencies] = json['isaac_version']['dbDependencies'] rescue nil
     end
