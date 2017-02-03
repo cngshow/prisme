@@ -28,7 +28,6 @@ class WelcomeController < ApplicationController
     flash_state = flash_state.strip
     flash_state << " on #{service_name}"
     flash_notify(message: flash_state)
-    foo = @change_state_succeded
     if (@change_state_succeded)
       $log.info("Updating the model for uuid #{uuid} to have state #{tomcat_action}") if uuid
       UuidProp.uuid(uuid: uuid, state: tomcat_action)
@@ -115,9 +114,9 @@ class WelcomeController < ApplicationController
 
       # get all of the applications deployed at this app server location
       tomcat_deployments[appserver].each_pair do |war, d|
+        next if [:available, :failed].include?(war) #This line ensures we skip over Tomcats that have no applications installed or that aren't responding properly.  It must be first!
         war_uuid = tomcat_deployments[appserver][war][:war_id]
         current_row[:available] = true
-        next if [:available, :failed].include?(war) #todo comment wtf is happening here.  This line in tomcat concern might help :  ret_hash = {available: true}
         hash = {war_uuid: war_uuid}.merge(uuid_hash(uuid: war_uuid))
 
         if war =~ /komet/
