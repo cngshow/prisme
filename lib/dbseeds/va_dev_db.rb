@@ -28,7 +28,7 @@ module SeedData
       {
           service: {name: 'Jenkins Build Server', description: 'Jenkins Build Server', service_type: PrismeService::JENKINS},
           props: [
-              {key: PrismeService::JENKINS_ROOT, value: 'https://vadev.mantech.com:8081'},
+              {key: PrismeService::JENKINS_ROOT, value: 'https://vadev.mantech.com:8081/jenkins'},
               {key: PrismeService::JENKINS_USER, value: 'devtest'},
               {key: PrismeService::JENKINS_PWD, value: '["jK\x90\xA1\x1Fk\x87\xD7\xC3\xD8\xA8\x9A\x18\xD4fC"]'}
           ]
