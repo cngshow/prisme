@@ -71,7 +71,9 @@
             <%= field_set_tag 'Select the Tomcat Server to Host this Deployment' do %>
                 <div id="komet_app_server">
                   <%= label_tag 'tomcat_komet_app_server', 'Tomcat Server to Deploy to:' %><br>
-                  <%= select_tag 'tomcat_komet_app_server', options_from_collection_for_select(@tomcat_servers.map do |e| e[:tomcat_ar] end.uniq, 'select_key', 'select_value'), {:prompt => '--- Select the Tomcat Server  ---', required: true} %>
+                  <%= select_tag 'tomcat_komet_app_server', options_from_collection_for_select(@tomcat_servers.map do |e|
+                    e[:tomcat_ar]
+                  end.uniq, 'select_key', 'select_value'), {:prompt => '--- Select the Tomcat Server  ---', required: true} %>
                 </div>
                 <div id="isaac_app_server">
                   <%= label_tag 'tomcat_isaac_app_server', 'Tomcat Server / Context to Deploy to:' %><br>
@@ -89,6 +91,13 @@
                   <div id="summary_component" class="app_deployer"></div>
                   <h4 class="text-italic text-underline">Tomcat Server</h4>
                   <div id="summary_tomcat" class="app_deployer"></div>
+                  <div id="application_name_desc" style="width: 500px">
+                    <%= label_tag 'application_name', 'Application Name:' %><br>
+                    <%= text_field_tag 'application_name', nil, placeholder: 'Enter an Application Name', maxlength: 45, size: 45, class: 'form-control', required: true %>
+                    <br>
+                    <%= label_tag 'application_description', 'Application Description:' %><br>
+                    <%= text_area_tag 'application_description', nil, placeholder: 'Please describe this application deployment', size: '500x5', class: 'form-control' %>
+                  </div>
                 </section>
             <% end %>
         <% end %>
@@ -106,7 +115,7 @@
 
     $(document).ready(function () {
         init_wizard();
-        $('#app_deployer_form').find('select').addClass('form-control').css('width','500px');
+        $('#app_deployer_form').find('select').addClass('form-control').css('width', '500px');
     });
 
     function init_wizard() {
@@ -209,9 +218,9 @@
                 form.attr('method', 'post');
                 var action = form.attr('action');
                 form.submit();
-                setTimeout(function() {
-                  $('#app_deploy_modal').modal('toggle');
-                  flash_notify({message: 'The deployment request was received successfully!'}, {type: 'success'})
+                setTimeout(function () {
+                    $('#app_deploy_modal').modal('toggle');
+                    flash_notify({message: 'The deployment request was received successfully!'}, {type: 'success'})
                 }, 4000);
             }
         }).validate({

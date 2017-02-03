@@ -18,7 +18,7 @@ class WelcomeController < ApplicationController
     tomcat_service_id = params[:tomcat_service_id]
     tomcat_app = params[:tomcat_app]
     tomcat_action = params[:tomcat_action]
-
+    uuid = params[:war_uuid]
     # get the Service name for displaying in the flash
     service = Service.find(tomcat_service_id)
     service_name = service.name
@@ -28,7 +28,27 @@ class WelcomeController < ApplicationController
     flash_state = flash_state.strip
     flash_state << " on #{service_name}"
     flash_notify(message: flash_state)
+    foo = @change_state_succeded
+    if (@change_state_succeded)
+      $log.info("Updating the model for uuid #{uuid} to have state #{tomcat_action}") if uuid
+      UuidProp.uuid(uuid: uuid, state: tomcat_action)
+    end
     reload_deployments
+  end
+
+  def check_isaac_dependency
+    war_uuid = params[:war_uuid]
+    unless war_uuid
+      render json: {dependency: false}
+      return
+    end
+    prop = UuidProp.uuid(uuid: war_uuid)
+    dependency = prop.running_dependency?
+    if dependency #either false or a string containing the name of the dependent
+      render json: {dependency: true, name: dependency}
+    else
+      render json: {dependency: false, name: dependency}
+    end
   end
 
   def reload_job_queue_list
@@ -43,6 +63,18 @@ class WelcomeController < ApplicationController
       end
     end
     render json: json
+  end
+
+  def rename_war
+    ret = {status: 'failure'}
+    uuid = params[:uuid]
+    war_name = params[:war_name]
+    war_descr = params[:war_description] #war_description
+    prop = UuidProp.uuid(uuid: uuid)
+    if prop
+      ret = {status: 'success'} if prop.save_json_hash(UuidProp::Keys::NAME => war_name, UuidProp::Keys::DESCRIPTION => war_descr)
+    end
+    render json: ret
   end
 
   def reload_log_events
@@ -75,7 +107,6 @@ class WelcomeController < ApplicationController
   private
   def format_deployments_table_data(tomcat_deployments)
     is_admin_user = auth_admin?
-
     ret = []
     tomcat_deployments.keys.each do |appserver|
       service_name = appserver[:service_name]
@@ -84,19 +115,45 @@ class WelcomeController < ApplicationController
 
       # get all of the applications deployed at this app server location
       tomcat_deployments[appserver].each_pair do |war, d|
+        war_uuid = tomcat_deployments[appserver][war][:war_id]
         current_row[:available] = true
-        next if [:available, :failed].include?(war)
+        next if [:available, :failed].include?(war) #todo comment wtf is happening here.  This line in tomcat concern might help :  ret_hash = {available: true}
+        hash = {war_uuid: war_uuid}.merge(uuid_hash(uuid: war_uuid))
+
+        if war =~ /komet/
+          isaac_war_uuid = d[:isaac][:war_id] if d[:isaac]
+          hash[:isaac_war_uuid] = isaac_war_uuid
+          hash[:isaac_war_name] = uuid_name(uuid: isaac_war_uuid)
+        end
 
         if is_admin_user || war =~ /komet/
           link = ssoi? ? URI(d[:link]).proxify.to_s : d[:link]
-          hash = {war_name: war, state: d[:state], version: d[:version], session_count: d[:session_count].to_s, link: link}
+          hash.merge!({war_name: war, state: d[:state], version: d[:version], session_count: d[:session_count].to_s, link: link})
           hash[:isaac] = d[:isaac] if d[:isaac]
           hash[:komets_isaac_version] = d[:komets_isaac_version] if d[:komets_isaac_version]
-          current_row[:rows] << hash
+          current_row[:rows] << HashWithIndifferentAccess.new(hash)
         end
       end
       ret << current_row
     end
     ret
+  end
+
+  private
+
+  def uuid_name(uuid:)
+    return '' if uuid.to_s.empty?
+    prop = UuidProp.uuid(uuid: uuid)
+    prop.get(key: UuidProp::Keys::NAME).to_s
+  end
+
+  def uuid_hash(uuid:)
+    return {} if uuid.to_s.empty?
+    record = UuidProp.uuid(uuid: uuid)
+    h = HashWithIndifferentAccess.new
+    UuidProp::Keys.constants.each do |k|
+      h[UuidProp::Keys.const_get(k)] = record.get(key: UuidProp::Keys.const_get(k))
+    end
+    h
   end
 end

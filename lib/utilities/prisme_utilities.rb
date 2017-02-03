@@ -9,9 +9,12 @@ module PrismeUtilities
   VALID_APPLICATIONS = [KOMET_APPLICATION, ISAAC_APPLICATION, ALL_APPLICATION]
 
   class << self
+    #these do leak internal state.  In most cases you should call the corresponding method below to get a defensive copy
+    #of your data structure
     attr_accessor :ssoi_logout_url
     attr_accessor :config #server_config.yml
     attr_accessor :aitc_env #aitc_environment.yml
+    attr_accessor :hl7_env #hl7_environment.yml
     attr_accessor :terminology_config #TerminologyConfig.xml (Validated against TerminologyConfig.xsd)
     attr_accessor :terminology_config_errors #TerminologyConfig.xml (Validated against TerminologyConfig.xsd).  Nil if all is good
   end
@@ -225,6 +228,24 @@ module PrismeUtilities
     server_config['proxy_config_root']['proxy_urls']
   end
 
+  #see PrismeConstants::ENVIRONMENT for keys
+  def self.hl7_environment
+    return PrismeUtilities.hl7_env unless PrismeUtilities.hl7_env.nil?
+    env_file = which_file('hl7_environment.yml')
+    if env_file.nil?
+      $log.warn('No hl7 environment yml file found!')
+      return nil
+    end
+    # read the config yml file
+    begin
+      PrismeUtilities.hl7_env = HashWithIndifferentAccess.new YAML.load_file(env_file)
+    rescue => ex
+      $log.error("Error reading #{env_file}, error is #{ex}")
+      $log.error(ex.backtrace.join("\n"))
+    end
+    (HashWithIndifferentAccess.new PrismeUtilities.hl7_env).deep_dup
+  end
+
   def self.aitc_environment
     return PrismeUtilities.aitc_env unless PrismeUtilities.aitc_env.nil?
     env_file = which_file('aitc_environment.yml')
@@ -234,12 +255,12 @@ module PrismeUtilities
     end
     # read the config yml file
     begin
-      PrismeUtilities.aitc_env = YAML.load_file(env_file)
+      PrismeUtilities.aitc_env = HashWithIndifferentAccess.new YAML.load_file(env_file)
     rescue => ex
       $log.error("Error reading #{env_file}, error is #{ex}")
       $log.error(ex.backtrace.join("\n"))
     end
-    PrismeUtilities.aitc_env
+    (HashWithIndifferentAccess.new PrismeUtilities.aitc_env).deep_dup
   end
 
 
@@ -257,12 +278,12 @@ module PrismeUtilities
 
     # read the config yml file
     begin
-      PrismeUtilities.config = YAML.load_file(config_file)
+      PrismeUtilities.config = HashWithIndifferentAccess.new  YAML.load_file(config_file)
     rescue => ex
       $log.error("Error reading #{config_file}, error is #{ex}")
       $log.error(ex.backtrace.join("\n"))
     end
-    PrismeUtilities.config
+    (HashWithIndifferentAccess.new PrismeUtilities.config).deep_dup
   end
 
   def self.ssoi_logout_path

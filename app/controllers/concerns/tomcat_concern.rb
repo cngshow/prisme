@@ -7,10 +7,12 @@ module TomcatConcern
   VALID_ACTIONS = [:start, :stop, :undeploy]
   ISAAC_SYSTEM_INFO_PATH = '/rest/1/system/systemInfo'
   KOMET_VERSION_PATH = '/komet_dashboard/version?include_isaac=true'
+  RUNNING_STATE = 'running'
+  STATE_CHANGE_SUCCEDED = 'OK'
 
   # change_state(url: "http://localhost:8080/",username: "devtest",pwd: "devtest", context: "rails_komet_b", path: 'start')
   def change_state(tomcat_service_id:, context:, action:)
-    $alog.always(prisme_user.user_name + " has issued to '#{Service.find(tomcat_service_id).description}' against context '#{context}' the action '#{action}'")
+    $log.always(prisme_user.user_name + " has issued to '#{Service.find(tomcat_service_id).description}' against context '#{context}' the action '#{action}'")
     unless VALID_ACTIONS.include?(action.to_sym)
       $log.error("Invalid action, #{action}, passed into change_state method. Valid actions are: #{VALID_ACTIONS.to_s}.")
       raise StandardError.new("Invalid action, #{action}, passed into change_state method. Valid actions are: #{VALID_ACTIONS.to_s}.")
@@ -30,9 +32,11 @@ module TomcatConcern
       return {failed: ex.message}
     rescue => ex
       [$log, $alog].each { |l| l.warn("Unexpected Exception: #{ex.message}")}
+      @change_state_succeded = false
       return {failed: ex.message}
     end
     $alog.always(prisme_user.user_name + " has a result of: #{response.body}")
+    @change_state_succeded = response.body.strip.start_with?(STATE_CHANGE_SUCCEDED)
     response.body
   end
 
@@ -95,10 +99,11 @@ module TomcatConcern
         ret_hash[war][:context] = vars[0]
         ret_hash[war][:state] = vars[1]
         ret_hash[war][:session_count] = vars[2]
-        version_hash = get_version_hash(war: war, context: vars[0], tomcat_service: tomcat_service)
+        version_hash = get_version_hash(war: war, context: vars[0], tomcat_service: tomcat_service, state: ret_hash[war][:state])
         ret_hash[war][:version] = version_hash[:version]
         ret_hash[war][:isaac] = version_hash[:isaac] if version_hash[:isaac]
         ret_hash[war][:komets_isaac_version] = version_hash[:isaac][:isaac_version] if (version_hash[:isaac] && version_hash[:isaac][:isaac_version])
+        ret_hash[war][:war_id] = version_hash[:war_id]
       end
 
       if ret_hash.empty?
@@ -113,7 +118,8 @@ module TomcatConcern
     end
   end
 
-  def get_version_hash(war:, context:, tomcat_service:)
+  def get_version_hash(war:, context:, tomcat_service:, state:)
+    $log.error("State is #{state}")
     conn = get_connection(service_or_id: tomcat_service)
     path = ''
     response = nil
@@ -143,11 +149,17 @@ module TomcatConcern
     version_hash[:isaac] = {}
     if war =~ /^isaac/
       version_hash[:version] = json['apiImplementationVersion'].to_s unless json['apiImplementationVersion'].to_s.empty?
+      version_hash[:war_id] = json[UuidProp::ISAAC_WAR_ID].to_s unless json[UuidProp::ISAAC_WAR_ID].to_s.empty?
       version_hash[:isaac][:database] = json['isaacDbDependency']
       version_hash[:isaac][:database_dependencies] = json['dbDependencies']
+      UuidProp.uuid(uuid: version_hash[:war_id], state: state)
     else
       version_hash[:version] = json['version'].to_s
+      version_hash[:war_id] = json[UuidProp::KOMET_WAR_ID].to_s unless json[UuidProp::KOMET_WAR_ID].to_s.empty?
       version_hash[:isaac][:isaac_version] = json['isaac_version']['apiImplementationVersion'].to_s rescue "unknown isaac version"
+      version_hash[:isaac][:war_id] = json['isaac_version'][UuidProp::ISAAC_WAR_ID].to_s rescue nil
+      #record my dependency
+      UuidProp.uuid(uuid: version_hash[:war_id], dependent_uuid: version_hash[:isaac][:war_id], state: state)
       version_hash[:isaac][:database] = json['isaac_version']['isaacDbDependency'] rescue nil
       version_hash[:isaac][:database_dependencies] = json['isaac_version']['dbDependencies'] rescue nil
     end
@@ -182,7 +194,7 @@ module TomcatConcern
             d.last[:link] = link
           end
         end
-        $log.debug("Tomcat deployment data_hash is #{data_hash.inspect}")
+        $log.trace("Tomcat deployment data_hash is #{data_hash.inspect}")
         tomcat_deployments[{url: url, service_name: tomcat.name, service_desc: tomcat.description, service_id: tomcat.id}] = data_hash
       end
     end

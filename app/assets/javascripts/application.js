@@ -15,6 +15,7 @@
 //= require jquery-ui
 //= require bootstrap
 //= require turbolinks
+//= require jsTree/jstree
 // select2 drop down js library
 //= require select2
 //= require jquery.steps-1.1.0/jquery.steps

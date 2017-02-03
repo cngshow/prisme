@@ -5,6 +5,10 @@ Rails.application.routes.draw do
     end
   end
 
+  get 'checksum/index', as: 'checksum'
+  get 'checksum/retrieve_sites'
+  # get 'discovery/index', as: 'discovery'
+
   #resources :log_events
   match 'log_event' => 'log_events#log_event', :as => :log_event, via: [:get, :put, :post]
   post 'log_events/acknowledge_log_event', as: :acknowledge_log_event, :constraints => OnlyAjaxRequest.new
@@ -12,6 +16,8 @@ Rails.application.routes.draw do
   # javascript timer checking user session timeout
   get 'welcome/session_timeout', as: :session_timeout
   get 'welcome/renew_session', as: :renew_session, :constraints => OnlyAjaxRequest.new
+  get 'welcome/rename_war', as: :rename_war, :constraints => OnlyAjaxRequest.new
+  get 'welcome/check_isaac_dependency', as: :check_isaac_dependency
 
   get 'utilities/warmup'
   get 'utilities/seed_services'
