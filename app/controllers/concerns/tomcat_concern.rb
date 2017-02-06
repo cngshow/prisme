@@ -119,7 +119,6 @@ module TomcatConcern
   end
 
   def get_version_hash(war:, context:, tomcat_service:, state:)
-    $log.error("State is #{state}")
     conn = get_connection(service_or_id: tomcat_service)
     path = ''
     response = nil
