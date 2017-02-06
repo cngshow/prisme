@@ -228,24 +228,7 @@ module PrismeUtilities
     server_config['proxy_config_root']['proxy_urls']
   end
 
-  #see PrismeConstants::ENVIRONMENT for keys
-  def self.hl7_environment
-    return PrismeUtilities.hl7_env unless PrismeUtilities.hl7_env.nil?
-    env_file = which_file('hl7_environment.yml')
-    if env_file.nil?
-      $log.warn('No hl7 environment yml file found!')
-      return nil
-    end
-    # read the config yml file
-    begin
-      PrismeUtilities.hl7_env = HashWithIndifferentAccess.new YAML.load_file(env_file)
-    rescue => ex
-      $log.error("Error reading #{env_file}, error is #{ex}")
-      $log.error(ex.backtrace.join("\n"))
-    end
-    (HashWithIndifferentAccess.new PrismeUtilities.hl7_env).deep_dup
-  end
-
+  # refactor to use fetch_yml
   def self.aitc_environment
     return PrismeUtilities.aitc_env unless PrismeUtilities.aitc_env.nil?
     env_file = which_file('aitc_environment.yml')
@@ -263,7 +246,7 @@ module PrismeUtilities
     (HashWithIndifferentAccess.new PrismeUtilities.aitc_env).deep_dup
   end
 
-
+  # refactor to use fetch_yml
   def self.server_config
     return PrismeUtilities.config unless PrismeUtilities.config.nil?
     # default the config file location based on the data_directory property
@@ -323,7 +306,21 @@ module PrismeUtilities
     result
   end
 
-  private
+  def self.fetch_yml(base_file)
+    yml_file = PrismeUtilities.which_file(base_file)
+    if yml_file.nil?
+      $log.warn("No yml file found! #{base_file}")
+      return nil
+    end
+    # read the yml file
+    begin
+      return HashWithIndifferentAccess.new YAML.load(ERB.new(File.read(yml_file)).result)
+    rescue => ex
+      $log.error("Error reading #{yml_file}, error is #{ex}")
+      $log.error(ex.backtrace.join("\n"))
+    end
+    nil
+  end
 
   #given a base file selects the prismeData variant over the config variant
   def self.which_file(base_file)

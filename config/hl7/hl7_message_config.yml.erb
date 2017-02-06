@@ -1,0 +1,40 @@
+# Settings used by the converter to configure the sending application.
+set_sending_application_namespace_id_update: VETS UPDATE
+set_sending_application_namespace_id_md5: VETS MD5
+set_sending_application_namespace_id_site_data: VETS DATA
+
+# Target Application at VistA sites
+receiving_application_namespace_id_update: XUMF UPDATE
+receiving_application_namespace_id_md5: XUMF MD5
+receiving_application_namespace_id_site_data: XUMF DATA
+
+#Message Version ID
+version_id: 2.4
+
+#acceptAcknowledgementType
+accept_acknowledgement_type: AL
+application_acknowledgement_type: AL
+country_code: USA
+
+#MFI field values
+master_file_identifier: Standard Terminology
+name_of_coding_system: ERT
+file_level_event_code: MUP
+response_level_code: NE
+
+#MFE field values
+record_level_event_code: NE
+
+#QRD field values
+query_format_code: R
+query_priority: I
+query_id: Standard Terminology Query
+query_limited_request_quantity: 99999
+query_who_subject_filter_id_number: ALL
+query_what_department_data_code_identifier: VA
+
+#CE static field values
+sub_field_separator: '@'
+use_interface_engine: <%=!Rails.env.development? %> #set this to false for devbox
+
+receiving_application_namespace_id_update: XUMF UPDATE
