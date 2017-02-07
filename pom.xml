@@ -253,7 +253,7 @@
 							<jrubyVerbose>true</jrubyVerbose>
 							<jrubyJvmArgs>-Djava.awt.headless=true</jrubyJvmArgs>
 							<command>rake</command>
-							<args>test:units</args>
+							<args>test:integration</args>
 						</configuration>
 					</execution>
 

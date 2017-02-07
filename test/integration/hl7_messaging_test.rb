@@ -8,7 +8,7 @@ class Hl7MessagingTest < ActionDispatch::IntegrationTest
   # end
 
   def setup
-    @check_sum_string='some_string'
+    @subset_string='some_string'
   end
 
   def tear_down
@@ -17,7 +17,7 @@ class Hl7MessagingTest < ActionDispatch::IntegrationTest
 
   test 'check_sum' do
     setup
-    task = HL7Messaging.get_check_sum_task(subset: @check_sum_string, site_list: VaSite.all.to_a)
+    task = HL7Messaging.get_check_sum_task(subset: @subset_string, site_list: VaSite.all.to_a)
     HL7Messaging.start_checksum_task(task: task)
     result = HL7Messaging.fetch_result(task: task)
     p "check_sum test result is #{result}"
