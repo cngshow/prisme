@@ -9,6 +9,8 @@ class Hl7MessagingTest < ActionDispatch::IntegrationTest
 
   def setup
     @subset_string='some_string'
+    PrismeUtilities.synch_site_data
+    PrismeUtilities.synch_group_data
   end
 
   def tear_down
