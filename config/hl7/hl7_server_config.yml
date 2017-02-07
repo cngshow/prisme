@@ -1,47 +1,47 @@
 #Note: the keys in the second level hash (listener_port, but not DEV) are converted into get methods dynamically.  The keys need to match the java interface
 #gov.vha.isaac.ochre.services.dto.publish.ApplicationProperties
-# interface_engine_url is a special case.  We will dynamically create the method getInterfaceEngineUrl (note the case Url) and we will manually add
-# getInterfaceEngineURL to call getInterfaceEngineUrl and instantiate a java.net.URL
+# note: interface_engine_URL is a special case.  ApplicationProperties has the method
+# getInterfaceEngineURL, so take care with the case.
 ---
 DEV_BOX:
   sending_facility_namespace_id: 200ET1
   ets_server: vaauscttdbs80.aac.va.gov
-  interface_engine_url: http://vaaacvies64.aac.dva.va.gov:8090/FrameworkClient-1.1/Framework2ServletHTTPtoChannel
+  interface_engine_URL: http://vaaacvies64.aac.dva.va.gov:8090/FrameworkClient-1.1/Framework2ServletHTTPtoChannel
   listener_port: 49990
   hl7_encoding_type: VB
   use_interface_engine: false #set this to false for devbox
 DEV:
   sending_facility_namespace_id: 200ET1
   ets_server: vaauscttdbs80.aac.va.gov
-  interface_engine_url: http://vaaacvies64.aac.dva.va.gov:8090/FrameworkClient-1.1/Framework2ServletHTTPtoChannel
+  interface_engine_URL: http://vaaacvies64.aac.dva.va.gov:8090/FrameworkClient-1.1/Framework2ServletHTTPtoChannel
   listener_port: 49990
   hl7_encoding_type: VB
   use_interface_engine: true
 INTEGRATION:
   sending_facility_namespace_id: 200ET10
   ets_server: vaauscttdbs82.aac.va.gov
-  interface_engine_url: http://vaaacvies64.aac.dva.va.gov:8090/FrameworkClient-1.1/Framework2ServletHTTPtoChannel
+  interface_engine_URL: http://vaaacvies64.aac.dva.va.gov:8090/FrameworkClient-1.1/Framework2ServletHTTPtoChannel
   listener_port: 49990
   hl7_encoding_type: VB
   use_interface_engine: true
 SQA:
   sending_facility_namespace_id: 200ET20
   ets_server: vaausdbsctt700.aac.va.gov
-  interface_engine_url: http://vaaacvies64.aac.dva.va.gov:8090/FrameworkClient-1.1/Framework2ServletHTTPtoChannel
+  interface_engine_URL: http://vaaacvies64.aac.dva.va.gov:8090/FrameworkClient-1.1/Framework2ServletHTTPtoChannel
   listener_port: 49990
   hl7_encoding_type: VB
   use_interface_engine: true
 PRE-PROD:
   sending_facility_namespace_id: 200ET30
   ets_server: vaausdbsctt402.aac.va.gov
-  interface_engine_url: http://vaaacviep44.aac.dva.va.gov:8090/FrameworkClient-1.1/Framework2ServletHTTPtoChannel
+  interface_engine_URL: http://vaaacviep44.aac.dva.va.gov:8090/FrameworkClient-1.1/Framework2ServletHTTPtoChannel
   listener_port: 49990
   hl7_encoding_type: VB
   use_interface_engine: true
 PROD:
   sending_facility_namespace_id: 200ETS
   ets_server: vaausdbsctt202.aac.va.gov
-  interface_engine_url: http://vaaacviev24.aac.dva.va.gov:8090/FrameworkClient-1.1/Framework2ServletHTTPtoChannel
+  interface_engine_URL: http://vaaacviev24.aac.dva.va.gov:8090/FrameworkClient-1.1/Framework2ServletHTTPtoChannel
   listener_port: 49990
   hl7_encoding_type: VB
   use_interface_engine: true

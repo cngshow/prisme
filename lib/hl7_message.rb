@@ -64,7 +64,7 @@ module HL7Messaging
     def initialize
       @server_environment = HL7Messaging.server_environment[PRISME_ENVIRONMENT] # PRISME_ENVIRONMENT = dev, sqa, etc
       @server_environment.keys.each do |key|
-        method_name = "get#{key.camelize}".to_sym
+        method_name = "get#{key.camelize_preserving}".to_sym
         self.define_singleton_method(method_name) do
           @server_environment[key]
         end
@@ -77,10 +77,6 @@ module HL7Messaging
 
     def getApplicationVersion
       PRISME_VERSION
-    end
-
-    def getInterfaceEngineURL
-      java.net.URL.new getInterfaceEngineUrl
     end
   end
 

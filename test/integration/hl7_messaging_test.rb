@@ -15,7 +15,7 @@ class Hl7MessagingTest < ActionDispatch::IntegrationTest
 
   teardown do
     JLookupService.shutdownSystem
-    javafx.application.Platform.exit
+    javafx.application.Platform.exit if @stop_fx
   end
 
   test 'check_sum' do
@@ -25,5 +25,11 @@ class Hl7MessagingTest < ActionDispatch::IntegrationTest
     p "check_sum test result is #{result}"
     #result = 'fizzle' #to force a failure
     assert(result.eql?('done'), 'Expected a result of done, received a result of ' + result.to_s)
+    @stop_fx = true
+  end
+
+  test 'application_property_url' do
+    app_prop = HL7Messaging::ApplicationProperties.new.to_java
+    assert(app_prop.getInterfaceEngineURL.is_a? String)
   end
 end
