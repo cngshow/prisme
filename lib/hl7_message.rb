@@ -6,11 +6,6 @@ end
 
 module HL7Messaging
 
-  ETS_APPLICATION_ID = :ets_application_id
-  ETS_SERVER = :ets_server
-  INTERFACE_ENGINE_URL = :interface_engine_url
-  LISTENER_PORT = :listener_port
-  HL7_ENCODING_TYPE = :hl7_encoding_type
 
   class << self
     #these leak state, you should use the the defined methods unless you know what you are doing...
@@ -20,30 +15,24 @@ module HL7Messaging
 
   #todo add user to appropriate methods
   module ClassMethods
-    def get_check_sum_task(hl7_message_string:, site_list:)
-      task = JIsaacLibrary::HL7CheckSum.checkSum(hl7_message_string, site_list)
+    # task = HL7Messaging.get_check_sum_task(check_sum: 'some_string', site_list: VaSite.all.to_a)
+    def get_check_sum_task(subset:, site_list:)
+      @@application_properties ||= HL7Messaging::ApplicationProperties.new
+      @@message_properties ||= HL7Messaging::MessageProperties.new
+      task = JIsaacLibrary::HL7CheckSum.checkSum(subset, site_list, @@application_properties, @@message_properties)
       task
     end
 
+    # HL7Messaging.start_checksum_task(task: task)
     def start_checksum_task(task:)
       $log.info("Starting the calculation for the HL7 check sum")
       JIsaacLibrary::WorkExecutors.get().getExecutor().execute(task)
       $log.info("HL7 check sum task started!")
     end
 
-    def build_application_props
-      props = JIsaacLibrary::HL7ApplicationProperties.new
-      hl7_env = PrismeUtilities.hl7_environment[PRISME_ENVIRONMENT]
-      props.setApplicationServerName(PRISME_ENVIRONMENT) #See aitc_environment.yml
-      props.setApplicationVersion(PRISME_VERSION)
-      props.setListenerPort(hl7_env[EVIE_PORT])
-      props.setSendingFacilityNamespaceId(hl7_env[ETS_APPLICATION_ID])
-      props.setHl7EncodingType("VB")
-      props.setEnvironment("")
-      props
-    end
 
     #convenience method
+    # HL7Messaging.fetch_result(task: task)
     def fetch_result(task:)
       JIsaacLibrary.fetch_result(task: task)
     end
@@ -64,9 +53,63 @@ module HL7Messaging
   end
 
   extend ClassMethods
+
+  # p = HL7Messaging::ApplicationProperties.new
+  class ApplicationProperties
+    include gov.vha.isaac.ochre.services.dto.publish.ApplicationProperties
+    include JavaImmutable
+
+    attr_reader :server_environment
+
+    def initialize
+      @server_environment = HL7Messaging.server_environment[PRISME_ENVIRONMENT] # PRISME_ENVIRONMENT = dev, sqa, etc
+      @server_environment.keys.each do |key|
+        method_name = "get#{key.camelize}".to_sym
+        self.define_singleton_method(method_name) do
+          @server_environment[key]
+        end
+      end
+    end
+
+    def getApplicationServerName
+      PRISME_ENVIRONMENT
+    end
+
+    def getApplicationVersion
+      PRISME_VERSION
+    end
+
+    def getInterfaceEngineURL
+      java.net.URL.new getInterfaceEngineUrl
+    end
+  end
+
+  # p = HL7Messaging::MessageProperties.new
+  class MessageProperties
+    include gov.vha.isaac.ochre.services.dto.publish.MessageProperties
+    include JavaImmutable
+
+    attr_reader :message_environment
+
+    def initialize
+      @message_environment = HL7Messaging.message_environment
+      @message_environment.keys.each do |key|
+        method_name = "get#{key.camelize_preserving}".to_sym
+        self.define_singleton_method(method_name) do
+          @message_environment[key]
+        end
+      end
+    end
+  end
 end
+=begin
+p = HL7Messaging::MessageProperties.new
+m = p.to_java
+m.setVersionId("Development")
+m.getVersionId
+m.getQueryLimitedRequestUnits
 
-
+=end
 =begin
 load('./lib/hl7_message.rb')
 

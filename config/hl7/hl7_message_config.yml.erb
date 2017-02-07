@@ -1,15 +1,22 @@
+#Note:
+#The keys directly correspond to the methods in isaac's code
+#See gov.vha.isaac.ochre.services.dto.publish.MessageProperties.
+#Ruby will dynamically create the appropriate methods on a poro capable of casting to a pojo.
+# Note the edge case that doesn't perfectly follow the CamelCase pattern: getSendingApplicationNamespaceIdMD5
+#in this case, we ensure the key's case matches the method.
+
 # Settings used by the converter to configure the sending application.
-set_sending_application_namespace_id_update: VETS UPDATE
-set_sending_application_namespace_id_md5: VETS MD5
-set_sending_application_namespace_id_site_data: VETS DATA
+sending_application_namespace_id_update: VETS UPDATE
+sending_application_namespace_id_MD5: VETS MD5
+sending_application_namespace_id_site_data: VETS DATA
 
 # Target Application at VistA sites
 receiving_application_namespace_id_update: XUMF UPDATE
-receiving_application_namespace_id_md5: XUMF MD5
+receiving_application_namespace_id_MD5: XUMF MD5
 receiving_application_namespace_id_site_data: XUMF DATA
 
 #Message Version ID
-version_id: 2.4
+version_id: '2.4'
 
 #acceptAcknowledgementType
 accept_acknowledgement_type: AL
@@ -35,6 +42,5 @@ query_what_department_data_code_identifier: VA
 
 #CE static field values
 sub_field_separator: '@'
-use_interface_engine: <%=!Rails.env.development? %> #set this to false for devbox
-
 receiving_application_namespace_id_update: XUMF UPDATE
+query_limited_request_units: 5
