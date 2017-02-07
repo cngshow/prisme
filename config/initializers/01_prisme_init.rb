@@ -84,7 +84,7 @@ if(!STFU_MODE || $testing)
   at_exit do
     begin
       $log.info('Internal Isaac libs getting shutdown...')
-      JLookupService.shutdownIsaac
+      JLookupService.shutdownSystem
       $log.info('Isaac is shutdown...')
     rescue => ex
       $log.warn("Isaac libs got cranky during the shutdown. #{ex}")
