@@ -62,6 +62,12 @@ module HL7Messaging
     attr_reader :server_environment
 
     def initialize
+      p "My hostname is #{Socket.gethostname} "
+      p "Prisme environment is #{PRISME_ENVIRONMENT}"
+      p HL7Messaging.server_environment[PRISME_ENVIRONMENT]
+      p '----'
+      p HL7Messaging.server_environment
+      p 'dun!!!'
       @server_environment = HL7Messaging.server_environment[PRISME_ENVIRONMENT] # PRISME_ENVIRONMENT = dev, sqa, etc
       @server_environment.keys.each do |key|
         method_name = "get#{key.camelize}".to_sym
