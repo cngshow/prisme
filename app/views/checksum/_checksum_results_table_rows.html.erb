@@ -1,0 +1,12 @@
+<% rows.each do |row| %>
+  <tr id="<%= "site_#{row[:site_id]}-subset_#{row[:subset_id]}-text_#{row[:subset_text]}" %>" style="background-color: <%= row[:striped] % 2 == 0 ? 'transparent' : '#f2f2f2;' %>">
+    <td><%= row[:site_name] %></td>
+    <td><%= row[:subset_text] %></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td>View Hashes</td>
+    <td>Request Data</td>
+  </tr>
+<% end %>

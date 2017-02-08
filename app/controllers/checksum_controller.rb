@@ -1,6 +1,6 @@
 class ChecksumController < ApplicationController
   include ChecksumDiscoveryConcern
-
+  include ChecksumHelper
   before_action :auth_registered #todo should this require admin role?
 
 
@@ -20,6 +20,13 @@ class ChecksumController < ApplicationController
       subset_root[:children] << g
     end
     subset_root
+  end
+
+  def checksum_results_table
+    subset_selections = JSON.parse(params[:subset_selections])
+    site_selections = JSON.parse(params[:site_selections])
+    ret = render_results_table(subsets: subset_selections, sites: site_selections)
+    render text: ret
   end
 
   def group_tree_data

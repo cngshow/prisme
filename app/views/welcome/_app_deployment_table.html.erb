@@ -90,7 +90,7 @@
         <button type="button" class="close" data-dismiss="modal">&times;</button>
         <button type="button" class="btn btn-primary" id="btn_submit_form" onclick="submitRenameDeployment();">Rename Application</button>
       </div>
-      <div class="modal-body" style="overflow:auto; max-height: 70vh;"><!-- style is for scrollable div -->
+      <div class="modal-body scrollable_div">
         <div id="application_name_desc" style="width: 500px">
           <%= label_tag 'application_name', 'Application Name:' %><br>
           <%= text_field_tag 'war_name', nil, id: 'war_name', placeholder: 'Enter an Application Name', maxlength: 45, size: 45, class: 'form-control', required: true %>

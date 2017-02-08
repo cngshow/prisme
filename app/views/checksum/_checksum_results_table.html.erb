@@ -1,0 +1,27 @@
+<div class="result_hdr" style="border-left: 3px solid green; padding-left: 5px" ><%#= tbl_border_color %>
+  <div style='background-color: transparent; height: 50px; padding: 5px;'>
+    <div style='float: left; color: black; font-weight: bold; font-size: 18px; padding-left: 5px' onclick="toggleResultTable(this)"><%= title %></div>
+  </div>
+  <div class="result_table">
+    <table class="prisme-table table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Site</th>
+        <th scope="col">Subset</th>
+        <th scope="col">User Name</th>
+        <th scope="col">Request Date</th>
+        <th scope="col">Receive Date</th>
+        <th scope="col">Version</th>
+        <th scope="col">MD5</th>
+        <th scope="col">Discovery</th>
+      </tr>
+      </thead>
+      <tbody><%= rows %></tbody>
+    </table>
+  </div>
+</div>
+<script type="text/javascript" charset="utf-8">
+function toggleResultTable(elem) {
+    $(elem).closest('.result_hdr').find('.result_table').toggle();
+}
+</script>
