@@ -28,6 +28,11 @@
 @import "font-awesome";
 //@import "growlyflash";
 
+.scrollable_div {
+  overflow: auto;
+  max-height: 80vh;
+}
+
 .tp_alert_bg {
   background-color: #ffd0d0;
 }
@@ -44,40 +49,48 @@
   border-radius: 1em 1em 0 0;
   border-bottom: 2px solid #6c6c6c;
 }
-.prisme-navbar .glyphicon{
+
+.prisme-navbar .glyphicon {
   top: initial;
   padding-top: 2px;
 }
-.prisme-navbar a{
+
+.prisme-navbar a {
   text-decoration: none;
   color: black
 }
-.prisme-navbar button{
+
+.prisme-navbar button {
   height: 24px;
   display: flex;
   flex: 0 0 auto;
   align-items: center;
 }
-.prisme-navbar-header{
+
+.prisme-navbar-header {
   font-size: 24px;
   flex: 0 0 auto;
   align-items: center;
   padding: 0px 10px;
   display: flex;
 }
-.prisme-logo-prisme{
-  color:#183445;
+
+.prisme-logo-prisme {
+  color: #183445;
   margin-right: 4px;
 }
-.prisme-logo-tooling{
-  color:#414199;
+
+.prisme-logo-tooling {
+  color: #414199;
 }
-.prisme-navbar-navigation .dropdown a:focus{
+
+.prisme-navbar-navigation .dropdown a:focus {
   outline: thin dotted;
   outline: 5px auto -webkit-focus-ring-color;
   outline-offset: -2px;
 }
-.prisme-navbar-navigation{
+
+.prisme-navbar-navigation {
   margin-bottom: 0px;
   border-left: 4px solid white;
   color: black;
@@ -85,7 +98,8 @@
   flex: 0 0 auto;
   align-items: stretch;
 }
-.prisme-navbar-navigation > div{
+
+.prisme-navbar-navigation > div {
   border-right: 4px solid white;
   border-bottom: 1px solid transparent;
   padding: 0px 10px;
@@ -94,20 +108,25 @@
   align-items: center;
   cursor: pointer;
 }
+
 .prisme-navbar-navigation > div.dropdown.open > ul {
   font-size: 18px;
 }
-.prisme-navbar-navigation > div:hover, .prisme-navbar-navigation > div:focus{
+
+.prisme-navbar-navigation > div:hover, .prisme-navbar-navigation > div:focus {
   border-bottom: 1px solid black;
 }
-.prisme-navbar-tools{
+
+.prisme-navbar-tools {
   display: flex;
   flex: 1 1 auto;
   justify-content: flex-end;
 }
-.prisme-navbar-tools > :first-child{
+
+.prisme-navbar-tools > :first-child {
   border-left: 4px solid white;
 }
+
 .prisme-navbar-tools > div {
   display: flex;
   flex: 0 0 auto;
@@ -117,34 +136,40 @@
   border-bottom: 1px solid transparent;
   cursor: pointer;
 }
-.prisme-navbar-tools > div:last-child{
+
+.prisme-navbar-tools > div:last-child {
   border-right: none;
 }
-.prisme-navbar-tools > div:hover, .prisme-navbar-tools > div:focus{
+
+.prisme-navbar-tools > div:hover, .prisme-navbar-tools > div:focus {
   border-bottom: 1px solid black;
 }
-#prisme_user_preference_link{
+
+#prisme_user_preference_link {
   margin-right: 0px;
 }
-.prisme-navbar-tools .glyphicon, .prisme-navbar-tools .fa{
+
+.prisme-navbar-tools .glyphicon, .prisme-navbar-tools .fa {
   margin-right: 5px;
   padding-bottom: 4px;
 }
-.prisme-link-button{
+
+.prisme-link-button {
   background: none !important;
   border: none;
   padding: 0 !important;
 }
-.prisme-footer{
+
+.prisme-footer {
   text-align: center;
   height: 25px;
   background-color: black;
   color: white;
   border: 1px solid #ddd;
   border-radius: 4px;
-  position:fixed;
-  bottom:0;
-  left:0;
+  position: fixed;
+  bottom: 0;
+  left: 0;
   clear: both;
   width: 100%;
 }
@@ -185,8 +210,8 @@ legend.classic-border {
 // used with jquery validation - specifically with select2 dropdowns and jq validate
 // start - jquery validate error displayed to the right of the label for the input field
 label.error {
-  margin-left:9px;
-  font-size:small;
+  margin-left: 9px;
+  font-size: small;
   color: #4d0909;
 }
 
@@ -200,6 +225,7 @@ label.arrow_box {
   -moz-box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.80);
   -webkit-box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.80);
 }
+
 label.arrow_box:after, .arrow_box:before {
   right: 100%;
   top: 50%;
@@ -224,6 +250,7 @@ label.arrow_box:before {
   border-width: 8px;
   margin-top: -8px;
 }
+
 // end jquery validator label validation error
 
 .modal-wide50 .modal-dialog {
@@ -235,6 +262,8 @@ label.arrow_box:before {
 }
 
 html, body {
+  height: 100%;
+  margin: 0;
   padding: 5px;
 }
 
@@ -273,7 +302,6 @@ html, body {
   background: transparent;
 }
 
-
 /* line 125, C:/work/ETS/gem_home/gems/bootstrap-sass-3.3.6/assets/stylesheets/bootstrap/_tables.scss */
 .table-hover > tbody > tr:hover {
   background-color: #dde7f5;
@@ -288,10 +316,10 @@ html, body {
 }
 
 /* tooltip styling*/
- .prismetooltip {
-   position: relative;
-   display: inline-block;
- }
+.prismetooltip {
+  position: relative;
+  display: inline-block;
+}
 
 .prismetooltip .tooltiptext {
   visibility: hidden;
@@ -299,9 +327,9 @@ html, body {
   background-color: cornsilk;
   color: black;
   text-align: left;
-  overflow:scroll;
+  overflow: scroll;
   padding: 5px;
-  box-shadow: 9px 5px 5px #888888 ;
+  box-shadow: 9px 5px 5px #888888;
   /* Position the tooltip */
   position: absolute;
   z-index: 1;
@@ -310,13 +338,16 @@ html, body {
 .prismetooltip:hover .tooltiptext {
   visibility: visible;
 }
+
 #prisme_navbar_navigation .nav a:hover, #prisme_navbar_navigation .nav a:focus {
   border-bottom: 1px solid black;
 }
+
 #prisme_navbar_tools a:hover, #prisme_navbar_tools a:focus {
   text-decoration: none;
   color: black;
 }
+
 h1,
 .h1 {
   font-size: 24px;
@@ -329,7 +360,7 @@ h1,
   color: black;
 }
 
-.prisme-btn-danger  {
+.prisme-btn-danger {
   color: #FFFFDD;
   background-color: #C02F1D;
 }
