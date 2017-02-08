@@ -4,7 +4,9 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 where provided, and the git commit history.
 
 * 2017/02/?? - 1.55 - PENDING  
-   *
+   * Checkpoint for checksum GUI. It needs to be wired to the back end once the API is available
+   * Added a komet_c.war filter to the prisme.properties file and included code to filter out these wars in the app_deployer if the running environment not specified in the properties file
+   
 
 * 2017/02/03 - 1.54  
    * 439581 GUI - Present list of selectable sites/groups for checksum.  To test: you need to be able to modify the back-end yml file (site_data.yml/group_data.yml) 
