@@ -3,6 +3,9 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2017/02/?? - 1.56 - PENDING  
+   *
+
 * 2017/02/09 - 1.55  
    * Checkpoint for checksum GUI. It needs to be wired to the back end once the API is available
    * Added a komet_c.war filter to the prisme.properties file and included code to filter out these wars in the app_deployer if the running environment not specified in the properties file
