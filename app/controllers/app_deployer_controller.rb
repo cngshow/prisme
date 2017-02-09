@@ -90,7 +90,7 @@ class AppDeployerController < ApplicationController
     war_cookie_params[:war_group_id] = war_file.groupId
     war_cookie_params[:war_artifact_id] = war_file.artifactId
     war_cookie_params[:war_uuid] = SecureRandom.uuid
-    name_war(war_cookie_params[:war_uuid],application_name, application_description)
+    name_war(war_cookie_params[:war_uuid], application_name, application_description)
     war_cookie_params[:war_version] = war_file.version
     war_cookie_params[:war_repo] = war_file.repo
     war_cookie_params[:war_classifier] = war_file.classifier unless war_file.classifier.empty?
@@ -233,7 +233,15 @@ class AppDeployerController < ApplicationController
 
         # only include war files
         links.keep_if { |h| h['extension'] == 'war' }.each do |h|
-          ret << NexusArtifactSelectOption.new(groupId: g, artifactId: a, version: v, repo: repo, classifier: h['classifier'], package: h['extension'])
+          include_war = true
+          if a =~ /komet/i && h['classifier'].eql?('c')
+            include_envs = ($PROPS['PRISME.komet_c_include_env']).split(',').map(&:strip) rescue []
+            include_war = include_envs.include? PRISME_ENVIRONMENT
+          end
+
+          if include_war
+            ret << NexusArtifactSelectOption.new(groupId: g, artifactId: a, version: v, repo: repo, classifier: h['classifier'], package: h['extension'])
+          end
         end
       end
     else
