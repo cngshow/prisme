@@ -105,7 +105,6 @@ module PrismeUtilities
         else
           #we need to update db_site, and record the update
           begin
-            #todo Ask Greg wtf the creat_or_update method is...
             db_group.update! name: group.name, member_sites: group.member_sites, member_groups: group.member_groups
             updated_sites += 1
             $log.always("I updated the group with group id #{db_group.id}")
@@ -228,61 +227,15 @@ module PrismeUtilities
     server_config['proxy_config_root']['proxy_urls']
   end
 
-  #see PrismeConstants::ENVIRONMENT for keys
-  def self.hl7_environment
-    return PrismeUtilities.hl7_env unless PrismeUtilities.hl7_env.nil?
-    env_file = which_file('hl7_environment.yml')
-    if env_file.nil?
-      $log.warn('No hl7 environment yml file found!')
-      return nil
-    end
-    # read the config yml file
-    begin
-      PrismeUtilities.hl7_env = HashWithIndifferentAccess.new YAML.load_file(env_file)
-    rescue => ex
-      $log.error("Error reading #{env_file}, error is #{ex}")
-      $log.error(ex.backtrace.join("\n"))
-    end
-    (HashWithIndifferentAccess.new PrismeUtilities.hl7_env).deep_dup
-  end
-
   def self.aitc_environment
-    return PrismeUtilities.aitc_env unless PrismeUtilities.aitc_env.nil?
-    env_file = which_file('aitc_environment.yml')
-    if env_file.nil?
-      $log.warn('No aitc environment yml file found!')
-      return nil
-    end
-    # read the config yml file
-    begin
-      PrismeUtilities.aitc_env = HashWithIndifferentAccess.new YAML.load_file(env_file)
-    rescue => ex
-      $log.error("Error reading #{env_file}, error is #{ex}")
-      $log.error(ex.backtrace.join("\n"))
-    end
+    return (HashWithIndifferentAccess.new PrismeUtilities.aitc_env).deep_dup unless PrismeUtilities.aitc_env.nil?
+    PrismeUtilities.aitc_env = PrismeUtilities.fetch_yml 'aitc_environment.yml'
     (HashWithIndifferentAccess.new PrismeUtilities.aitc_env).deep_dup
   end
 
-
   def self.server_config
-    return PrismeUtilities.config unless PrismeUtilities.config.nil?
-    # default the config file location based on the data_directory property
-    config_file = which_file('server_config.yml')
-
-    # now check that the actual config file to use exists. This should never fail but
-    # in case it is deleted from source control we do not want to go any further
-    if config_file.nil?
-      $log.warn('No proxy mapping file found. Doing nothing!')
-      return nil
-    end
-
-    # read the config yml file
-    begin
-      PrismeUtilities.config = HashWithIndifferentAccess.new  YAML.load_file(config_file)
-    rescue => ex
-      $log.error("Error reading #{config_file}, error is #{ex}")
-      $log.error(ex.backtrace.join("\n"))
-    end
+    return (HashWithIndifferentAccess.new PrismeUtilities.config).deep_dup unless PrismeUtilities.config.nil?
+    PrismeUtilities.config = PrismeUtilities.fetch_yml 'server_config.yml'
     (HashWithIndifferentAccess.new PrismeUtilities.config).deep_dup
   end
 
@@ -323,7 +276,21 @@ module PrismeUtilities
     result
   end
 
-  private
+  def self.fetch_yml(base_file)
+    yml_file = PrismeUtilities.which_file(base_file)
+    if yml_file.nil?
+      $log.warn("No yml file found! #{base_file}")
+      return nil
+    end
+    # read the yml file
+    begin
+      return HashWithIndifferentAccess.new YAML.load(ERB.new(File.read(yml_file)).result)
+    rescue => ex
+      $log.error("Error reading #{yml_file}, error is #{ex}")
+      $log.error(ex.backtrace.join("\n"))
+    end
+    nil
+  end
 
   #given a base file selects the prismeData variant over the config variant
   def self.which_file(base_file)

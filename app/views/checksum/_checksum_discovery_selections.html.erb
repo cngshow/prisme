@@ -1,0 +1,228 @@
+<div id="checksum_selection_div">
+  <%= render 'layouts/page_title_bar', locals: {title: 'Terminology Checksum',
+                                                actions: ['<button type="button" class="btn btn-info btn-sm btn-req-checksum">Request Checksum</button>']} %>
+  <div style="width: 35%; display: inline-block; ">
+    <div style='background-color: transparent; height: 50px; padding: 5px;'>
+      <div style='float: left; color: black; font-weight: bold; font-size: 18px; padding-left: 5px'>Subset Selection(s)</div>
+      <br>
+      <br>
+    </div>
+    <div id="subsets" style="border:2px solid black;"></div>
+  </div>
+  <div style="width: 63%; display: inline-block; float: right" class="scrollable_div">
+    <div style='background-color: transparent;padding: 5px;'>
+      <div style='float: left; color: black; font-weight: bold; font-size: 18px; padding-left: 5px'>Site Selection(s)</div>
+      <div style='float: right'>
+        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#siteSelectionModal">Select Site(s)</button>
+      </div>
+      <br>
+      <br>
+      <table id="tbl_site_selection" class="prisme-table table-striped table-hover">
+        <thead>
+        <tr>
+          <th>Site Name</th>
+          <th>Site Type</th>
+          <th width="25px">Remove</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="no_rows">
+          <td colspan="3" class="text-center" scope="col">No sites have been selected</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div id="siteSelectionModal" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="site_selections();">Select Site(s)</button>
+      </div>
+      <div class="modal-body scrollable_div">
+        <div id="checksum">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript" charset="utf-8">
+    function site_selections() {
+        var checked = $('#checksum').jstree('get_checked');
+        if (checked.length == 0) {
+            bootbox.alert("Please select sites before requesting the checksum.");
+            return false;
+        }
+
+        var groups = [];
+        var sites = [];
+
+        for (var i = 0, l = checked.length; i < l; i++) {
+            var id = $('#checksum').jstree(true).get_node(checked[i]).id;
+            var id_split = id.split('_');
+
+            if (id_split[0] === '<%= VaGroup.name %>') {
+                groups.push(id_split[1]);
+            }
+            if (id_split[0] === '<%= VaSite.name %>') {
+                sites.push(id_split[1]);
+            }
+        }
+
+        // make the ajax call to get all of the selected sites to load the selection table with
+        $.getJSON(gon.routes.checksum_retrieve_sites_path, {
+            groups: groups.toString(),
+            sites: sites.toString()
+        }, function (data) {
+            loadSiteSelectionTable(data);
+            $("#siteSelectionModal").find(".close").click()
+        });
+    }
+
+    function loadSiteSelectionTable(data) {
+        var fields = ['site_name', 'site_type'];
+        var tbody = $('#tbl_site_selection').find('tbody');
+        tbody.empty();
+
+        $.each(data, function (index, item) {
+            // create the row adding a data-job_id attribute
+            var row = $('<tr>').addClass('text-top').attr('data-va_site_id', item['va_site_id']).attr('data-site_text', item['name']).attr('data-site_type', item['site_type']).attr('data-msg_type', item['message_type']);
+
+            $.each(fields, function (index, field) {
+                var item_value = item[field + ''];
+
+                if (field === 'site_name') {
+                    var name = item['va_site_id'] + ' - ' + item['name'];
+                    row.append($('<td>').text(name));
+                }
+                else {
+                    row.append($('<td>').text(item_value));
+                }
+            });
+
+            var rm = '<a class="btn btn-default" role="button" onclick="remove_site(' + item["va_site_id"] + ');"><i class="fa fa-times fa-fw" aria-hidden="true"></i></a>';
+            row.append($('<td>').html(rm));
+            tbody.append(row);
+        });
+    }
+
+    function remove_site(site_id_row) {
+        var selector = $("tr[data-va_site_id='" + site_id_row + "']");
+        $(selector).remove();
+
+        if ($("#tbl_site_selection > tbody > tr").length === 0) {
+            var no_rows = '<tr valign="top" class="no_rows"><td colspan="3" align="center">No sites have been selected</td></tr>';
+            $("table#tbl_site_selection").find('tbody').html(no_rows);
+        }
+    }
+
+    /*
+     [{"id":"subset_root","text":"Subsets","icon":"fa fa-sitemap","li_attr":{"id":"subset_root"},"a_attr":{"href":"#","id":"subset_root_anchor"},"state":{"loaded":true,"opened":true,"selected":false,"disabled":false},"data":{},"parent":"#"},
+     {"id":"Allergy","text":"Allergy","icon":"fa fa-object-group","li_attr":{"id":"Allergy"},"a_attr":{"href":"#","id":"Allergy_anchor"},"state":{"loaded":true,"opened":false,"selected":true,"disabled":false},"data":{},"parent":"subset_root"},
+     {"id":"j2_3","text":"Reactions","icon":true,"li_attr":{"id":"j2_3"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":true,"disabled":false},"data":{},"parent":"Allergy"},
+     {"id":"j2_4","text":"Reactants","icon":true,"li_attr":{"id":"j2_4"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":true,"disabled":false},"data":{},"parent":"Allergy"},
+     {"id":"Immunizations","text":"Immunizations","icon":"fa fa-object-group","li_attr":{"id":"Immunizations"},"a_attr":{"href":"#","id":"Immunizations_anchor"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"subset_root"},{"id":"j2_6","text":"Immunization Procedure","icon":true,"li_attr":{"id":"j2_6"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"Immunizations"},{"id":"j2_7","text":"Skin Test","icon":true,"li_attr":{"id":"j2_7"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"Immunizations"},{"id":"Pharmacy","text":"Pharmacy","icon":"fa fa-object-group","li_attr":{"id":"Pharmacy"},"a_attr":{"href":"#","id":"Pharmacy_anchor"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"subset_root"},{"id":"j2_9","text":"Medication Routes","icon":true,"li_attr":{"id":"j2_9"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"Pharmacy"},{"id":"Orders","text":"Orders","icon":"fa fa-object-group","li_attr":{"id":"Orders"},"a_attr":{"href":"#","id":"Orders_anchor"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"subset_root"},{"id":"j2_11","text":"Order Status","icon":true,"li_attr":{"id":"j2_11"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"Orders"},{"id":"j2_12","text":"Nature of Order","icon":true,"li_attr":{"id":"j2_12"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"Orders"},{"id":"TIU","text":"TIU","icon":"fa fa-object-group","li_attr":{"id":"TIU"},"a_attr":{"href":"#","id":"TIU_anchor"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"subset_root"},{"id":"j2_14","text":"TIU Status","icon":true,"li_attr":{"id":"j2_14"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"TIU"},{"id":"j2_15","text":"TIU Doctype","icon":true,"li_attr":{"id":"j2_15"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"TIU"},{"id":"j2_16","text":"TIU Role","icon":true,"li_attr":{"id":"j2_16"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"TIU"},{"id":"j2_17","text":"TIU SMD","icon":true,"li_attr":{"id":"j2_17"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"TIU"},{"id":"j2_18","text":"TIU Service","icon":true,"li_attr":{"id":"j2_18"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"TIU"},{"id":"j2_19","text":"TIU Setting","icon":true,"li_attr":{"id":"j2_19"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"TIU"},{"id":"j2_20","text":"TIU Titles","icon":true,"li_attr":{"id":"j2_20"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"TIU"},{"id":"Vitals","text":"Vitals","icon":"fa fa-object-group","li_attr":{"id":"Vitals"},"a_attr":{"href":"#","id":"Vitals_anchor"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"subset_root"},{"id":"j2_22","text":"Vital Types","icon":true,"li_attr":{"id":"j2_22"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"Vitals"},{"id":"j2_23","text":"Vital Categories","icon":true,"li_attr":{"id":"j2_23"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"Vitals"},{"id":"j2_24","text":"Vital Qualifiers","icon":true,"li_attr":{"id":"j2_24"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"Vitals"}]
+     */
+    function load_checksum_results() {
+        var subset_tree = $('#subsets');
+        var selected_ids = subset_tree.jstree('get_checked');
+        var all_subsets = subset_tree.jstree(true).get_json('#', {'flat': true});
+        var tables = [];
+        var table_ids = [];
+
+        for (var i = 0, len = all_subsets.length; i < len; i++) {
+            var subset = all_subsets[i];
+            var subset_id = subset['id'];
+
+            if (selected_ids.indexOf(subset_id) != -1 && subset_id !== 'subset_root') {
+                var parent_id = subset['parent'];
+
+                if (parent_id === 'subset_root') {
+                    table_ids.push(subset_id);
+                    tables.push({id: subset_id, text: subset['text'], subsets: []});
+                } else {
+                    if (table_ids.indexOf(parent_id) != -1) {
+                        var cur_table = tables.pop();
+                        cur_table['subsets'].push(subset);
+                        tables.push(cur_table);
+                    } else {
+                        // create the new table and add this as a subset
+                        var table = {id: parent_id, text: parent_id, subsets: []};
+                        table['subsets'].push(subset);
+                        tables.push(table);
+                        table_ids.push(parent_id);
+                    }
+                }
+            }
+        }
+
+        var sites = $("#tbl_site_selection > tbody > tr");
+        var site_selections = [];
+
+        for (var i = 0, len = sites.length; i < len; i++) {
+            var site = sites[i];
+            site_selections.push({id: $(site).data('va_site_id'), text: $(site).data('site_text')})
+        }
+        $.post(gon.routes.checksum_results_table_path, {subset_selections: JSON.stringify(tables), site_selections: JSON.stringify(site_selections)}, function (data) {
+            $('#checksum_results').html(data);
+            change_tabs('checksum');
+        })
+    }
+
+    function sites() {
+        var sites = $('#tbl_site_selection > tbody > tr');
+        if (sites.length == 1 && sites[0].hasClass('no_rows')) {
+            return [];
+        }
+        return sites;
+    }
+
+    $(document).ready(function () {
+        $('#checksum').jstree(
+            {
+                "checkbox": {
+                    "keep_selected_style": false
+                },
+                "plugins": ["checkbox"],
+
+                'core': {
+                    'data': [<%= raw @group_tree %>, <%= raw @site_tree %>],
+                    'themes': {"stripes": true}
+                }
+            });
+
+        $('#subsets').jstree(
+            {
+                "checkbox": {
+                    "keep_selected_style": false
+                },
+                "plugins": ["checkbox"],
+
+                'core': {
+                    'data': [<%= raw @active_subsets %>],
+                    'themes': {"stripes": true}
+                }
+            });
+
+        $('.btn-req-checksum').on("click", function () {
+            var checked = $('#subsets').jstree('get_checked');
+            if (checked.length == 0) {
+                bootbox.alert("Please select subsets before requesting the checksum.");
+                return false;
+            }
+
+            if ($('#tbl_site_selection > tbody > tr').hasClass('no_rows')) {
+                bootbox.alert('Please select your site(s) before requesting the checksum.');
+                return false;
+            }
+
+            // load the results table
+            load_checksum_results();
+        });
+    });
+</script>

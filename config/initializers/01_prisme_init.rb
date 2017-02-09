@@ -70,14 +70,13 @@ end
 #https://github.com/jruby/jruby/wiki/PerformanceTuning#dont-enable-objectspace
 #one of our dependent gems (zip.rb) enables this.  Disabling.
 JRuby.objectspace = false
-unless STFU_MODE
+if(!STFU_MODE || $testing)
   puts 'Object space disabled again'
   require './lib/rails_common/logging/rails_appender'
 
   #isaac utilities must be loaded after our appenders are set (if they are set.)
   require './lib/isaac_utilities'
   require './lib/hl7_message'
-
   java_import 'gov.vha.isaac.ochre.api.LookupService' do |p, c|
     'JLookupService'
   end
@@ -85,7 +84,7 @@ unless STFU_MODE
   at_exit do
     begin
       $log.info('Internal Isaac libs getting shutdown...')
-      JLookupService.shutdownIsaac
+      JLookupService.shutdownSystem
       $log.info('Isaac is shutdown...')
     rescue => ex
       $log.warn("Isaac libs got cranky during the shutdown. #{ex}")
@@ -102,7 +101,7 @@ rescue
   $log.warn("Could not read the version file!")
 end
 PRISME_VERSION = version
-PRISME_EVIRONMENT = PrismeUtilities.aitc_environment.fetch(Socket.gethostname) rescue 'environment not known'
+PRISME_ENVIRONMENT = PrismeUtilities.aitc_environment.fetch(Socket.gethostname) rescue 'environment not known'
 $log.always { PrismeLogEvent.notify(PrismeLogEvent::LIFECYCLE_TAG, "#{Rails.application.class.parent_name} coming up!  The version is #{PRISME_VERSION}") }
 
 # ensure super_user and admin for cboden for demo

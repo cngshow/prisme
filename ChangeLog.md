@@ -3,11 +3,18 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2017/02/09 - 1.55  
+   * Checkpoint for checksum GUI. It needs to be wired to the back end once the API is available
+   * Added a komet_c.war filter to the prisme.properties file and included code to filter out these wars in the app_deployer if the running environment not specified in the properties file
+
 * 2017/02/03 - 1.54  
-   * 439581 GUI - Present list of selectable sites/groups for checksum.  To test: you need to be able to modify the back-end yml file (site_data.yml/group_data.yml) and ensure the gui keeps up after prisme restarts.  The gui is not yet wired to the back end. 
-   * 439584 GUI - Display list of selectable subsets for checksum. To test: you need to be able to modify the back-end xml file (TerminologyConfig.xml) and ensure the gui keeps up after prisme restarts.  The gui is not yet wired to the back end. 
+   * 439581 GUI - Present list of selectable sites/groups for checksum.  To test: you need to be able to modify the back-end yml file (site_data.yml/group_data.yml) 
+       and ensure the gui keeps up after prisme restarts.  The gui is not yet wired to the back end. 
+   * 439584 GUI - Display list of selectable subsets for checksum. To test: you need to be able to modify the back-end xml file (TerminologyConfig.xml) and ensure 
+       the gui keeps up after prisme restarts.  The gui is not yet wired to the back end. 
    * 452506 - Environment is displayed on prisme next to the version in the footer.
-   * 456256 - Add uuid to prisme.properties.  To test: Deploy an Isaac instance.  Name the Isaac during the deploy.  Deploy a Komet instance and bind it to the previous isaac instance you just deployed.  Name the Komet.  On the home page the Komet should tell you it's Isaac (by name).
+   * 456256 - Add uuid to prisme.properties.  To test: Deploy an Isaac instance.  Name the Isaac during the deploy.  Deploy a Komet instance and bind it to the 
+       previous isaac instance you just deployed.  Name the Komet.  On the home page the Komet should tell you it's Isaac (by name).
    * 456257 - Allow Naming Isaac's/Komet.  See above.  Should you stop an Isaac that a Komet relies on there is currently no warning message
    
 * 2017/01/26 - 1.53  
