@@ -7,6 +7,13 @@ class Hl7MessagingTest < ActionDispatch::IntegrationTest
   #   assert true
   # end
 
+  def request_checksum
+    task = HL7Messaging.get_check_sum_task(subset: @subset_string, site_list: VaSite.all.to_a)
+    task.stateProperty.addListener(@observer) unless @observer.nil?
+    HL7Messaging.start_checksum_task(task: task)
+    HL7Messaging.fetch_result(task: task) #blocking call
+  end
+
   setup do
     @subset_string='some_string'
     PrismeUtilities.synch_site_data
@@ -14,18 +21,21 @@ class Hl7MessagingTest < ActionDispatch::IntegrationTest
   end
 
   teardown do
-    JLookupService.shutdownSystem
-    javafx.application.Platform.exit if @stop_fx
+
   end
 
   test 'check_sum' do
-    task = HL7Messaging.get_check_sum_task(subset: @subset_string, site_list: VaSite.all.to_a)
-    HL7Messaging.start_checksum_task(task: task)
-    result = HL7Messaging.fetch_result(task: task)
+    result = request_checksum
     p "check_sum test result is #{result}"
     #result = 'fizzle' #to force a failure
     assert(result.eql?('done'), 'Expected a result of done, received a result of ' + result.to_s)
-    @stop_fx = true
+  end
+
+
+  test 'check_sum_observer' do
+    @observer = HL7Messaging::HL7CheckSumObserver.new
+    p 'checksum result is ' + request_checksum.to_s
+    assert(@observer.new_value == JIsaacLibrary::Task::SUCCEEDED,"The final state of our checksum task was (between the arrows)-->#{@observer.new_value}<--, the old value is -->#{@observer.old_value}<--")
   end
 
   test 'application_property_url' do

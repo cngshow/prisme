@@ -2,6 +2,15 @@ module JIsaacLibrary
   include_package 'gov.vha.isaac.ochre.deployment.hapi.extension.hl7.message' #HL7CheckSum
   include_package 'gov.vha.isaac.ochre.access.maint.deployment.dto' #PublishMessageDTO, SiteDTO
   include_package 'gov.vha.isaac.ochre.services.dto.publish' #HL7ApplicationProperties
+
+  module Task
+    READY = javafx.concurrent.Worker::State::READY
+    SCHEDULED = javafx.concurrent.Worker::State::SCHEDULED
+    RUNNING = javafx.concurrent.Worker::State::RUNNING
+    SUCCEEDED = javafx.concurrent.Worker::State::SUCCEEDED
+    CANCELLED = javafx.concurrent.Worker::State::CANCELLED
+    FAILED = javafx.concurrent.Worker::State::FAILED
+  end
 end
 
 module HL7Messaging
@@ -97,6 +106,27 @@ module HL7Messaging
       end
     end
   end
+
+  class HL7CheckSumObserver < JIsaacLibrary::TaskObserver
+    include JIsaacLibrary::Task
+    def changed(observable_task, old_value, new_value)
+      super observable_task, old_value, new_value
+      #puts "I observed #{old_value}  --> #{new_value}"
+      case new_value
+        when SUCCEEDED, FAILED, CANCELLED
+          #non final state, update the active record with the status
+          #puts 'new value in final state is ' + new_value.to_s
+          result = HL7Messaging.fetch_result(task: observable_task)
+          #puts "The final result the observer got is #{result}"
+        else
+          #final state, this notification is guaranteed
+          #puts 'new value in non final state is ' + new_value.to_s
+      end
+    end
+  end
+
+
+
 end
 =begin
 p = HL7Messaging::MessageProperties.new
