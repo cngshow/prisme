@@ -10,7 +10,7 @@ class CreateChecksumDetails < ActiveRecord::Migration
 
       t.timestamps null: false
     end
-    # add_foreign_key :checksum_details, :checksum_requests
+    #add_foreign_key :checksum_details, :checksum_requests
   end
 end
 # 20170209192335_create_checksum_details.rb

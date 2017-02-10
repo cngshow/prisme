@@ -49,10 +49,12 @@ class VaSite < ActiveRecord::Base
     rand 1000 #@message_id
   end
 
+  #redo in new ac obj
   def setMessageId(message_id)
     @message_id = message_id
   end
 
+  #redo in new ac obj
   def getSite
     self
   end

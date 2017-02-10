@@ -109,6 +109,11 @@ module HL7Messaging
 
   class HL7CheckSumObserver < JIsaacLibrary::TaskObserver
     include JIsaacLibrary::Task
+    #
+    # def initialize(active_record_publish_message)
+    #
+    # end
+
     def changed(observable_task, old_value, new_value)
       super observable_task, old_value, new_value
       #puts "I observed #{old_value}  --> #{new_value}"
