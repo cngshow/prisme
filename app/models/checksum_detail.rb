@@ -22,7 +22,7 @@ A full example:
 
 all_sites = []
 VaSite.all.to_a.each do |s|
-  all_sites << {va_site_id: s.id, subset: 'reactants'}
+  all_sites << {va_site_id: s.id, subset: 'Reactants'}
 end
 cr = ChecksumRequest.new
 cd = cr.checksum_details.build all_sites
