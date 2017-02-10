@@ -77,10 +77,12 @@ module HL7Messaging
             cd.subset = subset
           end
         end
-        cr.save!
         cr_array << cr
       end
-     # kick_off_checksums(cr_array)
+      ChecksumRequest.transaction do
+        cr_array.each(&:save!)
+      end
+      # kick_off_checksums(cr_array)
       cr_array
     end
 
