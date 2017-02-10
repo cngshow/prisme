@@ -59,6 +59,31 @@ module HL7Messaging
       (HashWithIndifferentAccess.new HL7Messaging.hl7_message_config).deep_dup
     end
 
+    #subset_hash looks like {'Allergy' => ['Reaction', 'Reactants'], 'Immunizations' => ['Immunization Procedure']}
+    def build_task_active_record(user:, subset_hash: ,site_ids_array:)
+      task_ar_array = []
+      site_ids = []
+      cr_array = []
+      site_ids_array.each do |site_id|
+        site_ids << {va_site_id: site_id}
+      end
+      subset_hash.each_pair do |main_subset, subset_array|
+        cr = ChecksumRequest.new
+        cr.username = user
+        cr.subset_group = main_subset
+        subset_array.each do |subset|
+          cd_array = cr.checksum_details.build site_ids
+          cd_array.each do |cd|
+            cd.subset = subset
+          end
+        end
+        cr.save!
+        cr_array << cr
+      end
+     # kick_off_checksums(cr_array)
+      cr_array
+    end
+
   end
 
   extend ClassMethods
