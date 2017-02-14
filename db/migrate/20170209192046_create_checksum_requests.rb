@@ -8,6 +8,7 @@ class CreateChecksumRequests < ActiveRecord::Migration
 
       t.timestamps null: false
     end
+    add_index(:checksum_requests, [:subset_group, :finish_time])
   end
 end
 # 20170209192046_create_checksum_requests
