@@ -174,7 +174,9 @@ module HL7Messaging
           @checksum_request.save
       end
       mock_checksum if Rails.env.development?
-      @checksum_request.checksum_details.each(&:save)
+      ChecksumRequest.transaction do
+        @checksum_request.checksum_details.each(&:save)
+      end
     end
 
     def mock_checksum
