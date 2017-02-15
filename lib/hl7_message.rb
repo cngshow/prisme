@@ -10,7 +10,7 @@ module JIsaacLibrary
     SUCCEEDED = javafx.concurrent.Worker::State::SUCCEEDED
     CANCELLED = javafx.concurrent.Worker::State::CANCELLED
     FAILED = javafx.concurrent.Worker::State::FAILED
-    NOT_STARTED = 'NOT STARTED'
+    NOT_STARTED = 'NOT STARTED'.to_sym
   end
 end
 
@@ -69,7 +69,7 @@ module HL7Messaging
       end
       subset_hash.each_pair do |main_subset, subset_array|
         cr = ChecksumRequest.new
-        cr.status = JIsaacLibrary::Task::NOT_STARTED
+        cr.status = JIsaacLibrary::Task::NOT_STARTED.to_s
         cr.username = user
         cr.subset_group = main_subset
         subset_array.each do |subset|
@@ -173,10 +173,46 @@ module HL7Messaging
         else
           @checksum_request.save
       end
+      mock_checksum if Rails.env.development?
+      @checksum_request.checksum_details.each(&:save)
+    end
+
+    def mock_checksum
+      @checksum_request.checksum_details.each do |detail|
+        if detail.checksum.nil?
+          file = Tempfile.new('checksum_simulator')
+          file.write([*('a'..'z'),*('0'..'9')].shuffle[0,36].join)
+          file.close
+          detail.checksum = Digest::MD5.file(file).to_s
+          detail.discovery_data = DISCOVERY_MOCK
+          file.unlink
+        end
+      end
     end
   end
 
-
+  DISCOVERY_MOCK = %(
+MSH^~|\&^XUMF DATA^442^VETS DATA^660INT^20060731124021-0400^^MFR~M01^44210935997^T^2.4^^^AL^NE^USA
+MSA^AA^200607311040367311^
+QRD^20060731104000.000-0600^R^I^Standard Terminology Query^^^99999^ALL^Vital Types^VA
+MFI^Vital Types^Standard Terminology^MUP^20060731124021-0400^20060731124021-0400^NE
+MFE^MUP^^20060731124021-0400^Vital Types@871299
+ZRT^Term^HOLLI HEIGHT
+ZRT^VistA_Short_Name^HH
+ZRT^VistA_Type_Rate^YES
+ZRT^VistA_Rate_Input_Transform^D EN3\F\GMRVUT0 K:X=0!(X>100)!(X<1) X
+ZRT^VistA_Type_Rate_Help^GMRV-HEIGHT RATE HELP
+ZRT^VistA_PCE_Abbreviation^
+ZRT^Status^1
+MFE^MUP^^20060731124021-0400^Vital Types@4688728
+ZRT^Term^VISION UNCORRECTED
+ZRT^VistA_Short_Name^VU
+ZRT^VistA_Type_Rate^YES
+ZRT^VistA_Rate_Input_Transform^K:'$$VALID\F\GMRVPCE3("VU",X) X
+ZRT^VistA_Type_Rate_Help^
+ZRT^VistA_PCE_Abbreviation^VU
+ZRT^Status^1
+).strip
 
 end
 =begin
