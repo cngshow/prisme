@@ -23,11 +23,29 @@ class ChecksumController < ApplicationController
   end
 
   def checksum_results_table
-    subset_selections = JSON.parse(params[:subset_selections])
+    # repackage selected sites
     site_selections = JSON.parse(params[:site_selections])
-    ret = render_results_table(subsets: subset_selections, sites: site_selections)
-    cr_array = HL7Messaging.build_task_activesub_record(user: prisme_user.user_name, subset_hash: @subset_request_hash ,site_ids_array: @site_request_array)
-    render text: ret
+
+    sites_arr = []
+    site_selections.each do |s|
+      sites_arr << s['id'].to_s
+    end
+
+    # repackage subset selections
+    subset_selections = JSON.parse(params[:subset_selections])
+    subset_hash = {}
+    subset_selections.each do |group|
+      subsets = []
+
+      group['subsets'].each do |subset|
+        subsets << subset['text']
+      end
+      subset_hash[group['id']] = subsets
+    end
+
+    # build checksum request active records for display
+    @checksum_results = HL7Messaging.build_task_active_record(user: prisme_user.user_name, subset_hash: subset_hash, site_ids_array: sites_arr)
+    render partial: 'checksum/discovery_results'
   end
 
   def group_tree_data

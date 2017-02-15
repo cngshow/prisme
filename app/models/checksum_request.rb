@@ -1,7 +1,6 @@
 class ChecksumRequest < ActiveRecord::Base
   has_many :checksum_details, :dependent => :destroy
 
-
   def self.last_checksum_detail(subset_group:, subset:, site_id:)
 
     sql = %(

@@ -1,1 +1,7 @@
-discovery results...
+<% if @checksum_results %>
+    <% @checksum_results.each do |row| %>
+        <% row.checksum_details.each do |dtl| %>
+            <%= "#{row.subset_group} -> #{dtl.va_site.id} - #{dtl.va_site.name} :: #{dtl.subset} :: #{dtl.last_checksum}" %><br>
+        <% end %>
+    <% end %>
+<% end %>
