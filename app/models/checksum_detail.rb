@@ -1,6 +1,7 @@
 class ChecksumDetail < ActiveRecord::Base
   belongs_to :checksum_request
   belongs_to :va_site
+  belongs_to :checksum_detail
   include gov.vha.isaac.ochre.access.maint.deployment.dto.PublishMessage
   include JavaImmutable
 
@@ -15,6 +16,7 @@ class ChecksumDetail < ActiveRecord::Base
   end
 
   #Java methods here:
+
   # def setVersion(version_string)
   #   self.version = version
   # end

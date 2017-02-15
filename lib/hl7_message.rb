@@ -22,13 +22,12 @@ module HL7Messaging
     attr_accessor :hl7_message_config #hl7_message_config.yml.erb
   end
 
-  #todo add user to appropriate methods
   module ClassMethods
     # task = HL7Messaging.get_check_sum_task(check_sum: 'some_string', site_list: VaSite.all.to_a)
-    def get_check_sum_task(subset:, site_list:)
+    def get_check_sum_task(checksum_detail_array:)
       @@application_properties ||= HL7Messaging::ApplicationProperties.new
       @@message_properties ||= HL7Messaging::MessageProperties.new
-      task = JIsaacLibrary::HL7CheckSum.checkSum(subset, site_list, @@application_properties, @@message_properties)
+      task = JIsaacLibrary::HL7Checksum.checksum(checksum_detail_array, @@application_properties, @@message_properties)
       task
     end
 
@@ -59,6 +58,7 @@ module HL7Messaging
       (HashWithIndifferentAccess.new HL7Messaging.hl7_message_config).deep_dup
     end
 
+    #this method is called by the controller.
     #subset_hash looks like {'Allergy' => ['Reaction', 'Reactants'], 'Immunizations' => ['Immunization Procedure']}
     def build_task_active_record(user:, subset_hash: ,site_ids_array:)
       task_ar_array = []
@@ -82,8 +82,20 @@ module HL7Messaging
       ChecksumRequest.transaction do
         cr_array.each(&:save!)
       end
-      # kick_off_checksums(cr_array)
+      kick_off_checksums(cr_array)
       cr_array
+    end
+
+    private
+    def kick_off_checksums(cr_array)
+      cr_array.each do |checksum_request|
+        #the call to 'to_a' (below) inflates the models.
+        task = get_check_sum_task(checksum_detail_array: checksum_request.checksum_details.to_a)
+        # Register the observable
+        task.stateProperty.addListener(HL7ChecksumObserver.new(checksum_request))
+        #start the task
+        start_checksum_task(task:task)
+      end
     end
 
   end
@@ -134,25 +146,30 @@ module HL7Messaging
     end
   end
 
-  class HL7CheckSumObserver < JIsaacLibrary::TaskObserver
+  class HL7ChecksumObserver < JIsaacLibrary::TaskObserver
     include JIsaacLibrary::Task
-    #
-    # def initialize(active_record_publish_message)
-    #
-    # end
+
+    def initialize(checksum_request)
+      @checksum_request = checksum_request
+    end
 
     def changed(observable_task, old_value, new_value)
       super observable_task, old_value, new_value
-      #puts "I observed #{old_value}  --> #{new_value}"
+      $log.info("The checksum request #{@checksum_request.inspect} is now #{new_value}!")
       case new_value
         when SUCCEEDED, FAILED, CANCELLED
-          #non final state, update the active record with the status
-          #puts 'new value in final state is ' + new_value.to_s
-          result = HL7Messaging.fetch_result(task: observable_task)
-          #puts "The final result the observer got is #{result}"
+          @checksum_request.finish_time = Time.now
+          saved = @checksum_request.save #save md5 values set by java side
+          cs_string = @checksum_request.inspect
+          cd_string = @checksum_request.checksum_details.to_a.inspect
+          $log.always_n(PrismeLogEvent::CHECKSUM_TAG,"#{cs_string}\n\n#{cd_string}")
+          $log.warn("The checksum request #{@checksum_request.inspect} did not save md5 data to the db. (check rails_prisme log)") unless saved
+        when RUNNING
+          @checksum_request.start_time = Time.now
+          saved = (@checksum_request.save)
+          $log.warn("The checksum request #{@checksum_request.inspect} is now running, but the field start_time did not save to the db. (check rails_prisme log)") unless saved
         else
-          #final state, this notification is guaranteed
-          #puts 'new value in non final state is ' + new_value.to_s
+
       end
     end
   end
