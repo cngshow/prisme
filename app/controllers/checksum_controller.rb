@@ -26,6 +26,7 @@ class ChecksumController < ApplicationController
     subset_selections = JSON.parse(params[:subset_selections])
     site_selections = JSON.parse(params[:site_selections])
     ret = render_results_table(subsets: subset_selections, sites: site_selections)
+    cr_array = HL7Messaging.build_task_activesub_record(user: prisme_user.user_name, subset_hash: @subset_request_hash ,site_ids_array: @site_request_array)
     render text: ret
   end
 
