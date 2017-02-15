@@ -27,4 +27,14 @@ module ChecksumHelper
     end
     table.join('<br><br>').html_safe
   end
+
+  def view_checksum_detail(checksum_detail:)
+    ret = checksum_detail
+
+    if checksum_detail.checksum.nil?
+      @last = checksum_detail.last_checksum
+      ret = @last.nil? ? checksum_detail : @last
+    end
+    ret
+  end
 end
