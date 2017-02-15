@@ -6,7 +6,6 @@ class ChecksumDetail < ActiveRecord::Base
 
   def last_checksum
     unless checksum_detail_id
-      subset_group = checksum_request.subset_group
       id = ChecksumRequest.last_checksum_detail(subset_group: checksum_request.subset_group, subset: subset, site_id: va_site_id)
       return nil if id.nil?
       self.checksum_detail_id = id
