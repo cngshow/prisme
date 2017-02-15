@@ -1,10 +1,11 @@
 class CreateChecksumRequests < ActiveRecord::Migration
   def change
     create_table :checksum_requests do |t|
-      t.string :username
+      t.string :username, null: false
+      t.string :subset_group, null: false
+      t.string :status, null: false
       t.date :start_time
       t.date :finish_time
-      t.string :subset_group
 
       t.timestamps null: false
     end
