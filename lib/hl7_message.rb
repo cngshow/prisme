@@ -60,7 +60,7 @@ module HL7Messaging
 
     #this method is called by the controller.
     #subset_hash looks like {'Allergy' => ['Reaction', 'Reactants'], 'Immunizations' => ['Immunization Procedure']}
-    def build_task_active_record(user:, subset_hash: ,site_ids_array:)
+    def build_task_active_record(user:, subset_hash:, site_ids_array:)
       task_ar_array = []
       site_ids = []
       cr_array = []
@@ -95,7 +95,7 @@ module HL7Messaging
         # Register the observable
         task.stateProperty.addListener(HL7ChecksumObserver.new(checksum_request))
         #start the task
-        start_checksum_task(task:task)
+        start_checksum_task(task: task)
       end
     end
 
@@ -161,29 +161,24 @@ module HL7Messaging
       case new_value
         when SUCCEEDED, FAILED, CANCELLED
           @checksum_request.finish_time = Time.now
-          saved = @checksum_request.save #save md5 values set by java side
           cs_string = @checksum_request.inspect
           cd_string = @checksum_request.checksum_details.to_a.inspect
-          $log.always_n(PrismeLogEvent::CHECKSUM_TAG,"#{cs_string}\n\n#{cd_string}")
-          $log.warn("The checksum request #{@checksum_request.inspect} did not save md5 data to the db. (check rails_prisme log)") unless saved
+          $log.always_n(PrismeLogEvent::CHECKSUM_TAG, "#{cs_string}\n\n#{cd_string}")
+          mock_checksum if Rails.env.development?
         when RUNNING
           @checksum_request.start_time = Time.now
-          saved = (@checksum_request.save)
-          $log.warn("The checksum request #{@checksum_request.inspect} is now running, but the field start_time did not save to the db. (check rails_prisme log)") unless saved
         else
-          @checksum_request.save
+          #nothing
       end
-      mock_checksum if Rails.env.development?
-      ChecksumRequest.transaction do
-        @checksum_request.checksum_details.each(&:save)
-      end
+      @checksum_request.save
+      @checksum_request.checksum_details.each(&:save) #save md5/discovery values set by java side
     end
 
     def mock_checksum
       @checksum_request.checksum_details.each do |detail|
         if detail.checksum.nil?
           file = Tempfile.new('checksum_simulator')
-          file.write([*('a'..'z'),*('0'..'9')].shuffle[0,36].join)
+          file.write([*('a'..'z'), *('0'..'9')].shuffle[0, 36].join)
           file.close
           detail.checksum = Digest::MD5.file(file).to_s
           detail.discovery_data = DISCOVERY_MOCK
