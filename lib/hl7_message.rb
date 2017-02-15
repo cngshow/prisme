@@ -10,11 +10,11 @@ module JIsaacLibrary
     SUCCEEDED = javafx.concurrent.Worker::State::SUCCEEDED
     CANCELLED = javafx.concurrent.Worker::State::CANCELLED
     FAILED = javafx.concurrent.Worker::State::FAILED
+    NOT_STARTED = 'NOT STARTED'
   end
 end
 
 module HL7Messaging
-
 
   class << self
     #these leak state, you should use the the defined methods unless you know what you are doing...
@@ -69,6 +69,7 @@ module HL7Messaging
       end
       subset_hash.each_pair do |main_subset, subset_array|
         cr = ChecksumRequest.new
+        cr.status = JIsaacLibrary::Task::NOT_STARTED
         cr.username = user
         cr.subset_group = main_subset
         subset_array.each do |subset|
@@ -156,6 +157,7 @@ module HL7Messaging
     def changed(observable_task, old_value, new_value)
       super observable_task, old_value, new_value
       $log.info("The checksum request #{@checksum_request.inspect} is now #{new_value}!")
+      @checksum_request.status = new_value.to_s
       case new_value
         when SUCCEEDED, FAILED, CANCELLED
           @checksum_request.finish_time = Time.now
@@ -169,7 +171,7 @@ module HL7Messaging
           saved = (@checksum_request.save)
           $log.warn("The checksum request #{@checksum_request.inspect} is now running, but the field start_time did not save to the db. (check rails_prisme log)") unless saved
         else
-
+          @checksum_request.save
       end
     end
   end
