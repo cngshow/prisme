@@ -51,6 +51,15 @@ class Hl7MessagingTest < ActionDispatch::IntegrationTest
     assert(result.eql?('done'), 'Expected a result of done, received a result of ' + result.to_s)
   end
 
+  test 'not_using_interface_engine' do
+    props = HL7Messaging::ApplicationProperties.new.to_java
+    p 'Application props is ---------------------' + props.getApplicationServerName
+    p props.inspect
+    p ' ---------------------'
+    use_interface_engine = props.getUseInterfaceEngine
+    assert(use_interface_engine == false, "#{props.getApplicationServerName}: We should not be using the interface engine during test.  The value of use_interface_engine is #{use_interface_engine}")
+  end
+
 
   test 'check_sum_observer' do
     request_checksum(true)

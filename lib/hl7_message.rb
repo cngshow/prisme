@@ -11,6 +11,13 @@ module JIsaacLibrary
     CANCELLED = javafx.concurrent.Worker::State::CANCELLED
     FAILED = javafx.concurrent.Worker::State::FAILED
     NOT_STARTED = 'NOT STARTED'.to_sym
+
+    def self.convert_string(s)
+      s = s.to_s
+      return NOT_STARTED if s.eql? NOT_STARTED.to_s
+      javafx.concurrent.Worker::State.value_of(s) rescue nil
+    end
+
   end
 end
 
