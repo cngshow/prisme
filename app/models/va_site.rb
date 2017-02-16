@@ -1,14 +1,10 @@
 class VaSite < ActiveRecord::Base
   include gov.vha.isaac.ochre.access.maint.deployment.dto.Site
-  include gov.vha.isaac.ochre.access.maint.deployment.dto.PublishMessage
-  include JavaImmutable
+
 
   validates_uniqueness_of :va_site_id
   self.primary_key = 'va_site_id'
   include InterestingColumnCompare
-
-  #I think you can set this bad boy to the 'request id', but I am unsure...
-  attr_accessor :message_id
 
   #Java methods here:
 
@@ -42,19 +38,6 @@ class VaSite < ActiveRecord::Base
   #  VaSite.all.to_a.first.to_java.getMessageType
   def getMessageType
     message_type
-  end
-
-  def getMessageId
-    $log.always('message id method was called')
-    rand 1000 #@message_id
-  end
-
-  def setMessageId(message_id)
-    @message_id = message_id
-  end
-
-  def getSite
-    self
   end
 
   # See opening of site below

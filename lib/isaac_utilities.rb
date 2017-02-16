@@ -86,6 +86,18 @@ module JIsaacLibrary
 
   class GitFailureException < StandardError
   end
+
+  class TaskObserver
+    include javafx.beans.value.ChangeListener
+    attr_reader :old_value, :new_value
+
+    def changed(observable_task, oldValue, newValue)
+      $log.debug { "#{observable_task}:: oldValue = #{oldValue}, newValue = #{newValue}" }
+      @old_value = oldValue
+      @new_value = newValue
+    end
+  end
+
 end
 
 module IsaacDBConfigurationCreator
@@ -223,15 +235,7 @@ module IsaacUploader
     JIsaacLibrary.fetch_result(task: task)
   end
 
-  class UploadObserver
-    include javafx.beans.value.ChangeListener
-    attr_reader :old_value, :new_value
-
-    def changed(observable_task, oldValue, newValue)
-      $log.debug { "#{observable_task}:: oldValue = #{oldValue}, newValue = #{newValue}" }
-      @old_value = oldValue
-      @new_value = newValue
-    end
+  class UploadObserver < JIsaacLibrary::TaskObserver
   end
 
   class StateObserver < UploadObserver

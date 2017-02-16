@@ -114,9 +114,9 @@ class WelcomeController < ApplicationController
 
       # get all of the applications deployed at this app server location
       tomcat_deployments[appserver].each_pair do |war, d|
-        next if [:available, :failed].include?(war) #This line ensures we skip over Tomcats that have no applications installed or that aren't responding properly.  It must be first!
+        current_row[:available] = true #this line toggles between the no apps on tomcat vs tomcat is unavailable or misconfigured message.  It must be first
+        next if [:available, :failed].include?(war) #This line ensures we skip over Tomcats that have no applications installed or that aren't responding properly.  It must be second!
         war_uuid = tomcat_deployments[appserver][war][:war_id]
-        current_row[:available] = true
         hash = {war_uuid: war_uuid}.merge(uuid_hash(uuid: war_uuid))
 
         if war =~ /komet/

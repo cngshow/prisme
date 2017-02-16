@@ -1,3 +1,5 @@
+require './lib/time/time_utils'
+
 module ApplicationHelper
   include BootstrapNotifier
 =begin
@@ -86,7 +88,7 @@ module ApplicationHelper
     time_string
   end
 
-  def self.display_time(time)
+  def display_time(time)
     ret = ''
     if time
       converted_time = time + session[:tzOffset].to_i.hours
