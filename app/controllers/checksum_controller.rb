@@ -43,13 +43,22 @@ class ChecksumController < ApplicationController
       subset_hash[group['id']] = subsets
     end
 
+    # set the user's timezone offset into the session for displaying the local time information
+    session[:tzOffset] = params['tz_offset']
+
     # build checksum request active records for display
     @checksum_results = HL7Messaging.build_task_active_record(user: prisme_user.user_name, subset_hash: subset_hash, site_ids_array: sites_arr)
-    render partial: 'checksum/discovery_results'
+    render partial: 'discovery_results'
+  end
+
+  def checksum_request_poll
+    checksum_request_id = params[:checksum_req_id]
+    cr = ChecksumRequest.find(checksum_request_id)
+    render partial: 'checksum_results_tbody', locals: {checksum_details: cr.checksum_details}
   end
 
   def group_tree_data
-    group_root = {id: 'group_root', text: 'Groups', icon: "fa fa-sitemap", state: {opened: true}, children: []}
+    group_root = {id: 'group_root', text: 'Groups', icon: 'fa fa-sitemap', state: {opened: true}, children: []}
 
     groups = VaGroup.all
     groups.each do |group|

@@ -29,12 +29,14 @@ module ChecksumHelper
   end
 
   def view_checksum_detail(checksum_detail:)
-    ret = checksum_detail
+    last = checksum_detail.checksum.nil?
 
-    if checksum_detail.checksum.nil?
-      @last = checksum_detail.last_checksum
-      ret = @last.nil? ? checksum_detail : @last
+    if last
+      ret = checksum_detail.last_checksum ? checksum_detail.last_checksum : checksum_detail
+    else
+      last = false
+      ret = checksum_detail
     end
-    ret
+    [ret, last]
   end
 end

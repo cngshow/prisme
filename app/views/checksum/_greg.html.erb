@@ -1,12 +1,12 @@
-<div class="result_hdr" style="border-left: 3px solid green; padding-left: 5px" ><%#= tbl_border_color %>
+<div class="result_hdr" style="border-left: 3px solid green; padding-left: 5px"><%#= tbl_border_color %>
   <div style='background-color: transparent; height: 50px; padding: 5px;'>
     <div style='float: left; color: black; font-weight: bold; font-size: 18px; padding-left: 5px' onclick="toggleResultTable(this)">
       <i class="fa fa-minus-square" aria-hidden="true"></i>
-      <%= "#{req.subset_group}   Status: #{req.status}"%>
+      <%= req.subset_group %> - <span style="font-size: 12px" id="<%= "status_#{req.id}" %>"><%= "Status: #{req.status}" %></span>
     </div>
   </div>
   <div class="result_table">
-    <table class="prisme-table table-hover">
+    <table class="prisme-table table-hover checksum_table" id="<%= "tbl_#{req.id}" %>">
       <thead>
       <tr>
         <th scope="col">Site</th>
@@ -20,37 +20,10 @@
       </tr>
       </thead>
       <tbody>
-      <%
-        subset = nil
-        striped = 'transparent'
-        req.checksum_details.each do |row|
-          r = view_checksum_detail(checksum_detail: row)
-          unless r.subset.eql?(subset)
-            subset = r.subset
-            striped = (striped.eql?('transparent') ? '#f2f2f2;' : 'transparent')
-          end
-      %>
-          <tr id="<%= "#{r.va_site_id}|#{r.id}|#{r.subset}" %>" style="background-color: <%= striped %>">
-            <td><%= "#{r.va_site_id} - #{r.va_site.name} - #{@last.nil?}" %></td>
-            <td><%= r.subset %></td>
-            <td><%= r.checksum_request.username %></td>
-            <td><%= r.checksum_request.start_time %></td>
-            <td><%= r.checksum_request.finish_time %></td>
-            <td></td>
-            <td><%= r.checksum %></td>
-            <td>Request Data</td>
-          </tr>
-      <% end %>
+        <%= render partial: 'checksum_results_tbody', locals: {checksum_details: req.checksum_details} %>
       </tbody>
     </table>
   </div>
 </div>
-<script type="text/javascript" charset="utf-8">
-    function toggleResultTable(elem) {
-        var tbl = $(elem).closest('.result_hdr').find('.result_table');
-        tbl.toggle( "slow", function() {
-            var clazz = tbl.is(":visible") ? 'fa fa-minus-square' : 'fa fa-plus-square';
-            $(elem).find('.fa').removeClass().addClass(clazz);
-        });
-    }
-</script>
+<br>
+<br>

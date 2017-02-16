@@ -168,9 +168,15 @@
             var site = sites[i];
             site_selections.push({id: $(site).data('va_site_id'), text: $(site).data('site_text')})
         }
-        $.post(gon.routes.checksum_results_table_path, {subset_selections: JSON.stringify(tables), site_selections: JSON.stringify(site_selections)}, function (data) {
+
+//        todo move to layout making ajax call
+        var localTime = new Date();
+        var tz = localTime.getTimezoneOffset()/60 * (-1);
+
+        $.post(gon.routes.checksum_results_table_path, {subset_selections: JSON.stringify(tables), site_selections: JSON.stringify(site_selections), tz_offset: tz}, function (data) {
             $('#checksum_results').html(data);
             change_tabs('checksum');
+            init_checksum_table_polling();
         })
     }
 

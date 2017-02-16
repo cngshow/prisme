@@ -4,7 +4,7 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 where provided, and the git commit history.
 
 * 2017/02/?? - 1.56 - PENDING  
-   *
+   * Checksum - added polling for current checksum requests - tasks 392943, 460348 , 439585 , 439581
 
 * 2017/02/09 - 1.55  
    * Checkpoint for checksum GUI. It needs to be wired to the back end once the API is available

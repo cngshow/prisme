@@ -1,8 +1,5 @@
 <% if @checksum_results %>
     <% @checksum_results.each do |row| %>
         <%= render partial: 'greg', locals: {req: row} %>
-        <br>
-        <%= "#{row.subset_group}   Status: #{row.status}"%>
-        <br>
     <% end %>
 <% end %>
