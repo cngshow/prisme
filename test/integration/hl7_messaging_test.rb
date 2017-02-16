@@ -11,6 +11,7 @@ class Hl7MessagingTest < ActionDispatch::IntegrationTest
     @cr = ChecksumRequest.new
     @cr.username = 'Cris'
     @cr.subset_group = 'Allergy'
+    @cr.status = JIsaacLibrary::Task::NOT_STARTED
     subset = 'Reactants'
     site_ids = []
     ['443','442'].each do |site_id|
