@@ -1,4 +1,5 @@
 class ChecksumRequest < ActiveRecord::Base
+  include JIsaacLibrary::Task
   has_many :checksum_details, :dependent => :destroy
 
   def self.last_checksum_detail(subset_group:, subset:, site_id:)
@@ -14,6 +15,11 @@ class ChecksumRequest < ActiveRecord::Base
     and   a.checksum is not null
     )
     ChecksumRequest.connection.select_all(sql).first['last_checksum_detail']
+  end
+
+  #if the underlying task is complete we are dun!
+  def done?
+    [SUCCEEDED, CANCELLED, FAILED].map(&:to_s).include?(self.status)
   end
 end
 
