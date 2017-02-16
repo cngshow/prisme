@@ -177,8 +177,10 @@ module HL7Messaging
         else
           #nothing
       end
-      @checksum_request.save
-      @checksum_request.checksum_details.each(&:save) #save md5/discovery values set by java side
+      ChecksumRequest.transaction do
+        @checksum_request.save
+        @checksum_request.checksum_details.each(&:save) #save md5/discovery values set by java side
+      end
     end
 
     def mock_checksum
