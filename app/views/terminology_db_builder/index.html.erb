@@ -187,8 +187,8 @@
         init_select2();
 
         $.validator.addMethod("alphas_only", function (value, element) {
-            return this.optional(element) || /^[a-z][a-z0-9-_.]+$/i.test(value);
-        }, "Only alphanumerics, dash, underscore, and periods are allowed and this must begin with an alpha character");
+            return this.optional(element) || /^[a-z0-9][a-z0-9-_.]+$/i.test(value);
+        }, "Only alphanumerics, dash, underscore, and periods are allowed and this must begin with an alpha or numeric character");
 
         $.validator.addMethod("trim_whitespace", function (value, element) {
             return this.optional(element) || /^\w+/i.test(value);
