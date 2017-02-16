@@ -3,6 +3,9 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2017/02/?? - 1.57 - PENDING  
+   *
+
 * 2017/02/16 - 1.56  
    * Checksum - added polling for current checksum requests - tasks 392943, 460348 , 439585 , 439581
    * Fixing regression bug I introduced durring waruuid feature.  Prisme would tell you Tomcat was down or misconfigured when it should tell you no apps were on it.
