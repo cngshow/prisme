@@ -169,13 +169,12 @@
             site_selections.push({id: $(site).data('va_site_id'), text: $(site).data('site_text')})
         }
 
-//        todo move to layout making ajax call
-        var localTime = new Date();
-        var tz = localTime.getTimezoneOffset()/60 * (-1);
+        wait_cursor(true);
 
-        $.post(gon.routes.checksum_results_table_path, {subset_selections: JSON.stringify(tables), site_selections: JSON.stringify(site_selections), tz_offset: tz}, function (data) {
+        $.post(gon.routes.checksum_results_table_path, {subset_selections: JSON.stringify(tables), site_selections: JSON.stringify(site_selections)}, function (data) {
             $('#checksum_results').html(data);
             change_tabs('checksum');
+            wait_cursor(false);
             init_checksum_table_polling();
         })
     }

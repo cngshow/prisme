@@ -15,7 +15,7 @@
     end
 %>
     <tr id="<%= "#{r.va_site_id}|#{r.id}|#{r.subset}" %>" style="background-color: <%= striped %>">
-      <td><%= "#{r.va_site_id} - #{r.va_site.name} - #{last.to_s}" %></td>
+      <td><%= "#{r.va_site_id} - #{r.va_site.name}" %><span style="font-style: italic; font-weight: bold"><%= last ? ' - cached' : '' %></span></td>
       <td><%= r.subset %></td>
       <td><%= r.checksum_request.username %></td>
       <td><%= display_time(r.checksum_request.start_time) %></td>

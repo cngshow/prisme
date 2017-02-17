@@ -43,3 +43,13 @@ Copyright Notice
 </body>
 </html>
 <%= render 'flashes/flash_notifications' %>
+
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function () {
+        var localTime = new Date();
+        var tz = localTime.getTimezoneOffset() / 60 * (-1);
+
+        $.get(gon.routes.utilities_browser_tz_offset_path, {tzOffset: tz}, function () {
+        })
+    });
+</script>

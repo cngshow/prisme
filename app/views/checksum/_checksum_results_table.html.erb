@@ -1,34 +1,33 @@
-<div class="result_hdr" style="border-left: 3px solid green; padding-left: 5px" ><%#= tbl_border_color %>
-  <div style='background-color: transparent; height: 50px; padding: 5px;'>
-    <div style='float: left; color: black; font-weight: bold; font-size: 18px; padding-left: 5px' onclick="toggleResultTable(this)">
-      <i class="fa fa-minus-square" aria-hidden="true"></i>
-      <%= title %>
-    </div>
-  </div>
-  <div class="result_table">
-    <table class="prisme-table table-hover">
-      <thead>
-      <tr>
-        <th scope="col">Site</th>
-        <th scope="col">Subset</th>
-        <th scope="col">User Name</th>
-        <th scope="col">Request Date</th>
-        <th scope="col">Receive Date</th>
-        <th scope="col">Version</th>
-        <th scope="col">MD5</th>
-        <th scope="col">Discovery</th>
-      </tr>
-      </thead>
-      <tbody><%= rows %></tbody>
-    </table>
-  </div>
-</div>
-<script type="text/javascript" charset="utf-8">
-function toggleResultTable(elem) {
-    var tbl = $(elem).closest('.result_hdr').find('.result_table');
-    tbl.toggle( "slow", function() {
-        var clazz = tbl.is(":visible") ? 'fa fa-minus-square' : 'fa fa-plus-square';
-        $(elem).find('.fa').removeClass().addClass(clazz);
-    });
-}
-</script>
+<% if @checksum_results %>
+    <% @checksum_results.each do |row| %>
+        <div class="result_hdr" style="border-left: 3px solid green; padding-left: 5px"><%#= tbl_border_color %>
+          <div style='background-color: transparent; height: 50px; padding: 5px;'>
+            <div style='float: left; color: black; font-weight: bold; font-size: 18px; padding-left: 5px' onclick="toggleResultTable(this);">
+              <i class="fa fa-minus-square" aria-hidden="true"></i>
+              <%= row.subset_group %> - <span style="font-size: 12px" id="<%= "status_#{row.id}" %>"><%= "Status: #{row.status}" %></span>
+            </div>
+          </div>
+          <div class="result_table">
+            <table class="prisme-table table-hover checksum_table" id="<%= "tbl_#{row.id}" %>">
+              <thead>
+              <tr>
+                <th scope="col">Site</th>
+                <th scope="col">Subset</th>
+                <th scope="col">User Name</th>
+                <th scope="col">Request Date</th>
+                <th scope="col">Receive Date</th>
+                <th scope="col">Version</th>
+                <th scope="col">MD5</th>
+                <th scope="col">Discovery</th>
+              </tr>
+              </thead>
+              <tbody>
+              <%= render partial: 'checksum_results_tbody', locals: {checksum_details: row.checksum_details} %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <br>
+        <br>
+    <% end %>
+<% end %>

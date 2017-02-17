@@ -114,7 +114,7 @@ module IsaacDBConfigurationCreator
   # s_version = ibdf_files.first[:v]
   def self.create_db_configuration(name:, version:, description:, result_classifier:, classify_bool:, ibdf_files:, metadata_version:, git_url:, git_user:, git_password:)
     @db_tag_list_dirty = true
-    $log.info("Starting a db create...")
+    $log.info('Starting a db create...')
     ibdf_converted = ibdf_files.map do |ibdf|
       #the search symbols in nexus are: 'a' for artifact id, 'g' for group id, and 'v' for version
       ibdf_array = [ibdf[:g], ibdf[:a], ibdf[:v]] #to_do, check if a classifier shows up.
@@ -125,11 +125,10 @@ module IsaacDBConfigurationCreator
     begin
       return JIsaacLibrary::DBConfigurationCreator.createDBConfiguration(name, version, description, result_classifier, classify_bool, ibdf_j_a, metadata_version, git_url, git_user, git_password.to_java.toCharArray)
     rescue java.lang.Throwable => ex
-      $log.error("Failed to create db configuration! " + ex.to_s)
+      $log.error("Failed to create db configuration! #{ex.to_s}")
       $log.error(ex.backtrace.join("\n"))
       raise DBConfigurationException.new(ex)
     end
-    $log.info("db create finished...")
   end
 
   def self.read_tags

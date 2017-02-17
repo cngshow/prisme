@@ -44,6 +44,7 @@ var polling = (function () {
                 }
             });
         }
+        wait_cursor(true);
     }
 
     function unregister(controller) {

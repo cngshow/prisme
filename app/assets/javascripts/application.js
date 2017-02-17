@@ -30,6 +30,14 @@ function flash_notify(options, settings) {
     $.notify(options, settings);
 }
 
+function wait_cursor(on) {
+    if (on) {
+        $('body').addClass('wait');
+    } else {
+        $('body').removeClass('wait');
+    }
+}
+
 function format_epoch_in_local(epoch) {
     var ret = '';
 

@@ -43,16 +43,13 @@
 
           <ul class="dropdown-menu" aria-hidden="true" aria-label="Terminology Submenu">
             <li role="menuitem">
-              <a href="<%= terminology_source_packages_path %>" onclick="polling
-                  .checkPolling(polling.pollEnum.TERM_SOURCE);" title="Source Package Upload">
+              <a href="<%= terminology_source_packages_path %>" onclick="polling.checkPolling(polling.pollEnum.TERM_SOURCE);" title="Source Package Upload">
                 Source Package Upload</a></li>
             <li role="menuitem">
-              <a href="<%= terminology_converter_path %>" onclick="polling.checkPolling(polling.pollEnum
-                  .CONVERTER);" title="Convert Terminology">
+              <a href="<%= terminology_converter_path %>" onclick="polling.checkPolling(polling.pollEnum.CONVERTER);" title="Convert Terminology">
                 Convert Terminology</a></li>
             <li role="menuitem">
-              <a href="<%= terminology_db_builder_path %>" onclick="polling.checkPolling(polling.pollEnum
-                  .DB_BUILDER);" title="Database Builder">
+              <a href="<%= terminology_db_builder_path %>" onclick="polling.checkPolling(polling.pollEnum.DB_BUILDER);" title="Database Builder">
                 Database Builder</a></li>
           </ul>
         </div>
@@ -64,12 +61,10 @@
 
           <ul class="dropdown-menu" aria-hidden="true" aria-label="Administration Submenu">
             <li role="menuitem">
-              <a href="<%= list_users_path %>" onclick="polling.checkPolling(polling.pollEnum.ADMIN_USER_EDIT);
-              " title="Edit User Permissions">
+              <a href="<%= list_users_path %>" onclick="polling.checkPolling(polling.pollEnum.ADMIN_USER_EDIT);" title="Edit User Permissions">
                 Edit User Permissions</a></li>
             <li role="menuitem">
-              <a href="<%= services_path %>" onclick="polling.checkPolling(polling.pollEnum.SERVICES);" title="Service
-                Provisioning">
+              <a href="<%= services_path %>" onclick="polling.checkPolling(polling.pollEnum.SERVICES);" title="Service Provisioning">
                 Service Provisioning</a></li>
           </ul>
         </div>

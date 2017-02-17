@@ -267,6 +267,10 @@ html, body {
   padding: 5px;
 }
 
+body.wait, body.wait *{
+  cursor: wait !important;
+}
+
 .prisme-table tr:hover {
   cursor: pointer;
 }

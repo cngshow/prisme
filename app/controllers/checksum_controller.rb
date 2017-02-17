@@ -43,12 +43,9 @@ class ChecksumController < ApplicationController
       subset_hash[group['id']] = subsets
     end
 
-    # set the user's timezone offset into the session for displaying the local time information
-    session[:tzOffset] = params['tz_offset']
-
     # build checksum request active records for display
     @checksum_results = HL7Messaging.build_task_active_record(user: prisme_user.user_name, subset_hash: subset_hash, site_ids_array: sites_arr)
-    render partial: 'discovery_results'
+    render partial: 'checksum_results_table'
   end
 
   def checksum_request_poll

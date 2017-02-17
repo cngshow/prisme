@@ -15,6 +15,12 @@ class UtilitiesController < ApplicationController
     end
   end
 
+  def browser_tz_offset
+    tz = params[:tzOffset]
+    session[:tzOffset] = tz
+    render json: {status: 'done'}
+  end
+
   def prisme_config
     prisme_config = PrismeUtilities.server_config
     prisme_config.merge!({'aitc_environment' => PrismeUtilities.aitc_environment})
