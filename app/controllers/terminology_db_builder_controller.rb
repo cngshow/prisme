@@ -1,5 +1,5 @@
 class TerminologyDbBuilderController < ApplicationController
-  before_action :auth_registered
+  before_action :read_only
   before_action :ensure_services_configured
   include NexusConcern
   include JenkinsJobConcern

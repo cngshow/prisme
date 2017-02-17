@@ -1,5 +1,5 @@
 class TerminologySourcePackagesController < ApplicationController
-  before_action :auth_registered
+  before_action :read_only
 
   def index
     # new up a TerminologySourcePackage model for the modal popup allowing the user to create a new package

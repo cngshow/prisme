@@ -1,6 +1,6 @@
 class ServicesController < ApplicationController
   before_action :set_service, only: [:show, :edit, :update, :destroy]
-  before_action :auth_admin, except: [:all_services_as_json]
+  before_action :any_administrator, except: [:all_services_as_json]
   skip_after_action :verify_authorized, only: [:all_services_as_json]
   skip_before_action :verify_authenticity_token, only: [:all_services_as_json]
 

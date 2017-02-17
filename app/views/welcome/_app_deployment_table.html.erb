@@ -1,5 +1,5 @@
 <div id="<%= deployment[:service_id] %>">
-  <% colspan = policy(:navigation).admin? ? 6 : 5 %>
+  <% colspan = policy(:navigation).any_administrator? ? 6 : 5 %>
   <table class="prisme-table table-striped table-hover">
     <caption title='<%= deployment[:service_desc] %>'>Service
       Name:&nbsp;&nbsp;<%= deployment[:service_name] %></caption>
@@ -10,7 +10,7 @@
       <th scope="col" width="10%">Version</th>
       <th scope="col" width="10%">State</th>
       <th scope="col" width="10%">Session Count</th>
-      <% if policy(:navigation).admin? %>
+      <% if policy(:navigation).any_administrator? %>
           <th scope="col" width="20%">Actions (Start/Stop/Undeploy)</th>
       <% end %>
     </tr>
@@ -70,7 +70,7 @@
               </td>
               <td><%= row[:state] %></td>
               <td><%= row[:session_count] %></td>
-              <% if policy(:navigation).admin? %>
+              <% if policy(:navigation).any_administrator? %>
                   <td>
                     <%= action_button_bar(row, deployment[:service_id], row[:war_uuid]) %>
                   </td>

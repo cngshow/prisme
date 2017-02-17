@@ -1,7 +1,7 @@
 class ChecksumController < ApplicationController
   include ChecksumDiscoveryConcern
   include ChecksumHelper
-  before_action :auth_registered #todo should this require admin role?
+  before_action :can_deploy
 
 
   def index

@@ -1,6 +1,6 @@
 class WelcomeController < ApplicationController
   include TomcatConcern
-  before_action :auth_admin, only: [:tomcat_app_action]
+  before_action :any_administrator, only: [:tomcat_app_action]
   before_action :ensure_services_configured
   skip_after_action :verify_authorized, :index, :reload_job_queue_list
 
@@ -105,7 +105,7 @@ class WelcomeController < ApplicationController
 
   private
   def format_deployments_table_data(tomcat_deployments)
-    is_admin_user = auth_admin?
+    is_admin_user = any_administrator?
     ret = []
     tomcat_deployments.keys.each do |appserver|
       service_name = appserver[:service_name]

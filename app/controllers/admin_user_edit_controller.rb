@@ -1,5 +1,5 @@
 class AdminUserEditController < ApplicationController
-  before_action :auth_admin
+  before_action :any_administrator
 
   def list
     unless session.has_key?(AdminUserEditHelper::FILTER_GROUP)
