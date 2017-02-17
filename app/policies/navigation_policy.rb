@@ -16,7 +16,6 @@ class NavigationPolicy
   def add_dynamic_methods
     Roles::ALL_ROLES.each do |role|
       self.define_singleton_method("#{role}?".to_sym) do
-        $log.always("CRIS  for #{role}  #{user.has_role?(role)}")
         user.has_role?(role)
       end
     end
