@@ -5,6 +5,7 @@ where provided, and the git commit history.
 
 * 2017/02/?? - 1.57 - PENDING  
    * Changed validations for db_builder - Task 465866
+   * 468082, prisme name change
 
 * 2017/02/16 - 1.56  
    * Checksum - added polling for current checksum requests - tasks 392943, 460348 , 439585 , 439581
