@@ -1,5 +1,5 @@
 module JIsaacLibrary
-  include_package 'gov.vha.isaac.ochre.deployment.hapi.extension.hl7.message' #HL7CheckSum
+  include_package 'gov.vha.isaac.ochre.deployment.hapi.extension.hl7.message' #HL7CheckSum, HL7Discovery
   include_package 'gov.vha.isaac.ochre.access.maint.deployment.dto' #PublishMessageDTO, SiteDTO
   include_package 'gov.vha.isaac.ochre.services.dto.publish' #HL7ApplicationProperties
 
@@ -32,17 +32,22 @@ module HL7Messaging
   module ClassMethods
     # task = HL7Messaging.get_check_sum_task(check_sum: 'some_string', site_list: VaSite.all.to_a)
     def get_check_sum_task(checksum_detail_array:)
-      @@application_properties ||= HL7Messaging::ApplicationProperties.new
-      @@message_properties ||= HL7Messaging::MessageProperties.new
+      setup_props
       task = JIsaacLibrary::HL7Checksum.checksum(checksum_detail_array, @@application_properties, @@message_properties)
       task
     end
 
+    def get_discovery_task(discovery_detail_array:)
+      setup_props
+      task = JIsaacLibrary::HL7Discovery.discovery(discovery_detail_array, @@application_properties, @@message_properties)
+      task
+    end
+
     # HL7Messaging.start_checksum_task(task: task)
-    def start_checksum_task(task:)
-      $log.info("Starting the calculation for the HL7 check sum")
+    def start_hl7_task(task:)
+      $log.info("Starting HL7 task")
       JIsaacLibrary::WorkExecutors.get().getExecutor().execute(task)
-      $log.info("HL7 check sum task started!")
+      $log.info("HL7 task started!")
     end
 
 
@@ -67,7 +72,7 @@ module HL7Messaging
 
     #this method is called by the controller.
     #subset_hash looks like {'Allergy' => ['Reaction', 'Reactants'], 'Immunizations' => ['Immunization Procedure']}
-    def build_task_active_record(user:, subset_hash:, site_ids_array:)
+    def build_checksum_task_active_record(user:, subset_hash:, site_ids_array:)
       task_ar_array = []
       site_ids = []
       cr_array = []
@@ -102,8 +107,13 @@ module HL7Messaging
         # Register the observable
         task.stateProperty.addListener(HL7ChecksumObserver.new(checksum_request))
         #start the task
-        start_checksum_task(task: task)
+        start_hl7_task(task: task)
       end
+    end
+
+    def setup_props
+      @@application_properties ||= HL7Messaging::ApplicationProperties.new
+      @@message_properties ||= HL7Messaging::MessageProperties.new
     end
 
   end

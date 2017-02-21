@@ -44,7 +44,7 @@ class ChecksumController < ApplicationController
     end
 
     # build checksum request active records for display
-    @checksum_results = HL7Messaging.build_task_active_record(user: prisme_user.user_name, subset_hash: subset_hash, site_ids_array: sites_arr)
+    @checksum_results = HL7Messaging.build_checksum_task_active_record(user: prisme_user.user_name, subset_hash: subset_hash, site_ids_array: sites_arr)
     render partial: 'checksum_results_table'
   end
 

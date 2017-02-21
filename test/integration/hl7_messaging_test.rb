@@ -27,7 +27,31 @@ class Hl7MessagingTest < ActionDispatch::IntegrationTest
       @observer = HL7Messaging::HL7ChecksumObserver.new @cr
       task.stateProperty.addListener(@observer)
     end
-    HL7Messaging.start_checksum_task(task: task)
+    HL7Messaging.start_hl7_task(task: task)
+    HL7Messaging.fetch_result(task: task) #blocking call
+  end
+
+  def request_discovery(observing = false)
+    @cr = ChecksumRequest.new
+    @cr.username = 'Cris'
+    @cr.subset_group = 'Allergy'
+    @cr.status = JIsaacLibrary::Task::NOT_STARTED
+    subset = 'Reactants'
+    site_ids = []
+    ['443','442'].each do |site_id|
+      site_ids << {va_site_id: site_id}
+    end
+    cd_array = @cr.checksum_details.build site_ids
+    cd_array.each do |cd|
+      cd.subset = subset
+    end
+    @cr.save!
+    task = HL7Messaging.get_discovery_task(discovery_detail_array: @cr.checksum_details.to_a)
+    if observing
+      @observer = HL7Messaging::HL7ChecksumObserver.new @cr
+      task.stateProperty.addListener(@observer)
+    end
+    HL7Messaging.start_hl7_task(task: task)
     HL7Messaging.fetch_result(task: task) #blocking call
   end
 
@@ -39,6 +63,16 @@ class Hl7MessagingTest < ActionDispatch::IntegrationTest
 
   teardown do
 
+  end
+
+  test 'discovery' do
+    result = request_discovery
+    if(result.is_a? java.lang.Exception)
+      puts "#{result}"
+      puts result.backtrace.join("\n")
+    end
+    #result = 'fizzle' #to force a failure
+    assert(result.eql?('done'), 'Expected a result of done, received a result of ' + result.to_s)
   end
 
   test 'check_sum' do
@@ -74,7 +108,7 @@ class Hl7MessagingTest < ActionDispatch::IntegrationTest
   test 'message_id' do
     h = {'Allergy' => ['Reaction', 'Reactants'], 'Immunizations' => ['Immunization Procedure']}
     sites =["443", "444"]
-    checksum_request = HL7Messaging.build_task_active_record(user: 'Cris', subset_hash: h, site_ids_array: sites)
+    checksum_request = HL7Messaging.build_checksum_task_active_record(user: 'Cris', subset_hash: h, site_ids_array: sites)
     checksum_request.first.checksum_details.first.to_java.getMessageId
     assert(checksum_request.first.checksum_details.first.to_java.getMessageId.to_java.is_a?(java.lang.Long), "The message id is not a long")
   end

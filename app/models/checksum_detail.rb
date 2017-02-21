@@ -17,9 +17,9 @@ class ChecksumDetail < ActiveRecord::Base
 
   #Java methods here:
 
-  # def setVersion(version_string)
-  #   self.version = version
-  # end
+  def setVersion(version_string)
+    self.version = version
+  end  #setVersion will not be part of discovery
 
   def getMessageId
     self.id
@@ -31,15 +31,15 @@ class ChecksumDetail < ActiveRecord::Base
 
   def getSubset
     self.subset
-  end
+  end #not part of discovery
 
-  def setSiteDiscoveryData(discover_string)
-    self.discovery_data = discover_string
-  end
+  # def setSiteDiscoveryData(discover_string)
+  #   self.discovery_data = discover_string
+  # end  #not part of checksum, part of discovery
 
   def setCheckSum(md5_string)
     self.checksum = md5_string
-  end
+  end #not part of discovery
 
 
 end
