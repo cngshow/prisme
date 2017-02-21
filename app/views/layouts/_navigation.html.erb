@@ -5,11 +5,10 @@
   <div class="prisme-navbar-header" role="navigation">
     <a href="<%= root_path %>" onclick="polling.checkPolling(polling.pollEnum.WELCOME_CONTROLLER);" title="Home">
       <div class="prisme-logo-prisme" aria-label="PRISME Home" title="PRISME Home">
-        <span class="glyphicon glyphicon-home" style="padding-right: 10px;"></span>PRISME
+        <span class="glyphicon glyphicon-home" style="padding-right: 10px;"></span><%=PRISME_NAME%>
       </div>
     </a>
   </div>
-  <% $log.always('CRIS' + policy(:navigation).can_deploy?.to_s) %>
   <div class="prisme-navbar-navigation" role="navigation">
 
   <% if policy(:navigation).can_deploy? %>

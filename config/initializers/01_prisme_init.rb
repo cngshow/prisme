@@ -103,7 +103,8 @@ end
 PRISME_VERSION = version
 PRISME_ENVIRONMENT = PrismeUtilities.aitc_environment.fetch(Socket.gethostname) rescue 'environment not known'
 $log.always { PrismeLogEvent.notify(PrismeLogEvent::LIFECYCLE_TAG, "#{Rails.application.class.parent_name} coming up!  The version is #{PRISME_VERSION}") }
-
+PRISME_NAME = $PROPS['PRISME.application_name']
+KOMET_NAME = $PROPS['PRISME.komet_name']
 # ensure super_user and admin for cboden for demo
 =begin
 cboden = SsoiUser.find_by_ssoi_user_name('cboden')
