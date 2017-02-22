@@ -31,7 +31,7 @@ class ChecksumDetail < ActiveRecord::Base
 
   def getSubset
     self.subset
-  end #not part of discovery
+  end #THIS IS PART OF DISCOVERY!!!!!!!!!!!!!!!!!!!!!
 
   # def setSiteDiscoveryData(discover_string)
   #   self.discovery_data = discover_string
