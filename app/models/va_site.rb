@@ -6,6 +6,14 @@ class VaSite < ActiveRecord::Base
   self.primary_key = 'va_site_id'
   include InterestingColumnCompare
 
+  PRODUCTION_SITE_TYPE = :Production
+  INTERNAL_SITE_TYPE = :Internal
+  SQA_SITE_TYPE = :SQA
+  SITE_TYPES = [PRODUCTION_SITE_TYPE, INTERNAL_SITE_TYPE, SQA_SITE_TYPE, ].freeze
+  PRODUCTION_MESSAGE_TYPE = :P
+  TEST_MESSAGE_TYPE = :T
+  MESSAGE_TYPES = [PRODUCTION_MESSAGE_TYPE,TEST_MESSAGE_TYPE, ].freeze
+
   #Java methods here:
 
   #  VaSite.all.to_a.first.to_java.getId
