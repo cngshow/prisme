@@ -1,4 +1,5 @@
-$CLASSPATH << "#{Rails.root}/lib/rails_common/logging/"
+$CLASSPATH << "#{Rails.root}/lib/logging"
+$CLASSPATH << "#{Rails.root}/lib/rails_common/logging/testLogConfig" if $rake
 ##
 # Do common initialization tasks in prisme
 #

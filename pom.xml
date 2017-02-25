@@ -107,10 +107,23 @@
 			<artifactId>jaxb-core</artifactId>
 			<version>2.2.11</version>
 		</dependency>
-		<dependency> <!-- Route slf4j logging to jdk logging to rails can pick it up -->
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-jdk14</artifactId>
-			<version>1.7.13</version>
+
+		<!-- Enable log4j, route slf4j and jdk logging into log4j -->
+		<!-- Need to override the scope on these 3 logging packages -->
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-slf4j-impl</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-jul</artifactId>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 
@@ -134,6 +147,8 @@
 								<include>**/*</include>
 							</includes>
 						</fileset>
+						<!-- This really should be doing a stomp of rails_common as well, because the unpack, below, won't delete deleted files.
+						But that breaks the way that Cris / Greg checkout the common project as a submodule... conditional stomp, perhaps? -->
 					</filesets>
 				</configuration>
 			</plugin>
@@ -163,9 +178,9 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<!-- We really just want jenkins-client, cargo, and their transitive dependencies. -->
+							<!-- We really just want jenkins-client, cargo, isaac code and their transitive dependencies. -->
 							<excludeArtifactIds>
-								jruby-complete,rake,bundler,rails_common,junit,log4j-slf4j-impl,log4j-jul,hamcrest-core,
+								jruby-complete,rake,bundler,rails_common,junit,hamcrest-core,
 							</excludeArtifactIds>
 							<overWriteReleases>true</overWriteReleases>
 							<overWriteSnapshots>true</overWriteSnapshots>
