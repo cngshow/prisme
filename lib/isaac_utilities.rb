@@ -89,7 +89,16 @@ module JIsaacLibrary
 
   class TaskObserver
     include javafx.beans.value.ChangeListener
+    include ActiveSupport::Rescuable
+    rescue_from Exception, java.lang.Throwable, :with => :observing_error
+
     attr_reader :old_value, :new_value
+
+    def observing_error(exception)
+      $log.error("An unexpected exception occured in #{self.class}")
+      $log.error(exception.message)
+      $log.error(exception.backtrace.join("\n"))
+    end
 
     def changed(observable_task, oldValue, newValue)
       $log.debug { "#{observable_task}:: oldValue = #{oldValue}, newValue = #{newValue}" }

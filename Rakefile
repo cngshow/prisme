@@ -4,5 +4,5 @@ $CLASSPATH << "./lib/jars/ojdbc7.jar"
 require File.expand_path('../config/application', __FILE__)
 Rake.add_rakelib('./lib/rails_common/tasks')
 Rails.application.load_tasks
-
+#Rake.application.options.trace = true #uncomment out to see stack traces in unit tests.
 $rake = true

@@ -7,12 +7,17 @@ class ChecksumDetail < ActiveRecord::Base
 
   def last_checksum
     unless checksum_detail_id
-      id = ChecksumRequest.last_checksum_detail(subset_group: checksum_request.subset_group, subset: subset, site_id: va_site_id)
+      id = ChecksumRequest.last_checksum_detail(domain: checksum_request.domain, subset: subset, site_id: va_site_id)
       return nil if id.nil?
       self.checksum_detail_id = id
       save
     end
     return ChecksumDetail.find checksum_detail_id
+  end
+
+  #if the underlying task is complete we are dun!
+  def done?
+    [SUCCEEDED, CANCELLED, FAILED].map(&:to_s).include?(self.status)
   end
 
   #Java methods here:
@@ -41,6 +46,9 @@ class ChecksumDetail < ActiveRecord::Base
     self.checksum = md5_string
   end #not part of discovery
 
+  def setRawHL7Message(hl7_string)
+
+  end #called for both discovery and checksum
 
 end
 

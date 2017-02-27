@@ -10,6 +10,7 @@ DEV_BOX:
   listener_port: 49990
   hl7_encoding_type: VB
   use_interface_engine: false #set this to false for devbox
+  response_listener_timeout: 0 #in minutes
 DEV:
   sending_facility_namespace_id: 200ET1
   ets_server: vaauscttdbs80.aac.va.gov
@@ -17,6 +18,7 @@ DEV:
   listener_port: 49990
   hl7_encoding_type: VB
   use_interface_engine: true
+  response_listener_timeout: 15 #in minutes
 TEST:
   sending_facility_namespace_id: 200ET10
   ets_server: vaauscttdbs82.aac.va.gov
@@ -24,6 +26,7 @@ TEST:
   listener_port: 49990
   hl7_encoding_type: VB
   use_interface_engine: true
+  response_listener_timeout: 15 #in minutes
 INTEGRATION:
   sending_facility_namespace_id: 200ET20
   ets_server: vaausdbsctt700.aac.va.gov
@@ -31,6 +34,7 @@ INTEGRATION:
   listener_port: 49990
   hl7_encoding_type: VB
   use_interface_engine: true
+  response_listener_timeout: 15 #in minutes
 PRE-PROD:
   sending_facility_namespace_id: 200ET30
   ets_server: vaausdbsctt402.aac.va.gov
@@ -38,6 +42,7 @@ PRE-PROD:
   listener_port: 49990
   hl7_encoding_type: VB
   use_interface_engine: true
+  response_listener_timeout: 15 #in minutes
 PROD:
   sending_facility_namespace_id: 200ETS
   ets_server: vaausdbsctt202.aac.va.gov
@@ -45,3 +50,4 @@ PROD:
   listener_port: 49990
   hl7_encoding_type: VB
   use_interface_engine: true
+  response_listener_timeout: 15 #in minutes
