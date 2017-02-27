@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   get 'checksum/index', as: 'checksum'
   get 'checksum/retrieve_sites'
   get 'checksum/checksum_request_poll', as: 'checksum_request_poll'
+  get 'checksum/isaac_hl7', as: 'isaac_hl7'
   post 'checksum/checksum_results_table', as: 'checksum_results_table'
   # get 'discovery/index', as: 'discovery'
 

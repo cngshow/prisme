@@ -13,7 +13,7 @@ class ChecksumController < ApplicationController
   def subset_tree_data
     # {"Allergy"=>["Reactions", "Reactants"], "Immunizations"=>["Immunization Procedure", "Skin Test"], "Pharmacy"=>["Medication Routes"], "Orders"=>["Order Status", "Nature of Order"], "TIU"=>["TIU Status", "TIU Doctype", "TIU Role", "TIU SMD", "TIU Service", "TIU Setting", "TIU Titles"], "Vitals"=>["Vital Types", "Vital Categories", "Vital Qualifiers"]}
 
-    subset_root = {id: 'subset_root', text: 'Subsets', icon: "fa fa-sitemap", state: {opened: true}, children: []}
+    subset_root = {id: 'subset_root', text: 'Subsets', icon: 'fa fa-sitemap', state: {opened: true}, children: []}
     subsets = active_subsets
     subsets.each_pair do |subset, children|
       g = {id: subset, text: subset, icon: 'fa fa-object-group', children: children}
@@ -48,6 +48,13 @@ class ChecksumController < ApplicationController
     render partial: 'checksum_results_table'
   end
 
+  def isaac_hl7
+    row = params[:id]
+    site_id, row_id, subset = row.split('_')
+
+    render json: {isaac_hl7: 'isaac hl7 text'}
+  end
+
   def checksum_request_poll
     checksum_request_id = params[:checksum_req_id]
     cr = ChecksumRequest.find(checksum_request_id)
@@ -66,13 +73,16 @@ class ChecksumController < ApplicationController
   end
 
   def site_tree_data
-    site_root = {id: 'site_root', text: 'Individual Sites', icon: 'fa fa-hospital-o', state: {closed: true}, children: []}
+    site_root = {id: 'site_root', text: 'Individual Sites', icon: 'fa fa-hospital-o', state: {opened: true}, children: []}
 
     sites = VaSite.all
     sites.each do |site|
       s = site.as_json
       s['id'] = "#{site.class.to_s}_#{site.va_site_id}"
       s['text'] = "#{site.va_site_id} - #{site.name}"
+      s['site_type'] = "#{site.site_type}" #todo do we need this?
+      s['message_type'] = "#{site.message_type}" #todo do we need this?
+      s['li_attr'] = {'data-site_type': "#{site.site_type}", 'class': 'va_site'}
       site_root[:children] << s
     end
     site_root

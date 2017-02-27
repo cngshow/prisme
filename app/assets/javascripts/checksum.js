@@ -38,3 +38,21 @@ function checksum_poll(table_id) {
         // awaiting_poll_results = false;
     });
 }
+
+//function for displaying hl7 data
+function greg(tr_id) {
+    var row = $('#' + tr_id);
+    var vista = row.data('hl7_vista');
+    var site_name = row.find('td.site_name').text();
+    var subset_name = row.find('td.subset_name').text();
+    console.log("tr_id is " + tr_id + " :: " + vista + ' :: ' + site_name);
+
+    // make ajax call to get isaac hl7 hash
+    $.get(gon.routes.isaac_hl7_path, {id: tr_id}, function(data) {
+        $('#view_hashes_modal_title').text(site_name + ' - ' + subset_name);
+        $('#textarea_vista_hl7').val(vista);
+        $('#textarea_isaac_hl7').val(data['isaac_hl7']);
+        $('#view_hashes_modal').modal('show');
+    });
+
+}

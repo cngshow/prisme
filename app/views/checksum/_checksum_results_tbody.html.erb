@@ -13,15 +13,16 @@
       subset = r.subset
       striped = (striped.eql?('transparent') ? '#f2f2f2;' : 'transparent')
     end
+    tr_id = "#{r.va_site_id}_#{r.id}_#{r.subset}"
 %>
-    <tr id="<%= "#{r.va_site_id}|#{r.id}|#{r.subset}" %>" style="background-color: <%= striped %>">
-      <td><%= "#{r.va_site_id} - #{r.va_site.name}" %><span style="font-style: italic; font-weight: bold"><%= last ? ' - cached' : '' %></span></td>
-      <td><%= r.subset %></td>
+    <tr id="<%= tr_id %>" style="background-color: <%= striped %>" data-hl7_vista="<%= r.discovery_data %>">
+      <td class="site_name"><%= "#{r.va_site_id} - #{r.va_site.name}" %><span style="font-style: italic; font-weight: bold"><%= last ? ' - cached' : '' %></span></td>
+      <td class="subset_name"><%= r.subset %></td>
       <td><%= r.checksum_request.username %></td>
       <td><%= display_time(r.checksum_request.start_time) %></td>
       <td><%= display_time(r.checksum_request.finish_time) %></td>
       <td></td>
-      <td><%= r.checksum %></td>
+      <td class="greg"><%= r.checksum %></td><!-- <a onclick="greg('<%#= tr_id %>');">view hash</a> -->
       <td>Request Data</td>
     </tr>
 <% end %>
