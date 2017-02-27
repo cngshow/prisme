@@ -1,4 +1,4 @@
-set JRUBY_OPTS=-J-Xmx2g -J-Djava.awt.headless=true
+set JRUBY_OPTS=-J-Xmx2g -J-Djava.awt.headless=true -J-Dcatalina.base=./logs/java_logs
 set GEM_HOME=C:\work\ETS\rails_prisme\gem_home
 set JRUBY_PATH=C:\languages\ruby\jruby-9.0.4.0
 set JRUBY_JAR=%JRUBY_PATH%\jruby-complete-9.0.4.0.jar
