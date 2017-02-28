@@ -1,6 +1,6 @@
 module JIsaacLibrary
 
-  java_import 'gov.vha.isaac.ochre.deployment.hapi.extension.hl7.message.HL7Messaging' do |p,c|
+  java_import 'gov.vha.isaac.ochre.deployment.hapi.extension.hl7.message.HL7Messaging' do |p, c|
     'JHL7Messaging'
   end
 
@@ -152,13 +152,15 @@ module HL7Messaging
         #the tasks in task array are all started!!
         task_to_detail_map = {}
         details = checksum_request.checksum_details.to_a
-        task_array.zip(details) do |task, detail| task_to_detail_map[task] = detail end
+        task_array.zip(details) do |task, detail|
+          task_to_detail_map[task] = detail
+        end
         task_array.each do |task|
           runnable = -> do
             observer = HL7Messaging::HL7ChecksumObserver.new(task_to_detail_map[task], task)
             task.stateProperty.addListener(observer)
             observer.initial_state_check
-          end# Register with the observable
+          end # Register with the observable
           javafx.application.Platform.runLater(runnable)
         end
       end
@@ -220,45 +222,48 @@ module HL7Messaging
       raise ArgumentError.new("Please pass in a " + ChecksumDetail.to_s + ".  I got a #{checksum_detail.inspect}") unless checksum_detail.is_a? ChecksumDetail
       @checksum_detail = checksum_detail
       @task = task
+      @change_monitor = Monitor.new
     end
 
     #This method is called after construction and registration with the fx listener
     def initial_state_check
-      state = nil
-      com.sun.javafx.application.PlatformImpl.runAndWait(-> do state = @task.getState end) #if sun ever takes this away Dan will give us one!
-      if [SUCCEEDED, FAILED, CANCELLED].include?(state)
-        @checksum_detail.start_time = Time.now unless @checksum_detail.start_time
+      @change_monitor.synchronize do
+        state = nil
+        com.sun.javafx.application.PlatformImpl.runAndWait(-> do state = @task.getState end) #if sun ever takes this away Dan will give us one!
+        @checksum_detail.start_time = Time.now unless @checksum_detail.start_time #tasks are started when I get them
+        changed(@task, nil, state)
       end
-      changed(@task,nil,state)
     end
 
     def changed(observable_task_property, old_value, new_value)
-      super observable_task_property, old_value, new_value
-      begin
-        @old_value = old_value
-        @new_value = new_value
-        @checksum_detail.status = @new_value.to_s
-        case @new_value
-          when SUCCEEDED, FAILED, CANCELLED
-            @checksum_detail.finish_time = Time.now unless @checksum_detail.finish_time
-            if ([FAILED, CANCELLED].include?(@new_value))
-              message_string = nil
-              runnable = -> do message_string = @task.getMessage end#add this to active record display on each row. Only get for failed or cancelled
-              com.sun.javafx.application.PlatformImpl.runAndWait(runnable)
-              @checksum_detail.failure_message = message_string
-            end
-            mock_checksum if Rails.env.development?
-          when RUNNING
-            @checksum_detail.start_time = Time.now unless @checksum_detail.start_time
-          else
-            #nothing
+      @change_monitor.synchronize do
+        super observable_task_property, old_value, new_value
+        begin
+          @old_value = old_value
+          @new_value = new_value
+          @checksum_detail.status = @new_value.to_s
+          case @new_value
+            when SUCCEEDED, FAILED, CANCELLED
+              @checksum_detail.finish_time = Time.now unless @checksum_detail.finish_time
+              if ([FAILED, CANCELLED].include?(@new_value))
+                message_string = nil
+                runnable = -> do message_string = @task.getMessage end #add this to active record display on each row. Only get for failed or cancelled
+                com.sun.javafx.application.PlatformImpl.runAndWait(runnable)
+                @checksum_detail.failure_message = message_string
+              end
+              mock_checksum if Rails.env.development?
+            when RUNNING
+              @checksum_detail.start_time = Time.now unless @checksum_detail.start_time
+            else
+              #nothing
+          end
+        rescue => ex
+          observing_error(ex)
+          raise ex
         end
-      rescue => ex
-        observing_error(ex)
-        raise ex
+        $log.info("The checksum detail #{@checksum_detail.inspect} is now #{@new_value}!")
+        $log.error("I failed to record the data #{@checksum_detail.inspect} to the database!") unless @checksum_detail.save
       end
-      $log.info("The checksum detail #{@checksum_detail.inspect} is now #{@new_value}!")
-      $log.error("I failed to record the data #{@checksum_detail.inspect} to the database!") unless @checksum_detail.save
     end
 
     def mock_checksum
