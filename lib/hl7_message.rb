@@ -205,6 +205,7 @@ module HL7Messaging
   class HL7ChecksumObserver < JIsaacLibrary::TaskObserver
     include JIsaacLibrary::Task
 
+
     def initialize(checksum_detail, task)
       raise ArgumentError.new("Please pass in a " + ChecksumDetail.to_s + ".  I got a #{checksum_detail.inspect}") unless checksum_detail.is_a? ChecksumDetail
       @checksum_detail = checksum_detail
@@ -220,21 +221,28 @@ module HL7Messaging
 
     def changed(observable_task_property, old_value, new_value)
       super observable_task_property, old_value, new_value
-      @old_value = old_value
-      @new_value = new_value
-      @checksum_detail.status = @new_value.to_s
-      case @new_value
-        when SUCCEEDED, FAILED, CANCELLED
-          @checksum_detail.finish_time = Time.now unless @checksum_detail.finish_time
-          message_string = nil
-          runnable = -> do message_string = @task.getMessage end#add this to active record display on each row. Only get for failed or cancelled
-          com.sun.javafx.application.PlatformImpl.runAndWait(runnable)
-          mock_checksum if Rails.env.development?
-          @checksum_detail.failure_message = message_string if ([FAILED, CANCELLED].include?(@new_value))
-        when RUNNING
-          @checksum_detail.start_time = Time.now unless @checksum_detail.start_time
-        else
-          #nothing
+      begin
+        @old_value = old_value
+        @new_value = new_value
+        @checksum_detail.status = @new_value.to_s
+        case @new_value
+          when SUCCEEDED, FAILED, CANCELLED
+            @checksum_detail.finish_time = Time.now unless @checksum_detail.finish_time
+            if ([FAILED, CANCELLED].include?(@new_value))
+              message_string = nil
+              runnable = -> do message_string = @task.getMessage end#add this to active record display on each row. Only get for failed or cancelled
+              com.sun.javafx.application.PlatformImpl.runAndWait(runnable)
+              @checksum_detail.failure_message = message_string
+            end
+            mock_checksum if Rails.env.development?
+          when RUNNING
+            @checksum_detail.start_time = Time.now unless @checksum_detail.start_time
+          else
+            #nothing
+        end
+      rescue => ex
+        observing_error(ex)
+        raise ex
       end
       $log.info("The checksum detail #{@checksum_detail.inspect} is now #{@new_value}!")
       $log.error("I failed to record the data #{@checksum_detail.inspect} to the database!") unless @checksum_detail.save

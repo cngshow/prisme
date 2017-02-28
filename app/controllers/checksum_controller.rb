@@ -2,6 +2,7 @@ class ChecksumController < ApplicationController
   include ChecksumDiscoveryConcern
   include ChecksumHelper
   before_action :can_deploy
+  before_action :verify_hl7_engine #todo remove methods under polling.
 
 
   def index
@@ -99,5 +100,9 @@ class ChecksumController < ApplicationController
     all_sites = all_sites + VaSite.find(sites.split(','))
     all_sites.uniq!
     render json: all_sites.as_json
+  end
+
+  def verify_hl7_engine
+    flash_alert(message:"The HL7 messaging engine is not running!  Please contact an administrator.") unless HL7Messaging.running?
   end
 end
