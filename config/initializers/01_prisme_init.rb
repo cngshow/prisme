@@ -110,9 +110,8 @@ PRISME_ENVIRONMENT = PrismeUtilities.aitc_environment.fetch(Socket.gethostname) 
 $log.always { PrismeLogEvent.notify(PrismeLogEvent::LIFECYCLE_TAG, "#{Rails.application.class.parent_name} coming up!  The version is #{PRISME_VERSION}") }
 PRISME_NAME = $PROPS['PRISME.application_name']
 KOMET_NAME = $PROPS['PRISME.komet_name']
-HL7Messaging.init_messaging_engine
-#started = HL7Messaging.init_messaging_engine
-#$log.info("Messaging engine started?: #{started}")
+started = HL7Messaging.init_messaging_engine
+$log.info("Messaging engine started?: #{started}")
 # ensure super_user and admin for cboden for demo
 =begin
 cboden = SsoiUser.find_by_ssoi_user_name('cboden')
