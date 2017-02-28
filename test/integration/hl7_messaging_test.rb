@@ -30,7 +30,9 @@ class Hl7MessagingTest < ActionDispatch::IntegrationTest
     if observing
       task_array.each do |task|
         @observer = HL7Messaging::HL7ChecksumObserver.new(task_to_detail_map[task], task)
-        runnable = -> do task.stateProperty.addListener(@observer) end
+        runnable = -> do
+          task.stateProperty.addListener(@observer)
+        end
         javafx.application.Platform.runLater(runnable)
         @observer.initial_state_check
       end
@@ -101,7 +103,7 @@ class Hl7MessagingTest < ActionDispatch::IntegrationTest
       puts result.backtrace.join("\n")
     end
     #result = 'fizzle' #to force a failure
-    assert(result.eql?(nil), 'Expected a result of nil, received a result of ' + result.to_s) 
+    assert(result.eql?(nil), 'Expected a result of nil, received a result of ' + result.to_s)
   end
 
   test 'not_using_interface_engine' do
@@ -111,14 +113,8 @@ class Hl7MessagingTest < ActionDispatch::IntegrationTest
 
 
   test 'check_sum_observer' do
-    begin
-      request_checksum(true)
-      assert(@observer.new_value == JIsaacLibrary::Task::SUCCEEDED, "The final state of our checksum task was (between the arrows)-->#{@observer.new_value}<--, the old value is -->#{@observer.old_value}<--")
-    rescue => ex
-      puts ex.message
-      puts ex.backtrace.join("\n")
-      raise ex
-    end
+    request_checksum(true)
+    assert(@observer.new_value == JIsaacLibrary::Task::SUCCEEDED, "The final state of our checksum task was (between the arrows)-->#{@observer.new_value}<--, the old value is -->#{@observer.old_value}<--")
   end
 
   test 'application_property_url' do
@@ -135,7 +131,7 @@ class Hl7MessagingTest < ActionDispatch::IntegrationTest
 
   test 'HL7_still_running' do
     running = HL7Messaging.running?
-    assert(running,'The HL7 engine is not running!!! (It should be)')
+    assert(running, 'The HL7 engine is not running!!! (It should be)')
   end
 
 end

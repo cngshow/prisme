@@ -89,21 +89,22 @@ module JIsaacLibrary
 
   class TaskObserver
     include javafx.beans.value.ChangeListener
-    include ActiveSupport::Rescuable
-    rescue_from Exception, java.lang.Throwable, :with => :observing_error
+    include ActiveSupport::Rescuable #doesn't work, why?
+    rescue_from Exception, java.lang.Throwable, :with => :observing_error#doesn't work, why?
 
     attr_reader :old_value, :new_value
-
-    def observing_error(exception)
-      $log.error("An unexpected exception occured in #{self.class}")
-      $log.error(exception.message)
-      $log.error(exception.backtrace.join("\n"))
-    end
 
     def changed(observable_task, oldValue, newValue)
       $log.debug { "#{observable_task}:: oldValue = #{oldValue}, newValue = #{newValue}" }
       @old_value = oldValue
       @new_value = newValue
+    end
+
+    protected
+    def observing_error(exception)
+      $log.error("An unexpected exception occured in #{self.class}")
+      $log.error(exception.message)
+      $log.error(exception.backtrace.join("\n"))
     end
   end
 
