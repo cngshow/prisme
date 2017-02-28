@@ -4,6 +4,7 @@ class ChecksumDetail < ActiveRecord::Base
   belongs_to :checksum_detail
   include gov.vha.isaac.ochre.access.maint.deployment.dto.PublishMessage
   include JavaImmutable
+  include JIsaacLibrary::Task
 
   def last_checksum
     unless checksum_detail_id

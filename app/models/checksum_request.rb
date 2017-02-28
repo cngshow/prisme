@@ -1,5 +1,4 @@
 class ChecksumRequest < ActiveRecord::Base
-  include JIsaacLibrary::Task
   has_many :checksum_details, :dependent => :destroy
 
   def self.last_checksum_detail(domain:, subset:, site_id:)
