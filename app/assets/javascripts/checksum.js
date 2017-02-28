@@ -21,11 +21,8 @@ function checksum_poll(table_id) {
 
     $.get(gon.routes.checksum_request_poll_path, {checksum_req_id: id}, function (data) {
         console.log("returning from poll");
-        var req_tbl = $('#'+table_id);
+        var req_tbl = $('#' + table_id);
         req_tbl.find('tbody').html(data);
-
-        //set the status in the header
-        // $('#status_' + id).text('Status: ' + req_tbl.data('status'));
 
         console.log("-------------done? " + req_tbl.data('done'));
 
