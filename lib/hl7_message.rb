@@ -226,6 +226,9 @@ module HL7Messaging
     def initial_state_check
       state = nil
       com.sun.javafx.application.PlatformImpl.runAndWait(-> do state = @task.getState end) #if sun ever takes this away Dan will give us one!
+      if [SUCCEEDED, FAILED, CANCELLED].include?(state)
+        @checksum_detail.start_time = Time.now unless @checksum_detail.start_time
+      end
       changed(@task,nil,state)
     end
 
