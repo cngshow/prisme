@@ -66,13 +66,13 @@ module HL7Messaging
 
     # task = HL7Messaging.get_check_sum_task(check_sum: 'some_string', site_list: VaSite.all.to_a)
     def get_check_sum_task(checksum_detail_array:)
-      raise IllegalStateError.new("Not initialized!!") unless @@message_properties
+      raise IllegalStateError.new("Not initialized!!") unless defined? @@message_properties
       task = JIsaacLibrary::JHL7Messaging.checksum(checksum_detail_array, @@message_properties)
       task
     end
 
     def get_discovery_task(discovery_detail_array:)
-      raise IllegalStateError.new("Not initialized!!") unless @@message_properties
+      raise IllegalStateError.new("Not initialized!!") unless defined? @@message_properties
       task = JIsaacLibrary::JHL7Messaging.discovery(discovery_detail_array, @@message_properties)
       task
     end
