@@ -103,6 +103,8 @@ class ChecksumController < ApplicationController
   end
 
   def verify_hl7_engine
-    flash_alert(message:"The HL7 messaging engine is not running!  Please contact an administrator.") unless HL7Messaging.running?
+    # the_classloader_of_love = JIsaacLibrary::JHL7Messaging.java_class.to_java.getClassLoader
+    # java.lang.Thread.currentThread.setContextClassLoader(the_classloader_of_love)
+    # flash_alert(message:"The HL7 messaging engine is not running!  Please contact an administrator.") unless HL7Messaging.running?
   end
 end

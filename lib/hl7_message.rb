@@ -47,6 +47,8 @@ module HL7Messaging
       $log.info("About to start the HL7 Engine.")
       begin
         $log.info("Setting application properties via enable listener")
+        the_classloader_of_love = JIsaacLibrary::JHL7Messaging.java_class.to_java.getClassLoader
+        java.lang.Thread.currentThread.setContextClassLoader(the_classloader_of_love)
         JIsaacLibrary::JHL7Messaging.enableListener(@@application_properties)
         @@hl7_started = true
       rescue => ex
@@ -67,13 +69,18 @@ module HL7Messaging
 
     # task = HL7Messaging.get_check_sum_task(check_sum: 'some_string', site_list: VaSite.all.to_a)
     def get_check_sum_task(checksum_detail_array:)
+      init_messaging_engine
       raise IllegalStateError.new("Not initialized!!") unless defined? @@message_properties
+      # the_classloader_of_love = JIsaacLibrary::JHL7Messaging.java_class.to_java.getClassLoader
+      # java.lang.Thread.currentThread.setContextClassLoader(the_classloader_of_love)
       task = JIsaacLibrary::JHL7Messaging.checksum(checksum_detail_array, @@message_properties)
       task
     end
 
     def get_discovery_task(discovery_detail_array:)
-      raise IllegalStateError.new("Not initialized!!") unless defined? @@message_properties
+      init_messaging_engine
+      # raise IllegalStateError.new("Not initialized!!") unless defined? @@message_properties
+      # java.lang.Thread.currentThread.setContextClassLoader(JIsaacLibrary::JHL7Messaging.java_class.to_java.getClassLoader)
       task = JIsaacLibrary::JHL7Messaging.discovery(discovery_detail_array, @@message_properties)
       task
     end
@@ -109,8 +116,6 @@ module HL7Messaging
     #this method is called by the controller.
     #subset_hash looks like {'Allergy' => ['Reaction', 'Reactants'], 'Immunizations' => ['Immunization Procedure']}
     def build_checksum_task_active_record(user:, subset_hash:, site_ids_array:)
-      started = HL7Messaging.init_messaging_engine
-      $log.debug("Messaging engine started?: #{started}")
       task_ar_array = []
       site_ids = []
       cr_array = []
