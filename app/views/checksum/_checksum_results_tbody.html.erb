@@ -5,7 +5,7 @@
 
   checksum_details.each do |row|
     done ||= row.checksum_request.done?
-    status ||= row.checksum_request.status
+    # status ||= row.checksum_request.status
     req_id ||= row.checksum_request.id
 
     r, last = view_checksum_detail(checksum_detail: row)
@@ -15,9 +15,10 @@
     end
     tr_id = "#{r.va_site_id}_#{r.id}_#{r.subset}"
 %>
-    <tr id="<%= tr_id %>" style="background-color: <%= striped %>" data-hl7_vista="<%= r.discovery_data %>">
+    <tr id="<%= tr_id %>" style="background-color: <%= striped %>" data-hl7_vista="<%= r.hl7_message %>">
       <td class="site_name"><%= "#{r.va_site_id} - #{r.va_site.name}" %><span style="font-style: italic; font-weight: bold"><%= last ? ' - cached' : '' %></span></td>
       <td class="subset_name"><%= r.subset %></td>
+      <td><%= r.status %></td>
       <td><%= r.checksum_request.username %></td>
       <td><%= display_time(r.checksum_request.start_time) %></td>
       <td><%= display_time(r.checksum_request.finish_time) %></td>
@@ -28,6 +29,6 @@
 <% end %>
 <script type="text/javascript" charset="utf-8">
     var req_tbl = $('#tbl_' + '<%= req_id %>');
-    req_tbl.data('status', '<%= status %>');
+//    req_tbl.data('status', '<%#= status %>');
     req_tbl.data('done', <%= done %>);
 </script>

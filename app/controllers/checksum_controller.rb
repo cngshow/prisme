@@ -2,7 +2,7 @@ class ChecksumController < ApplicationController
   include ChecksumDiscoveryConcern
   include ChecksumHelper
   before_action :can_deploy
-  before_action :verify_hl7_engine #todo remove methods under polling.
+  # before_action :verify_hl7_engine #todo remove methods under polling.
 
 
   def index
@@ -103,8 +103,6 @@ class ChecksumController < ApplicationController
   end
 
   def verify_hl7_engine
-    # the_classloader_of_love = JIsaacLibrary::JHL7Messaging.java_class.to_java.getClassLoader
-    # java.lang.Thread.currentThread.setContextClassLoader(the_classloader_of_love)
-    # flash_alert(message:"The HL7 messaging engine is not running!  Please contact an administrator.") unless HL7Messaging.running?
+    flash_alert(message: 'The HL7 messaging engine is not running!  Please contact an administrator.') unless HL7Messaging.running?
   end
 end

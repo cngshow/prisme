@@ -25,7 +25,7 @@ function checksum_poll(table_id) {
         req_tbl.find('tbody').html(data);
 
         //set the status in the header
-        $('#status_' + id).text('Status: ' + req_tbl.data('status'));
+        // $('#status_' + id).text('Status: ' + req_tbl.data('status'));
 
         console.log("-------------done? " + req_tbl.data('done'));
 

@@ -4,7 +4,7 @@
           <div style='background-color: transparent; height: 50px; padding: 5px;'>
             <div style='float: left; color: black; font-weight: bold; font-size: 18px; padding-left: 5px' onclick="toggleResultTable(this);">
               <i class="fa fa-minus-square" aria-hidden="true"></i>
-              <%= row.subset_group %> - <span style="font-size: 12px" id="<%= "status_#{row.id}" %>"><%= "Status: #{row.status}" %></span>
+              <%= row.domain %>
             </div>
           </div>
           <div class="result_table">
@@ -13,6 +13,7 @@
               <tr>
                 <th scope="col">Site</th>
                 <th scope="col">Subset</th>
+                <th scope="col">Status</th>
                 <th scope="col">User Name</th>
                 <th scope="col">Request Date</th>
                 <th scope="col">Receive Date</th>

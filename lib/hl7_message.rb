@@ -70,7 +70,7 @@ module HL7Messaging
     # task = HL7Messaging.get_check_sum_task(check_sum: 'some_string', site_list: VaSite.all.to_a)
     def get_check_sum_task(checksum_detail_array:)
       init_messaging_engine
-      raise IllegalStateError.new("Not initialized!!") unless defined? @@message_properties
+      raise IllegalStateError.new('Not initialized!!') unless defined? @@message_properties
       # the_classloader_of_love = JIsaacLibrary::JHL7Messaging.java_class.to_java.getClassLoader
       # java.lang.Thread.currentThread.setContextClassLoader(the_classloader_of_love)
       task = JIsaacLibrary::JHL7Messaging.checksum(checksum_detail_array, @@message_properties)
@@ -116,6 +116,8 @@ module HL7Messaging
     #this method is called by the controller.
     #subset_hash looks like {'Allergy' => ['Reaction', 'Reactants'], 'Immunizations' => ['Immunization Procedure']}
     def build_checksum_task_active_record(user:, subset_hash:, site_ids_array:)
+      # started = HL7Messaging.init_messaging_engine
+      # $log.debug("Messaging engine started?: #{started}")
       task_ar_array = []
       site_ids = []
       cr_array = []
