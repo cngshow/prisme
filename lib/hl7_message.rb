@@ -222,7 +222,7 @@ module HL7Messaging
       raise ArgumentError.new("Please pass in a " + ChecksumDetail.to_s + ".  I got a #{checksum_detail.inspect}") unless checksum_detail.is_a? ChecksumDetail
       @checksum_detail = checksum_detail
       @task = task
-      @change_monitor = Monitor.new
+      @change_monitor = Monitor.new #monitors are re-entrant
     end
 
     #This method is called after construction and registration with the fx listener
@@ -231,7 +231,7 @@ module HL7Messaging
         state = nil
         com.sun.javafx.application.PlatformImpl.runAndWait(-> do state = @task.getState end) #if sun ever takes this away Dan will give us one!
         @checksum_detail.start_time = Time.now unless @checksum_detail.start_time #tasks are started when I get them
-        changed(@task, nil, state)
+        changed(@task, nil, state)#making use of re-entrancy here...
       end
     end
 
