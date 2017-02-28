@@ -46,6 +46,7 @@ module HL7Messaging
       @@message_properties ||= HL7Messaging::MessageProperties.new
       $log.info("About to start the HL7 Engine.")
       begin
+        $log.info("Setting application properties via enable listener")
         JIsaacLibrary::JHL7Messaging.enableListener(@@application_properties)
         @@hl7_started = true
       rescue => ex

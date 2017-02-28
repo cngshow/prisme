@@ -79,7 +79,8 @@ class Hl7MessagingTest < ActionDispatch::IntegrationTest
     PrismeUtilities.synch_site_data
     PrismeUtilities.synch_group_data
     @app_prop = HL7Messaging::ApplicationProperties.new.to_java
-    raise "I couldn't initialize the HL7Messaging engine!" unless HL7Messaging.init_messaging_engine
+    started = HL7Messaging.init_messaging_engine
+    raise "I couldn't initialize the HL7Messaging engine! #{started}" unless started
   end
 
   teardown do
