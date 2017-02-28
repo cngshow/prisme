@@ -109,6 +109,8 @@ module HL7Messaging
     #this method is called by the controller.
     #subset_hash looks like {'Allergy' => ['Reaction', 'Reactants'], 'Immunizations' => ['Immunization Procedure']}
     def build_checksum_task_active_record(user:, subset_hash:, site_ids_array:)
+      started = HL7Messaging.init_messaging_engine
+      $log.debug("Messaging engine started?: #{started}")
       task_ar_array = []
       site_ids = []
       cr_array = []
