@@ -14,7 +14,7 @@
     end
     tr_id = "#{row.va_site_id}_#{row.id}_#{row.subset}"
 %>
-    <tr id="<%= tr_id %>" style="background-color: <%= striped %>" data-hl7_vista="<%#= r.hl7_message %>">
+    <tr id="<%= tr_id %>" style="background-color: <%= striped %>" data-hl7_message="<%= r.hl7_message %>">
       <td class="site_name"><%= "#{r.va_site_id} - #{r.va_site.name}" %><span style="font-style: italic; font-weight: bold"><%= last ? ' - cached' : '' %></span></td>
       <td class="subset_name"><%= r.subset %></td>
       <td><%= r.status %></td>

@@ -2,7 +2,7 @@ class ChecksumController < ApplicationController
   include ChecksumDiscoveryConcern
   include ChecksumHelper
   before_action :can_deploy
-  # before_action :verify_hl7_engine #todo remove methods under polling.
+  before_action :verify_hl7_engine, :except => :checksum_request_poll
 
 
   def index
@@ -103,6 +103,7 @@ class ChecksumController < ApplicationController
   end
 
   def verify_hl7_engine
-    flash_alert(message: 'The HL7 messaging engine is not running!  Please contact an administrator.') unless HL7Messaging.running?
+    running = HL7Messaging.running?
+    flash_alert(message: 'The HL7 messaging engine is not running!  Please contact an administrator.') unless running
   end
 end

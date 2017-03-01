@@ -69,7 +69,6 @@ module HL7Messaging
 
     # task = HL7Messaging.get_check_sum_task(check_sum: 'some_string', site_list: VaSite.all.to_a)
     def get_check_sum_task(checksum_detail_array:)
-      init_messaging_engine
       raise IllegalStateError.new('Not initialized!!') unless defined? @@message_properties
       # the_classloader_of_love = JIsaacLibrary::JHL7Messaging.java_class.to_java.getClassLoader
       # java.lang.Thread.currentThread.setContextClassLoader(the_classloader_of_love)
@@ -78,7 +77,6 @@ module HL7Messaging
     end
 
     def get_discovery_task(discovery_detail_array:)
-      init_messaging_engine
       # raise IllegalStateError.new("Not initialized!!") unless defined? @@message_properties
       # java.lang.Thread.currentThread.setContextClassLoader(JIsaacLibrary::JHL7Messaging.java_class.to_java.getClassLoader)
       task = JIsaacLibrary::JHL7Messaging.discovery(discovery_detail_array, @@message_properties)
@@ -88,9 +86,9 @@ module HL7Messaging
     # WARNING!! THIS is done for us now...
     # HL7Messaging.start_checksum_task(task: task)
     def start_hl7_task(task:)
-      $log.info("Starting HL7 task")
+      $log.info('Starting HL7 task')
       JIsaacLibrary::WorkExecutors.get().getExecutor().execute(task)
-      $log.info("HL7 task started!")
+      $log.info('HL7 task started!')
     end
 
 

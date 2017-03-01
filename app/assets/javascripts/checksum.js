@@ -39,7 +39,7 @@ function checksum_poll(table_id) {
 //function for displaying hl7 data
 function greg(tr_id) {
     var row = $('#' + tr_id);
-    var vista = row.data('hl7_vista');
+    var vista = row.data('hl7_message');
     var site_name = row.find('td.site_name').text();
     var subset_name = row.find('td.subset_name').text();
     console.log("tr_id is " + tr_id + " :: " + vista + ' :: ' + site_name);
