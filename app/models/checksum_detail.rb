@@ -43,7 +43,7 @@ class ChecksumDetail < ActiveRecord::Base
   #   self.discovery_data = discover_string
   # end  #not part of checksum, part of discovery
 
-  def setCheckSum(md5_string)
+  def setChecksum(md5_string)
     self.checksum = md5_string
   end #not part of discovery
 
