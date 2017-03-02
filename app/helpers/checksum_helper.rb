@@ -31,8 +31,8 @@ module ChecksumHelper
   def view_checksum_detail(checksum_detail:)
     last = checksum_detail.checksum.nil?
 
-    if last
-      ret = checksum_detail.last_checksum ? checksum_detail.last_checksum : checksum_detail
+    if last && checksum_detail.last_checksum
+        ret = checksum_detail.last_checksum
     else
       last = false
       ret = checksum_detail
