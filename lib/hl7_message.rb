@@ -74,7 +74,7 @@ module HL7Messaging
       begin
         $log.info("About to attempt a discovery with the same site list from your get_check_sum_task.  No listeners will be registered.  View the java logs....")
         clones = checksum_detail_array.map do |e| e.clone end
-        clones.each do |d| d.double = true end #double the message id for uniqueness
+        clones.each do |d| d.double = true end
         JIsaacLibrary::JHL7Messaging.discovery(clones, @@message_properties)
       rescue => ex
         $log.error("Discovery failure" + Logging.trace(ex))
@@ -231,14 +231,16 @@ module HL7Messaging
     #This method is called after construction and registration with the fx listener
     def initial_state_check
       @change_monitor.synchronize do
-        state = nil
-        com.sun.javafx.application.PlatformImpl.runAndWait(-> do state = @task.getState end) #if sun ever takes this away Dan will give us one!
+        state = @task.getState #runLater thread
+        #com.sun.javafx.application.PlatformImpl.runAndWait(-> do state = @task.getState end) #if sun ever takes this away Dan will give us one!
         @checksum_detail.start_time = Time.now unless @checksum_detail.start_time #tasks are started when I get them
-        changed(@task, nil, state)#making use of re-entrancy here...
+        changed(nil, nil, state)#making use of re-entrancy here...
       end
     end
 
     def changed(observable_task_property, old_value, new_value)
+      name = java.lang.Thread.currentThread.getName
+      puts "My thread name in changed is #{name}"
       @change_monitor.synchronize do
         super observable_task_property, old_value, new_value
         begin
@@ -250,8 +252,9 @@ module HL7Messaging
               @checksum_detail.finish_time = Time.now unless @checksum_detail.finish_time
               if ([FAILED, CANCELLED].include?(@new_value))
                 message_string = nil
-                runnable = -> do message_string = @task.getMessage end #add this to active record display on each row. Only get for failed or cancelled
-                com.sun.javafx.application.PlatformImpl.runAndWait(runnable)
+                message_string = @task.getMessage
+                #runnable = -> do message_string = @task.getMessage end #add this to active record display on each row. Only get for failed or cancelled
+                #com.sun.javafx.application.PlatformImpl.runAndWait(runnable)
                 @checksum_detail.failure_message = message_string
               end
               mock_checksum if Rails.env.development?

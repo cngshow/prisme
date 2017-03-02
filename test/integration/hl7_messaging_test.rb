@@ -32,9 +32,9 @@ class Hl7MessagingTest < ActionDispatch::IntegrationTest
         @observer = HL7Messaging::HL7ChecksumObserver.new(task_to_detail_map[task], task)
         runnable = -> do
           task.stateProperty.addListener(@observer)
+          @observer.initial_state_check
         end
         javafx.application.Platform.runLater(runnable)
-        @observer.initial_state_check
       end
     end
     #HL7Messaging.start_hl7_task(task: task)
@@ -114,6 +114,8 @@ class Hl7MessagingTest < ActionDispatch::IntegrationTest
 
 
   test 'check_sum_observer' do
+    name = java.lang.Thread.currentThread.getName
+    puts "My thread name in test is #{name}"
     request_checksum(true)
     assert(@observer.new_value == JIsaacLibrary::Task::SUCCEEDED, "The final state of our checksum task was (between the arrows)-->#{@observer.new_value}<--, the old value is -->#{@observer.old_value}<--")
   end
