@@ -6,6 +6,8 @@ class ChecksumDetail < ActiveRecord::Base
   include JavaImmutable
   include JIsaacLibrary::Task
 
+  attr_accessor :double
+
   def last_checksum
     unless checksum_detail_id
       id = ChecksumRequest.last_checksum_detail(domain: checksum_request.domain, subset: subset, site_id: va_site_id)
@@ -28,7 +30,12 @@ class ChecksumDetail < ActiveRecord::Base
   end  #setVersion will not be part of discovery
 
   def getMessageId
-    self.id
+    m_id = self.id
+    if @double
+      m_id = (m_id.to_s*2).to_i
+      $log.info("This is a cloned checksum_detail giving out a bogus id of #{m_id} (in lieu of #{self.id}) for discovery")
+    end
+    m_id
   end
 
   def getSite
@@ -48,8 +55,17 @@ class ChecksumDetail < ActiveRecord::Base
   end #not part of discovery
 
   def setRawHL7Message(hl7_string)
-
+    self.hl7_message= hl7_string
   end #called for both discovery and checksum
+
+  #MOVE THIS METHOD TO DISCOVERY DETAIL
+  def setSiteDiscovery(site_discovery_pojo)
+    begin
+      $log.info("setSiteDiscoveryCalled #{site_discovery_pojo}, you might need to see java logs for more details.")
+    rescue => ex
+      $log.error("Something yucky happened durring setSiteDiscovery" + Logging.trace(ex))
+    end
+  end
 
 end
 

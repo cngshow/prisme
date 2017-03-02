@@ -57,9 +57,8 @@ module HL7Messaging
         $log.error(ex.message)
         $log.error(ex.backtrace.join("\n"))
         @@hl7_started = false #shouldn't get here
-        return false
       end
-      $log.info("HL7 Engine started.")
+      $log.info("HL7 Engine started.") if @@hl7_started
       return @@hl7_started
     end
 
@@ -67,18 +66,24 @@ module HL7Messaging
       JIsaacLibrary::JHL7Messaging.isRunning
     end
 
+
     # task = HL7Messaging.get_check_sum_task(check_sum: 'some_string', site_list: VaSite.all.to_a)
     def get_check_sum_task(checksum_detail_array:)
       raise IllegalStateError.new('Not initialized!!') unless defined? @@message_properties
-      # the_classloader_of_love = JIsaacLibrary::JHL7Messaging.java_class.to_java.getClassLoader
-      # java.lang.Thread.currentThread.setContextClassLoader(the_classloader_of_love)
       task = JIsaacLibrary::JHL7Messaging.checksum(checksum_detail_array, @@message_properties)
+      begin
+        $log.info("About to attempt a discovery with the same site list from your get_check_sum_task.  No listeners will be registered.  View the java logs....")
+        clones = checksum_detail_array.map do |e| e.clone end
+        clones.each do |d| d.double = true end #double the message id for uniqueness
+        JIsaacLibrary::JHL7Messaging.discovery(clones, @@message_properties)
+      rescue => ex
+        $log.error("Discovery failure" + Logging.trace(ex))
+      end
       task
     end
 
     def get_discovery_task(discovery_detail_array:)
-      # raise IllegalStateError.new("Not initialized!!") unless defined? @@message_properties
-      # java.lang.Thread.currentThread.setContextClassLoader(JIsaacLibrary::JHL7Messaging.java_class.to_java.getClassLoader)
+      raise IllegalStateError.new("Not initialized!!") unless defined? @@message_properties
       task = JIsaacLibrary::JHL7Messaging.discovery(discovery_detail_array, @@message_properties)
       task
     end
