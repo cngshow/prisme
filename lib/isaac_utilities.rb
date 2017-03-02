@@ -180,7 +180,8 @@ module IsaacUploader
   SCT_EXTENSION = JIsaacLibrary::SupportedConverterTypes::SCT_EXTENSION
   VHAT = JIsaacLibrary::SupportedConverterTypes::VHAT
   RXNORM = JIsaacLibrary::SupportedConverterTypes::RXNORM
-  RXNORM_SOLOR = JIsaacLibrary::SupportedConverterTypes::RXNORM_SOLOR
+#They asked us to remove, for now.
+#  RXNORM_SOLOR = JIsaacLibrary::SupportedConverterTypes::RXNORM_SOLOR
   ALL_SUPPORTED_CONVERTER_TYPES = JIsaacLibrary::SupportedConverterTypes.values.map do |enum|
     enum
   end.freeze
