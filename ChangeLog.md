@@ -3,7 +3,10 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
-* 2017/02/?? - 1.57 - PENDING  
+* 2017/03/?? - 1.58 - PENDING
+    * 
+
+* 2017/03/02 - 1.57  
    * Changed validations for db_builder - Task 465866
    * 468082, prisme name change
 
