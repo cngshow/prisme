@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Configure logging of all java libraries which use log4j, slf4j or java logging  -->
+
+<Configuration status="WARN">  <!--status configures the log level of internal log4j events-->
+	<Appenders>
+		<!-- Configure appenders for errors only, debug, and hl7 messaging traffic -->
+		<RollingFile name="appender-file-all" fileName="${sys:catalina.base}/logs/rails_prisme/java-lib-debug.log" 
+			filePattern="${sys:catalina.base}/logs/rails_prisme/java-lib-debug-%i.log">
+			<PatternLayout pattern="%d{DEFAULT} %-5level [%t] %logger{4} - %msg%n" />
+			<Policies>
+				<OnStartupTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="500 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="20"/>
+		</RollingFile>
+		
+		<RollingFile name="appender-file-error" fileName="${sys:catalina.base}/logs/rails_prisme/java-lib-err.log" 
+			filePattern="${sys:catalina.base}/logs/rails_prisme/java-lib-err-%i.log">
+			<PatternLayout pattern="%d{DEFAULT} %-5level [%t] %logger{4} - %msg%n" />
+			<Policies>
+				<OnStartupTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="500 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="20"/>
+		</RollingFile>
+		
+		<RollingFile name="appender-file-hl7" fileName="${sys:catalina.base}/logs/rails_prisme/java-lib-HL7.log" 
+			filePattern="${sys:catalina.base}/logs/rails_prisme/java-lib-HL7-%i.log">
+			<PatternLayout pattern="%d{DEFAULT} - %msg%n" />
+			<Policies>
+				<OnStartupTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="500 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="20"/>
+		</RollingFile>
+		
+		<!--PRISME also programmatically defines a new appender, which routes things targeted to that appender into the rails logging stack-->
+	</Appenders>
+
+	<Loggers>
+		<Root level="INFO">
+			<!-- PRISME code adds its own appender to the root logger - setting the level here will filter what events make it to PRISME log.
+			Currently set to INFO, so no TRACE or DEBUG events will make it to the PRISME appender EXCEPT for those that are redefined, down below, 
+			with a more specific level.-->
+
+			<!-- An exception, however, is any logger below, with additivity set to false, will not arrive here. -->
+			
+			<!-- -Put the isaac appenders on any events that make it here-->
+			<AppenderRef ref="appender-file-all"/>
+			<AppenderRef ref="appender-file-error" level="WARN" />
+		</Root>
+
+		<!--  Quiet down these specific loggers in isaac code - remove these lines if you need extensive debug of the logger in question-->
+		<logger name="gov.vha.isaac.ochre.deployment.listener.HL7ResponseListener" level="INFO" />
+
+		<!--override the root logger level to TRACE for our code, let it flow up to the root logger-->
+		<logger name="gov.vha" level="TRACE" />
+		<logger name="gov.va" level="TRACE" />
+		
+		<!--The class HL7ResponseListener uses this logger specifically for HL7 messages only -->
+		<logger name="hl7messages" level="TRACE" additivity="false">  <!--Just log here, don't pass up to root-->  
+			<AppenderRef ref="appender-file-hl7"/>
+		</logger>
+		
+		<!--grab any log events from the HL7 parser library, and don't let them go up to root.  Also, quiet it down.-->  
+		<logger name="ca.uhn.hl7v2" level="INFO" additivity="false">  
+			<AppenderRef ref="appender-file-all"/>
+			<AppenderRef ref="appender-file-error" level="WARN"/>
+		</logger>
+		
+		<!-- catch all patterns for other code in our dependency stack - prevent them from being routed up to the root logger-->
+		<!--  None of the items below here will be passed to the root logger, so they won't be logged by rails-->
+		<logger name="com" level="INFO" additivity="false">  
+			<AppenderRef ref="appender-file-all"/>
+			<AppenderRef ref="appender-file-error" level="WARN"/>
+		</logger>
+		
+		<logger name="org" level="INFO" additivity="false">  
+			<AppenderRef ref="appender-file-all"/>
+			<AppenderRef ref="appender-file-error" level="WARN"/>
+		</logger>
+		
+		<logger name="de" level="INFO" additivity="false">  
+			<AppenderRef ref="appender-file-all"/>
+			<AppenderRef ref="appender-file-error" level="WARN"/>
+		</logger>
+		
+		<logger name="eu" level="INFO" additivity="false">  
+			<AppenderRef ref="appender-file-all"/>
+			<AppenderRef ref="appender-file-error" level="WARN"/>
+		</logger>
+		
+		<logger name="net" level="INFO" additivity="false">  
+			<AppenderRef ref="appender-file-all"/>
+			<AppenderRef ref="appender-file-error" level="WARN"/>
+		</logger>
+		
+		<logger name="javax" level="INFO" additivity="false">  
+			<AppenderRef ref="appender-file-all"/>
+			<AppenderRef ref="appender-file-error" level="WARN"/>
+		</logger>
+		
+		<logger name="oracle" level="INFO" additivity="false">  
+			<AppenderRef ref="appender-file-all"/>
+			<AppenderRef ref="appender-file-error" level="WARN"/>
+		</logger>
+	</Loggers>
+</Configuration>

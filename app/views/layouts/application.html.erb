@@ -21,7 +21,7 @@ Copyright Notice
 <head>
   <meta http-equiv="X-UA-Compatible" content="IE=Edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PRISME</title>
+  <title><%=PRISME_NAME%></title>
   <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
@@ -43,3 +43,13 @@ Copyright Notice
 </body>
 </html>
 <%= render 'flashes/flash_notifications' %>
+
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function () {
+        var localTime = new Date();
+        var tz = localTime.getTimezoneOffset() / 60 * (-1);
+
+        $.get(gon.routes.utilities_browser_tz_offset_path, {tzOffset: tz}, function () {
+        })
+    });
+</script>

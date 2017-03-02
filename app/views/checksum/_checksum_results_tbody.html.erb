@@ -1,11 +1,10 @@
 <%
   subset = nil
   striped = 'transparent'
-  done, status, req_id = nil, nil, nil
+  done, req_id = [], nil
 
   checksum_details.each do |row|
-    done ||= row.checksum_request.done?
-    status ||= row.checksum_request.status
+    done << row.done?
     req_id ||= row.checksum_request.id
 
     r, last = view_checksum_detail(checksum_detail: row)
@@ -13,20 +12,21 @@
       subset = r.subset
       striped = (striped.eql?('transparent') ? '#f2f2f2;' : 'transparent')
     end
+    tr_id = "#{row.va_site_id}_#{row.id}_#{row.subset}"
 %>
-    <tr id="<%= "#{r.va_site_id}|#{r.id}|#{r.subset}" %>" style="background-color: <%= striped %>">
-      <td><%= "#{r.va_site_id} - #{r.va_site.name} - #{last.to_s}" %></td>
-      <td><%= r.subset %></td>
+    <tr id="<%= tr_id %>" style="background-color: <%= striped %>" data-hl7_message="<%= r.hl7_message %>">
+      <td class="site_name"><%= "#{r.va_site_id} - #{r.va_site.name}" %><span style="font-style: italic; font-weight: bold"><%= last ? ' - cached' : '' %></span></td>
+      <td class="subset_name"><%= r.subset %></td>
+      <td><%= r.status %></td>
       <td><%= r.checksum_request.username %></td>
-      <td><%= display_time(r.checksum_request.start_time) %></td>
-      <td><%= display_time(r.checksum_request.finish_time) %></td>
+      <td><%= display_time(r.start_time) %></td>
+      <td><%= display_time(r.finish_time) %></td>
       <td></td>
-      <td><%= r.checksum %></td>
+      <td class="greg"><%= r.checksum %></td><!-- <a onclick="greg('<%#= tr_id %>');">view hash</a> -->
       <td>Request Data</td>
     </tr>
 <% end %>
 <script type="text/javascript" charset="utf-8">
     var req_tbl = $('#tbl_' + '<%= req_id %>');
-    req_tbl.data('status', '<%= status %>');
-    req_tbl.data('done', <%= done %>);
+    req_tbl.data('done', <%= ! (done.uniq.include? false) %>);
 </script>

@@ -43,7 +43,7 @@
                   <%= role_checkbox(Roles::SUPER_USER) %>
                 </td>
                 <td width="70%">
-                  <p>The <strong>Super User</strong> role allows full access to all features in both PRISME and KOMET.</p>
+                  <p>The <strong>Super User</strong> role allows full access to all features.</p>
                 </td>
               </tr>
               <tr>
@@ -55,7 +55,7 @@
                   <ul>
                     <li>Create/Modify User Roles</li>
                     <li>Import/Export Terminology Content</li>
-                    <li>Create, Deploy and Configure KOMET</li>
+                    <li>Create, Deploy and Configure the <%=KOMET_NAME%></li>
                     <li>Manage Workflow - Track and Modify the Current State in Workflow</li>
                     <li>Monitor and Run Standardized Reports</li>
                     <li>Review All User In-boxes</li>
@@ -117,21 +117,26 @@
                   </ul>
                 </td>
               </tr>
-<!--
               <tr>
                 <td width="30%">
-                  <%#= role_checkbox(Roles::MANAGER) %>
+                  <%= role_checkbox(Roles::DEPLOYMENT_MANAGER) %>
                 </td>
                 <td width="70%">
-                  <p>The <strong>Manager</strong> role provides additional functionality to the Read Only role including:<br>
+                  <p>The <strong>Deployment Manager</strong> role provides additional functionality to the Read Only role including:<br>
                   <ul>
-                    <li>Add Comments</li>
-                    <li>Approve the Cancellation Process</li>
-                    <li>Deny the Cancellation Process and send it back to the initiator</li>
+                    <li>Deploy approved concepts</li>
+                    <li>Create, Deploy, Reject Initial Deployment Packages, Candidate Version Packages and Final Version Packages</li>
+                    <li>Display, Request, Validate Pre & Post Deployment Checksums</li>
+                    <li>Track current state of workflow</li>
+                    <li>Search for workflow instance</li>
+                    <li>Modify Deployment Workflow State</li>
+                    <li>Link and Unlink Final Versions</li>
+                    <li>Run Discovery</li>
+                    <li>Select Sites</li>
+                    <li>Select Groups</li>
                   </ul>
                 </td>
               </tr>
--->
               </tbody>
             </table>
         <% end %>

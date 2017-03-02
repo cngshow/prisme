@@ -4,76 +4,75 @@
   <!-- Brand and toggle menu display -->
   <div class="prisme-navbar-header" role="navigation">
     <a href="<%= root_path %>" onclick="polling.checkPolling(polling.pollEnum.WELCOME_CONTROLLER);" title="Home">
-        <div class="prisme-logo-prisme" aria-label="PRISME Home" title="PRISME Home">
-          <span class="glyphicon glyphicon-home" style="padding-right: 10px;"></span>PRISME
-        </div>
+      <div class="prisme-logo-prisme" aria-label="PRISME Home" title="PRISME Home">
+        <span class="glyphicon glyphicon-home" style="padding-right: 10px;"></span><%=PRISME_NAME%>
+      </div>
     </a>
   </div>
-
   <div class="prisme-navbar-navigation" role="navigation">
-    <div class="dropdown" role="presentation">
-      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="Deployment Tools">Deployment Tools
-        <span class="caret"></span></a>
 
-      <ul class="dropdown-menu" aria-hidden="true" aria-label="Checksum">
-        <li role="menuitem">
-          <a href="<%= checksum_path %>" onclick="polling.checkPolling(polling.pollEnum.CHECKSUM);"  title="Terminology Checksum">
-            Checksum
-          </a>
-        </li>
-<!--
+  <% if policy(:navigation).can_deploy? %>
+        <div class="dropdown" role="presentation">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="Deployment Tools">Deployment
+            Tools
+            <span class="caret"></span></a>
+
+          <ul class="dropdown-menu" aria-hidden="true" aria-label="Checksum">
+            <li role="menuitem">
+              <a href="<%= checksum_path %>" onclick="polling.checkPolling(polling.pollEnum.CHECKSUM);" title="Terminology Checksum">
+                Checksum
+              </a>
+            </li>
+            <!--
         <li role="menuitem">
           &lt;!&ndash;<a href="<%#= discovery_list_path %>" onclick="polling.checkPolling(polling.pollEnum.DISCOVERY);" title="Terminology Discovery">&ndash;&gt;
             Discovery
           &lt;!&ndash;</a>&ndash;&gt;
         </li>
 -->
-      </ul>
-    </div>
-
-    <% if policy(:navigation).admin? %>
-        <div>
-          <a href="<%= app_deployer_path %>" class="prisme-link-button" onclick="polling.checkPolling(polling.pollEnum.DEPLOYER);" title="Deploy Applications" role="navigation">Application Deployer</a>
-        </div>
-
-
-        <div class="dropdown" role="presentation">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="Terminology">Terminology
-            <span class="caret"></span></a>
-
-          <ul class="dropdown-menu" aria-hidden="true" aria-label="Terminology Submenu">
-            <li role="menuitem">
-              <a href="<%= terminology_source_packages_path %>" onclick="polling
-                  .checkPolling(polling.pollEnum.TERM_SOURCE);" title="Source Package Upload">
-                Source Package Upload</a></li>
-            <li role="menuitem">
-              <a href="<%= terminology_converter_path %>" onclick="polling.checkPolling(polling.pollEnum
-                  .CONVERTER);" title="Convert Terminology">
-                Convert Terminology</a></li>
-            <li role="menuitem">
-              <a href="<%= terminology_db_builder_path %>" onclick="polling.checkPolling(polling.pollEnum
-                  .DB_BUILDER);" title="Database Builder">
-                Database Builder</a></li>
           </ul>
         </div>
+  <% end %>
+
+  <% if policy(:navigation).any_administrator? %>
+      <div>
+        <a href="<%= app_deployer_path %>" class="prisme-link-button" onclick="polling.checkPolling(polling.pollEnum.DEPLOYER);" title="Deploy Applications" role="navigation">Application
+          Deployer</a>
+      </div>
 
 
-        <div class="dropdown" role="presentation">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="Administration">Administration
-            <span class="caret"></span></a>
+      <div class="dropdown" role="presentation">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="Terminology">Terminology
+          <span class="caret"></span></a>
 
-          <ul class="dropdown-menu" aria-hidden="true" aria-label="Administration Submenu">
-            <li role="menuitem">
-              <a href="<%= list_users_path %>" onclick="polling.checkPolling(polling.pollEnum.ADMIN_USER_EDIT);
-              " title="Edit User Permissions">
-                Edit User Permissions</a></li>
-            <li role="menuitem">
-              <a href="<%= services_path %>" onclick="polling.checkPolling(polling.pollEnum.SERVICES);" title="Service
-                Provisioning">
-                Service Provisioning</a></li>
-          </ul>
-        </div>
-    <% end %>
+        <ul class="dropdown-menu" aria-hidden="true" aria-label="Terminology Submenu">
+          <li role="menuitem">
+            <a href="<%= terminology_source_packages_path %>" onclick="polling.checkPolling(polling.pollEnum.TERM_SOURCE);" title="Source Package Upload">
+              Source Package Upload</a></li>
+          <li role="menuitem">
+            <a href="<%= terminology_converter_path %>" onclick="polling.checkPolling(polling.pollEnum.CONVERTER);" title="Convert Terminology">
+              Convert Terminology</a></li>
+          <li role="menuitem">
+            <a href="<%= terminology_db_builder_path %>" onclick="polling.checkPolling(polling.pollEnum.DB_BUILDER);" title="Database Builder">
+              Database Builder</a></li>
+        </ul>
+      </div>
+
+
+      <div class="dropdown" role="presentation">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="Administration">Administration
+          <span class="caret"></span></a>
+
+        <ul class="dropdown-menu" aria-hidden="true" aria-label="Administration Submenu">
+          <li role="menuitem">
+            <a href="<%= list_users_path %>" onclick="polling.checkPolling(polling.pollEnum.ADMIN_USER_EDIT);" title="Edit User Permissions">
+              Edit User Permissions</a></li>
+          <li role="menuitem">
+            <a href="<%= services_path %>" onclick="polling.checkPolling(polling.pollEnum.SERVICES);" title="Service Provisioning">
+              Service Provisioning</a></li>
+        </ul>
+      </div>
+  <% end %>
 
 
   </div>
@@ -92,7 +91,8 @@
           <a href="<%= new_user_session_path %>" onclick="polling.checkPolling(polling.pollEnum.LOGIN);">Log in</a>
       <% else %>
           <% if prisme_user.is_a?(SsoiUser) %>
-              <a href="<%= roles_sso_logout_path %>" onclick="polling.checkPolling(polling.pollEnum.LOGOUT);">SSO Log out</a>
+              <a href="<%= roles_sso_logout_path %>" onclick="polling.checkPolling(polling.pollEnum.LOGOUT);">SSO Log
+                out</a>
           <% else %>
 
               <a href="<%= destroy_user_session_path %>" class="prisme-link-button" id="logout"
@@ -104,8 +104,9 @@
       <% end %>
     </div>
   </div>
+
 </nav>
 
 <% if controller.ssoi? %>
-  <%= render 'session_timeout/session_timeout_notification' %>
+    <%= render 'session_timeout/session_timeout_notification' %>
 <% end %>

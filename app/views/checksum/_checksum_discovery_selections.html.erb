@@ -1,17 +1,17 @@
 <div id="checksum_selection_div">
   <%= render 'layouts/page_title_bar', locals: {title: 'Terminology Checksum',
                                                 actions: ['<button type="button" class="btn btn-info btn-sm btn-req-checksum">Request Checksum</button>']} %>
-  <div style="width: 35%; display: inline-block; ">
+  <div style="width: 35%;" class="selection_div">
     <div style='background-color: transparent; height: 50px; padding: 5px;'>
-      <div style='float: left; color: black; font-weight: bold; font-size: 18px; padding-left: 5px'>Subset Selection(s)</div>
+      <div class='section_label'>Subset Selection(s)</div>
       <br>
       <br>
     </div>
-    <div id="subsets" style="border:2px solid black;"></div>
+    <div id="subsets" class="tree_border"></div>
   </div>
-  <div style="width: 63%; display: inline-block; float: right" class="scrollable_div">
+  <div style="min-width: 64.5%;float: right" class="selection_div scrollable_div">
     <div style='background-color: transparent;padding: 5px;'>
-      <div style='float: left; color: black; font-weight: bold; font-size: 18px; padding-left: 5px'>Site Selection(s)</div>
+      <div class="section_label">Site Selection(s)</div>
       <div style='float: right'>
         <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#siteSelectionModal">Select Site(s)</button>
       </div>
@@ -44,8 +44,13 @@
         <button type="button" class="close" data-dismiss="modal">&times;</button>
         <button type="button" class="btn btn-primary btn-sm" onclick="site_selections();">Select Site(s)</button>
       </div>
-      <div class="modal-body scrollable_div">
-        <div id="checksum">
+      <div class="modal-body">
+        <%= radio_button_tag 'site_type', VaSite::PRODUCTION_SITE_TYPE, true %>&nbsp;<%= VaSite::PRODUCTION_SITE_TYPE %>&nbsp;&nbsp;
+        <%= radio_button_tag 'site_type', VaSite::INTERNAL_SITE_TYPE %>&nbsp;<%= VaSite::INTERNAL_SITE_TYPE %>&nbsp;&nbsp;
+        <%= radio_button_tag 'site_type', VaSite::SQA_SITE_TYPE %>&nbsp;<%= VaSite::SQA_SITE_TYPE %><br><br>
+        <div class="scrollable_div tree_border">
+          <div id="site_tree">
+          </div>
         </div>
       </div>
     </div>
@@ -53,7 +58,7 @@
 </div>
 <script type="text/javascript" charset="utf-8">
     function site_selections() {
-        var checked = $('#checksum').jstree('get_checked');
+        var checked = $('#site_tree').jstree('get_checked');
         if (checked.length == 0) {
             bootbox.alert("Please select sites before requesting the checksum.");
             return false;
@@ -63,7 +68,7 @@
         var sites = [];
 
         for (var i = 0, l = checked.length; i < l; i++) {
-            var id = $('#checksum').jstree(true).get_node(checked[i]).id;
+            var id = $('#site_tree').jstree(true).get_node(checked[i]).id;
             var id_split = id.split('_');
 
             if (id_split[0] === '<%= VaGroup.name %>') {
@@ -169,13 +174,12 @@
             site_selections.push({id: $(site).data('va_site_id'), text: $(site).data('site_text')})
         }
 
-//        todo move to layout making ajax call
-        var localTime = new Date();
-        var tz = localTime.getTimezoneOffset()/60 * (-1);
+        wait_cursor(true);
 
-        $.post(gon.routes.checksum_results_table_path, {subset_selections: JSON.stringify(tables), site_selections: JSON.stringify(site_selections), tz_offset: tz}, function (data) {
+        $.post(gon.routes.checksum_results_table_path, {subset_selections: JSON.stringify(tables), site_selections: JSON.stringify(site_selections)}, function (data) {
             $('#checksum_results').html(data);
             change_tabs('checksum');
+            wait_cursor(false);
             init_checksum_table_polling();
         })
     }
@@ -188,8 +192,32 @@
         return sites;
     }
 
+
+    function get_site_type() {
+        return $("input[name='site_type']:checked").val();
+    }
+
+    function filter_sites(site_type, reset_cbxs) {
+        // hide all site checkboxes
+        $("li.va_site").hide();
+
+        // deselect all sites
+        if (reset_cbxs == true) {
+            var sites_tree = $('#site_tree');
+            sites_tree.jstree(true).check_node('#site_root');
+            sites_tree.jstree(true).uncheck_node('#site_root');
+        }
+
+        // show filtered checkboxes for selection
+        $("li[data-site_type='" + site_type + "']").show();
+    }
+
     $(document).ready(function () {
-        $('#checksum').jstree(
+        $('input[type=radio][name=site_type]').change(function() {
+            filter_sites(this.value, true);
+        });
+
+        $('#site_tree').jstree(
             {
                 "checkbox": {
                     "keep_selected_style": false
@@ -200,7 +228,16 @@
                     'data': [<%= raw @group_tree %>, <%= raw @site_tree %>],
                     'themes': {"stripes": true}
                 }
-            });
+            }).bind("open_node.jstree", function(event,data){
+                // re-filter the site listing when the site_root is closed and re-opened
+                if (data.node.id === 'site_root') {
+                  filter_sites(get_site_type());
+                }
+            }).bind('loaded.jstree', function(e, data) {
+                console.log("loaded complete....");
+              // invoked after jstree has loaded - call filter sites to get the production sites only based on the selected radio button
+              filter_sites(get_site_type(), true);
+        });
 
         $('#subsets').jstree(
             {

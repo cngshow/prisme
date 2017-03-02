@@ -1,15 +1,14 @@
 class ChecksumRequest < ActiveRecord::Base
-  include JIsaacLibrary::Task
   has_many :checksum_details, :dependent => :destroy
 
-  def self.last_checksum_detail(subset_group:, subset:, site_id:)
+  def self.last_checksum_detail(domain:, subset:, site_id:)
 
     sql = %(
     select max(a.id) as last_checksum_detail
     from CHECKSUM_DETAILS a, CHECKSUM_REQUESTS b
     where a.CHECKSUM_REQUEST_ID = b.id
-    and   b.SUBSET_GROUP = '#{subset_group}'
-    and   b.FINISH_TIME is not null
+    and   b.domain = '#{domain}'
+    and   a.FINISH_TIME is not null
     and   a.SUBSET = '#{subset}'
     and   a.VA_SITE_ID = '#{site_id}'
     and   a.checksum is not null
@@ -17,10 +16,6 @@ class ChecksumRequest < ActiveRecord::Base
     ChecksumRequest.connection.select_all(sql).first['last_checksum_detail']
   end
 
-  #if the underlying task is complete we are dun!
-  def done?
-    [SUCCEEDED, CANCELLED, FAILED].map(&:to_s).include?(self.status)
-  end
 end
 
 =begin

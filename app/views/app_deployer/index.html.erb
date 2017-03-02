@@ -38,7 +38,7 @@
             <h3>Select the Application Type</h3>
             <%= field_set_tag 'Select the Application Type' do %>
                 <%= label_tag 'application_KOMET', class: 'radio-inline' do %>
-                    <%= radio_button_tag 'application', 'KOMET', true %>KOMET Tooling Deployment
+                    <%= radio_button_tag 'application', 'KOMET', true %><%=KOMET_NAME%> Tooling Deployment
                 <% end %>
                 <br/>
                 <%= label_tag 'application_ISAAC', class: 'radio-inline' do %>
@@ -49,7 +49,7 @@
             <h3>Select the Application Components</h3>
             <%= field_set_tag 'Select the Application Components for Deployment to Tomcat' do %>
                 <div id="komet_wars">
-                  <%= label_tag 'komet_war', 'KOMET Tooling Version to Use' %><br>
+                  <%= label_tag 'komet_war', "#{KOMET_NAME} Tooling Version to Use" %><br>
                   <%= select_tag 'komet_war', options_from_collection_for_select(@komet_wars, 'select_key', 'select_value'), {:prompt => '-- Select a war to deploy --'} %>
                   <br>
                   <br>

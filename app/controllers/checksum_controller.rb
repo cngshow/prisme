@@ -1,7 +1,8 @@
 class ChecksumController < ApplicationController
   include ChecksumDiscoveryConcern
   include ChecksumHelper
-  before_action :auth_registered #todo should this require admin role?
+  before_action :can_deploy
+  before_action :verify_hl7_engine, :except => :checksum_request_poll
 
 
   def index
@@ -13,7 +14,7 @@ class ChecksumController < ApplicationController
   def subset_tree_data
     # {"Allergy"=>["Reactions", "Reactants"], "Immunizations"=>["Immunization Procedure", "Skin Test"], "Pharmacy"=>["Medication Routes"], "Orders"=>["Order Status", "Nature of Order"], "TIU"=>["TIU Status", "TIU Doctype", "TIU Role", "TIU SMD", "TIU Service", "TIU Setting", "TIU Titles"], "Vitals"=>["Vital Types", "Vital Categories", "Vital Qualifiers"]}
 
-    subset_root = {id: 'subset_root', text: 'Subsets', icon: "fa fa-sitemap", state: {opened: true}, children: []}
+    subset_root = {id: 'subset_root', text: 'Subsets', icon: 'fa fa-sitemap', state: {opened: true}, children: []}
     subsets = active_subsets
     subsets.each_pair do |subset, children|
       g = {id: subset, text: subset, icon: 'fa fa-object-group', children: children}
@@ -43,12 +44,16 @@ class ChecksumController < ApplicationController
       subset_hash[group['id']] = subsets
     end
 
-    # set the user's timezone offset into the session for displaying the local time information
-    session[:tzOffset] = params['tz_offset']
-
     # build checksum request active records for display
-    @checksum_results = HL7Messaging.build_task_active_record(user: prisme_user.user_name, subset_hash: subset_hash, site_ids_array: sites_arr)
-    render partial: 'discovery_results'
+    @checksum_results = HL7Messaging.build_checksum_task_active_record(user: prisme_user.user_name, subset_hash: subset_hash, site_ids_array: sites_arr)
+    render partial: 'checksum_results_table'
+  end
+
+  def isaac_hl7
+    row = params[:id]
+    site_id, row_id, subset = row.split('_')
+
+    render json: {isaac_hl7: 'isaac hl7 text'}
   end
 
   def checksum_request_poll
@@ -69,13 +74,16 @@ class ChecksumController < ApplicationController
   end
 
   def site_tree_data
-    site_root = {id: 'site_root', text: 'Individual Sites', icon: 'fa fa-hospital-o', state: {closed: true}, children: []}
+    site_root = {id: 'site_root', text: 'Individual Sites', icon: 'fa fa-hospital-o', state: {opened: true}, children: []}
 
     sites = VaSite.all
     sites.each do |site|
       s = site.as_json
       s['id'] = "#{site.class.to_s}_#{site.va_site_id}"
       s['text'] = "#{site.va_site_id} - #{site.name}"
+      s['site_type'] = "#{site.site_type}" #todo do we need this?
+      s['message_type'] = "#{site.message_type}" #todo do we need this?
+      s['li_attr'] = {'data-site_type': "#{site.site_type}", 'class': 'va_site'}
       site_root[:children] << s
     end
     site_root
@@ -92,5 +100,10 @@ class ChecksumController < ApplicationController
     all_sites = all_sites + VaSite.find(sites.split(','))
     all_sites.uniq!
     render json: all_sites.as_json
+  end
+
+  def verify_hl7_engine
+    running = HL7Messaging.running?
+    flash_alert(message: 'The HL7 messaging engine is not running!  Please contact an administrator.') unless running
   end
 end

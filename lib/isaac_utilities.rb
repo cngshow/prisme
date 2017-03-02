@@ -89,12 +89,22 @@ module JIsaacLibrary
 
   class TaskObserver
     include javafx.beans.value.ChangeListener
+    include ActiveSupport::Rescuable #doesn't work, why?
+    rescue_from Exception, java.lang.Throwable, :with => :observing_error#doesn't work, why?
+
     attr_reader :old_value, :new_value
 
     def changed(observable_task, oldValue, newValue)
       $log.debug { "#{observable_task}:: oldValue = #{oldValue}, newValue = #{newValue}" }
       @old_value = oldValue
       @new_value = newValue
+    end
+
+    protected
+    def observing_error(exception)
+      $log.error("An unexpected exception occured in #{self.class}")
+      $log.error(exception.message)
+      $log.error(exception.backtrace.join("\n"))
     end
   end
 
@@ -114,7 +124,7 @@ module IsaacDBConfigurationCreator
   # s_version = ibdf_files.first[:v]
   def self.create_db_configuration(name:, version:, description:, result_classifier:, classify_bool:, ibdf_files:, metadata_version:, git_url:, git_user:, git_password:)
     @db_tag_list_dirty = true
-    $log.info("Starting a db create...")
+    $log.info('Starting a db create...')
     ibdf_converted = ibdf_files.map do |ibdf|
       #the search symbols in nexus are: 'a' for artifact id, 'g' for group id, and 'v' for version
       ibdf_array = [ibdf[:g], ibdf[:a], ibdf[:v]] #to_do, check if a classifier shows up.
@@ -125,11 +135,10 @@ module IsaacDBConfigurationCreator
     begin
       return JIsaacLibrary::DBConfigurationCreator.createDBConfiguration(name, version, description, result_classifier, classify_bool, ibdf_j_a, metadata_version, git_url, git_user, git_password.to_java.toCharArray)
     rescue java.lang.Throwable => ex
-      $log.error("Failed to create db configuration! " + ex.to_s)
+      $log.error("Failed to create db configuration! #{ex.to_s}")
       $log.error(ex.backtrace.join("\n"))
       raise DBConfigurationException.new(ex)
     end
-    $log.info("db create finished...")
   end
 
   def self.read_tags
@@ -164,14 +173,6 @@ module IsaacDBConfigurationCreator
 end
 
 module IsaacUploader
-  #Conveniance constants
-  LOINC = JIsaacLibrary::SupportedConverterTypes::LOINC
-  LOINC_TECH_PREVIEW = JIsaacLibrary::SupportedConverterTypes::LOINC_TECH_PREVIEW
-  SCT = JIsaacLibrary::SupportedConverterTypes::SCT
-  SCT_EXTENSION = JIsaacLibrary::SupportedConverterTypes::SCT_EXTENSION
-  VHAT = JIsaacLibrary::SupportedConverterTypes::VHAT
-  RXNORM = JIsaacLibrary::SupportedConverterTypes::RXNORM
-  RXNORM_SOLOR = JIsaacLibrary::SupportedConverterTypes::RXNORM_SOLOR
   ALL_SUPPORTED_CONVERTER_TYPES = JIsaacLibrary::SupportedConverterTypes.values.map do |enum|
     enum
   end.freeze

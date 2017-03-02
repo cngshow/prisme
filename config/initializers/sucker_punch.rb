@@ -36,7 +36,7 @@ module ActiveJob
 end
 
 at_exit do
-  ActiveJob::QueueAdapters::SuckerPunchAdapter.shutdown_scheduler
+  ActiveJob::QueueAdapters::SuckerPunchAdapter.shutdown_scheduler unless $testing
 end
 
 unless ($rake || defined?(Rails::Generators))

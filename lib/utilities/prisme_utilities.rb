@@ -14,9 +14,6 @@ module PrismeUtilities
     attr_accessor :ssoi_logout_url
     attr_accessor :config #server_config.yml
     attr_accessor :aitc_env #aitc_environment.yml
-    attr_accessor :hl7_env #hl7_environment.yml
-    attr_accessor :terminology_config #TerminologyConfig.xml (Validated against TerminologyConfig.xsd)
-    attr_accessor :terminology_config_errors #TerminologyConfig.xml (Validated against TerminologyConfig.xsd).  Nil if all is good
   end
 
   def self.localize_host(host)

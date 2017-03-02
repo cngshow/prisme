@@ -583,3 +583,7 @@
   name: MIL2
   site_type: Production
   message_type: T
+- va_site_id: '950'
+  name: STLVETSDEV
+  site_type: SQA
+  message_type: T

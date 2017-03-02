@@ -1,5 +1,5 @@
 class LogEventsController < ApplicationController
-  before_action :auth_admin, except: [:log_event]
+  before_action :any_administrator, except: [:log_event]
   before_action :set_log_event, only: [:destroy, :acknowledge_log_event]
   skip_after_action :verify_authorized, only: [:log_event]
   skip_before_action :verify_authenticity_token, only: [:log_event]

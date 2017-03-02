@@ -15,6 +15,7 @@ class ApplicationController < ActionController::Base
 
   append_view_path 'lib/rails_common/views'
 
+  prepend_before_action :add_pundit_methods
   after_action :verify_authorized, unless: :devise_controller?
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
@@ -63,22 +64,6 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def auth_registered
-    authorize :navigation, :registered?
-  end
-
-  def auth_registered?
-    auth_registered rescue false
-  end
-
-  def auth_admin
-    authorize :navigation, :admin?
-  end
-
-  def auth_admin?
-    auth_admin rescue false
-  end
-
   def ensure_services_configured
     configured = true
 
@@ -106,6 +91,10 @@ class ApplicationController < ActionController::Base
     # else
     #   raise exception
     # end
+  end
+
+  def add_pundit_methods
+    NavigationPolicy.add_action_methods self
   end
 
 end

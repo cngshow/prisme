@@ -1,5 +1,10 @@
 module JIsaacLibrary
-  include_package 'gov.vha.isaac.ochre.deployment.hapi.extension.hl7.message' #HL7CheckSum
+
+  java_import 'gov.vha.isaac.ochre.deployment.hapi.extension.hl7.message.HL7Messaging' do |p, c|
+    'JHL7Messaging'
+  end
+
+  #include_package 'gov.vha.isaac.ochre.deployment.hapi.extension.hl7.message' #HL7Messaging
   include_package 'gov.vha.isaac.ochre.access.maint.deployment.dto' #PublishMessageDTO, SiteDTO
   include_package 'gov.vha.isaac.ochre.services.dto.publish' #HL7ApplicationProperties
 
@@ -10,7 +15,7 @@ module JIsaacLibrary
     SUCCEEDED = javafx.concurrent.Worker::State::SUCCEEDED
     CANCELLED = javafx.concurrent.Worker::State::CANCELLED
     FAILED = javafx.concurrent.Worker::State::FAILED
-    NOT_STARTED = 'NOT STARTED'.to_sym
+    NOT_STARTED = :'NOT STARTED'
 
     def self.convert_string(s)
       s = s.to_s
@@ -23,6 +28,8 @@ end
 
 module HL7Messaging
 
+  HL7_SERVER_CONFIG_YML = 'hl7/hl7_server_config.yml'
+
   class << self
     #these leak state, you should use the the defined methods unless you know what you are doing...
     attr_accessor :hl7_server_config #hl7_server_config.yml
@@ -30,19 +37,63 @@ module HL7Messaging
   end
 
   module ClassMethods
-    # task = HL7Messaging.get_check_sum_task(check_sum: 'some_string', site_list: VaSite.all.to_a)
-    def get_check_sum_task(checksum_detail_array:)
+
+    #called in the initializer thread.
+    def init_messaging_engine
+      @@hl7_started ||= false
+      return @@hl7_started if @@hl7_started #don't enable it twice
       @@application_properties ||= HL7Messaging::ApplicationProperties.new
       @@message_properties ||= HL7Messaging::MessageProperties.new
-      task = JIsaacLibrary::HL7Checksum.checksum(checksum_detail_array, @@application_properties, @@message_properties)
+      $log.info("About to start the HL7 Engine.")
+      begin
+        $log.info("Setting application properties via enable listener")
+        the_classloader_of_love = JIsaacLibrary::JHL7Messaging.java_class.to_java.getClassLoader
+        java.lang.Thread.currentThread.setContextClassLoader(the_classloader_of_love)
+        JIsaacLibrary::JHL7Messaging.enableListener(@@application_properties)
+        @@hl7_started = true
+      rescue => ex
+        $log.fatal("I could not enable the listener for HL7 Messaging.  Please have an administrator take a long hard look at #{HL7Messaging::HL7_SERVER_CONFIG_YML}.")
+        $log.fatal("Prisme will continue to come up...")
+        $log.error(ex.message)
+        $log.error(ex.backtrace.join("\n"))
+        @@hl7_started = false #shouldn't get here
+      end
+      $log.info("HL7 Engine started.") if @@hl7_started
+      return @@hl7_started
+    end
+
+    def running?
+      JIsaacLibrary::JHL7Messaging.isRunning
+    end
+
+
+    # task = HL7Messaging.get_check_sum_task(check_sum: 'some_string', site_list: VaSite.all.to_a)
+    def get_check_sum_task(checksum_detail_array:)
+      raise IllegalStateError.new('Not initialized!!') unless defined? @@message_properties
+      task = JIsaacLibrary::JHL7Messaging.checksum(checksum_detail_array, @@message_properties)
+      begin
+        $log.info("About to attempt a discovery with the same site list from your get_check_sum_task.  No listeners will be registered.  View the java logs....")
+        clones = checksum_detail_array.map do |e| e.clone end
+        clones.each do |d| d.double = true end #double the message id for uniqueness
+        JIsaacLibrary::JHL7Messaging.discovery(clones, @@message_properties)
+      rescue => ex
+        $log.error("Discovery failure" + Logging.trace(ex))
+      end
       task
     end
 
+    def get_discovery_task(discovery_detail_array:)
+      raise IllegalStateError.new("Not initialized!!") unless defined? @@message_properties
+      task = JIsaacLibrary::JHL7Messaging.discovery(discovery_detail_array, @@message_properties)
+      task
+    end
+
+    # WARNING!! THIS is done for us now...
     # HL7Messaging.start_checksum_task(task: task)
-    def start_checksum_task(task:)
-      $log.info("Starting the calculation for the HL7 check sum")
+    def start_hl7_task(task:)
+      $log.info('Starting HL7 task')
       JIsaacLibrary::WorkExecutors.get().getExecutor().execute(task)
-      $log.info("HL7 check sum task started!")
+      $log.info('HL7 task started!')
     end
 
 
@@ -55,7 +106,7 @@ module HL7Messaging
     #see PrismeConstants::ENVIRONMENT for keys
     def server_environment
       return (HashWithIndifferentAccess.new HL7Messaging.hl7_server_config).deep_dup unless HL7Messaging.hl7_server_config.nil?
-      HL7Messaging.hl7_server_config = PrismeUtilities.fetch_yml 'hl7/hl7_server_config.yml'
+      HL7Messaging.hl7_server_config = PrismeUtilities.fetch_yml HL7_SERVER_CONFIG_YML
       (HashWithIndifferentAccess.new HL7Messaging.hl7_server_config).deep_dup
     end
 
@@ -67,7 +118,9 @@ module HL7Messaging
 
     #this method is called by the controller.
     #subset_hash looks like {'Allergy' => ['Reaction', 'Reactants'], 'Immunizations' => ['Immunization Procedure']}
-    def build_task_active_record(user:, subset_hash:, site_ids_array:)
+    def build_checksum_task_active_record(user:, subset_hash:, site_ids_array:)
+      # started = HL7Messaging.init_messaging_engine
+      # $log.debug("Messaging engine started?: #{started}")
       task_ar_array = []
       site_ids = []
       cr_array = []
@@ -76,13 +129,13 @@ module HL7Messaging
       end
       subset_hash.each_pair do |main_subset, subset_array|
         cr = ChecksumRequest.new
-        cr.status = JIsaacLibrary::Task::NOT_STARTED.to_s
         cr.username = user
-        cr.subset_group = main_subset
+        cr.domain = main_subset
         subset_array.each do |subset|
           cd_array = cr.checksum_details.build site_ids
           cd_array.each do |cd|
             cd.subset = subset
+            cd.status = JIsaacLibrary::Task::NOT_STARTED.to_s
           end
         end
         cr_array << cr
@@ -98,11 +151,21 @@ module HL7Messaging
     def kick_off_checksums(cr_array)
       cr_array.each do |checksum_request|
         #the call to 'to_a' (below) inflates the models.
-        task = get_check_sum_task(checksum_detail_array: checksum_request.checksum_details.to_a)
-        # Register the observable
-        task.stateProperty.addListener(HL7ChecksumObserver.new(checksum_request))
-        #start the task
-        start_checksum_task(task: task)
+        task_array = get_check_sum_task(checksum_detail_array: checksum_request.checksum_details.to_a)
+        #the tasks in task array are all started!!
+        task_to_detail_map = {}
+        details = checksum_request.checksum_details.to_a
+        task_array.zip(details) do |task, detail|
+          task_to_detail_map[task] = detail
+        end
+        task_array.each do |task|
+          runnable = -> do
+            observer = HL7Messaging::HL7ChecksumObserver.new(task_to_detail_map[task], task)
+            task.stateProperty.addListener(observer)
+            observer.initial_state_check
+          end # Register with the observable
+          javafx.application.Platform.runLater(runnable)
+        end
       end
     end
 
@@ -157,43 +220,62 @@ module HL7Messaging
   class HL7ChecksumObserver < JIsaacLibrary::TaskObserver
     include JIsaacLibrary::Task
 
-    def initialize(checksum_request)
-      @checksum_request = checksum_request
+
+    def initialize(checksum_detail, task)
+      raise ArgumentError.new("Please pass in a " + ChecksumDetail.to_s + ".  I got a #{checksum_detail.inspect}") unless checksum_detail.is_a? ChecksumDetail
+      @checksum_detail = checksum_detail
+      @task = task
+      @change_monitor = Monitor.new #monitors are re-entrant
     end
 
-    def changed(observable_task, old_value, new_value)
-      super observable_task, old_value, new_value
-      $log.info("The checksum request #{@checksum_request.inspect} is now #{new_value}!")
-      @checksum_request.status = new_value.to_s
-      case new_value
-        when SUCCEEDED, FAILED, CANCELLED
-          @checksum_request.finish_time = Time.now
-          cs_string = @checksum_request.inspect
-          cd_string = @checksum_request.checksum_details.to_a.inspect
-          $log.always_n(PrismeLogEvent::CHECKSUM_TAG, "#{cs_string}\n\n#{cd_string}")
-          mock_checksum if Rails.env.development?
-        when RUNNING
-          @checksum_request.start_time = Time.now
-        else
-          #nothing
+    #This method is called after construction and registration with the fx listener
+    def initial_state_check
+      @change_monitor.synchronize do
+        state = nil
+        com.sun.javafx.application.PlatformImpl.runAndWait(-> do state = @task.getState end) #if sun ever takes this away Dan will give us one!
+        @checksum_detail.start_time = Time.now unless @checksum_detail.start_time #tasks are started when I get them
+        changed(@task, nil, state)#making use of re-entrancy here...
       end
-      ChecksumRequest.transaction do
-        @checksum_request.save
-        @checksum_request.checksum_details.each(&:save) #save md5/discovery values set by java side
+    end
+
+    def changed(observable_task_property, old_value, new_value)
+      @change_monitor.synchronize do
+        super observable_task_property, old_value, new_value
+        begin
+          @old_value = old_value
+          @new_value = new_value
+          @checksum_detail.status = @new_value.to_s
+          case @new_value
+            when SUCCEEDED, FAILED, CANCELLED
+              @checksum_detail.finish_time = Time.now unless @checksum_detail.finish_time
+              if ([FAILED, CANCELLED].include?(@new_value))
+                message_string = nil
+                runnable = -> do message_string = @task.getMessage end #add this to active record display on each row. Only get for failed or cancelled
+                com.sun.javafx.application.PlatformImpl.runAndWait(runnable)
+                @checksum_detail.failure_message = message_string
+              end
+              mock_checksum if Rails.env.development?
+            when RUNNING
+              @checksum_detail.start_time = Time.now unless @checksum_detail.start_time
+            else
+              #nothing
+          end
+        rescue => ex
+          observing_error(ex)
+          raise ex
+        end
+        $log.info("The checksum detail #{@checksum_detail.inspect} is now #{@new_value}!")
+        $log.error("I failed to record the data #{@checksum_detail.inspect} to the database!") unless @checksum_detail.save
       end
     end
 
     def mock_checksum
-      @checksum_request.checksum_details.each do |detail|
-        if detail.checksum.nil?
-          file = Tempfile.new('checksum_simulator')
-          file.write([*('a'..'z'), *('0'..'9')].shuffle[0, 36].join)
-          file.close
-          detail.checksum = Digest::MD5.file(file).to_s
-          detail.discovery_data = DISCOVERY_MOCK
-          file.unlink
-        end
-      end
+      file = Tempfile.new('checksum_simulator')
+      file.write([*('a'..'z'), *('0'..'9')].shuffle[0, 36].join)
+      file.close
+      @checksum_detail.checksum = Digest::MD5.file(file).to_s
+      #detail.discovery_data = DISCOVERY_MOCK
+      file.unlink
     end
   end
 
