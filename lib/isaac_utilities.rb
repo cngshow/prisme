@@ -173,14 +173,6 @@ module IsaacDBConfigurationCreator
 end
 
 module IsaacUploader
-  #Conveniance constants
-  LOINC = JIsaacLibrary::SupportedConverterTypes::LOINC
-  LOINC_TECH_PREVIEW = JIsaacLibrary::SupportedConverterTypes::LOINC_TECH_PREVIEW
-  SCT = JIsaacLibrary::SupportedConverterTypes::SCT
-  SCT_EXTENSION = JIsaacLibrary::SupportedConverterTypes::SCT_EXTENSION
-  VHAT = JIsaacLibrary::SupportedConverterTypes::VHAT
-  RXNORM = JIsaacLibrary::SupportedConverterTypes::RXNORM
-  RXNORM_SOLOR = JIsaacLibrary::SupportedConverterTypes::RXNORM_SOLOR
   ALL_SUPPORTED_CONVERTER_TYPES = JIsaacLibrary::SupportedConverterTypes.values.map do |enum|
     enum
   end.freeze
