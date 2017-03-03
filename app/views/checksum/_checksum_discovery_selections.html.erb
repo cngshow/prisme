@@ -1,7 +1,7 @@
 <div id="checksum_selection_div">
   <%= render 'layouts/page_title_bar', locals: {title: 'Terminology Checksum',
                                                 actions: ['<button type="button" class="btn btn-info btn-sm btn-req-checksum">Request Checksum</button>']} %>
-  <div style="width: 35%;" class="selection_div">
+  <div style="width: 34%;" class="selection_div">
     <div style='background-color: transparent; height: 50px; padding: 5px;'>
       <div class='section_label'>Subset Selection(s)</div>
       <br>
@@ -9,7 +9,7 @@
     </div>
     <div id="subsets" class="tree_border"></div>
   </div>
-  <div style="min-width: 64.5%;float: right" class="selection_div scrollable_div">
+  <div style="min-width: 63%;float: right" class="selection_div scrollable_div">
     <div style='background-color: transparent;padding: 5px;'>
       <div class="section_label">Site Selection(s)</div>
       <div style='float: right'>
@@ -74,7 +74,7 @@
             if (id_split[0] === '<%= VaGroup.name %>') {
                 groups.push(id_split[1]);
             }
-            if (id_split[0] === '<%= VaSite.name %>') {
+            if (id_split[0] === '<%= VaSite.name %>' && $('#'+id).is(':visible')) {
                 sites.push(id_split[1]);
             }
         }
