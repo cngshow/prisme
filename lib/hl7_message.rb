@@ -240,7 +240,7 @@ module HL7Messaging
     end
 
     def changed(observable_task_property, old_value, new_value)
-      name = java.lang.Thread.currentThread.getName
+      #name = java.lang.Thread.currentThread.getName
       @change_monitor.synchronize do
         super observable_task_property, old_value, new_value
         begin

@@ -106,8 +106,6 @@ class Hl7MessagingTest < ActionDispatch::IntegrationTest
   #   assert(result.eql?('done'), 'Expected a result of done, received a result of ' + result.to_s)
   # end
 
-  #put back
-
   test 'check_sum' do
     result = request_checksum
     if (result.is_a? java.lang.Exception)
@@ -148,30 +146,16 @@ class Hl7MessagingTest < ActionDispatch::IntegrationTest
   end
 
 #Controller test cases
-  # test 'can_request_checksum' do
-  #   setup_test_user
-  #   domains = %q([{"id":"Allergy","text":"Allergy","subsets":[{"id":"j2_3","text":"Reactions","icon":true,"li_attr":{"id":"j2_3"},"a_attr":{"href":"#","id":"j2_3_anchor"},"state":{"loaded":true,"opened":false,"selected":true,"disabled":false},"data":{},"parent":"Allergy"}]}])
-  #   sites = %q([{"id":950,"text":"STLVETSDEV"}])
-  #   now = Time.now
-  #   too_long = 3.seconds.from_now
-  #   post user_session_path, 'user[email]' => @user.email, 'user[password]' =>  @user.email
-  #   post checksum_results_table_path, subset_selections: domains, site_selections: sites
-  #   requests = ChecksumRequest.where('created_at > ?', now).to_a
-  #   assert(requests.length == 1, "Too many checksum requests were found!")
-  #   not_done = true
-  #   cd = nil
-  #   while(not_done) do
-  #     cd = requests.first.checksum_details.first
-  #     p cd.status
-  #     p "Success!!!!!!!!!!!!!!" if JIsaacLibrary::Task.convert_string(cd.status) == JIsaacLibrary::Task::SUCCEEDED
-  #     break if JIsaacLibrary::Task.convert_string(cd.status) == JIsaacLibrary::Task::SUCCEEDED
-  #     sleep(1)
-  #     not_done = Time.now < too_long
-  #     puts not_done.to_s
-  #     ChecksumDetail.connection.commit_db_transaction
-  #     requests = ChecksumRequest.where('created_at > ?', now).to_a
-  #   end
-  #   assert(JIsaacLibrary::Task.convert_string(cd.status) == JIsaacLibrary::Task::SUCCEEDED, "The checksum detail #{cd.inspect} finished with a status of #{cd.status}")
-  # end
+  test 'can_request_checksum' do
+    now = Time.now
+    setup_test_user
+    domains = %q([{"id":"Allergy","text":"Allergy","subsets":[{"id":"j2_3","text":"Reactions","icon":true,"li_attr":{"id":"j2_3"},"a_attr":{"href":"#","id":"j2_3_anchor"},"state":{"loaded":true,"opened":false,"selected":true,"disabled":false},"data":{},"parent":"Allergy"}]}])
+    sites = %q([{"id":950,"text":"STLVETSDEV"}])
+    post user_session_path, 'user[email]' => @user.email, 'user[password]' =>  @user.email
+    post checksum_results_table_path, subset_selections: domains, site_selections: sites
+    requests = ChecksumRequest.where('created_at > ?',now).to_a
+    assert(requests.length == 1, "Too many checksum requests were found!")
+    assert(requests.first.checksum_details.length == 1, "Too many checksum requests were found!")
+  end
 
 end
