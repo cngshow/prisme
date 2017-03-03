@@ -271,7 +271,7 @@ module HL7Messaging
         $log.info("The checksum detail #{@checksum_detail.inspect} is now #{@new_value}!")
         cd_clone = @checksum_detail.clone
         DB_WRITER.post do
-          $log.error("I failed to record the data #{@checksum_detail.inspect} to the database!") unless cd_clone.save
+          $log.error("I failed to record the data #{cd_clone.inspect} to the database!") unless cd_clone.save
         end
       end
     end
