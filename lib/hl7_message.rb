@@ -29,6 +29,7 @@ end
 module HL7Messaging
 
   HL7_SERVER_CONFIG_YML = 'hl7/hl7_server_config.yml'
+  DB_WRITER = Concurrent::FixedThreadPool.new($PROPS['PRISME.db_writer_thread_pool'].to_i)
 
   class << self
     #these leak state, you should use the the defined methods unless you know what you are doing...
@@ -268,7 +269,10 @@ module HL7Messaging
           raise ex
         end
         $log.info("The checksum detail #{@checksum_detail.inspect} is now #{@new_value}!")
-        $log.error("I failed to record the data #{@checksum_detail.inspect} to the database!") unless @checksum_detail.save
+        cd_clone = @checksum_detail.clone
+        DB_WRITER.post do
+          $log.error("I failed to record the data #{@checksum_detail.inspect} to the database!") unless cd_clone.save
+        end
       end
     end
 
