@@ -241,7 +241,6 @@ module HL7Messaging
 
     def changed(observable_task_property, old_value, new_value)
       name = java.lang.Thread.currentThread.getName
-      puts "My thread name in changed is #{name}"
       @change_monitor.synchronize do
         super observable_task_property, old_value, new_value
         begin
@@ -266,7 +265,7 @@ module HL7Messaging
           end
         rescue => ex
           observing_error(ex)
-          raise ex
+          #raise ex #don't terminate the Fx thread.
         end
         $log.info("The checksum detail #{@checksum_detail.inspect} is now #{@new_value}!")
         cd_clone = @checksum_detail.clone

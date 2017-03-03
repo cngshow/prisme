@@ -115,7 +115,6 @@ class Hl7MessagingTest < ActionDispatch::IntegrationTest
 
   test 'check_sum_observer' do
     name = java.lang.Thread.currentThread.getName
-    puts "My thread name in test is #{name}"
     request_checksum(true)
     assert(@observer.new_value == JIsaacLibrary::Task::SUCCEEDED, "The final state of our checksum task was (between the arrows)-->#{@observer.new_value}<--, the old value is -->#{@observer.old_value}<--")
   end
