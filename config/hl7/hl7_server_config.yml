@@ -7,7 +7,7 @@ DEV_BOX:
   sending_facility_namespace_id: 200ET1
   ets_server: vaauscttdbs80.aac.va.gov
   interface_engine_URL: http://vaaacvies64.aac.dva.va.gov:8080/FrameworkClient-1.1/Framework2ServletHTTPtoChannel
-  listener_port: 49991
+  listener_port: 49990
   hl7_encoding_type: VB
   use_interface_engine: false #set this to false for devbox
   response_listener_timeout: 0 #in minutes

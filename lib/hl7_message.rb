@@ -72,14 +72,6 @@ module HL7Messaging
     def get_check_sum_task(checksum_detail_array:)
       raise IllegalStateError.new('Not initialized!!') unless defined? @@message_properties
       task = JIsaacLibrary::JHL7Messaging.checksum(checksum_detail_array, @@message_properties)
-      begin
-        $log.info("About to attempt a discovery with the same site list from your get_check_sum_task.  No listeners will be registered.  View the java logs....")
-        clones = checksum_detail_array.map do |e| e.clone end
-        clones.each do |d| d.double = true end
-        JIsaacLibrary::JHL7Messaging.discovery(clones, @@message_properties)
-      rescue => ex
-        $log.error("Discovery failure" + Logging.trace(ex))
-      end
       task
     end
 
