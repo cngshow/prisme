@@ -38,7 +38,46 @@ class Hl7MessagingTest < ActionDispatch::IntegrationTest
     end
     if observing
       task_array.each do |task|
-        @observer = HL7Messaging::HL7ChecksumObserver.new(task_to_detail_map[task], task)
+        @observer = HL7Messaging::HL7ChecksumDiscoveryObserver.new(task_to_detail_map[task], task)
+        runnable = -> do
+          task.stateProperty.addListener(@observer)
+          @observer.initial_state_check
+        end
+        javafx.application.Platform.runLater(runnable)
+      end
+    end
+    #HL7Messaging.start_hl7_task(task: task)
+    task_array.each do |task|
+      HL7Messaging.fetch_result(task: task) #blocking call
+    end
+  end
+
+  def request_discovery(observing = false)
+    @dr = DiscoveryRequest.new
+    @dr.username = 'Cris'
+    @dr.domain = 'Allergy'
+    subset = 'Reactants'
+    site_ids = []
+    ['443', '442'].each do |site_id|
+      site_ids << {va_site_id: site_id}
+    end
+    cd_array = @dr.details.build site_ids
+    cd_array.each do |cd|
+      cd.subset = subset
+      cd.status = JIsaacLibrary::Task::NOT_STARTED
+    end
+    @dr.save!
+    task_array = HL7Messaging.get_discovery_task(discovery_detail_array: @dr.details.to_a)
+    task_to_detail_map = {}
+    details = @dr.details.to_a
+    # puts "Task array (#{task_array.length}) = #{task_array.toString}"
+    # puts "details (#{details.length})= #{details.inspect}"
+    task_array.zip(details) do |task, detail|
+      task_to_detail_map[task] = detail
+    end
+    if observing
+      task_array.each do |task|
+        @observer = HL7Messaging::HL7ChecksumDiscoveryObserver.new(task_to_detail_map[task], task)
         runnable = -> do
           task.stateProperty.addListener(@observer)
           @observer.initial_state_check
@@ -96,18 +135,27 @@ class Hl7MessagingTest < ActionDispatch::IntegrationTest
 
   end
 
-  # test 'discovery' do
-  #   result = request_discovery
-  #   if(result.is_a? java.lang.Exception)
-  #     puts "#{result}"
-  #     puts result.backtrace.join("\n")
-  #   end
-  #   #result = 'fizzle' #to force a failure
-  #   assert(result.eql?('done'), 'Expected a result of done, received a result of ' + result.to_s)
-  # end
+
 
   test 'check_sum' do
     result = request_checksum
+    if (result.is_a? java.lang.Exception)
+      puts "#{result}"
+      puts result.backtrace.join("\n")
+    end
+    #result = 'fizzle' #to force a failure
+    assert(result.eql?(nil), 'Expected a result of nil, received a result of ' + result.to_s)
+  end
+
+  test 'discovery' do
+    result = nil
+    begin
+      result = request_discovery
+    rescue => ex
+      puts ex.message
+      puts ex.backtrace.join("\n")
+      raise ex
+    end
     if (result.is_a? java.lang.Exception)
       puts "#{result}"
       puts result.backtrace.join("\n")
@@ -123,8 +171,12 @@ class Hl7MessagingTest < ActionDispatch::IntegrationTest
 
 
   test 'check_sum_observer' do
-    #name = java.lang.Thread.currentThread.getName
     request_checksum(true)
+    assert(@observer.new_value == JIsaacLibrary::Task::SUCCEEDED, "The final state of our checksum task was (between the arrows)-->#{@observer.new_value}<--, the old value is -->#{@observer.old_value}<--")
+  end
+
+  test 'check_discovery_observer' do
+    request_discovery(true)
     assert(@observer.new_value == JIsaacLibrary::Task::SUCCEEDED, "The final state of our checksum task was (between the arrows)-->#{@observer.new_value}<--, the old value is -->#{@observer.old_value}<--")
   end
 
@@ -145,7 +197,17 @@ class Hl7MessagingTest < ActionDispatch::IntegrationTest
     assert(running, 'The HL7 engine is not running!!! (It should be)')
   end
 
-#Controller test cases
+  # test 'discovery' do
+  #   result = request_discovery
+  #   if(result.is_a? java.lang.Exception)
+  #     puts "#{result}"
+  #     puts result.backtrace.join("\n")
+  #   end
+  #   #result = 'fizzle' #to force a failure
+  #   assert(result.eql?('done'), 'Expected a result of done, received a result of ' + result.to_s)
+  # end
+
+  #Controller test cases
   test 'can_request_checksum' do
     now = Time.now
     setup_test_user
@@ -154,8 +216,8 @@ class Hl7MessagingTest < ActionDispatch::IntegrationTest
     post user_session_path, 'user[email]' => @user.email, 'user[password]' =>  @user.email
     post checksum_results_table_path, subset_selections: domains, site_selections: sites
     requests = ChecksumRequest.where('created_at > ?',now).to_a
-    assert(requests.length == 1, "Too many checksum requests were found!")
-    assert(requests.first.checksum_details.length == 1, "Too many checksum requests were found!")
+    assert(requests.length == 1, "Too many checksum requests were found!  Expected 1, got #{requests.length}")
+    assert(requests.first.checksum_details.length == 1, "Too many checksum details were found!  Expected 1, got #{requests.first.checksum_details.length}")
   end
 
 end

@@ -15,7 +15,7 @@ class RenewChecksumTables1 < ActiveRecord::Migration
     create_table :checksum_details do |t|
       t.references :va_site, index: true, null: false
       t.references :checksum_request, index: true, null: false
-      t.references :checksum_detail, index: true, null: true
+      t.references :detail, index: true, null: true
       t.string :subset
       t.string :checksum
       t.string :failure_message

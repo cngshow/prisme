@@ -109,51 +109,57 @@ module HL7Messaging
       (HashWithIndifferentAccess.new HL7Messaging.hl7_message_config).deep_dup
     end
 
+    def build_discovery_task_active_record(user:, subset_hash:, site_ids_array:)
+      build_task_active_record(DiscoveryRequest, user, subset_hash, site_ids_array)
+    end
+
+    def build_checksum_task_active_record(user:, subset_hash:, site_ids_array:)
+      build_task_active_record(ChecksumRequest, user, subset_hash, site_ids_array)
+    end
     #this method is called by the controller.
     #subset_hash looks like {'Allergy' => ['Reaction', 'Reactants'], 'Immunizations' => ['Immunization Procedure']}
-    def build_checksum_task_active_record(user:, subset_hash:, site_ids_array:)
-      # started = HL7Messaging.init_messaging_engine
-      # $log.debug("Messaging engine started?: #{started}")
-      task_ar_array = []
+
+    private
+
+    def build_task_active_record(active_record_clazz, user, subset_hash, site_ids_array)
       site_ids = []
-      cr_array = []
+      request_array = []
       site_ids_array.each do |site_id|
         site_ids << {va_site_id: site_id}
       end
-      subset_hash.each_pair do |main_subset, subset_array|
-        cr = ChecksumRequest.new
-        cr.username = user
-        cr.domain = main_subset
+      subset_hash.each_pair do |domain, subset_array|
+        ar = active_record_clazz.send(:new)
+        ar.username = user
+        ar.domain = domain
         subset_array.each do |subset|
-          cd_array = cr.checksum_details.build site_ids
-          cd_array.each do |cd|
-            cd.subset = subset
-            cd.status = JIsaacLibrary::Task::NOT_STARTED.to_s
+          details_array = ar.details.build site_ids
+          details_array.each do |detail|
+            detail.subset = subset
+            detail.status = JIsaacLibrary::Task::NOT_STARTED.to_s
           end
         end
-        cr_array << cr
+        request_array << ar
       end
-      ChecksumRequest.transaction do
-        cr_array.each(&:save!)
+      active_record_clazz.send(:transaction) do
+        request_array.each(&:save!)
       end
-      kick_off_checksums(cr_array)
-      cr_array
+      kick_off(active_record_clazz, request_array)
+      request_array
     end
 
-    private
-    def kick_off_checksums(cr_array)
-      cr_array.each do |checksum_request|
+    def kick_off(active_record_clazz, request_array)
+      request_array.each do |request|
         #the call to 'to_a' (below) inflates the models.
-        task_array = get_check_sum_task(checksum_detail_array: checksum_request.checksum_details.to_a)
+        task_array = get_check_sum_task(checksum_detail_array: request.details.to_a)
         #the tasks in task array are all started!!
         task_to_detail_map = {}
-        details = checksum_request.checksum_details.to_a
+        details = request.details.to_a
         task_array.zip(details) do |task, detail|
           task_to_detail_map[task] = detail
         end
         task_array.each do |task|
           runnable = -> do
-            observer = HL7Messaging::HL7ChecksumObserver.new(task_to_detail_map[task], task)
+            observer = HL7Messaging::HL7ChecksumDiscoveryObserver.new(task_to_detail_map[task], task)
             task.stateProperty.addListener(observer)
             observer.initial_state_check
           end # Register with the observable
@@ -210,13 +216,13 @@ module HL7Messaging
     end
   end
 
-  class HL7ChecksumObserver < JIsaacLibrary::TaskObserver
+  class HL7ChecksumDiscoveryObserver < JIsaacLibrary::TaskObserver
     include JIsaacLibrary::Task
 
 
-    def initialize(checksum_detail, task)
-      raise ArgumentError.new("Please pass in a " + ChecksumDetail.to_s + ".  I got a #{checksum_detail.inspect}") unless checksum_detail.is_a? ChecksumDetail
-      @checksum_detail = checksum_detail
+    def initialize(detail, task)
+      raise ArgumentError.new("Please pass in a valid Active record object ChecksumDetail/DiscoverDetail.  I got a #{detail.inspect}") unless ((detail.is_a? ChecksumDetail) || (detail.is_a? DiscoveryDetail))
+      @detail = detail
       @task = task
       @change_monitor = Monitor.new #monitors are re-entrant
     end
@@ -226,7 +232,7 @@ module HL7Messaging
       @change_monitor.synchronize do
         state = @task.getState #runLater thread
         #com.sun.javafx.application.PlatformImpl.runAndWait(-> do state = @task.getState end) #if sun ever takes this away Dan will give us one!
-        @checksum_detail.start_time = Time.now unless @checksum_detail.start_time #tasks are started when I get them
+        @detail.start_time = Time.now unless @detail.start_time #tasks are started when I get them
         changed(nil, nil, state)#making use of re-entrancy here...
       end
     end
@@ -238,20 +244,20 @@ module HL7Messaging
         begin
           @old_value = old_value
           @new_value = new_value
-          @checksum_detail.status = @new_value.to_s
+          @detail.status = @new_value.to_s
           case @new_value
             when SUCCEEDED, FAILED, CANCELLED
-              @checksum_detail.finish_time = Time.now unless @checksum_detail.finish_time
+              @detail.finish_time = Time.now unless @detail.finish_time
               if ([FAILED, CANCELLED].include?(@new_value))
                 message_string = nil
                 message_string = @task.getMessage
                 #runnable = -> do message_string = @task.getMessage end #add this to active record display on each row. Only get for failed or cancelled
                 #com.sun.javafx.application.PlatformImpl.runAndWait(runnable)
-                @checksum_detail.failure_message = message_string
+                @detail.failure_message = message_string
               end
-              mock_checksum if Rails.env.development?
+              mock if Rails.env.development?
             when RUNNING
-              @checksum_detail.start_time = Time.now unless @checksum_detail.start_time
+              @detail.start_time = Time.now unless @detail.start_time
             else
               #nothing
           end
@@ -259,21 +265,27 @@ module HL7Messaging
           observing_error(ex)
           #raise ex #don't terminate the Fx thread.
         end
-        $log.info("The checksum detail #{@checksum_detail.inspect} is now #{@new_value}!")
-        cd_clone = @checksum_detail.clone
+        $log.info("The checksum detail #{@detail.inspect} is now #{@new_value}!")
+        cd_clone = @detail.clone
         DB_WRITER.post do
           $log.error("I failed to record the data #{cd_clone.inspect} to the database!") unless cd_clone.save
         end
       end
     end
 
-    def mock_checksum
-      file = Tempfile.new('checksum_simulator')
-      file.write([*('a'..'z'), *('0'..'9')].shuffle[0, 36].join)
-      file.close
-      @checksum_detail.checksum = Digest::MD5.file(file).to_s
-      #detail.discovery_data = DISCOVERY_MOCK
-      file.unlink
+    def mock
+      if(@detail.class.eql? ChecksumDetail)
+        file = Tempfile.new('checksum_simulator')
+        file.write([*('a'..'z'), *('0'..'9')].shuffle[0, 36].join)
+        file.close
+        @detail.checksum = Digest::MD5.file(file).to_s
+        #detail.discovery_data = DISCOVERY_MOCK
+        file.unlink
+      else
+        #DiscoveryDetail
+        @detail.hl7_message = DISCOVERY_MOCK
+      end
+
     end
   end
 
