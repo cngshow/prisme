@@ -18,7 +18,7 @@ DEV:
   listener_port: 49990
   hl7_encoding_type: VB
   use_interface_engine: true
-  response_listener_timeout: 15 #in minutes
+  response_listener_timeout: 2 #in minutes
 TEST:
   sending_facility_namespace_id: 200ET10
   ets_server: vaauscttdbs82.aac.va.gov
