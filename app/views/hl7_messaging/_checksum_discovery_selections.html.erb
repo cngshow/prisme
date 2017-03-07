@@ -1,6 +1,6 @@
 <div id="checksum_selection_div">
-  <%= render 'layouts/page_title_bar', locals: {title: "Terminology #{@nav_type}",
-                                                actions: ["<button type='button' class='btn btn-info btn-sm btn-req-hl7_messaging'>Request #{@nav_type}</button>"]} %>
+  <%= render 'layouts/page_title_bar', locals: {title: "Terminology #{@nav_type.titlecase}",
+                                                actions: ["<button type='button' class='btn btn-info btn-sm btn-req-hl7_messaging'>Request #{@nav_type.titlecase}</button>"]} %>
   <div style="width: 34%;" class="selection_div">
     <div style='background-color: transparent; height: 50px; padding: 5px;'>
       <div class='section_label'>Subset Selection(s)</div>
