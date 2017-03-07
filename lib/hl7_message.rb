@@ -288,7 +288,7 @@ module HL7Messaging
         file.unlink
       else
         #DiscoveryDetail
-        @detail.hl7_message = DISCOVERY_MOCK
+        @detail.hl7_message = DISCOVERY_MOCK + "\n#{Time.now}"
       end
 
     end
