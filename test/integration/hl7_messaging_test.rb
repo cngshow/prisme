@@ -13,24 +13,24 @@ class Hl7MessagingTest < ActionDispatch::IntegrationTest
     @user.save
   end
 
-  def request_checksum(observing = false)
-    @cr = ChecksumRequest.new
-    @cr.username = 'Cris'
-    @cr.domain = 'Allergy'
+  def request(klass, observing = false, hl7_method, keyword)
+    @record = klass.send(:new)
+    @record.username = 'Cris'
+    @record.domain = 'Allergy'
     subset = 'Reactants'
     site_ids = []
     ['443', '442'].each do |site_id|
       site_ids << {va_site_id: site_id}
     end
-    cd_array = @cr.checksum_details.build site_ids
+    cd_array = @record.details.build site_ids
     cd_array.each do |cd|
       cd.subset = subset
       cd.status = JIsaacLibrary::Task::NOT_STARTED
     end
-    @cr.save!
-    task_array = HL7Messaging.get_check_sum_task(checksum_detail_array: @cr.checksum_details.to_a)
+    @record.save!
+    task_array = HL7Messaging.send(hl7_method, {keyword => @record.details.to_a})
     task_to_detail_map = {}
-    details = @cr.checksum_details.to_a
+    details = @record.details.to_a
     # puts "Task array (#{task_array.length}) = #{task_array.toString}"
     # puts "details (#{details.length})= #{details.inspect}"
     task_array.zip(details) do |task, detail|
@@ -50,77 +50,15 @@ class Hl7MessagingTest < ActionDispatch::IntegrationTest
     task_array.each do |task|
       HL7Messaging.fetch_result(task: task) #blocking call
     end
+  end
+
+  def request_checksum(observing = false)
+    request(ChecksumRequest, observing, :get_check_sum_task, :checksum_detail_array)
   end
 
   def request_discovery(observing = false)
-    @dr = DiscoveryRequest.new
-    @dr.username = 'Cris'
-    @dr.domain = 'Allergy'
-    subset = 'Reactants'
-    site_ids = []
-    ['443', '442'].each do |site_id|
-      site_ids << {va_site_id: site_id}
-    end
-    cd_array = @dr.details.build site_ids
-    cd_array.each do |cd|
-      cd.subset = subset
-      cd.status = JIsaacLibrary::Task::NOT_STARTED
-    end
-    @dr.save!
-    task_array = HL7Messaging.get_discovery_task(discovery_detail_array: @dr.details.to_a)
-    task_to_detail_map = {}
-    details = @dr.details.to_a
-    # puts "Task array (#{task_array.length}) = #{task_array.toString}"
-    # puts "details (#{details.length})= #{details.inspect}"
-    task_array.zip(details) do |task, detail|
-      task_to_detail_map[task] = detail
-    end
-    if observing
-      task_array.each do |task|
-        @observer = HL7Messaging::HL7ChecksumDiscoveryObserver.new(task_to_detail_map[task], task)
-        runnable = -> do
-          task.stateProperty.addListener(@observer)
-          @observer.initial_state_check
-        end
-        javafx.application.Platform.runLater(runnable)
-      end
-    end
-    #HL7Messaging.start_hl7_task(task: task)
-    task_array.each do |task|
-      HL7Messaging.fetch_result(task: task) #blocking call
-    end
+    request(DiscoveryRequest, observing, :get_discovery_task, :discovery_detail_array)
   end
-
-  #
-  # def request_discovery(observing = false)
-  #   @cr = ChecksumRequest.new
-  #   @cr.username = 'Cris'
-  #   @cr.subset_group = 'Allergy'
-  #   @cr.status = JIsaacLibrary::Task::NOT_STARTED
-  #   subset = 'Reactants'
-  #   site_ids = []
-  #   ['443','442'].each do |site_id|
-  #     site_ids << {va_site_id: site_id}
-  #   end
-  #   cd_array = @cr.checksum_details.build site_ids
-  #   cd_array.each do |cd|
-  #     cd.subset = subset
-  #   end
-  #   @cr.save!
-  #   #the task array order aligns with the order of checksum details
-  #   details = @cr.checksum_details.to_a
-  #   task_array = HL7Messaging.get_discovery_task(discovery_detail_array: details)
-  #   task_to_detail_map = {}
-  #   task_array.zip(details) do |task,detail| task_to_detail_map[task] = detail
-  #   if observing
-  #     task_array.each do |task|
-  #       @observer = HL7Messaging::HL7ChecksumObserver.new @cr
-  #       task.stateProperty.addListener(@observer)
-  #     end
-  #   end
-  #   HL7Messaging.start_hl7_task(task: task)
-  #   HL7Messaging.fetch_result(task: task) #blocking call
-  # end
 
   setup do
     @subset_string='some_string'
@@ -136,7 +74,6 @@ class Hl7MessagingTest < ActionDispatch::IntegrationTest
   end
 
 
-
   test 'check_sum' do
     result = request_checksum
     if (result.is_a? java.lang.Exception)
@@ -148,14 +85,7 @@ class Hl7MessagingTest < ActionDispatch::IntegrationTest
   end
 
   test 'discovery' do
-    result = nil
-    begin
-      result = request_discovery
-    rescue => ex
-      puts ex.message
-      puts ex.backtrace.join("\n")
-      raise ex
-    end
+    result = request_discovery
     if (result.is_a? java.lang.Exception)
       puts "#{result}"
       puts result.backtrace.join("\n")
@@ -213,9 +143,9 @@ class Hl7MessagingTest < ActionDispatch::IntegrationTest
     setup_test_user
     domains = %q([{"id":"Allergy","text":"Allergy","subsets":[{"id":"j2_3","text":"Reactions","icon":true,"li_attr":{"id":"j2_3"},"a_attr":{"href":"#","id":"j2_3_anchor"},"state":{"loaded":true,"opened":false,"selected":true,"disabled":false},"data":{},"parent":"Allergy"}]}])
     sites = %q([{"id":950,"text":"STLVETSDEV"}])
-    post user_session_path, 'user[email]' => @user.email, 'user[password]' =>  @user.email
+    post user_session_path, 'user[email]' => @user.email, 'user[password]' => @user.email
     post checksum_results_table_path, subset_selections: domains, site_selections: sites
-    requests = ChecksumRequest.where('created_at > ?',now).to_a
+    requests = ChecksumRequest.where('created_at > ?', now).to_a
     assert(requests.length == 1, "Too many checksum requests were found!  Expected 1, got #{requests.length}")
     assert(requests.first.checksum_details.length == 1, "Too many checksum details were found!  Expected 1, got #{requests.first.checksum_details.length}")
   end
