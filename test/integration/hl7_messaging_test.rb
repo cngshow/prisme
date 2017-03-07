@@ -127,16 +127,6 @@ class Hl7MessagingTest < ActionDispatch::IntegrationTest
     assert(running, 'The HL7 engine is not running!!! (It should be)')
   end
 
-  # test 'discovery' do
-  #   result = request_discovery
-  #   if(result.is_a? java.lang.Exception)
-  #     puts "#{result}"
-  #     puts result.backtrace.join("\n")
-  #   end
-  #   #result = 'fizzle' #to force a failure
-  #   assert(result.eql?('done'), 'Expected a result of done, received a result of ' + result.to_s)
-  # end
-
   #Controller test cases
   test 'can_request_checksum' do
     now = Time.now
