@@ -150,7 +150,12 @@ module HL7Messaging
     def kick_off(active_record_clazz, request_array)
       request_array.each do |request|
         #the call to 'to_a' (below) inflates the models.
-        task_array = get_check_sum_task(checksum_detail_array: request.details.to_a)
+        if request.instance_of? DiscoveryRequest
+          task_array = get_discovery_task(discovery_detail_array: request.details.to_a)
+        else
+          task_array = get_check_sum_task(checksum_detail_array: request.details.to_a)
+        end
+
         #the tasks in task array are all started!!
         task_to_detail_map = {}
         details = request.details.to_a

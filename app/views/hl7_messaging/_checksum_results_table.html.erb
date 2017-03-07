@@ -1,0 +1,56 @@
+<% if @checksum_results %>
+    <% @checksum_results.each do |row| %>
+        <div class="result_hdr" style="border-left: 3px solid green; padding-left: 5px"><%#= tbl_border_color %>
+          <div style='background-color: transparent; height: 50px; padding: 5px;'>
+            <div style='float: left; color: black; font-weight: bold; font-size: 18px; padding-left: 5px' onclick="toggleResultTable(this);">
+              <i class="fa fa-minus-square" aria-hidden="true"></i>
+              <%= row.domain %>
+            </div>
+          </div>
+          <div class="result_table">
+            <table class="prisme-table table-hover checksum_table" id="<%= "checksum_#{row.id}" %>">
+              <thead>
+              <tr>
+                <th scope="col">Site</th>
+                <th scope="col">Subset</th>
+                <th scope="col">Status</th>
+                <th scope="col">User Name</th>
+                <th scope="col">Request Date</th>
+                <th scope="col">Receive Date</th>
+                <th scope="col">Version</th>
+                <th scope="col">MD5</th>
+                <th scope="col">Discovery</th>
+              </tr>
+              </thead>
+              <tbody>
+              <%= render partial: 'checksum_results_tbody', locals: {checksum_details: row.checksum_details} %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <br>
+        <br>
+    <% end %>
+<% end %>
+<!-- modal popup for viewing checksum hl7 -->
+<!--<div id="view_hashes_modal" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-lg">
+    &lt;!&ndash; Modal content&ndash;&gt;
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h3 style="padding-top: 5px">View Hashes for:&nbsp;<strong><span id="view_hashes_modal_title"></span></strong></h3>
+      </div>
+      <div class="modal-body scrollable_div">
+        <div>
+          <H5 style="font-weight: bold">VistA</H5>
+          <textarea id="textarea_vista_hl7" rows="10" cols="85" readonly></textarea>
+        </div>
+        <div>
+          <H5 style="font-weight: bold">ISAAC</H5>
+          <textarea id="textarea_isaac_hl7" rows="10" cols="85" readonly></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>-->

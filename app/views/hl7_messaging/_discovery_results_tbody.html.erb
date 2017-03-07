@@ -1,0 +1,34 @@
+<%
+  subset = nil
+  striped = 'transparent'
+  done, req_id = [], nil
+
+  discovery_details.each do |row|
+    done << row.done?
+    req_id ||= row.discovery_request.id
+    r, last = view_discovery_detail(discovery_detail: row)
+
+    unless r.subset.eql?(subset)
+      subset = r.subset
+      striped = (striped.eql?('transparent') ? '#f2f2f2;' : 'transparent')
+    end
+    tr_id = "#{row.va_site_id}_#{row.id}_#{row.subset.gsub(' ','')}"
+%>
+    <tr id="<%= tr_id %>" style="background-color: <%= striped %>" data-hl7_message="<%= r.hl7_message %>">
+      <td class="site_name"><%= "#{r.va_site_id} - #{r.va_site.name}" %><span style="font-style: italic; font-weight: bold"><%= last ? ' - cached' : '' %></span></td>
+      <td class="subset_name"><%= r.subset %></td>
+      <td><%= r.status %></td>
+      <td><%= r.discovery_request.username %></td>
+      <td><%= display_time(r.start_time) %></td>
+      <td><%= display_time(r.finish_time) %></td>
+      <td class="discovery_hl7_message">
+        <%if r.hl7_message %>
+            <a tabindex="0" onclick="discovery_hl7_message('<%= tr_id %>');"><i class="fa fa-check" aria-hidden="true"></i></a>
+        <% end %>
+      </td>
+    </tr>
+<% end %>
+<script type="text/javascript" charset="utf-8">
+    var req_tbl = $('#discovery_' + '<%= req_id %>');
+    req_tbl.data('done', <%= ! (done.uniq.include? false) %>);
+</script>

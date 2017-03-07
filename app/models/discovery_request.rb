@@ -1,6 +1,7 @@
 require './app/models/HL7Base'
 
 class DiscoveryRequest < ActiveRecord::Base
+  extend HL7RequestBase
   has_many :discovery_details, :dependent => :destroy
 
   alias_method(:details, :discovery_details)

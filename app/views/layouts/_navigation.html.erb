@@ -13,23 +13,19 @@
 
   <% if policy(:navigation).can_deploy? %>
         <div class="dropdown" role="presentation">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="Deployment Tools">Deployment
-            Tools
-            <span class="caret"></span></a>
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="Deployment Tools">Deployment Tools<span class="caret"></span></a>
 
           <ul class="dropdown-menu" aria-hidden="true" aria-label="Checksum">
             <li role="menuitem">
-              <a href="<%= checksum_path %>" onclick="polling.checkPolling(polling.pollEnum.CHECKSUM);" title="Terminology Checksum">
+              <a href="<%= hl7_messaging_path %>?nav=checksum" onclick="polling.checkPolling(polling.pollEnum.CHECKSUM);" title="Terminology Checksum">
                 Checksum
               </a>
             </li>
-            <!--
-        <li role="menuitem">
-          &lt;!&ndash;<a href="<%#= discovery_list_path %>" onclick="polling.checkPolling(polling.pollEnum.DISCOVERY);" title="Terminology Discovery">&ndash;&gt;
-            Discovery
-          &lt;!&ndash;</a>&ndash;&gt;
-        </li>
--->
+            <li role="menuitem">
+              <a href="<%= hl7_messaging_path %>?nav=discovery" onclick="polling.checkPolling(polling.pollEnum.DISCOVERY);" title="Terminology Discovery">
+                Discovery
+              </a>
+            </li>
           </ul>
         </div>
   <% end %>

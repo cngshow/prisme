@@ -2,7 +2,6 @@ class RenewChecksumTables1 < ActiveRecord::Migration
   def change
     drop_table :checksum_details rescue false
     drop_table :checksum_requests rescue false
-   # ActiveRecord::Base.connection.execute "delete from SCHEMA_MIGRATIONS where version in ('20170209192046','20170209192335')" rescue false
 
     create_table :checksum_requests do |t|
       t.string :username, null: false
@@ -16,7 +15,7 @@ class RenewChecksumTables1 < ActiveRecord::Migration
       t.references :va_site, index: true, null: false
       t.references :checksum_request, index: true, null: false
       t.references :detail, index: true, null: true
-      t.string :subset
+      t.string :subset #todo cris this should be required!! , null: false
       t.string :checksum
       t.string :failure_message
       t.text :hl7_message

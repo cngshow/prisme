@@ -1,4 +1,5 @@
 require './app/models/HL7Base'
+
 class DiscoveryDetail < ActiveRecord::Base
   include HL7DetailBase
   belongs_to :discovery_request
@@ -9,7 +10,7 @@ class DiscoveryDetail < ActiveRecord::Base
   alias_method(:request, :discovery_request)
 
   def last_discovery
-    last_detail(discovery_detail_id,:last_discovery_detail, :discovery_detail_id)
+    last_detail(discovery_detail_id, :last_discovery_detail, :discovery_detail_id)
   end
 
 

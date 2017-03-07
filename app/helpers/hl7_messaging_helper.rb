@@ -1,4 +1,4 @@
-module ChecksumHelper
+module Hl7MessagingHelper
   def render_results_table(subsets:, sites:)
     @subset_request_hash = {}
     @site_request_array = []
@@ -36,6 +36,18 @@ module ChecksumHelper
     else
       last = false
       ret = checksum_detail
+    end
+    [ret, last]
+  end
+
+  def view_discovery_detail(discovery_detail:) #todo cris test this!!
+    last = discovery_detail.hl7_message.nil?
+
+    if last && discovery_detail.last_discovery
+        ret = discovery_detail.last_discovery
+    else
+      last = false
+      ret = discovery_detail
     end
     [ret, last]
   end
