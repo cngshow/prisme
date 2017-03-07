@@ -33,7 +33,7 @@ module HL7DetailBase
       self[column_name_id] = id
       save
     end
-    return self.class.send(:find, self[column_name_id])
+    self.class.send(:find, self[column_name_id])
   end
 
 

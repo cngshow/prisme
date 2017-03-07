@@ -15,3 +15,6 @@ class DiscoveryDetail < ActiveRecord::Base
 
 
 end
+=begin
+load('./app/models/discovery_detail.rb')
+=end
