@@ -1,7 +1,7 @@
 <div id="checksum_selection_div">
-  <%= render 'layouts/page_title_bar', locals: {title: 'Terminology Checksum',
-                                                actions: ['<button type="button" class="btn btn-info btn-sm btn-req-checksum">Request Checksum</button>']} %>
-  <div style="width: 35%;" class="selection_div">
+  <%= render 'layouts/page_title_bar', locals: {title: "Terminology #{@nav_type.titlecase}",
+                                                actions: ["<button type='button' class='btn btn-info btn-sm btn-req-hl7_messaging'>Request #{@nav_type.titlecase}</button>"]} %>
+  <div style="width: 34%;" class="selection_div">
     <div style='background-color: transparent; height: 50px; padding: 5px;'>
       <div class='section_label'>Subset Selection(s)</div>
       <br>
@@ -9,7 +9,7 @@
     </div>
     <div id="subsets" class="tree_border"></div>
   </div>
-  <div style="min-width: 64.5%;float: right" class="selection_div scrollable_div">
+  <div style="min-width: 63%;float: right" class="selection_div scrollable_div">
     <div style='background-color: transparent;padding: 5px;'>
       <div class="section_label">Site Selection(s)</div>
       <div style='float: right'>
@@ -60,7 +60,7 @@
     function site_selections() {
         var checked = $('#site_tree').jstree('get_checked');
         if (checked.length == 0) {
-            bootbox.alert("Please select sites before requesting the checksum.");
+            bootbox.alert("Please select sites before requesting the <%= @nav_type %>.");
             return false;
         }
 
@@ -74,13 +74,13 @@
             if (id_split[0] === '<%= VaGroup.name %>') {
                 groups.push(id_split[1]);
             }
-            if (id_split[0] === '<%= VaSite.name %>') {
+            if (id_split[0] === '<%= VaSite.name %>' && $('#'+id).is(':visible')) {
                 sites.push(id_split[1]);
             }
         }
 
         // make the ajax call to get all of the selected sites to load the selection table with
-        $.getJSON(gon.routes.checksum_retrieve_sites_path, {
+        $.getJSON(gon.routes.hl7_messaging_retrieve_sites_path, {
             groups: groups.toString(),
             sites: sites.toString()
         }, function (data) {
@@ -133,7 +133,7 @@
      {"id":"j2_4","text":"Reactants","icon":true,"li_attr":{"id":"j2_4"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":true,"disabled":false},"data":{},"parent":"Allergy"},
      {"id":"Immunizations","text":"Immunizations","icon":"fa fa-object-group","li_attr":{"id":"Immunizations"},"a_attr":{"href":"#","id":"Immunizations_anchor"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"subset_root"},{"id":"j2_6","text":"Immunization Procedure","icon":true,"li_attr":{"id":"j2_6"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"Immunizations"},{"id":"j2_7","text":"Skin Test","icon":true,"li_attr":{"id":"j2_7"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"Immunizations"},{"id":"Pharmacy","text":"Pharmacy","icon":"fa fa-object-group","li_attr":{"id":"Pharmacy"},"a_attr":{"href":"#","id":"Pharmacy_anchor"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"subset_root"},{"id":"j2_9","text":"Medication Routes","icon":true,"li_attr":{"id":"j2_9"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"Pharmacy"},{"id":"Orders","text":"Orders","icon":"fa fa-object-group","li_attr":{"id":"Orders"},"a_attr":{"href":"#","id":"Orders_anchor"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"subset_root"},{"id":"j2_11","text":"Order Status","icon":true,"li_attr":{"id":"j2_11"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"Orders"},{"id":"j2_12","text":"Nature of Order","icon":true,"li_attr":{"id":"j2_12"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"Orders"},{"id":"TIU","text":"TIU","icon":"fa fa-object-group","li_attr":{"id":"TIU"},"a_attr":{"href":"#","id":"TIU_anchor"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"subset_root"},{"id":"j2_14","text":"TIU Status","icon":true,"li_attr":{"id":"j2_14"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"TIU"},{"id":"j2_15","text":"TIU Doctype","icon":true,"li_attr":{"id":"j2_15"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"TIU"},{"id":"j2_16","text":"TIU Role","icon":true,"li_attr":{"id":"j2_16"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"TIU"},{"id":"j2_17","text":"TIU SMD","icon":true,"li_attr":{"id":"j2_17"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"TIU"},{"id":"j2_18","text":"TIU Service","icon":true,"li_attr":{"id":"j2_18"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"TIU"},{"id":"j2_19","text":"TIU Setting","icon":true,"li_attr":{"id":"j2_19"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"TIU"},{"id":"j2_20","text":"TIU Titles","icon":true,"li_attr":{"id":"j2_20"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"TIU"},{"id":"Vitals","text":"Vitals","icon":"fa fa-object-group","li_attr":{"id":"Vitals"},"a_attr":{"href":"#","id":"Vitals_anchor"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"subset_root"},{"id":"j2_22","text":"Vital Types","icon":true,"li_attr":{"id":"j2_22"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"Vitals"},{"id":"j2_23","text":"Vital Categories","icon":true,"li_attr":{"id":"j2_23"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"Vitals"},{"id":"j2_24","text":"Vital Qualifiers","icon":true,"li_attr":{"id":"j2_24"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"Vitals"}]
      */
-    function load_checksum_results() {
+    function load_hl7_messaging_results() {
         var subset_tree = $('#subsets');
         var selected_ids = subset_tree.jstree('get_checked');
         var all_subsets = subset_tree.jstree(true).get_json('#', {'flat': true});
@@ -176,12 +176,33 @@
 
         wait_cursor(true);
 
-        $.post(gon.routes.checksum_results_table_path, {subset_selections: JSON.stringify(tables), site_selections: JSON.stringify(site_selections)}, function (data) {
-            $('#checksum_results').html(data);
-            change_tabs('checksum');
-            wait_cursor(false);
-            init_checksum_table_polling();
+        $.post(gon.routes.hl7_messaging_results_table_path, {nav_type: '<%= @nav_type %>', subset_selections: JSON.stringify(tables), site_selections: JSON.stringify(site_selections)}, function (data) {
+            <% if @nav_type.eql? 'checksum' %>
+              _checksum_results(data);
+            <% else %>
+              _discovery_results(data);
+            <% end %>
         })
+    }
+
+    function _checksum_results(data) {
+        $('#checksum_results').html(data);
+        change_tabs('checksum');
+        wait_cursor(false);
+        init_checksum_table_polling();
+    }
+
+    function _discovery_results(data) {
+        $('#discovery_results').html(data);
+        change_tabs('discovery');
+        wait_cursor(false);
+
+        $('.<%= @nav_type %>_table').each(function (index, value) {
+            var table_id = $(this).attr('id');
+            setTimeout(function () {
+                checksum_discovery_table_poll(table_id, gon.routes.discovery_request_poll_path);
+            }, 5000);
+        });
     }
 
     function sites() {
@@ -191,7 +212,6 @@
         }
         return sites;
     }
-
 
     function get_site_type() {
         return $("input[name='site_type']:checked").val();
@@ -252,20 +272,20 @@
                 }
             });
 
-        $('.btn-req-checksum').on("click", function () {
+        $('.btn-req-hl7_messaging').on("click", function () {
             var checked = $('#subsets').jstree('get_checked');
             if (checked.length == 0) {
-                bootbox.alert("Please select subsets before requesting the checksum.");
+                bootbox.alert('<%= "Please select subsets before requesting the #{@nav_type}." %>');
                 return false;
             }
 
             if ($('#tbl_site_selection > tbody > tr').hasClass('no_rows')) {
-                bootbox.alert('Please select your site(s) before requesting the checksum.');
+                bootbox.alert('<%= "Please select your site(s) before requesting the #{@nav_type}." %>');
                 return false;
             }
 
             // load the results table
-            load_checksum_results();
+            load_hl7_messaging_results();
         });
     });
 </script>

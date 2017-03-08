@@ -27,6 +27,6 @@
     </tr>
 <% end %>
 <script type="text/javascript" charset="utf-8">
-    var req_tbl = $('#tbl_' + '<%= req_id %>');
+    var req_tbl = $('#checksum_' + '<%= req_id %>');
     req_tbl.data('done', <%= ! (done.uniq.include? false) %>);
 </script>

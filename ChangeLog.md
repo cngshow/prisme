@@ -3,6 +3,11 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
+* 2017/03/08 - 1.58
+    * Migration and corresponding models in support of discovery
+    * Refactoring Checksum to include GUI pages and controller methods for discovery
+    * Menuing for both checksum and discovery
+
 * 2017/03/02 - 1.57  
    * Changed validations for db_builder - Task 465866
    * 468082, prisme name change

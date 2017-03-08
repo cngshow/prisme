@@ -8,7 +8,7 @@ default: &default
   adapter: oracle_enhanced
   database: xe
   pool: 1000
-
+  reaping_frequency: 10
 development:
   <<: *default
   url: jdbc:oracle:thin:@localhost:1521:xe

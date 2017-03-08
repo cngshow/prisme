@@ -1,6 +1,6 @@
-class ChecksumController < ApplicationController
+class Hl7MessagingController < ApplicationController
   include ChecksumDiscoveryConcern
-  include ChecksumHelper
+  include Hl7MessagingHelper
   before_action :can_deploy
   before_action :verify_hl7_engine, :except => :checksum_request_poll
 
@@ -9,6 +9,7 @@ class ChecksumController < ApplicationController
     @active_subsets = subset_tree_data.to_json
     @group_tree = group_tree_data.to_json
     @site_tree = site_tree_data.to_json
+    @nav_type = params['nav']
   end
 
   def subset_tree_data
@@ -23,7 +24,9 @@ class ChecksumController < ApplicationController
     subset_root
   end
 
-  def checksum_results_table
+  def hl7_messaging_results_table
+    nav_type = params[:nav_type]
+
     # repackage selected sites
     site_selections = JSON.parse(params[:site_selections])
 
@@ -44,9 +47,15 @@ class ChecksumController < ApplicationController
       subset_hash[group['id']] = subsets
     end
 
-    # build checksum request active records for display
-    @checksum_results = HL7Messaging.build_checksum_task_active_record(user: prisme_user.user_name, subset_hash: subset_hash, site_ids_array: sites_arr)
-    render partial: 'checksum_results_table'
+    if nav_type.eql? 'checksum'
+      # build hl7_messaging request active records for display
+      @checksum_results = HL7Messaging.build_checksum_task_active_record(user: prisme_user.user_name, subset_hash: subset_hash, site_ids_array: sites_arr)
+      render partial: 'checksum_results_table'
+    else
+      # build hl7_messaging request active records for display
+      @results = HL7Messaging.build_discovery_task_active_record(user: prisme_user.user_name, subset_hash: subset_hash, site_ids_array: sites_arr)
+      render partial: 'discovery_results_table'
+    end
   end
 
   def isaac_hl7
@@ -57,9 +66,15 @@ class ChecksumController < ApplicationController
   end
 
   def checksum_request_poll
-    checksum_request_id = params[:checksum_req_id]
+    checksum_request_id = params[:request_id]
     cr = ChecksumRequest.find(checksum_request_id)
     render partial: 'checksum_results_tbody', locals: {checksum_details: cr.checksum_details}
+  end
+
+  def discovery_request_poll
+    discovery_request_id = params[:request_id]
+    dr = DiscoveryRequest.find(discovery_request_id)
+    render partial: 'discovery_results_tbody', locals: {discovery_details: dr.discovery_details}
   end
 
   def group_tree_data

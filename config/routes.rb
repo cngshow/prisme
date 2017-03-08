@@ -5,12 +5,12 @@ Rails.application.routes.draw do
     end
   end
 
-  get 'checksum/index', as: 'checksum'
-  get 'checksum/retrieve_sites'
-  get 'checksum/checksum_request_poll', as: 'checksum_request_poll'
-  get 'checksum/isaac_hl7', as: 'isaac_hl7'
-  post 'checksum/checksum_results_table', as: 'checksum_results_table'
-  # get 'discovery/index', as: 'discovery'
+  get 'hl7_messaging/index', as: 'hl7_messaging'
+  get 'hl7_messaging/retrieve_sites'
+  get 'hl7_messaging/checksum_request_poll', as: 'checksum_request_poll'
+  get 'hl7_messaging/discovery_request_poll', as: 'discovery_request_poll'
+  get 'hl7_messaging/isaac_hl7', as: 'isaac_hl7'
+  post 'hl7_messaging/hl7_messaging_results_table', as: 'hl7_messaging_results_table'
 
   #resources :log_events
   match 'log_event' => 'log_events#log_event', :as => :log_event, via: [:get, :put, :post]

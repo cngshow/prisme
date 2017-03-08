@@ -1,19 +1,14 @@
+require './app/models/HL7Base'
+
 class ChecksumRequest < ActiveRecord::Base
+  extend HL7RequestBase
   has_many :checksum_details, :dependent => :destroy
 
-  def self.last_checksum_detail(domain:, subset:, site_id:)
+  alias_method(:details, :checksum_details)
 
-    sql = %(
-    select max(a.id) as last_checksum_detail
-    from CHECKSUM_DETAILS a, CHECKSUM_REQUESTS b
-    where a.CHECKSUM_REQUEST_ID = b.id
-    and   b.domain = '#{domain}'
-    and   a.FINISH_TIME is not null
-    and   a.SUBSET = '#{subset}'
-    and   a.VA_SITE_ID = '#{site_id}'
-    and   a.checksum is not null
-    )
-    ChecksumRequest.connection.select_all(sql).first['last_checksum_detail']
+  def self.last_checksum_detail(domain, subset, site_id)
+    sql = sql_template(domain, subset, site_id, 'CHECKSUM', 'checksum')
+    ChecksumRequest.connection.select_all(sql).first['last_detail_id']
   end
 
 end
