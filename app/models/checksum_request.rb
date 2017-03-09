@@ -1,7 +1,8 @@
-require './app/models/HL7Base'
+require './app/models/concerns/HL7Base'
+require './app/models/concerns/cleanup_concern'
 
 class ChecksumRequest < ActiveRecord::Base
-  extend HL7RequestBase
+  extend HL7RequestBase, Cleanup
   has_many :checksum_details, :dependent => :destroy
 
   alias_method(:details, :checksum_details)

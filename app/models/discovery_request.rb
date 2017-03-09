@@ -1,7 +1,8 @@
-require './app/models/HL7Base'
+require './app/models/concerns/HL7Base'
+require './app/models/concerns/cleanup_concern'
 
 class DiscoveryRequest < ActiveRecord::Base
-  extend HL7RequestBase
+  extend HL7RequestBase, Cleanup
   has_many :discovery_details, :dependent => :destroy
 
   alias_method(:details, :discovery_details)
