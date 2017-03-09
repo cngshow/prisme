@@ -1,4 +1,4 @@
-require './app/models/HL7Base'
+require './app/models/concerns/HL7Base'
 
 class DiscoveryDetail < ActiveRecord::Base
   include HL7DetailBase
