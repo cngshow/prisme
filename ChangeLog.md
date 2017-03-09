@@ -4,7 +4,7 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 where provided, and the git commit history.
 
 * 2017/03/?? - 1.59 - PENDING
-    *
+    * added new prisme_err.log, only error and fatal events are sent here.
 
 * 2017/03/08 - 1.58
     * Migration and corresponding models in support of discovery
