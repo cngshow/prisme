@@ -12,9 +12,29 @@ module HL7RequestBase
     and   a.#{data_column} is not null
     )
   end
-
 end
 
+module HL7RequestSerializer
+
+  def self.included(base)
+    base.extend(ClassMethods)
+  end
+
+  def to_hash
+    h = {}
+    h['request'] = JSON.parse self.to_json
+    h['details'] = JSON.parse self.details.to_json
+    h
+  end
+
+  module ClassMethods
+    def to_record(**hash)
+      request = self.new hash['request']
+      request.details.build hash['details']
+      request
+    end
+  end
+end
 
 module HL7DetailBase
   include gov.vha.isaac.ochre.access.maint.deployment.dto.PublishMessage
