@@ -1,0 +1,972 @@
+MSH^~|\&^XUMF DATA^950^VETS DATA^200ET1^20170310105906-0400^^MFR~M01^65760934408^T^2.4^^^AL^NE^USA
+MSA^AA^10029
+QRD^20170310095900.000-0600^R^I^Standard Terminology Query^^^99999~5^ALL^Vital Qualifiers^VA
+MFI^Vital Qualifiers^Standard Terminology^MUP^20170310105905-0400^20170310105905-0400^NE
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4500641
+ZRT^Term^ADULT CUFF
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^AC
+ZRT^has_qualifier^BLOOD PRESSURE
+ZRT^has_VistA_category^CUFF SIZE
+ZRT^has_VistA_category^CUFF SIZE
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4500642
+ZRT^Term^ORAL
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^O
+ZRT^has_qualifier^TEMPERATURE
+ZRT^has_VistA_category^LOCATION
+ZRT^has_VistA_category^LOCATION
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4500643
+ZRT^Term^STANDING WEIGHT
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^SW
+ZRT^has_qualifier^WEIGHT
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4500992
+ZRT^Term^WITH CAST OR BRACE
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^WCB
+ZRT^has_qualifier^WEIGHT
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4500993
+ZRT^Term^WITH PROSTHESIS
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^WP
+ZRT^has_qualifier^WEIGHT
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4500994
+ZRT^Term^WITHOUT PROSTHESIS
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^WOP
+ZRT^has_qualifier^WEIGHT
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4536406
+ZRT^Term^OTHER
+ZRT^VistA_Short_Name^Oth
+ZRT^Status^0
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4536408
+ZRT^Term^CUFF
+ZRT^VistA_Short_Name^Cu
+ZRT^Status^0
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4536409
+ZRT^Term^ADULT
+ZRT^VistA_Short_Name^Ad
+ZRT^Status^0
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4536410
+ZRT^Term^SM ADULT
+ZRT^VistA_Short_Name^SmA
+ZRT^Status^0
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4536411
+ZRT^Term^LG ADULT
+ZRT^VistA_Short_Name^LgA
+ZRT^Status^0
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4536412
+ZRT^Term^PEDIATRIC
+ZRT^VistA_Short_Name^Ped
+ZRT^Status^0
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4536414
+ZRT^Term^O2 SATS
+ZRT^VistA_Short_Name
+ZRT^Status^0
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4536415
+ZRT^Term^FINGER
+ZRT^VistA_Short_Name^xx
+ZRT^Status^0
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4536416
+ZRT^Term^Colin Machine
+ZRT^VistA_Short_Name^COL
+ZRT^Status^0
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4536417
+ZRT^Term^Telemetry
+ZRT^VistA_Short_Name^TL
+ZRT^Status^0
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4536418
+ZRT^Term^Cardiac Monitor
+ZRT^VistA_Short_Name^CM
+ZRT^Status^0
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4536419
+ZRT^Term^RHYTHM
+ZRT^VistA_Short_Name^RHY
+ZRT^Status^0
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4536420
+ZRT^Term^Ambulating 100 Feet
+ZRT^VistA_Short_Name^xx
+ZRT^Status^0
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4536421
+ZRT^Term^WITH AMBULATION
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^WA
+ZRT^has_qualifier^PULSE OXIMETRY
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4536584
+ZRT^Term^LARYNGEAL MASK AIRWAY
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^LMA
+ZRT^has_qualifier^PULSE OXIMETRY
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4537028
+ZRT^Term^TEMPORAL
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^Tem
+ZRT^has_qualifier^TEMPERATURE
+ZRT^has_VistA_category^LOCATION
+ZRT^has_VistA_category^LOCATION
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4537031
+ZRT^Term^CALCULATED
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^Cal
+ZRT^has_qualifier^WEIGHT
+ZRT^has_VistA_category^QUALITY
+ZRT^has_VistA_category^QUALITY
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688633
+ZRT^Term^ABDOMINAL
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^Abd
+ZRT^has_qualifier^CIRCUMFERENCE/GIRTH
+ZRT^has_VistA_category^LOCATION
+ZRT^has_VistA_category^LOCATION
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688634
+ZRT^Term^ACTUAL
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^A
+ZRT^has_qualifier^WEIGHT
+ZRT^has_VistA_category^QUALITY
+ZRT^has_qualifier^HEIGHT
+ZRT^has_VistA_category^QUALITY
+ZRT^has_VistA_category^QUALITY
+ZRT^has_VistA_category^QUALITY
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688635
+ZRT^Term^AEROSOL/HUMIDIFIED MASK
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^AM
+ZRT^has_qualifier^PULSE OXIMETRY
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688636
+ZRT^Term^ANKLE
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^Ank
+ZRT^has_qualifier^CIRCUMFERENCE/GIRTH
+ZRT^has_VistA_category^LOCATION
+ZRT^has_VistA_category^LOCATION
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688637
+ZRT^Term^APICAL
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^Ap
+ZRT^has_qualifier^PULSE
+ZRT^has_VistA_category^LOCATION
+ZRT^has_VistA_category^LOCATION
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688638
+ZRT^Term^ASSISTED VENTILATOR
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^AV
+ZRT^has_qualifier^PULSE OXIMETRY
+ZRT^has_VistA_category^METHOD
+ZRT^has_qualifier^RESPIRATION
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688639
+ZRT^Term^AUSCULTATE
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^Aus
+ZRT^has_qualifier^PULSE
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688640
+ZRT^Term^AXILLARY
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^Ax
+ZRT^has_qualifier^TEMPERATURE
+ZRT^has_VistA_category^LOCATION
+ZRT^has_VistA_category^LOCATION
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688641
+ZRT^Term^BED
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^B
+ZRT^has_qualifier^WEIGHT
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688642
+ZRT^Term^BILATERAL PERIPHERALS
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^BiP
+ZRT^has_qualifier^PULSE
+ZRT^has_VistA_category^LOCATION
+ZRT^has_VistA_category^LOCATION
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688643
+ZRT^Term^BRACHIAL
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^Bra
+ZRT^has_qualifier^PULSE
+ZRT^has_VistA_category^LOCATION
+ZRT^has_qualifier^BLOOD PRESSURE
+ZRT^has_VistA_category^LOCATION
+ZRT^has_VistA_category^LOCATION
+ZRT^has_VistA_category^LOCATION
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688644
+ZRT^Term^CALF
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^Clf
+ZRT^has_qualifier^CIRCUMFERENCE/GIRTH
+ZRT^has_VistA_category^LOCATION
+ZRT^has_VistA_category^LOCATION
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688645
+ZRT^Term^CAROTID
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^Car
+ZRT^has_qualifier^PULSE
+ZRT^has_VistA_category^LOCATION
+ZRT^has_VistA_category^LOCATION
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688646
+ZRT^Term^CHAIR
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^Ch
+ZRT^has_qualifier^WEIGHT
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688647
+ZRT^Term^CONTROLLED VENTILATOR
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^CV
+ZRT^has_qualifier^PULSE OXIMETRY
+ZRT^has_VistA_category^METHOD
+ZRT^has_qualifier^RESPIRATION
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688648
+ZRT^Term^CORE
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^C
+ZRT^has_qualifier^TEMPERATURE
+ZRT^has_VistA_category^LOCATION
+ZRT^has_VistA_category^LOCATION
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688649
+ZRT^Term^CUFF-AUTOMATED
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^CA
+ZRT^has_qualifier^BLOOD PRESSURE
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688650
+ZRT^Term^DOPPLER
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^Dop
+ZRT^has_qualifier^PULSE
+ZRT^has_VistA_category^METHOD
+ZRT^has_qualifier^BLOOD PRESSURE
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688651
+ZRT^Term^DORSALIS PEDIS
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^DP
+ZRT^has_qualifier^PULSE
+ZRT^has_VistA_category^LOCATION
+ZRT^has_VistA_category^LOCATION
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688652
+ZRT^Term^DRY
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^D
+ZRT^has_qualifier^WEIGHT
+ZRT^has_VistA_category^QUALITY
+ZRT^has_VistA_category^QUALITY
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688653
+ZRT^Term^ESTIMATED
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^E
+ZRT^has_qualifier^HEIGHT
+ZRT^has_VistA_category^QUALITY
+ZRT^has_qualifier^WEIGHT
+ZRT^has_VistA_category^QUALITY
+ZRT^has_VistA_category^QUALITY
+ZRT^has_VistA_category^QUALITY
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688654
+ZRT^Term^FACE TENT
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^FT
+ZRT^has_qualifier^PULSE OXIMETRY
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688655
+ZRT^Term^FEMORAL
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^Fem
+ZRT^has_qualifier^PULSE
+ZRT^has_VistA_category^LOCATION
+ZRT^has_qualifier^BLOOD PRESSURE
+ZRT^has_VistA_category^LOCATION
+ZRT^has_VistA_category^LOCATION
+ZRT^has_VistA_category^LOCATION
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688656
+ZRT^Term^HEAD
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^Hd
+ZRT^has_qualifier^CIRCUMFERENCE/GIRTH
+ZRT^has_VistA_category^LOCATION
+ZRT^has_VistA_category^LOCATION
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688657
+ZRT^Term^L ARM
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^LA
+ZRT^has_qualifier^BLOOD PRESSURE
+ZRT^has_VistA_category^LOCATION
+ZRT^has_VistA_category^LOCATION
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688658
+ZRT^Term^L LEG
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^LL
+ZRT^has_qualifier^BLOOD PRESSURE
+ZRT^has_VistA_category^LOCATION
+ZRT^has_VistA_category^LOCATION
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688659
+ZRT^Term^LEAD
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^L
+ZRT^has_qualifier^PULSE
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688660
+ZRT^Term^LEFT
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^Lt
+ZRT^has_qualifier^PULSE
+ZRT^has_VistA_category^SITE
+ZRT^has_qualifier^CIRCUMFERENCE/GIRTH
+ZRT^has_VistA_category^SITE
+ZRT^has_VistA_category^SITE
+ZRT^has_VistA_category^SITE
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688661
+ZRT^Term^LG ADULT CUFF
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^LAC
+ZRT^has_qualifier^BLOOD PRESSURE
+ZRT^has_VistA_category^CUFF SIZE
+ZRT^has_VistA_category^CUFF SIZE
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688662
+ZRT^Term^LOWER ARM
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^LrA
+ZRT^has_qualifier^CIRCUMFERENCE/GIRTH
+ZRT^has_VistA_category^LOCATION
+ZRT^has_VistA_category^LOCATION
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688663
+ZRT^Term^LYING
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^Ly
+ZRT^has_qualifier^PULSE
+ZRT^has_VistA_category^POSITION
+ZRT^has_qualifier^BLOOD PRESSURE
+ZRT^has_VistA_category^POSITION
+ZRT^has_qualifier^RESPIRATION
+ZRT^has_VistA_category^POSITION
+ZRT^has_VistA_category^POSITION
+ZRT^has_VistA_category^POSITION
+ZRT^has_VistA_category^POSITION
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688664
+ZRT^Term^MASK
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^M
+ZRT^has_qualifier^PULSE OXIMETRY
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688665
+ZRT^Term^MONITOR
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^Mo
+ZRT^has_qualifier^PULSE
+ZRT^has_VistA_category^METHOD
+ZRT^has_qualifier^PULSE OXIMETRY
+ZRT^has_VistA_category^METHOD
+ZRT^has_qualifier^BLOOD PRESSURE
+ZRT^has_VistA_category^METHOD
+ZRT^has_qualifier^RESPIRATION
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688666
+ZRT^Term^NASAL CANNULA
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^NC
+ZRT^has_qualifier^PULSE OXIMETRY
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688667
+ZRT^Term^NON RE-BREATHER
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^NRB
+ZRT^has_qualifier^PULSE OXIMETRY
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688668
+ZRT^Term^NON-INVASIVE
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^N-I
+ZRT^has_qualifier^PULSE
+ZRT^has_VistA_category^METHOD
+ZRT^has_qualifier^BLOOD PRESSURE
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688669
+ZRT^Term^PALPATED
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^Pal
+ZRT^has_qualifier^PULSE
+ZRT^has_VistA_category^METHOD
+ZRT^has_qualifier^BLOOD PRESSURE
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688670
+ZRT^Term^PARTIAL RE-BREATHER
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^PRB
+ZRT^has_qualifier^PULSE OXIMETRY
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688671
+ZRT^Term^PEDIATRIC CUFF
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^PdC
+ZRT^has_qualifier^BLOOD PRESSURE
+ZRT^has_VistA_category^CUFF SIZE
+ZRT^has_VistA_category^CUFF SIZE
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688672
+ZRT^Term^PERIPHERAL
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^Per
+ZRT^has_qualifier^PULSE
+ZRT^has_VistA_category^LOCATION
+ZRT^has_VistA_category^LOCATION
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688673
+ZRT^Term^POPLITEAL
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^Pop
+ZRT^has_qualifier^PULSE
+ZRT^has_VistA_category^LOCATION
+ZRT^has_VistA_category^LOCATION
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688675
+ZRT^Term^POSTERIOR TIBIAL
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^PT
+ZRT^has_qualifier^PULSE
+ZRT^has_VistA_category^LOCATION
+ZRT^has_VistA_category^LOCATION
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688676
+ZRT^Term^R ARM
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^RA
+ZRT^has_qualifier^BLOOD PRESSURE
+ZRT^has_VistA_category^LOCATION
+ZRT^has_VistA_category^LOCATION
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688677
+ZRT^Term^R LEG
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^RL
+ZRT^has_qualifier^BLOOD PRESSURE
+ZRT^has_VistA_category^LOCATION
+ZRT^has_VistA_category^LOCATION
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688678
+ZRT^Term^RADIAL
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^Rad
+ZRT^has_qualifier^PULSE
+ZRT^has_VistA_category^LOCATION
+ZRT^has_qualifier^BLOOD PRESSURE
+ZRT^has_VistA_category^LOCATION
+ZRT^has_VistA_category^LOCATION
+ZRT^has_VistA_category^LOCATION
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688679
+ZRT^Term^RECTAL
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^R
+ZRT^has_qualifier^TEMPERATURE
+ZRT^has_VistA_category^LOCATION
+ZRT^has_VistA_category^LOCATION
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688680
+ZRT^Term^RIGHT
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^Rt
+ZRT^has_qualifier^CIRCUMFERENCE/GIRTH
+ZRT^has_VistA_category^SITE
+ZRT^has_qualifier^PULSE
+ZRT^has_VistA_category^SITE
+ZRT^has_VistA_category^SITE
+ZRT^has_VistA_category^SITE
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688681
+ZRT^Term^ROOM AIR
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^R/A
+ZRT^has_qualifier^PULSE OXIMETRY
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688682
+ZRT^Term^SEMIFOWLERS
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^Sfl
+ZRT^has_qualifier^PULSE
+ZRT^has_VistA_category^POSITION
+ZRT^has_qualifier^BLOOD PRESSURE
+ZRT^has_VistA_category^POSITION
+ZRT^has_qualifier^RESPIRATION
+ZRT^has_VistA_category^POSITION
+ZRT^has_VistA_category^POSITION
+ZRT^has_VistA_category^POSITION
+ZRT^has_VistA_category^POSITION
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688683
+ZRT^Term^TRANSTRACHEAL
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^Tt
+ZRT^has_qualifier^PULSE OXIMETRY
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688684
+ZRT^Term^LIFT SCALE
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^LS
+ZRT^has_qualifier^WEIGHT
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688685
+ZRT^Term^PENDANT CANNULA
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^PC
+ZRT^has_qualifier^PULSE OXIMETRY
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688686
+ZRT^Term^NECK
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^Ne
+ZRT^has_qualifier^CIRCUMFERENCE/GIRTH
+ZRT^has_VistA_category^LOCATION
+ZRT^has_VistA_category^LOCATION
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688687
+ZRT^Term^MUSTACHE CANNULA
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^MC
+ZRT^has_qualifier^PULSE OXIMETRY
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688688
+ZRT^Term^CUFF-MANUAL
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^CM
+ZRT^has_qualifier^BLOOD PRESSURE
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688689
+ZRT^Term^KNEE
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^Kn
+ZRT^has_qualifier^CIRCUMFERENCE/GIRTH
+ZRT^has_VistA_category^LOCATION
+ZRT^has_VistA_category^LOCATION
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688690
+ZRT^Term^CPAP
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^CP
+ZRT^has_qualifier^PULSE OXIMETRY
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688691
+ZRT^Term^BIPAP-CPAP
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^PAP
+ZRT^has_qualifier^PULSE OXIMETRY
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688692
+ZRT^Term^STATED
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^Sta
+ZRT^has_qualifier^WEIGHT
+ZRT^has_VistA_category^QUALITY
+ZRT^has_qualifier^HEIGHT
+ZRT^has_VistA_category^QUALITY
+ZRT^has_VistA_category^QUALITY
+ZRT^has_VistA_category^QUALITY
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688693
+ZRT^Term^WHEELCHAIR SCALE
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^WcS
+ZRT^has_qualifier^WEIGHT
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688694
+ZRT^Term^TRENDELENBURG
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^Tr
+ZRT^has_qualifier^BLOOD PRESSURE
+ZRT^has_VistA_category^POSITION
+ZRT^has_qualifier^RESPIRATION
+ZRT^has_VistA_category^POSITION
+ZRT^has_qualifier^PULSE
+ZRT^has_VistA_category^POSITION
+ZRT^has_VistA_category^POSITION
+ZRT^has_VistA_category^POSITION
+ZRT^has_VistA_category^POSITION
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688695
+ZRT^Term^BIPAP
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^BIP
+ZRT^has_qualifier^PULSE OXIMETRY
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688696
+ZRT^Term^AV FISTULA
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^AVF
+ZRT^has_qualifier^PULSE
+ZRT^has_VistA_category^LOCATION
+ZRT^has_VistA_category^LOCATION
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688697
+ZRT^Term^AT REST
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^AR
+ZRT^has_qualifier^PULSE
+ZRT^has_VistA_category^METHOD
+ZRT^has_qualifier^PULSE OXIMETRY
+ZRT^has_VistA_category^METHOD
+ZRT^has_qualifier^BLOOD PRESSURE
+ZRT^has_VistA_category^METHOD
+ZRT^has_qualifier^RESPIRATION
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688698
+ZRT^Term^AMBU BAG
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^AB
+ZRT^has_qualifier^PULSE OXIMETRY
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688699
+ZRT^Term^WITH ACTIVITY
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^Act
+ZRT^has_qualifier^PULSE
+ZRT^has_VistA_category^METHOD
+ZRT^has_qualifier^PULSE OXIMETRY
+ZRT^has_VistA_category^METHOD
+ZRT^has_qualifier^BLOOD PRESSURE
+ZRT^has_VistA_category^METHOD
+ZRT^has_qualifier^RESPIRATION
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688700
+ZRT^Term^INVASIVE
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^I
+ZRT^has_qualifier^PULSE
+ZRT^has_VistA_category^METHOD
+ZRT^has_qualifier^BLOOD PRESSURE
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688701
+ZRT^Term^ARTERIAL LINE
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^AL
+ZRT^has_qualifier^BLOOD PRESSURE
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688702
+ZRT^Term^AFTER EXERCISE
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^AE
+ZRT^has_qualifier^PULSE
+ZRT^has_VistA_category^METHOD
+ZRT^has_qualifier^PULSE OXIMETRY
+ZRT^has_VistA_category^METHOD
+ZRT^has_qualifier^BLOOD PRESSURE
+ZRT^has_VistA_category^METHOD
+ZRT^has_qualifier^RESPIRATION
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688703
+ZRT^Term^SITTING
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^Sit
+ZRT^has_qualifier^PULSE
+ZRT^has_VistA_category^POSITION
+ZRT^has_qualifier^BLOOD PRESSURE
+ZRT^has_VistA_category^POSITION
+ZRT^has_qualifier^RESPIRATION
+ZRT^has_VistA_category^POSITION
+ZRT^has_VistA_category^POSITION
+ZRT^has_VistA_category^POSITION
+ZRT^has_VistA_category^POSITION
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688704
+ZRT^Term^SKIN
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^Sk
+ZRT^has_qualifier^TEMPERATURE
+ZRT^has_VistA_category^LOCATION
+ZRT^has_VistA_category^LOCATION
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688705
+ZRT^Term^SM ADULT CUFF
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^SAC
+ZRT^has_qualifier^BLOOD PRESSURE
+ZRT^has_VistA_category^CUFF SIZE
+ZRT^has_VistA_category^CUFF SIZE
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688706
+ZRT^Term^SPONTANEOUS
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^S
+ZRT^has_qualifier^RESPIRATION
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688707
+ZRT^Term^STANDING
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^St
+ZRT^has_qualifier^PULSE
+ZRT^has_VistA_category^POSITION
+ZRT^has_qualifier^BLOOD PRESSURE
+ZRT^has_VistA_category^POSITION
+ZRT^has_qualifier^RESPIRATION
+ZRT^has_VistA_category^POSITION
+ZRT^has_VistA_category^POSITION
+ZRT^has_VistA_category^POSITION
+ZRT^has_VistA_category^POSITION
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688708
+ZRT^Term^THIGH
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^Thi
+ZRT^has_qualifier^CIRCUMFERENCE/GIRTH
+ZRT^has_VistA_category^LOCATION
+ZRT^has_VistA_category^LOCATION
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688709
+ZRT^Term^THIGH CUFF
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^ThC
+ZRT^has_qualifier^BLOOD PRESSURE
+ZRT^has_VistA_category^CUFF SIZE
+ZRT^has_VistA_category^CUFF SIZE
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688710
+ZRT^Term^T-PIECE
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^TP
+ZRT^has_qualifier^PULSE OXIMETRY
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688711
+ZRT^Term^TRACHEOSTOMY COLLAR
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^TC
+ZRT^has_qualifier^PULSE OXIMETRY
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688712
+ZRT^Term^TYMPANIC
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^Tym
+ZRT^has_qualifier^TEMPERATURE
+ZRT^has_VistA_category^LOCATION
+ZRT^has_VistA_category^LOCATION
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688713
+ZRT^Term^ULNAR
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^Uln
+ZRT^has_qualifier^PULSE
+ZRT^has_VistA_category^LOCATION
+ZRT^has_VistA_category^LOCATION
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688714
+ZRT^Term^UPPER ARM
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^UpA
+ZRT^has_qualifier^CIRCUMFERENCE/GIRTH
+ZRT^has_VistA_category^LOCATION
+ZRT^has_VistA_category^LOCATION
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688715
+ZRT^Term^VENTILATOR
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^Ven
+ZRT^has_qualifier^PULSE OXIMETRY
+ZRT^has_VistA_category^METHOD
+ZRT^has_qualifier^RESPIRATION
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688716
+ZRT^Term^VENTURI MASK
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^VM
+ZRT^has_qualifier^PULSE OXIMETRY
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4688717
+ZRT^Term^WRIST
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^Wri
+ZRT^has_qualifier^CIRCUMFERENCE/GIRTH
+ZRT^has_VistA_category^LOCATION
+ZRT^has_VistA_category^LOCATION
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4691085
+ZRT^Term^ESTIMATED BY ARM SPAN
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^EAS
+ZRT^has_qualifier^HEIGHT
+ZRT^has_VistA_category^QUALITY
+ZRT^has_VistA_category^QUALITY
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4693051
+ZRT^Term^RESERVOIR CANNULA
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^RC
+ZRT^has_qualifier^PULSE OXIMETRY
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@4697470
+ZRT^Term^HIP
+ZRT^VistA_Mapping_Target^SCT
+ZRT^VistA_Short_Name^Hip
+ZRT^has_qualifier^CIRCUMFERENCE/GIRTH
+ZRT^has_VistA_category^LOCATION
+ZRT^has_VistA_category^LOCATION
+ZRT^Status^1
+MFE^MUP^^20170310105905-0400^Vital Qualifiers@5238706
+ZRT^Term^BLADDER
+ZRT^VistA_Short_Name^Bla
+ZRT^has_qualifier^TEMPERATURE
+ZRT^has_VistA_category^LOCATION
+ZRT^has_VistA_category^LOCATION
+ZRT^Status^1
+MFE^MUP^^20170310105906-0400^Vital Qualifiers@5242853
+ZRT^Term^HIGH FLOW NASAL CANNULA
+ZRT^VistA_Short_Name^HNC
+ZRT^has_qualifier^PULSE OXIMETRY
+ZRT^has_VistA_category^METHOD
+ZRT^has_VistA_category^METHOD
+ZRT^Status^1
+MFE^MUP^^20170310105906-0400^Vital Qualifiers@15245602
+ZRT^Term^HEARD ON THE RADIO
+ZRT^VistA_Mapping_Target^CPT
+ZRT^VistA_Short_Name^Zap
+ZRT^Status^0
+MFE^MUP^^20170310105906-0400^Vital Qualifiers@15245651
+ZRT^Term^NORTH-EAST
+ZRT^VistA_Short_Name^NOE
+ZRT^has_qualifier^PULSE
+ZRT^has_VistA_category^SITE
+ZRT^has_qualifier^CIRCUMFERENCE/GIRTH
+ZRT^has_VistA_category^SITE
+ZRT^has_VistA_category^SITE
+ZRT^has_VistA_category^SITE
+ZRT^Status^1
