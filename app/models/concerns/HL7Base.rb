@@ -1,6 +1,6 @@
 module HL7RequestBase
 
-  def sql_template(domain, subset, site_id, base_table, data_column)
+  def sql_template(domain, subset, site_id, base_table, data_column, my_id)
     %(
     select max(a.id) as last_detail_id
     from #{base_table}_DETAILS a, #{base_table}_REQUESTS b
@@ -10,6 +10,7 @@ module HL7RequestBase
     and   a.SUBSET = '#{subset}'
     and   a.VA_SITE_ID = '#{site_id}'
     and   a.#{data_column} is not null
+    and   a.id != #{my_id}
     )
   end
 
@@ -53,28 +54,16 @@ module HL7DetailBase
 
 
 
-#   ChecksumRequest.all.first.checksum_details.first.last_checksum
   protected
 
   def last_detail(detail_id, last_detail_method, column_name_id, save_me = true)
     unless detail_id
-      id = request.class.send(last_detail_method, request.domain, subset, va_site_id)
-      return nil if id.nil?
-      self[column_name_id] = id
+      last_id = request.class.send(last_detail_method, request.domain, subset, va_site_id, self.id)
+      return nil if last_id.nil?
+      self[column_name_id] = last_id
       save if save_me
     end
     self.class.send(:find, self[column_name_id])
-  end
-
-
-  def last_checksum_delete_me
-    unless checksum_detail_id
-      id = ChecksumRequest.last_checksum_detail(domain: checksum_request.domain, subset: subset, site_id: va_site_id)
-      return nil if id.nil?
-      self.checksum_detail_id = id
-      save
-    end
-    return ChecksumDetail.find checksum_detail_id
   end
 
 

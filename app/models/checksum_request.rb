@@ -7,8 +7,8 @@ class ChecksumRequest < ActiveRecord::Base
   include HL7RequestSerializer
   alias_method(:details, :checksum_details)
 
-  def self.last_checksum_detail(domain, subset, site_id)
-    sql = sql_template(domain, subset, site_id, 'CHECKSUM', 'checksum')
+  def self.last_checksum_detail(domain, subset, site_id, my_id)
+    sql = sql_template(domain, subset, site_id, 'CHECKSUM', 'checksum', my_id)
     ChecksumRequest.connection.select_all(sql).first['last_detail_id']
   end
 

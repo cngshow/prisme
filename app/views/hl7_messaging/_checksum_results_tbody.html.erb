@@ -6,23 +6,30 @@
   checksum_details.each do |row|
     done << row.done?
     req_id ||= row.checksum_request.id
+    last = row.last_checksum
 
-    r, last = view_checksum_detail(checksum_detail: row)
-    unless r.subset.eql?(subset)
-      subset = r.subset
+    unless row.subset.eql?(subset)
+      subset = row.subset
       striped = (striped.eql?('transparent') ? '#f2f2f2;' : 'transparent')
     end
     tr_id = "#{row.va_site_id}_#{row.id}_#{row.subset}"
 %>
-    <tr id="<%= tr_id %>" style="background-color: <%= striped %>" data-hl7_message="<%= r.hl7_message %>">
-      <td class="site_name"><%= "#{r.va_site_id} - #{r.va_site.name}" %><span style="font-style: italic; font-weight: bold"><%= last ? ' - cached' : '' %></span></td>
-      <td class="subset_name"><%= r.subset %></td>
-      <td><%= r.status %></td>
-      <td><%= r.checksum_request.username %></td>
-      <td><%= display_time(r.start_time) %></td>
-      <td><%= display_time(r.finish_time) %></td>
-      <td></td>
-      <td class="greg"><%= r.checksum %></td><!-- <a onclick="greg('<%#= tr_id %>');">view hash</a> -->
+    <tr id="<%= tr_id %>" style="background-color: <%= striped %>" data-hl7_message="<%= row.hl7_message %>">
+      <td class="site_name"><%= "#{row.va_site_id} - #{row.va_site.name}" %></td>
+      <td class="subset_name"><%= row.subset %></td>
+      <td style="text-align: right"><span style="font-weight: bold">User Name:</span><br>
+        <span style="font-weight: bold">Status:</span><br>
+        <span style="font-weight: bold">Version:</span><br>
+        <span style="font-weight: bold">Request Time:</span><br>
+        <span style="font-weight: bold">Response Time:</span><br>
+        <span style="font-weight: bold">Checksum:</span><br>
+      </td>
+      <td>
+        <%= render partial: 'checksum_display', locals: {detail: row} %>
+      </td>
+      <td>
+        <%= render partial: 'checksum_display', locals: {detail: last} %>
+      </td>
       <td>Request Data</td>
     </tr>
 <% end %>
