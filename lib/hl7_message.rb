@@ -109,11 +109,11 @@ module HL7Messaging
       (HashWithIndifferentAccess.new HL7Messaging.hl7_message_config).deep_dup
     end
 
-    def build_discovery_task_active_record(user:, subset_hash:, site_ids_array:)
+    def build_discovery_task_active_record(user:, subset_hash:, site_ids_array:, save: true)
       build_task_active_record(DiscoveryRequest, user, subset_hash, site_ids_array)
     end
 
-    def build_checksum_task_active_record(user:, subset_hash:, site_ids_array:)
+    def build_checksum_task_active_record(user:, subset_hash:, site_ids_array:, save: true)
       build_task_active_record(ChecksumRequest, user, subset_hash, site_ids_array)
     end
     #this method is called by the controller.
@@ -121,7 +121,7 @@ module HL7Messaging
 
     private
 
-    def build_task_active_record(active_record_clazz, user, subset_hash, site_ids_array)
+    def build_task_active_record(active_record_clazz, user, subset_hash, site_ids_array, save= true)
       site_ids = []
       request_array = []
       site_ids_array.each do |site_id|
@@ -140,10 +140,13 @@ module HL7Messaging
         end
         request_array << ar
       end
-      active_record_clazz.send(:transaction) do
-        request_array.each(&:save!)
+      if (save)
+        active_record_clazz.send(:transaction) do
+          request_array.each(&:save!)
+        end
+        kick_off(active_record_clazz, request_array)
       end
-      kick_off(active_record_clazz, request_array)
+
       request_array
     end
 
@@ -287,35 +290,12 @@ module HL7Messaging
         #detail.discovery_data = DISCOVERY_MOCK
         file.unlink
       else
-        #DiscoveryDetail
-        @detail.hl7_message = DISCOVERY_MOCK + "\n#{Time.now}"
+        require('./config/hl7/discovery_mocks/discovery_mock')
+        @detail.hl7_message = Mocks::Discovery.fetch_random_discovery
       end
 
     end
   end
-
-  DISCOVERY_MOCK = %(
-MSH^~|\&^XUMF DATA^442^VETS DATA^660INT^20060731124021-0400^^MFR~M01^44210935997^T^2.4^^^AL^NE^USA
-MSA^AA^200607311040367311^
-QRD^20060731104000.000-0600^R^I^Standard Terminology Query^^^99999^ALL^Vital Types^VA
-MFI^Vital Types^Standard Terminology^MUP^20060731124021-0400^20060731124021-0400^NE
-MFE^MUP^^20060731124021-0400^Vital Types@871299
-ZRT^Term^HOLLI HEIGHT
-ZRT^VistA_Short_Name^HH
-ZRT^VistA_Type_Rate^YES
-ZRT^VistA_Rate_Input_Transform^D EN3\F\GMRVUT0 K:X=0!(X>100)!(X<1) X
-ZRT^VistA_Type_Rate_Help^GMRV-HEIGHT RATE HELP
-ZRT^VistA_PCE_Abbreviation^
-ZRT^Status^1
-MFE^MUP^^20060731124021-0400^Vital Types@4688728
-ZRT^Term^VISION UNCORRECTED
-ZRT^VistA_Short_Name^VU
-ZRT^VistA_Type_Rate^YES
-ZRT^VistA_Rate_Input_Transform^K:'$$VALID\F\GMRVPCE3("VU",X) X
-ZRT^VistA_Type_Rate_Help^
-ZRT^VistA_PCE_Abbreviation^VU
-ZRT^Status^1
-).strip
 
 end
 =begin

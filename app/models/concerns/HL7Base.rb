@@ -14,8 +14,38 @@ module HL7RequestBase
     )
   end
 
+  def save_with_details(request:)
+    request.class.send(:transaction) do
+      request.save!
+    end
+  end
+
+  def kick_off_task(request:)
+    raise "Not yet implemented!"
+  end
 end
 
+module HL7RequestSerializer
+
+  def self.included(base)
+    base.extend(ClassMethods)
+  end
+
+  def to_hash
+    h = {}
+    h['request'] = JSON.parse self.to_json
+    h['details'] = JSON.parse self.details.to_json
+    h
+  end
+
+  module ClassMethods
+    def to_record(**hash)
+      request = self.new hash['request']
+      request.details.build hash['details']
+      request
+    end
+  end
+end
 
 module HL7DetailBase
   include gov.vha.isaac.ochre.access.maint.deployment.dto.PublishMessage
@@ -26,12 +56,12 @@ module HL7DetailBase
 
   protected
 
-  def last_detail(detail_id, last_detail_method, column_name_id)
+  def last_detail(detail_id, last_detail_method, column_name_id, save_me = true)
     unless detail_id
       last_id = request.class.send(last_detail_method, request.domain, subset, va_site_id, self.id)
       return nil if last_id.nil?
       self[column_name_id] = last_id
-      save
+      save if save_me
     end
     self.class.send(:find, self[column_name_id])
   end
