@@ -8,8 +8,8 @@ class ChecksumDetail < ActiveRecord::Base
 
   alias_method(:request, :checksum_request)
 
-  def last_checksum
-    last_detail(checksum_detail_id,:last_checksum_detail, :checksum_detail_id)
+  def last_checksum(save_me = true)
+    last_detail(checksum_detail_id,:last_checksum_detail, :checksum_detail_id, save_me)
   end
 
 

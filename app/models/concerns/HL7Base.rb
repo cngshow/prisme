@@ -12,6 +12,16 @@ module HL7RequestBase
     and   a.#{data_column} is not null
     )
   end
+
+  def save_with_details(request:)
+    request.class.send(:transaction) do
+      request.save!
+    end
+  end
+
+  def kick_off_task(request:)
+    raise "Not yet implemented!"
+  end
 end
 
 module HL7RequestSerializer
@@ -46,12 +56,12 @@ module HL7DetailBase
 #   ChecksumRequest.all.first.checksum_details.first.last_checksum
   protected
 
-  def last_detail(detail_id, last_detail_method, column_name_id)
+  def last_detail(detail_id, last_detail_method, column_name_id, save_me = true)
     unless detail_id
       id = request.class.send(last_detail_method, request.domain, subset, va_site_id)
       return nil if id.nil?
       self[column_name_id] = id
-      save
+      save if save_me
     end
     self.class.send(:find, self[column_name_id])
   end

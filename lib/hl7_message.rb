@@ -109,11 +109,11 @@ module HL7Messaging
       (HashWithIndifferentAccess.new HL7Messaging.hl7_message_config).deep_dup
     end
 
-    def build_discovery_task_active_record(user:, subset_hash:, site_ids_array:)
+    def build_discovery_task_active_record(user:, subset_hash:, site_ids_array:, save: true)
       build_task_active_record(DiscoveryRequest, user, subset_hash, site_ids_array)
     end
 
-    def build_checksum_task_active_record(user:, subset_hash:, site_ids_array:)
+    def build_checksum_task_active_record(user:, subset_hash:, site_ids_array:, save: true)
       build_task_active_record(ChecksumRequest, user, subset_hash, site_ids_array)
     end
     #this method is called by the controller.
@@ -121,7 +121,7 @@ module HL7Messaging
 
     private
 
-    def build_task_active_record(active_record_clazz, user, subset_hash, site_ids_array)
+    def build_task_active_record(active_record_clazz, user, subset_hash, site_ids_array, save= true)
       site_ids = []
       request_array = []
       site_ids_array.each do |site_id|
@@ -140,10 +140,13 @@ module HL7Messaging
         end
         request_array << ar
       end
-      active_record_clazz.send(:transaction) do
-        request_array.each(&:save!)
+      if (save)
+        active_record_clazz.send(:transaction) do
+          request_array.each(&:save!)
+        end
+        kick_off(active_record_clazz, request_array)
       end
-      kick_off(active_record_clazz, request_array)
+
       request_array
     end
 
