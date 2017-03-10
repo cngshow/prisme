@@ -1,0 +1,10 @@
+<% if detail %>
+    <div style="float: right"><%= detail.checksum_request.username %></div><br>
+    <div style="float: right"><%= detail.status %></div><br>
+    <div style="float: right"></div><br>
+    <div style="float: right"><%= display_time(detail.start_time) %></div><br>
+    <div style="float: right"><%= display_time(detail.finish_time) %></div><br>
+    <div style="float: right"><%= detail.checksum %></div><br>
+<% else %>
+    <span style="color:red">Previous Checksum is not available</span>
+<% end %>

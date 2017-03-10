@@ -15,44 +15,20 @@ function init_checksum_table_polling() { // todo rename this - refactor this to 
     });
 }
 
-// var poll_paths = {'checksum' : gon.routes.checksum_request_poll_path, 'discovery' : gon.routes.discovery_request_poll_path};
-/*
-
-function results_table_poll(table_id) {
-    var poll_table_info = table_id.split('_');// poll_paths[poll_table_info[0]]
-    var poll_path = gon.routes.checksum_request_poll_path;
-    var id = poll_table_info[1];
-    console.log('poll table info1...' + table_id);
-
-    $.get(poll_path, {request_id: id}, function (data) {
-        console.log("returning from poll");
-        var req_tbl = $('#' + table_id);
-        req_tbl.find('tbody').html(data);
-
-        console.log("-------------done? " + req_tbl.data('done'));
-
-        //check if we continue polling
-        if (! req_tbl.data('done')) {
-            setTimeout(function () {
-                results_table_poll(table_id);
-            }, 5000);
-        }
-        // awaiting_poll_results = false;
-    });
-}
-*/
-
 function checksum_discovery_table_poll(table_id, poll_path) {
     var poll_table_info = table_id.split('_');
     var id = poll_table_info[1];
-    console.log('poll table info...' + table_id);
+
+    if ($('#'+table_id).attr('id') == undefined) {
+        console.log("table "+ + table_id + " is no longer available so bailing out...");
+        return false;
+    }
 
     $.get(poll_path, {request_id: id}, function (data) {
-        console.log("returning from poll");
         var req_tbl = $('#' + table_id);
         req_tbl.find('tbody').html(data);
 
-        console.log("-------------done? " + req_tbl.data('done'));
+        console.log("polling " + table_id + "------------done? " + req_tbl.data('done'));
 
         //check if we continue polling
         if (!req_tbl.data('done')) {
