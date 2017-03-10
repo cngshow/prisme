@@ -67,6 +67,16 @@ module HL7Messaging
       JIsaacLibrary::JHL7Messaging.isRunning
     end
 
+    def discovery_hl7_to_csv(discovery_hl7:)
+      return nil if discovery_hl7.nil?
+      site_discovery = JIsaacLibrary::JHL7Messaging.convertDiscoveryText(discovery_hl7)
+      csv = ''
+      csv << site_discovery.getHeaders.join(',') << "\n"
+      site_discovery.getValues.each do |line|
+        csv << "#{line.join(',')}\n"
+      end
+      csv
+    end
 
     # task = HL7Messaging.get_check_sum_task(check_sum: 'some_string', site_list: VaSite.all.to_a)
     def get_check_sum_task(checksum_detail_array:)

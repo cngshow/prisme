@@ -12,7 +12,6 @@ class ChecksumDetail < ActiveRecord::Base
     last_detail(checksum_detail_id,:last_checksum_detail, :checksum_detail_id, save_me)
   end
 
-
   #Java methods here:
 
   def setVersion(version)
