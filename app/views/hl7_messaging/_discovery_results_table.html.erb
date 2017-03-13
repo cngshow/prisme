@@ -47,6 +47,12 @@
 </div>
 <script type="text/javascript" charset="utf-8">
   function discoveryCsv(btn) {
-    alert($(btn).data('detail_id'));
+      var id = $(btn).data('detail_id');
+      $(btn).attr('disabled', true);
+      $.get(gon.routes.discovery_csv_path, {format: 'txt', discovery_detail_id: id.split('_')[0]}, function(data) {
+          string_to_file('discovery_'+id+'.csv', data);
+          $(btn).attr('disabled', false);
+      });
   }
+
 </script>
