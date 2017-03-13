@@ -75,5 +75,6 @@ function discovery_hl7_message(link, obj) {
     $('#discovery_label').text(current ? 'CURRENT' : 'PREVIOUS');
     $('#view_discovery_hl7_modal_title').text(site_name + ' - ' + subset_name);
     $('#textarea_discovery_hl7').val(hl7_message);
+    $('#btn_discovery_csv').data('detail_id', tr_id.split('_')[1]);
     $viewDiscoveryHl7Modal.modal('show');
 }

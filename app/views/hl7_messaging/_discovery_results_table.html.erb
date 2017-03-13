@@ -38,7 +38,7 @@
       </div>
       <div class="modal-body scrollable_div">
         <div>
-          <button onclick="discoveryCsv();" class="btn btn-info btn-sm">Export as CSV</button><br><br>
+          <button id='btn_discovery_csv' data-detail_id="" onclick="discoveryCsv(this);" class="btn btn-info btn-sm">Export as CSV</button><br><br>
           <textarea id="textarea_discovery_hl7" rows="20" cols="120" readonly></textarea>
         </div>
       </div>
@@ -46,8 +46,7 @@
   </div>
 </div>
 <script type="text/javascript" charset="utf-8">
-  function discoveryCsv() {
-
-      alert('greg');
+  function discoveryCsv(btn) {
+    alert($(btn).data('detail_id'));
   }
 </script>
