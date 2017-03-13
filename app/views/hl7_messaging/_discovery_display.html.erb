@@ -1,0 +1,13 @@
+<% if detail %>
+    <div style="float: right"><%= detail.discovery_request.username %></div><br>
+    <div style="float: right"><%= detail.status %></div><br>
+    <div style="float: right"><%= display_time(detail.start_time) %></div><br>
+    <div style="float: right"><%= display_time(detail.finish_time) %></div><br>
+    <div style="float: right">
+      <%if detail.hl7_message %>
+          <a tabindex="0" data-hl7_message="<%= detail.hl7_message %>" onclick="discovery_hl7_message(this, {tr_id: '<%= tr_id %>', current: <%= current %>});"><i class="fa fa-check" aria-hidden="true"></i></a>
+      <% end %>
+    </div><br>
+<% else %>
+    <span style="color:red">Previous Discovery is not available</span>
+<% end %>

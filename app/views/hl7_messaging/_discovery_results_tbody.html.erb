@@ -6,25 +6,29 @@
   discovery_details.each do |row|
     done << row.done?
     req_id ||= row.discovery_request.id
-    r, last = view_discovery_detail(discovery_detail: row)
+    last = row.last_discovery
 
-    unless r.subset.eql?(subset)
-      subset = r.subset
+    unless row.subset.eql?(subset)
+      subset = row.subset
       striped = (striped.eql?('transparent') ? '#f2f2f2;' : 'transparent')
     end
-    tr_id = "#{row.va_site_id}_#{row.id}_#{row.subset.gsub(' ','')}"
+    tr_id = "#{row.va_site_id}_#{row.id}_#{row.subset.gsub(' ','')}_discovery"
 %>
-    <tr id="<%= tr_id %>" style="background-color: <%= striped %>" data-hl7_message="<%= r.hl7_message %>">
-      <td class="site_name"><%= "#{r.va_site_id} - #{r.va_site.name}" %><span style="font-style: italic; font-weight: bold"><%= last ? ' - cached' : '' %></span></td>
-      <td class="subset_name"><%= r.subset %></td>
-      <td><%= r.status %></td>
-      <td><%= r.discovery_request.username %></td>
-      <td><%= display_time(r.start_time) %></td>
-      <td><%= display_time(r.finish_time) %></td>
-      <td class="discovery_hl7_message">
-        <%if r.hl7_message %>
-            <a tabindex="0" onclick="discovery_hl7_message('<%= tr_id %>');"><i class="fa fa-check" aria-hidden="true"></i></a>
-        <% end %>
+    <tr id="<%= tr_id %>" style="background-color: <%= striped %>">
+      <td class="site_name"><%= "#{row.va_site_id} - #{row.va_site.name}" %></td>
+      <td class="subset_name"><%= row.subset %></td>
+      <td style="text-align: right" width="10%">
+        <span style="font-weight: bold">User Name:</span><br>
+        <span style="font-weight: bold">Status:</span><br>
+        <span style="font-weight: bold">Request Time:</span><br>
+        <span style="font-weight: bold">Response Time:</span><br>
+        <span style="font-weight: bold">Has Data:</span><br>
+      </td>
+      <td>
+        <%= render partial: 'discovery_display', locals: {tr_id: tr_id, detail: row, current: true} %>
+      </td>
+      <td>
+        <%= render partial: 'discovery_display', locals: {tr_id: tr_id, detail: last, current: false} %>
       </td>
     </tr>
 <% end %>

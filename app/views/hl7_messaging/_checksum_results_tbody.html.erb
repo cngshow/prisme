@@ -12,9 +12,9 @@
       subset = row.subset
       striped = (striped.eql?('transparent') ? '#f2f2f2;' : 'transparent')
     end
-    tr_id = "#{row.va_site_id}_#{row.id}_#{row.subset}"
+    tr_id = "#{row.va_site_id}_#{row.id}_#{row.subset.gsub(' ','')}_checksum"
 %>
-    <tr id="<%= tr_id %>" style="background-color: <%= striped %>" data-hl7_message="<%= row.hl7_message %>">
+    <tr id="<%= tr_id %>" style="background-color: <%= striped %>">
       <td class="site_name"><%= "#{row.va_site_id} - #{row.va_site.name}" %></td>
       <td class="subset_name"><%= row.subset %></td>
       <td style="text-align: right"><span style="font-weight: bold">User Name:</span><br>

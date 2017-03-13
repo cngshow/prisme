@@ -41,6 +41,7 @@ function checksum_discovery_table_poll(table_id, poll_path) {
 }
 
 //function for displaying hl7 data
+/*
 function greg(tr_id) {
     var row = $('#' + tr_id);
     var vista = row.data('hl7_message');
@@ -57,16 +58,22 @@ function greg(tr_id) {
     });
 
 }
+*/
 
 //function for displaying hl7 message data with discovery
-function discovery_hl7_message(tr_id) {
-    $('#view_discovery_hl7_modal').modal('hide');
+function discovery_hl7_message(link, obj) {
+    var $viewDiscoveryHl7Modal = $('#view_discovery_hl7_modal');
+    $viewDiscoveryHl7Modal.modal('hide');
+
+    var hl7_message = $(link).data('hl7_message');
+    var tr_id = obj.tr_id;
+    var current = obj.current;
     var row = $('#' + tr_id);
-    var hl7_message = row.data('hl7_message');
-    console.log("tr_id is " + tr_id + " :: " + hl7_message + ' :: ' + hl7_message);
     var site_name = row.find('td.site_name').text();
     var subset_name = row.find('td.subset_name').text();
+
+    $('#discovery_label').text(current ? 'CURRENT' : 'PREVIOUS');
     $('#view_discovery_hl7_modal_title').text(site_name + ' - ' + subset_name);
     $('#textarea_discovery_hl7').val(hl7_message);
-    $('#view_discovery_hl7_modal').modal('show');
+    $viewDiscoveryHl7Modal.modal('show');
 }
