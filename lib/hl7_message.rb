@@ -292,7 +292,7 @@ module HL7Messaging
     end
 
     def mock
-      # if (rand(5).eql? 0)
+      # if (rand(5).eql? 0) #Checking this in will randomly break the build.  Uncomment as needed.
       #   @detail.status = FAILED
       #   @detail.failure_message = "I am a loser!!!"*rand(10)
       #   return
