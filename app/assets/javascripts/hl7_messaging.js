@@ -71,10 +71,11 @@ function discovery_hl7_message(link, obj) {
     var row = $('#' + tr_id);
     var site_name = row.find('td.site_name').text();
     var subset_name = row.find('td.subset_name').text();
+    var label = current ? 'CURRENT' : 'PREVIOUS';
 
-    $('#discovery_label').text(current ? 'CURRENT' : 'PREVIOUS');
+    $('#discovery_label').text(label);
     $('#view_discovery_hl7_modal_title').text(site_name + ' - ' + subset_name);
     $('#textarea_discovery_hl7').val(hl7_message);
-    $('#btn_discovery_csv').data('detail_id', tr_id.split('_')[1]);
+    $('#btn_discovery_csv').data('detail_id', tr_id.split('_')[1] + '_' + label);
     $viewDiscoveryHl7Modal.modal('show');
 }
