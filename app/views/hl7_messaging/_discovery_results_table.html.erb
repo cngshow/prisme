@@ -50,7 +50,9 @@
       var id = $(btn).data('detail_id');
       $(btn).attr('disabled', true);
       $.get(gon.routes.discovery_csv_path, {format: 'txt', discovery_detail_id: id.split('_')[0]}, function(data) {
-          string_to_file('discovery_'+id+'.csv', data);
+         // var FileSaver = require('file_saver');
+          var blob = new Blob([data], {type: "text/plain;charset=utf-8"});
+          saveAs(blob,'discovery_'+id+'.csv');
           $(btn).attr('disabled', false);
       });
   }
