@@ -126,6 +126,7 @@ module HL7Messaging
     def build_checksum_task_active_record(user:, subset_hash:, site_ids_array:, save: true)
       build_task_active_record(ChecksumRequest, user, subset_hash, site_ids_array)
     end
+
     #this method is called by the controller.
     #subset_hash looks like {'Allergy' => ['Reaction', 'Reactants'], 'Immunizations' => ['Immunization Procedure']}
 
@@ -251,7 +252,7 @@ module HL7Messaging
         state = @task.getState #runLater thread
         #com.sun.javafx.application.PlatformImpl.runAndWait(-> do state = @task.getState end) #if sun ever takes this away Dan will give us one!
         @detail.start_time = Time.now unless @detail.start_time #tasks are started when I get them
-        changed(nil, nil, state)#making use of re-entrancy here...
+        changed(nil, nil, state) #making use of re-entrancy here...
       end
     end
 
@@ -284,15 +285,14 @@ module HL7Messaging
           #raise ex #don't terminate the Fx thread.
         end
         $log.info("The checksum detail #{@detail.inspect} is now #{@new_value}!")
-        cd_clone = @detail.clone
-        DB_WRITER.post do
-          $log.error("I failed to record the data #{cd_clone.inspect} to the database!") unless cd_clone.save
+        DB_WRITER.post(@detail.clone) do |clone|
+          $log.error("I failed to record the data #{clone.inspect} to the database!") unless clone.save
         end
       end
     end
 
     def mock
-      if(@detail.class.eql? ChecksumDetail)
+      if (@detail.class.eql? ChecksumDetail)
         file = Tempfile.new('checksum_simulator')
         file.write([*('a'..'z'), *('0'..'9')].shuffle[0, 36].join)
         file.close

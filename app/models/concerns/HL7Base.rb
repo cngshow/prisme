@@ -28,23 +28,26 @@ end
 module HL7RequestSerializer
 
   def self.included(base)
-    base.extend(ClassMethods)
+    base.extend(ClassMethods) #allows: ChecksumRequest.to_record...
   end
 
   def to_hash
     h = {}
     h['request'] = JSON.parse self.to_json
     h['details'] = JSON.parse self.details.to_json
+    h['class'] = self.class.to_s
     h
   end
 
   module ClassMethods
     def to_record(**hash)
-      request = self.new hash['request']
+      request = Object.const_get(hash['class']).send(:new, hash['request']) #calls like this ChecksumRequest.to_record DiscoveryRequest.all.first.to_hash do the right thing
       request.details.build hash['details']
       request
     end
   end
+
+  extend ClassMethods #allows 'HL7RequestSerializer.to_record(h)'
 end
 
 module HL7DetailBase
