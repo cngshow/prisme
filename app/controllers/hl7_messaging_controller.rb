@@ -24,6 +24,20 @@ class Hl7MessagingController < ApplicationController
     subset_root
   end
 
+  #http://localhost:3000/hl7_messaging/discovery_csv.txt?discovery_detail_id=10106
+  #http://localhost:3000/hl7_messaging/discovery_csv.xml?discovery_detail_id=10106
+  def discovery_csv
+    id = params[:discovery_detail_id]
+    detail = DiscoveryDetail.find(id) rescue DiscoveryDetail.new
+    csv = detail.to_csv
+    respond_to do |format|
+      format.text { render :text =>  csv}
+      format.xml { render :xml =>  detail}
+    end
+  end
+
+
+  public
   def hl7_messaging_results_table
     nav_type = params[:nav_type]
 

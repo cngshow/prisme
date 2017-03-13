@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   end
 
   get 'hl7_messaging/index', as: 'hl7_messaging'
+  get 'hl7_messaging/discovery_csv', as: 'discovery_csv'
   get 'hl7_messaging/retrieve_sites'
   get 'hl7_messaging/checksum_request_poll', as: 'checksum_request_poll'
   get 'hl7_messaging/discovery_request_poll', as: 'discovery_request_poll'
