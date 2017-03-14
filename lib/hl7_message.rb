@@ -244,6 +244,7 @@ module HL7Messaging
       @detail = detail
       @task = task
       @change_monitor = Monitor.new #monitors are re-entrant
+      @work_queue = []
     end
 
     #This method is called after construction and registration with the fx listener
@@ -285,9 +286,7 @@ module HL7Messaging
           #raise ex #don't terminate the Fx thread.
         end
         $log.info("The checksum detail #{@detail.inspect} is now #{@new_value}!")
-        DB_WRITER.post(@detail.clone) do |clone|
-          $log.error("I failed to record the data #{clone.inspect} to the database!") unless clone.save
-        end
+        $log.error("I failed to record the data #{clone.inspect} to the database!") unless @detail.save
       end
     end
 
