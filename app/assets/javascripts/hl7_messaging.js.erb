@@ -71,7 +71,7 @@ function discovery_hl7_message(link, obj) {
     var row = $('#' + tr_id);
     var site_name = row.find('td.site_name').text();
     var subset_name = row.find('td.subset_name').text();
-    var label = current ? 'CURRENT' : 'PREVIOUS';
+    var label = current ? '<%=Hl7MessagingController::CURRENT_TAG%>' : '<%=Hl7MessagingController::PREVIOUS_TAG%>';
 
     $('#discovery_label').text(label);
     $('#view_discovery_hl7_modal_title').text(site_name + ' - ' + subset_name);
