@@ -1,6 +1,13 @@
 <% if detail %>
     <div style="float: right"><%= detail.checksum_request.username %></div><br>
-    <div style="float: right"><%= detail.status %></div><br>
+    <div style="float: right; color: <%= detail.status.eql?('FAILED') ? 'red' : 'green' %>" title="<%= detail.failure_message %>">
+      <% if detail.status.eql?('FAILED') %>
+          <i class="fa fa-times-circle" aria-hidden="true"></i></a>
+      <% elsif detail.status.eql?('RUNNING') %>
+          <i class="fa fa-cog fa-spin" aria-hidden="true"></i></a>
+      <% end %>
+      <%= detail.status %>
+    </div><br>
     <div style="float: right"></div><br>
     <div style="float: right"><%= display_time(detail.start_time) %></div><br>
     <div style="float: right"><%= display_time(detail.finish_time) %></div><br>
