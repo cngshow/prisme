@@ -8,6 +8,7 @@ where provided, and the git commit history.
     * modified checksum result display gui
     * modified discovery result display gui
     * added excel export to discovery, click the green check on the discovery result page.
+    * 439585, 439610, 439620, 439593
 
 * 2017/03/08 - 1.58
     * Migration and corresponding models in support of discovery
