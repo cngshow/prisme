@@ -56,7 +56,7 @@
         <h2 class="modal-title">Terminology Source Package Creation</h2>
       </div>
       <div class="modal-body">
-        <%= form_for(@package, remote: true, html: {multipart: true}) do %>
+        <%= form_for(@package, remote: true, html: {multipart: true, id: "source_package_form"}) do %>
             <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
             <div>
               <%= label_tag 'supported_converter', 'Supported Converter' %><br>
@@ -93,239 +93,250 @@
                 <br>
               </fieldset>
               <button class="btn btn-primary btn-lg" onclick="submitPackage()" id="btn_submit">Create Terminology Source Package</button>
-              <button id="btn_submit_hidden" aria-hidden="true" style="display: none;visibility:hidden;">Not In Use</button>
             </div>
         <% end %>
       </div>
     </div>
   </div>
   <script>
-    function add_upload(upload_json) {
-      var milliseconds = (new Date).getTime();
-      var input = $('<input>').attr('type', "file").attr('data-millis', milliseconds).attr('data-required', true).attr('required', true);//todo currently all file inputs are required
-      var sourceRows = $('#source_rows');
-      sourceRows.append($('<div>').attr('id', 'i_' + milliseconds.toString()).addClass('fileupload_div').html(input));
+      function add_upload(upload_json) {
+          var milliseconds = (new Date).getTime();
+          var input = $('<input>').attr('type', "file").attr('data-millis', milliseconds).attr('data-required', true).attr('required', true);//todo currently all file inputs are required
+          var sourceRows = $('#source_rows');
+          sourceRows.append($('<div>').attr('id', 'i_' + milliseconds.toString()).addClass('fileupload_div').html(input));
 
-      //if upload_json is undefined then the user is adding an additional source record
-      if (upload_json !== undefined) {
+          //if upload_json is undefined then the user is adding an additional source record
+          if (upload_json !== undefined) {
 //        input.attr('required', upload_json['file_required']);//todo use this for input params
 //        input.attr('data-required', true);
-        input.attr('data-regex_msg', upload_json['expected_naming_pattern']);
-        input.attr('pattern', upload_json['expected_name_regex']);
+              input.attr('data-regex_msg', upload_json['expected_naming_pattern']);
+              input.attr('pattern', upload_json['expected_name_regex']);
 
-        var suggested_source_url = upload_json['suggested_source_url'];
-        var suggested_source_location = upload_json['suggested_source_location'];
-        var sample_name = upload_json['sample_name'];
+              var suggested_source_url = upload_json['suggested_source_url'];
+              var suggested_source_location = upload_json['suggested_source_location'];
+              var sample_name = upload_json['sample_name'];
 //        var file_required = upload_json['file_required'];
-        var source_msg = '';
+              var source_msg = '';
 
-        if (sample_name !== '') {
-          source_msg += '<strong>Sample Name:&nbsp;</strong>' + sample_name + '<br><br>';
-        }
-        if (suggested_source_location !== '') {
-          source_msg += '<strong>Suggested Source Location:&nbsp;</strong>' + suggested_source_location + '<br><br>';
-        }
-        if (suggested_source_url !== '') {
-          source_msg += '<strong>Suggested Source URL:&nbsp;</strong>' + suggested_source_url + '<br>';
-        }
-
-        var info = $('<a>').html('<i class="fa fa-info-circle fa-2x" aria-hidden="true"></i>');
-        sourceRows.append($('<div>').addClass("inline_align_top_div").html(info));
-
-        info.popover({
-          html: true,
-          container: 'body',
-          title: 'File Upload Information',
-          content: "<div><p>" + upload_json['expected_naming_pattern'] + "</p></div>" +
-          "<div><p>" + source_msg + "</p></div>",
-          placement: 'bottom'
-        });
-      } else {
-        // user is manually adding an upload row
-        var btn_rm = $('<a>').addClass('btn btn-danger').text('X').on('click', function () {
-          $('#i_' + milliseconds.toString()).remove();
-          $('#x_' + milliseconds.toString()).remove();
-        });
-        sourceRows.append($('<div>').attr('id', 'x_' + milliseconds.toString()).addClass("inline_align_top_div").html(btn_rm));
-      }
-
-      input.fileinput({
-        showRemove: false,
-        showClose: true,
-        showUpload: false,
-        showPreview: false
-      });
-    }
-
-    function submitPackage() {
-      var submit_form = true;
-      var warning = "There are possible validation errors in the file names specified to upload.<br><br>MSG<br><br>Do you want to continue and submit this request?";
-      var warn_msg = "";
-
-      $('[data-required]').each(function (index, value) {
-        if (value.value === '') {
-          submit_form = false;
-        }
-      });
-
-      if (submit_form) {
-        $('[data-millis]').each(function (index, value) {
-          $(this).attr('name', 'terminology_source_package[terminology_source_contents_attributes][' + index + '][upload]');
-          var reggie = new RegExp($(this).attr('pattern'), 'i');
-          console.log(value.value + '::' + reggie.toString() + ' regex passes? ' + reggie.test(value.value).toString());
-
-          if (!reggie.test(value.value)) {
-            var filename = value.value;
-            if (filename.lastIndexOf('\\') > 0) {
-              filename = filename.substr(filename.lastIndexOf('\\') + 1);
-            } else if (filename.lastIndexOf('\/') > 0) {
-              filename = filename.substr(filename.lastIndexOf('\/') + 1);
-            }
-
-            warn_msg += "<span style=\"font-weight: bold; color: red\">" + filename + "</span> does not match the expected pattern.<br>- " + $(this).attr('data-regex_msg') + "<br><br>";
-          }
-        });
-
-        if (warn_msg !== '') {
-          warning = warning.replace('MSG', warn_msg);
-          bootbox.confirm({
-            size: 'large',
-            title: 'Warning',
-            message: warning,
-            callback: function (result) {
-              submitForm(result);
-            }
-          });
-          return false;
-        }
-      }
-      submitForm(submit_form);
-    }
-
-    function submitForm(bool) {
-      if (bool) {
-        $("#btn_submit").attr('onclick', 'return false;').html('<span><i class="fa fa-cog fa-spin fa-fw" aria-hidden="true"></i>Uploading...Please Wait</span>');
-      }
-
-      //submit the form in all cases to have the validations kick in
-      $('#btn_submit_hidden').click();
-    }
-
-    function loadTable(tableId, data) {
-      var fields = ['user', 'uploaded_files', 'started_at', 'state', 'result', 'progress', 'state_time', 'elapsed_time'];
-      $('#' + tableId).find('tbody').empty();
-
-      if (data.length > 0) {
-        $.each(data, function (index, row) {
-          var tr_data = $('<tr>');
-          var state_unknown = (row.state === 'UNKNOWN');
-
-          inner_loop:
-              for (var f = 0; f < fields.length; f++) {
-                var field = fields[f];
-
-                if (field === 'started_at') {
-                  tr_data.append($('<td>').text(format_epoch_in_local(row.started_at)));
-                }
-                else if (field === 'state' && state_unknown) {
-                  tr_data.append($('<td>').text(row.state));
-                  tr_data.append($('<td>').text(''));//result
-                  tr_data.append($('<td>').text(''));//progress
-                  tr_data.append($('<td>').text(''));//state_time
-                  tr_data.append($('<td>').text(''));//elapsed_time
-                  break;
-                }
-                else if (field === 'progress') {
-                  var title = row.progress < 100 ? row.title : '';
-                  var pbar = $('<div>').addClass('progress-bar')
-                      .prop('role', 'progressbar')
-                      .attr('aria-valuenow', row.progress)
-                      .attr('aria-valuemin', 0)
-                      .attr('aria-valuemax', 100)
-                      .css('width', row.progress.toString() + '%')
-                      .text(row.progress.toString() + '%');
-                  tr_data.append($('<td>').html($('<span>').html(title + '<br>').append($('<div>').addClass("progress").html(pbar))));
-                }
-                else if (field === 'state_time') {
-                  var txt = row.progress < 100 ? 'Running...' : format_epoch_in_local(row.state_time);
-                  tr_data.append($('<td>').text(txt));
-                }
-                else {
-                  tr_data.append($('<td>').text(eval('row.' + field)));
-                }
+              if (sample_name !== '') {
+                  source_msg += '<strong>Sample Name:&nbsp;</strong>' + sample_name + '<br><br>';
               }
-          $('#' + tableId + ' tbody').append(tr_data);
-        });
-      }
-      else {
-        var rows = '<tr><td colspan="8" class="text-center">There are no items to list...</td></tr>';
-        $('#' + tableId + ' tbody').html(rows);
-      }
-    }
+              if (suggested_source_location !== '') {
+                  source_msg += '<strong>Suggested Source Location:&nbsp;</strong>' + suggested_source_location + '<br><br>';
+              }
+              if (suggested_source_url !== '') {
+                  source_msg += '<strong>Suggested Source URL:&nbsp;</strong>' + suggested_source_url + '<br>';
+              }
 
-    function poll() {
-      console.log('calling poll - tsp');
-      var row_limit = arguments[0];
+              var info = $('<a>').html('<i class="fa fa-info-circle fa-2x" aria-hidden="true"></i>');
+              sourceRows.append($('<div>').addClass("inline_align_top_div").html(info));
 
-      if (row_limit === undefined) {
-        row_limit = $('#tsp_filter_rows').find('option:selected').val();
-      }
-
-      $.getJSON(gon.routes.terminology_source_packages_load_build_data_path, {row_limit: row_limit}, function (data) {
-        loadTable('data-table', data);
-
-        <% if Rails.env.development? %>
-        if (polling.isPolling(polling.pollEnum.TERM_SOURCE)) {
-          $.getJSON(gon.routes.terminology_source_packages_check_polling_path, {}, function (data) {
-            console.log(JSON.stringify(data));
-            if (data.poll === false) {
-              polling.unregisterPolling(polling.pollEnum.TERM_SOURCE);
-
-              //call final poll in case there is a timing issue
-              poll();
-            }
-          });
-        }
-        <% end %>
-      });
-    }
-
-    $(document).ready(function () {
-      // remove popovers when the modal window is closed
-      $(document).on('hide.bs.modal', '#myModal', function () {
-        $('div.popover').remove();
-      });
-
-      // set the onchange for the supported_converter selection
-      $('#supported_converter').change(function () {
-        $('#uploads').hide();
-        $('#source_rows').empty();
-        $('div.popover').remove();
-        var converter = this.value;
-
-        if (converter !== '') {
-          $.ajax({
-            url: gon.routes.terminology_source_packages_converter_change_path,
-            type: "GET",
-            data: {converter: converter},
-            success: function (data) {
-              $.each(data['upload_file_info'], function () {
-                add_upload(this);
+              info.popover({
+                  html: true,
+                  container: 'body',
+                  title: 'File Upload Information',
+                  content: "<div><p>" + upload_json['expected_naming_pattern'] + "</p></div>" +
+                  "<div><p>" + source_msg + "</p></div>",
+                  placement: 'bottom'
               });
-              $('#uploads').fadeIn();
-            }
+          } else {
+              // user is manually adding an upload row
+              var btn_rm = $('<a>').addClass('btn btn-danger').text('X').on('click', function () {
+                  $('#i_' + milliseconds.toString()).remove();
+                  $('#x_' + milliseconds.toString()).remove();
+              });
+              sourceRows.append($('<div>').attr('id', 'x_' + milliseconds.toString()).addClass("inline_align_top_div").html(btn_rm));
+          }
+
+          input.fileinput({
+              showRemove: false,
+              showClose: true,
+              showUpload: false,
+              showPreview: false
           });
-        }
+      }
 
-        var placeholder = converter == 'SCT_EXTENSION' ? 'Enter the Extension Name (e.g. US)' : 'Enter the Extension Name (optional)';
-        $('#extension_name').attr('required', (converter == 'SCT_EXTENSION')).attr('placeholder', placeholder);
+      function submitPackage() {
+          var $btnSubmit = $("#btn_submit");
+          $btnSubmit.attr('disabled', true);
+
+          if ($btnSubmit.hasClass('processing')) {
+              return false;
+          } else {
+              $btnSubmit.addClass('processing');
+          }
+
+          var submit_form = true;
+          var warning = "There are possible validation errors in the file names specified to upload.<br><br>MSG<br><br>Do you want to continue and submit this request?";
+          var warn_msg = "";
+
+          $('[data-required]').each(function (index, value) {
+              if (value.value === '') {
+                  submit_form = false;
+              }
+          });
+
+          if (submit_form) {
+              $('[data-millis]').each(function (index, value) {
+                  $(this).attr('name', 'terminology_source_package[terminology_source_contents_attributes][' + index + '][upload]');
+                  var reggie = new RegExp($(this).attr('pattern'), 'i');
+                  console.log(value.value + '::' + reggie.toString() + ' regex passes? ' + reggie.test(value.value).toString());
+
+                  if (!reggie.test(value.value)) {
+                      var filename = value.value;
+                      if (filename.lastIndexOf('\\') > 0) {
+                          filename = filename.substr(filename.lastIndexOf('\\') + 1);
+                      } else if (filename.lastIndexOf('\/') > 0) {
+                          filename = filename.substr(filename.lastIndexOf('\/') + 1);
+                      }
+
+                      warn_msg += "<span style=\"font-weight: bold; color: red\">" + filename + "</span> does not match the expected pattern.<br>- " + $(this).attr('data-regex_msg') + "<br><br>";
+                  }
+              });
+
+              if (warn_msg !== '') {
+                  warning = warning.replace('MSG', warn_msg);
+                  bootbox.confirm({
+                      size: 'large',
+                      title: 'Warning',
+                      message: warning,
+                      callback: function (result) {
+                          submitForm(result);
+                      }
+                  });
+                  return false;
+              }
+          }
+          submitForm(submit_form);
+      }
+
+      function submitForm(bool) {
+          var $btnSubmit = $("#btn_submit");
+
+          if (bool) {
+              $btnSubmit.html('<span><i class="fa fa-cog fa-spin fa-fw" aria-hidden="true"></i>Uploading...Please Wait</span>');
+              $('#source_package_form').submit();
+          } else {
+              $btnSubmit.removeClass('processing');
+              $btnSubmit.attr('disabled', false);
+          }
+      }
+
+      function loadTable(tableId, data) {
+          var fields = ['user', 'uploaded_files', 'started_at', 'state', 'result', 'progress', 'state_time', 'elapsed_time'];
+          $('#' + tableId).find('tbody').empty();
+
+          if (data.length > 0) {
+              $.each(data, function (index, row) {
+                  var tr_data = $('<tr>');
+                  var state_unknown = (row.state === 'UNKNOWN');
+
+                  inner_loop:
+                      for (var f = 0; f < fields.length; f++) {
+                          var field = fields[f];
+
+                          if (field === 'started_at') {
+                              tr_data.append($('<td>').text(format_epoch_in_local(row.started_at)));
+                          }
+                          else if (field === 'state' && state_unknown) {
+                              tr_data.append($('<td>').text(row.state));
+                              tr_data.append($('<td>').text(''));//result
+                              tr_data.append($('<td>').text(''));//progress
+                              tr_data.append($('<td>').text(''));//state_time
+                              tr_data.append($('<td>').text(''));//elapsed_time
+                              break;
+                          }
+                          else if (field === 'progress') {
+                              var title = row.progress < 100 ? row.title : '';
+                              var pbar = $('<div>').addClass('progress-bar')
+                                  .prop('role', 'progressbar')
+                                  .attr('aria-valuenow', row.progress)
+                                  .attr('aria-valuemin', 0)
+                                  .attr('aria-valuemax', 100)
+                                  .css('width', row.progress.toString() + '%')
+                                  .text(row.progress.toString() + '%');
+                              tr_data.append($('<td>').html($('<span>').html(title + '<br>').append($('<div>').addClass("progress").html(pbar))));
+                          }
+                          else if (field === 'state_time') {
+                              var txt = row.progress < 100 ? 'Running...' : format_epoch_in_local(row.state_time);
+                              tr_data.append($('<td>').text(txt));
+                          }
+                          else {
+                              tr_data.append($('<td>').text(eval('row.' + field)));
+                          }
+                      }
+                  $('#' + tableId + ' tbody').append(tr_data);
+              });
+          }
+          else {
+              var rows = '<tr><td colspan="8" class="text-center">There are no items to list...</td></tr>';
+              $('#' + tableId + ' tbody').html(rows);
+          }
+      }
+
+      function poll() {
+          console.log('calling poll - tsp');
+          var row_limit = arguments[0];
+
+          if (row_limit === undefined) {
+              row_limit = $('#tsp_filter_rows').find('option:selected').val();
+          }
+
+          $.getJSON(gon.routes.terminology_source_packages_load_build_data_path, {row_limit: row_limit}, function (data) {
+              loadTable('data-table', data);
+
+              <% if Rails.env.development? %>
+              if (polling.isPolling(polling.pollEnum.TERM_SOURCE)) {
+                  $.getJSON(gon.routes.terminology_source_packages_check_polling_path, {}, function (data) {
+                      console.log(JSON.stringify(data));
+                      if (data.poll === false) {
+                          polling.unregisterPolling(polling.pollEnum.TERM_SOURCE);
+
+                          //call final poll in case there is a timing issue
+                          poll();
+                      }
+                  });
+              }
+              <% end %>
+          });
+      }
+
+      $(document).ready(function () {
+          // remove popovers when the modal window is closed
+          $(document).on('hide.bs.modal', '#myModal', function () {
+              $('div.popover').remove();
+          });
+
+          // set the onchange for the supported_converter selection
+          $('#supported_converter').change(function () {
+              $('#uploads').hide();
+              $('#source_rows').empty();
+              $('div.popover').remove();
+              var converter = this.value;
+
+              if (converter !== '') {
+                  $.ajax({
+                      url: gon.routes.terminology_source_packages_converter_change_path,
+                      type: "GET",
+                      data: {converter: converter},
+                      success: function (data) {
+                          $.each(data['upload_file_info'], function () {
+                              add_upload(this);
+                          });
+                          $('#uploads').fadeIn();
+                      }
+                  });
+              }
+
+              var placeholder = converter == 'SCT_EXTENSION' ? 'Enter the Extension Name (e.g. US)' : 'Enter the Extension Name (optional)';
+              $('#extension_name').attr('required', (converter == 'SCT_EXTENSION')).attr('placeholder', placeholder);
+          });
+
+          // call init_select2 to initialize all select inputs to use the select2 js library
+          init_select2();
+
+          //register for polling
+          polling.registerPolling(polling.pollEnum.TERM_SOURCE, poll, 1000);
       });
-
-      // call init_select2 to initialize all select inputs to use the select2 js library
-      init_select2();
-
-      //register for polling
-      polling.registerPolling(polling.pollEnum.TERM_SOURCE, poll, 1000);
-    });
   </script>
 </div>
