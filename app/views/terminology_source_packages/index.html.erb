@@ -15,7 +15,7 @@
   }
 </style>
 <!-- Trigger the modal with a button -->
-</br>
+<br>
 <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Create Terminology Source Package</button>
 <div class="page-header">
   <h1>Terminology Source Package Dashboard</h1>
@@ -56,7 +56,7 @@
         <h2 class="modal-title">Terminology Source Package Creation</h2>
       </div>
       <div class="modal-body">
-        <%= form_for(@package, remote: true, html: {multipart: true, id: "source_package_form"}) do %>
+        <%= form_for(@package, remote: true, html: {multipart: true, id: 'source_package_form'}) do %>
             <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
             <div>
               <%= label_tag 'supported_converter', 'Supported Converter' %><br>
@@ -66,15 +66,15 @@
                              :include_blank => true,
                              :data => {ph: 'Select a Converter Type',
                                        w: '525px',
-                                       singleSelect: true
-                             },
-                             required: true
+                                       singleSelect: true,
+                                       required: true
+                             }
               %>
             </div>
             <br>
             <div title="Enter Your Version Number" class="input_div">
               <%= label_tag 'version', 'Version' %><br>
-              <%= text_field_tag 'version', nil, required: true, data: {required: true}, placeholder: 'Enter Your Version Number', maxlength: 75, size: 75, class: 'form-control' %>
+              <%= text_field_tag 'version', nil, data: {required: true}, placeholder: 'Enter Your Version Number', maxlength: 75, size: 75, class: 'form-control' %>
             </div>
             <br>
             <div class="input_div"><!-- todo put this everywhere and set up with jq validate-->
@@ -92,30 +92,27 @@
                 <div id="source_rows"></div>
                 <br>
               </fieldset>
-              <button class="btn btn-primary btn-lg" onclick="submitPackage()" id="btn_submit">Create Terminology Source Package</button>
             </div>
         <% end %>
+        <button class="btn btn-primary btn-lg" onclick="submitPackage()" id="btn_submit">Create Terminology Source Package</button>
       </div>
     </div>
   </div>
   <script>
       function add_upload(upload_json) {
           var milliseconds = (new Date).getTime();
-          var input = $('<input>').attr('type', "file").attr('data-millis', milliseconds).attr('data-required', true).attr('required', true);//todo currently all file inputs are required
+          var input = $('<input>').attr('type', "file").attr('data-millis', milliseconds).attr('data-required', true);//todo currently all file inputs are required
           var sourceRows = $('#source_rows');
           sourceRows.append($('<div>').attr('id', 'i_' + milliseconds.toString()).addClass('fileupload_div').html(input));
 
           //if upload_json is undefined then the user is adding an additional source record
           if (upload_json !== undefined) {
-//        input.attr('required', upload_json['file_required']);//todo use this for input params
-//        input.attr('data-required', true);
               input.attr('data-regex_msg', upload_json['expected_naming_pattern']);
               input.attr('pattern', upload_json['expected_name_regex']);
 
               var suggested_source_url = upload_json['suggested_source_url'];
               var suggested_source_location = upload_json['suggested_source_location'];
               var sample_name = upload_json['sample_name'];
-//        var file_required = upload_json['file_required'];
               var source_msg = '';
 
               if (sample_name !== '') {
@@ -169,12 +166,33 @@
           var submit_form = true;
           var warning = "There are possible validation errors in the file names specified to upload.<br><br>MSG<br><br>Do you want to continue and submit this request?";
           var warn_msg = "";
+          var req_msg = "";
 
           $('[data-required]').each(function (index, value) {
               if (value.value === '') {
+                  var id = $(value).attr('id');
+
+                  if (id === 'supported_converter') {
+                      req_msg += '<li>The Converter Type is required.</li>';
+                  }
+                  else if (id === 'version') {
+                      req_msg += '<li>The Version is required.</li>';
+                  }
+                  else {
+                      req_msg += '<li>Source content is required.</li>';
+                  }
                   submit_form = false;
               }
           });
+
+          if (req_msg !== '') {
+              bootbox.alert({
+                  size: 'normal',
+                  title: 'Validation Error(s)',
+                  message: 'The following validation error(s) were detected:<br><br><ol>' + req_msg + '</ol><br><br>Please enter all of the required data before submitting the form.'
+              });
+
+          }
 
           if (submit_form) {
               $('[data-millis]').each(function (index, value) {
@@ -207,6 +225,13 @@
                   return false;
               }
           }
+
+          // this is a check due to timing with the AJAX call to get the required source documents
+          //if the uploads are not visible then we are not submitting the form
+          if (! $('#uploads').is(':visible')) {
+              submit_form = false;
+          }
+
           submitForm(submit_form);
       }
 
