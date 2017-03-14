@@ -71,9 +71,9 @@ module HL7Messaging
       return nil if discovery_hl7.nil?
       site_discovery = JIsaacLibrary::JHL7Messaging.convertDiscoveryText(discovery_hl7)
       csv = ''
-      csv << site_discovery.getHeaders.join(',') << "\n"
+      csv << site_discovery.getHeaders.map do |e| "\"#{e}\"" end.join(',') << "\n"
       site_discovery.getValues.each do |line|
-        csv << "#{line.join(',')}\n"
+        csv << "#{line.map do |e| "\"#{e}\"" end.join(',')}\n"
       end
       csv
     end

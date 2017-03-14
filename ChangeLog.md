@@ -3,9 +3,15 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
-* 2017/03/?? - 1.59 - PENDING
-    * added new prisme_err.log, only error and fatal events are sent here.
+* 2017/03/?? - 1.60 - PENDING
     * fixed double submit in the GUI for source package upload
+
+* 2017/03/14 - 1.59
+    * added new prisme_err.log, only error and fatal events are sent here.
+    * modified checksum result display gui
+    * modified discovery result display gui
+    * added excel export to discovery, click the green check on the discovery result page.
+    * 439585, 439610, 439620, 439593 -- Test team there are comments in Jazz for each of these.
 
 * 2017/03/08 - 1.58
     * Migration and corresponding models in support of discovery
