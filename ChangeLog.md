@@ -5,6 +5,9 @@ where provided, and the git commit history.
 
 * 2017/03/?? - 1.59 - PENDING
     * added new prisme_err.log, only error and fatal events are sent here.
+    * modified checksum result display gui
+    * modified discovery result display gui
+    * added excel export to discovery, click the green check on the discovery result page.
 
 * 2017/03/08 - 1.58
     * Migration and corresponding models in support of discovery
