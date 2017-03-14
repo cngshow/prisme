@@ -3,6 +3,8 @@
     <div style="float: right; color: <%= detail.status.eql?('FAILED') ? 'red' : 'green' %>" title="<%= detail.failure_message %>">
       <% if detail.status.eql?('FAILED') %>
           <i class="fa fa-times-circle" aria-hidden="true"></i></a>
+      <% elsif detail.status.eql?('RUNNING') %>
+          <i class="fa fa-cog fa-spin" aria-hidden="true"></i></a>
       <% end %>
       <%= detail.status %>
     </div><br>
