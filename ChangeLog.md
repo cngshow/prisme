@@ -6,7 +6,7 @@ where provided, and the git commit history.
 * 2017/03/?? - 1.60 - PENDING
     * fixed double submit in the GUI for source package upload
 
-* 2017/03/14 - 1.59
+* 2017/03/15 - 1.59
     * added new prisme_err.log, only error and fatal events are sent here.
     * modified checksum result display gui
     * modified discovery result display gui
