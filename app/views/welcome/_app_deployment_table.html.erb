@@ -28,7 +28,7 @@
         <% deployment[:rows].each do |row| %>
             <tr>
               <td <%= raw(row[:state].eql?('running') ? " data-href='#{row[:link]}'" : '') %>>
-                <button class="<%= row[:state].eql?('running') ? 'btn btn-primary' : 'not-running' %>" tabindex="0"><%= row[:war_name] %></button>
+                <button <%= raw row[:state].eql?('running') ? 'class="btn btn-primary" tabindex="0"' : 'class="btn btn-link" tabindex="-1"' %>"><%= row[:war_name] %></button>
               </td>
               <td title="<%=row[UuidProp::Keys::DESCRIPTION].to_s%>">
                 <% unless row[:war_uuid].to_s.empty? %>
