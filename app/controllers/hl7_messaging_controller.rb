@@ -4,6 +4,9 @@ class Hl7MessagingController < ApplicationController
   before_action :can_deploy
   before_action :verify_hl7_engine, :except => :checksum_request_poll
 
+  PREVIOUS_TAG = 'PREVIOUS'
+  CURRENT_TAG = 'CURRENT'
+
 
   def index
     @active_subsets = subset_tree_data.to_json
@@ -24,6 +27,25 @@ class Hl7MessagingController < ApplicationController
     subset_root
   end
 
+  #http://localhost:3000/hl7_messaging/discovery_csv.txt?discovery_detail_id=10106_CURRENT
+  #http://localhost:3000/hl7_messaging/discovery_csv.xml?discovery_detail_id=10106_PREVIOUS
+  def discovery_csv
+    id,detail =  params[:discovery_detail_id].split('_') #id is the id of the current record. detail is either current or previous.
+    #if detail is previous get the last detail
+    detail_record = DiscoveryDetail.find(id) rescue DiscoveryDetail.new
+    if(detail.eql? PREVIOUS_TAG)
+      last_discovery = detail_record.last_discovery
+      detail_record = last_discovery unless last_discovery.nil?
+    end
+    csv = detail_record.to_csv
+    respond_to do |format|
+      format.text { render :text =>  csv}
+      format.xml { render :xml =>  detail}
+    end
+  end
+
+
+  public
   def hl7_messaging_results_table
     nav_type = params[:nav_type]
 

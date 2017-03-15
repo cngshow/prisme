@@ -1,4 +1,4 @@
-require './app/models/HL7Base'
+require './app/models/concerns/HL7Base'
 
 class DiscoveryDetail < ActiveRecord::Base
   include HL7DetailBase
@@ -11,6 +11,14 @@ class DiscoveryDetail < ActiveRecord::Base
 
   def last_discovery
     last_detail(discovery_detail_id, :last_discovery_detail, :discovery_detail_id)
+  end
+
+  # csv = DiscoveryRequest.all.first.details.first.to_csv
+  # test this ID 10106 with next jar
+  def to_csv
+    return 'unknown id' if self.id.nil?
+    return 'No HL7' if hl7_message.nil?
+    HL7Messaging.discovery_hl7_to_csv(discovery_hl7: hl7_message)
   end
 
 

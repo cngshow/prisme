@@ -16,6 +16,7 @@
 //= require bootstrap
 //= require turbolinks
 //= require jsTree/jstree
+//= require file_saver/FileSaver
 // select2 drop down js library
 //= require select2
 //= require jquery.steps-1.1.0/jquery.steps

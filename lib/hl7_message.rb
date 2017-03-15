@@ -67,6 +67,16 @@ module HL7Messaging
       JIsaacLibrary::JHL7Messaging.isRunning
     end
 
+    def discovery_hl7_to_csv(discovery_hl7:)
+      return nil if discovery_hl7.nil?
+      site_discovery = JIsaacLibrary::JHL7Messaging.convertDiscoveryText(discovery_hl7)
+      csv = ''
+      csv << site_discovery.getHeaders.map do |e| "\"#{e}\"" end.join(',') << "\n"
+      site_discovery.getValues.each do |line|
+        csv << "#{line.map do |e| "\"#{e}\"" end.join(',')}\n"
+      end
+      csv
+    end
 
     # task = HL7Messaging.get_check_sum_task(check_sum: 'some_string', site_list: VaSite.all.to_a)
     def get_check_sum_task(checksum_detail_array:)
@@ -109,19 +119,20 @@ module HL7Messaging
       (HashWithIndifferentAccess.new HL7Messaging.hl7_message_config).deep_dup
     end
 
-    def build_discovery_task_active_record(user:, subset_hash:, site_ids_array:)
+    def build_discovery_task_active_record(user:, subset_hash:, site_ids_array:, save: true)
       build_task_active_record(DiscoveryRequest, user, subset_hash, site_ids_array)
     end
 
-    def build_checksum_task_active_record(user:, subset_hash:, site_ids_array:)
+    def build_checksum_task_active_record(user:, subset_hash:, site_ids_array:, save: true)
       build_task_active_record(ChecksumRequest, user, subset_hash, site_ids_array)
     end
+
     #this method is called by the controller.
     #subset_hash looks like {'Allergy' => ['Reaction', 'Reactants'], 'Immunizations' => ['Immunization Procedure']}
 
     private
 
-    def build_task_active_record(active_record_clazz, user, subset_hash, site_ids_array)
+    def build_task_active_record(active_record_clazz, user, subset_hash, site_ids_array, save= true)
       site_ids = []
       request_array = []
       site_ids_array.each do |site_id|
@@ -140,10 +151,13 @@ module HL7Messaging
         end
         request_array << ar
       end
-      active_record_clazz.send(:transaction) do
-        request_array.each(&:save!)
+      if (save)
+        active_record_clazz.send(:transaction) do
+          request_array.each(&:save!)
+        end
+        kick_off(active_record_clazz, request_array)
       end
-      kick_off(active_record_clazz, request_array)
+
       request_array
     end
 
@@ -230,6 +244,7 @@ module HL7Messaging
       @detail = detail
       @task = task
       @change_monitor = Monitor.new #monitors are re-entrant
+      @work_queue = []
     end
 
     #This method is called after construction and registration with the fx listener
@@ -238,7 +253,7 @@ module HL7Messaging
         state = @task.getState #runLater thread
         #com.sun.javafx.application.PlatformImpl.runAndWait(-> do state = @task.getState end) #if sun ever takes this away Dan will give us one!
         @detail.start_time = Time.now unless @detail.start_time #tasks are started when I get them
-        changed(nil, nil, state)#making use of re-entrancy here...
+        changed(nil, nil, state) #making use of re-entrancy here...
       end
     end
 
@@ -271,15 +286,17 @@ module HL7Messaging
           #raise ex #don't terminate the Fx thread.
         end
         $log.info("The checksum detail #{@detail.inspect} is now #{@new_value}!")
-        cd_clone = @detail.clone
-        DB_WRITER.post do
-          $log.error("I failed to record the data #{cd_clone.inspect} to the database!") unless cd_clone.save
-        end
+        $log.error("I failed to record the data #{clone.inspect} to the database!") unless @detail.save
       end
     end
 
     def mock
-      if(@detail.class.eql? ChecksumDetail)
+      # if (rand(5).eql? 0) #Checking this in will randomly break the build.  Uncomment as needed.
+      #   @detail.status = FAILED
+      #   @detail.failure_message = "I am a loser!!!"*rand(10)
+      #   return
+      # end
+      if (@detail.class.eql? ChecksumDetail)
         file = Tempfile.new('checksum_simulator')
         file.write([*('a'..'z'), *('0'..'9')].shuffle[0, 36].join)
         file.close
@@ -287,35 +304,12 @@ module HL7Messaging
         #detail.discovery_data = DISCOVERY_MOCK
         file.unlink
       else
-        #DiscoveryDetail
-        @detail.hl7_message = DISCOVERY_MOCK + "\n#{Time.now}"
+        require('./config/hl7/discovery_mocks/discovery_mock')
+        @detail.hl7_message = Mocks::Discovery.fetch_random_discovery
       end
 
     end
   end
-
-  DISCOVERY_MOCK = %(
-MSH^~|\&^XUMF DATA^442^VETS DATA^660INT^20060731124021-0400^^MFR~M01^44210935997^T^2.4^^^AL^NE^USA
-MSA^AA^200607311040367311^
-QRD^20060731104000.000-0600^R^I^Standard Terminology Query^^^99999^ALL^Vital Types^VA
-MFI^Vital Types^Standard Terminology^MUP^20060731124021-0400^20060731124021-0400^NE
-MFE^MUP^^20060731124021-0400^Vital Types@871299
-ZRT^Term^HOLLI HEIGHT
-ZRT^VistA_Short_Name^HH
-ZRT^VistA_Type_Rate^YES
-ZRT^VistA_Rate_Input_Transform^D EN3\F\GMRVUT0 K:X=0!(X>100)!(X<1) X
-ZRT^VistA_Type_Rate_Help^GMRV-HEIGHT RATE HELP
-ZRT^VistA_PCE_Abbreviation^
-ZRT^Status^1
-MFE^MUP^^20060731124021-0400^Vital Types@4688728
-ZRT^Term^VISION UNCORRECTED
-ZRT^VistA_Short_Name^VU
-ZRT^VistA_Type_Rate^YES
-ZRT^VistA_Rate_Input_Transform^K:'$$VALID\F\GMRVPCE3("VU",X) X
-ZRT^VistA_Type_Rate_Help^
-ZRT^VistA_PCE_Abbreviation^VU
-ZRT^Status^1
-).strip
 
 end
 =begin

@@ -11,13 +11,10 @@
             <table class="prisme-table table-hover discovery_table" id="<%= "discovery_#{row.id}" %>">
               <thead>
               <tr>
-                <th scope="col">Site</th>
-                <th scope="col">Subset</th>
-                <th scope="col">Status</th>
-                <th scope="col">User Name</th>
-                <th scope="col">Request Date</th>
-                <th scope="col">Receive Date</th>
-                <th scope="col">Has Data</th>
+                <th scope="col" width="20%">Site</th>
+                <th scope="col" width="20%">Subset</th>
+                <th scope="col" width="35%" colspan="2">Current Discovery</th>
+                <th scope="col" width="25%">Previous Discovery</th>
               </tr>
               </thead>
               <tbody>
@@ -37,14 +34,26 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h3 style="padding-top: 5px">Discovery HL7 Message for:&nbsp;<strong><span id="view_discovery_hl7_modal_title"></span></strong></h3>
+        <h4 style="padding-top: 5px"><span id="discovery_label" style="font-style: oblique"></span>&nbsp;Discovery HL7 for:&nbsp;<strong><span id="view_discovery_hl7_modal_title"></span></strong></h4>
       </div>
       <div class="modal-body scrollable_div">
         <div>
-          <H5 style="font-weight: bold">Discovery HL7</H5>
+          <button id='btn_discovery_csv' data-detail_id="" onclick="discoveryCsv(this);" class="btn btn-info btn-sm">Export as CSV</button><br><br>
           <textarea id="textarea_discovery_hl7" rows="20" cols="120" readonly></textarea>
         </div>
       </div>
     </div>
   </div>
 </div>
+<script type="text/javascript" charset="utf-8">
+  function discoveryCsv(btn) {
+      var id = $(btn).data('detail_id');
+      $(btn).attr('disabled', true);
+      $.get(gon.routes.discovery_csv_path, {format: 'txt', discovery_detail_id: id}, function(data) {
+          var blob = new Blob([data], {type: "text/plain;charset=utf-8"});
+          saveAs(blob,'discovery_'+id+'.csv');
+          $(btn).attr('disabled', false);
+      });
+  }
+
+</script>

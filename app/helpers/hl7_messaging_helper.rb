@@ -28,6 +28,7 @@ module Hl7MessagingHelper
     table.join('<br><br>').html_safe
   end
 
+=begin
   def view_checksum_detail(checksum_detail:)
     last = checksum_detail.checksum.nil?
 
@@ -39,6 +40,7 @@ module Hl7MessagingHelper
     end
     [ret, last]
   end
+=end
 
   def view_discovery_detail(discovery_detail:) #todo cris test this!!
     last = discovery_detail.hl7_message.nil?
