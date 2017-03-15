@@ -5,6 +5,7 @@ where provided, and the git commit history.
 
 * 2017/03/?? - 1.60 - PENDING
     * fixed double submit in the GUI for source package upload
+    * added migration for removing duplicate ssoi users and unique constraint on ssoi_user_name to the model.
 
 * 2017/03/15 - 1.59
     * added new prisme_err.log, only error and fatal events are sent here.
