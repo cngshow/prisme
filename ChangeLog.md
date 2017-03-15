@@ -4,7 +4,7 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 where provided, and the git commit history.
 
 * 2017/03/?? - 1.60 - PENDING
-    * fixed double submit in the GUI for: source package upload, database builder and terminology converter
+    * fixed double submit in the GUI for: source package upload, database builder and terminology converter - 476184
     * added migration for removing duplicate ssoi users and unique constraint on ssoi_user_name to the model.
 
 * 2017/03/15 - 1.59
