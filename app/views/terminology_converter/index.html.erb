@@ -1,5 +1,5 @@
 <!-- Trigger the modal with a button -->
-</br>
+<br>
 <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal" onclick="reset_form();">Create Terminology Conversion</button>
 
 <div class="page-header">
@@ -54,60 +54,73 @@
             <br>
             <br>
             <div id="term_source_details_div"></div>
-            <div id="term_source_actions_div" class="modal-footer">
-              <button class="btn btn-primary btn-lg" onclick="submitPackage()" id="btn_submit">Submit Conversion Request</button>
-            </div>
         <% end %>
+        <div id="term_source_actions_div" class="modal-footer">
+          <button class="btn btn-primary btn-lg" onclick="submitPackage()" id="btn_submit">Submit Conversion Request</button>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-  function submitPackage() {
-    var $myForm = $('#myForm');
-    if ($myForm.valid()) {
-      $("#btn_submit").attr('onclick', 'return false;').html('<span><i class="fa fa-cog fa-spin fa-fw" aria-hidden="true"></i>Processing Request...Please Wait</span>');
-      $myForm.submit();
-    }
-  }
+    function submitPackage() {
+        var $btnSubmit = $("#btn_submit");
+        $btnSubmit.attr('disabled', true);
 
-  function term_source_change(val) {
-    $('#term_source_actions_div').hide();
-    if (val.length === 0) {
-      reset_form(true);
-      return false;
+        if ($btnSubmit.hasClass('processing')) {
+            return false;
+        } else {
+            $btnSubmit.addClass('processing');
+        }
+
+        var $myForm = $('#myForm');
+        if ($myForm.valid()) {
+            $btnSubmit.html('<span><i class="fa fa-cog fa-spin fa-fw" aria-hidden="true"></i>Processing Request...Please Wait</span>');
+            $myForm.submit();
+        } else {
+            console.log("validation errors so re-enabling button...");
+            $btnSubmit.attr('disabled', false);
+            $btnSubmit.removeClass('processing');
+        }
     }
 
-    $.ajax({
-      url: gon.routes.terminology_converter_term_source_change_path,
-      type: "GET",
-      data: {term_source: val},
-      success: function (data) {
-        $('#term_source_details_div').html(data);
-      }
+    function term_source_change(val) {
+        $('#term_source_actions_div').hide();
+        if (val.length === 0) {
+            reset_form(true);
+            return false;
+        }
+
+        $.ajax({
+            url: gon.routes.terminology_converter_term_source_change_path,
+            type: "GET",
+            data: {term_source: val},
+            success: function (data) {
+                $('#term_source_details_div').html(data);
+            }
+        });
+    }
+
+    function reset_form(term_source_change) {
+        if (term_source_change !== true) {
+            $('#terminology_source').find('option[value=""]').prop('selected', 'selected').change();
+        }
+        $('#term_source_details_div').html('');
+        $('#term_source_actions_div').hide();
+    }
+
+    $(document).ready(function () {
+        // call init_select2 to initialize all select inputs to use the select2 js library
+        init_select2();
+
+        // initialize the jquery validation plugin
+        $('#myForm').validate({
+            errorPlacement: function (error, element) {
+                var lbl = $("label[for='" + element.attr('id') + "']");
+                error.addClass('arrow_box');
+                error.insertAfter(lbl);
+            }
+        });
     });
-  }
-
-  function reset_form(term_source_change) {
-    if (term_source_change !== true) {
-      $('#terminology_source').find('option[value=""]').prop('selected', 'selected').change();
-    }
-    $('#term_source_details_div').html('');
-    $('#term_source_actions_div').hide();
-  }
-
-  $(document).ready(function () {
-    // call init_select2 to initialize all select inputs to use the select2 js library
-    init_select2();
-
-    // initialize the jquery validation plugin
-    $('#myForm').validate({
-      errorPlacement: function (error, element) {
-        var lbl = $("label[for='" + element.attr('id') + "']");
-        error.addClass('arrow_box');
-        error.insertAfter(lbl);
-      }
-    });
-  });
 </script>
