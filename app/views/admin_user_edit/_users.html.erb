@@ -18,12 +18,12 @@
           %>
           <td class="text-left"><%= raw role_text.empty? ? 'No Roles Assigned' : role_text %></td>
           <td class="text-left">
-            <a data-toggle="modal" data-target="#editModal" class="btn btn-primary" role="button" onclick='edit_user_roles("<%=user.user_row_id%>", <%= raw JSON.parse(user_roles.to_json) %>);'>
-              <i class="fa fa-edit fa-fw" aria-hidden="true"></i>&nbsp;Edit User Roles</a>
+            <button data-toggle="modal" data-target="#editModal" class="btn btn-primary" onclick='edit_user_roles("<%=user.user_row_id%>", <%= raw JSON.parse(user_roles.to_json) %>);'>
+              <i class="fa fa-edit fa-fw" aria-hidden="true"></i>&nbsp;Edit User Roles</button>
             <!-- user cannot delete themselves -->
             <% unless (prisme_user == user) %>
-                <a class="btn btn-danger" role="button" onclick="delete_user('<%=user.user_row_id%>', '<%= user.user_name %>');">
-                  <i class="fa fa-trash fa-fw" aria-hidden="true"></i>&nbsp;Delete User</a>
+                <button class="btn btn-danger" onclick="delete_user('<%=user.user_row_id%>', '<%= user.user_name %>');">
+                  <i class="fa fa-trash fa-fw" aria-hidden="true"></i>&nbsp;Delete User</button>
             <% end %>
           </td>
         </tr>
