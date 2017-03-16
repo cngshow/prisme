@@ -2,8 +2,8 @@ module WelcomeHelper
   def action_button_bar(deployment, service_id, war_uuid)
     ret = %{
 <div style="display: inline-block" id="SERVICE_ID-DEPLOYMENT_ID">
-<a id="SERVICE_ID-START_STOP_ACTION-DEPLOYMENT_ID" class="btn btn-default" role="button" DATA_WAR_UUID onclick="tomcat_app(this, SERVICE_ID, 'START_STOP_ACTION', 'DEPLOYMENT');" tabindex="0"><i class="fa START_STOP_ICON fa-fw" aria-hidden="true"></i>&nbsp;START_STOP_LABEL</a>
-<a id="SERVICE_ID-undeploy-DEPLOYMENT_ID" class="btn btn-default" role="button" DATA_WAR_UUID onclick="tomcat_app(this, SERVICE_ID, 'undeploy', 'DEPLOYMENT');" tabindex="0"><i class="fa fa-trash-o fa-fw" aria-hidden="true"></i>&nbsp;Undeploy</a>
+<button id="SERVICE_ID-START_STOP_ACTION-DEPLOYMENT_ID" class="btn btn-default" DATA_WAR_UUID onclick="tomcat_app(this, SERVICE_ID, 'START_STOP_ACTION', 'DEPLOYMENT');" tabindex="0"><i class="fa START_STOP_ICON fa-fw" aria-hidden="true"></i>&nbsp;START_STOP_LABEL</button>
+<button id="SERVICE_ID-undeploy-DEPLOYMENT_ID" class="btn btn-default" DATA_WAR_UUID onclick="tomcat_app(this, SERVICE_ID, 'undeploy', 'DEPLOYMENT');" tabindex="0"><i class="fa fa-trash-o fa-fw" aria-hidden="true"></i>&nbsp;Undeploy</button>
 </div>
 }
     # check the deployment state to see if it is running, etc.
