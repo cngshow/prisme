@@ -38,3 +38,10 @@ production:
 #IDENTIFIED BY rails;
 #grant create session to rails_development;
 #GRANT all PRIVILEGES to rails_development;
+
+# to change your password in dev box
+# cd C:\work\oracle\oraclexe\app\oracle\product\11.2.0\server\bin
+# sqlplus /nolog
+# SQL> connect /as sysdba
+# SQL> alter user rails_development identified by  "rails";
+# SQL> alter user SYS identified by  "rails";
