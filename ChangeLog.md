@@ -3,10 +3,11 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
-* 2017/03/?? - 1.60 - PENDING
+* 2017/03/16 - 1.60
     * fixed double submit in the GUI for: source package upload, database builder and terminology converter - 476184
     * added migration for removing duplicate ssoi users and unique constraint on ssoi_user_name to the model.
     * defect 469184 - changed the span to a button so that it can receive focus and be execued using the keyboard.
+    * Instructions for modifying password in oracle on a devbox when your password expires.
 
 * 2017/03/15 - 1.59
     * added new prisme_err.log, only error and fatal events are sent here.
