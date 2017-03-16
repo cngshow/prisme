@@ -1,6 +1,7 @@
 class SsoiUser < ActiveRecord::Base
   include PrismeUserConcern
   before_save :ensure_read_only
+  validates_uniqueness_of :ssoi_user_name
 
   def self.user_roles(ssoi_user_name)
     roles = []

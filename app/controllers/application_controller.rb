@@ -57,9 +57,10 @@ class ApplicationController < ActionController::Base
 
   def read_ssoi_headers
     ssoi_user_name = ssoi_headers
-
     unless ssoi_user_name.to_s.strip.empty?
-      SsoiUser.where(ssoi_user_name: ssoi_user_name).first_or_create
+      ssoi_user_name.to_sym.to_java.synchronized do
+        SsoiUser.where(ssoi_user_name: ssoi_user_name).first_or_create
+      end
       user_session(UserSession::SSOI_USER, ssoi_user_name)
     end
   end
