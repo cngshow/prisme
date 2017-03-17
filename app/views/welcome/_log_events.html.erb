@@ -70,7 +70,7 @@
           <%= text_area_tag 'ack_comment', nil, 'aria-labelledby': 'lbl_comment', placeholder: 'Enter an OPTIONAL acknowledgement comment', rows: '3', cols: 76, class: 'form-control' %>
         </div>
         <br>
-        <div class="btn btn-primary btn-lg" role="button" onclick="submit_acknowledgement();">Save Acknowledgement</div>
+        <button class="btn btn-primary btn-lg" type="button" onclick="submit_acknowledgement();">Save Acknowledgement</button>
       </div>
     </div>
   </div>
@@ -106,7 +106,7 @@
                     var ack_col2 = '';
 
                     if (item['acknowledged_by'] === null) {
-                        row.append($('<td>').attr('colspan', '2').html($('<div>').addClass('btn btn-primary btn-ack').attr('data-btn_ack_id', item_id).text('Acknowledge Event')));
+                        row.append($('<td>').attr('colspan', '2').html($('<button>').addClass('btn btn-primary btn-ack').attr('data-btn_ack_id', item_id).text('Acknowledge Event')));
                     } else {
                         row.append($('<td>').css('text-align', 'right').attr('width', "150px").html("Acknowledged By:<br>Acknowledged On:<br>Comment:"));
                         var ack_col = item['acknowledged_by'] + '<br>';
