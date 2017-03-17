@@ -25,7 +25,7 @@
       <%= field_set_tag (@service.id.nil? ? 'New Service' : @service.name) do %>
           <div>
             <%= f.label :name %><br>
-            <%= f.text_field :name, required: true, title: 'Please enter a service name', maxlength: 255, size: 75 %>
+            <%= f.text_field :name, required: true, title: 'Please enter a service name', maxlength: 255, size: 75, autofocus: true %>
           </div>
           <br>
           <div>
@@ -59,8 +59,8 @@
       <% end %>
     </div>
     <div class="actions" id="submit_div">
-      <%= f.submit class: 'btn btn-primary btn-lg' %>
-      <%= link_to 'Cancel', services_path, class: 'btn btn-primary btn-lg' %>
+      <button class="'btn btn-primary btn-lg" type="submit">Update Service</button>
+      <button onclick="location.href='<%= services_path %>';" class="'btn btn-primary btn-lg" type="button">Cancel</button>
     </div>
 <% end %>
 <script>
