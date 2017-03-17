@@ -32,7 +32,7 @@
 
   <% if policy(:navigation).any_administrator? %>
       <div>
-        <a href="<%= app_deployer_path %>" class="prisme-link-button" onclick="polling.checkPolling(polling.pollEnum.DEPLOYER);" title="Deploy Applications" role="navigation">Application
+        <a href="<%= app_deployer_path %>" class="prisme-link-button" onclick="polling.checkPolling(polling.pollEnum.DEPLOYER);" title="Deploy Applications">Application
           Deployer</a>
       </div>
 
@@ -76,7 +76,7 @@
   <div class="prisme-navbar-tools" role="navigation">
 
     <div>
-      <a href="#userid" class="prisme-link-button" id="userid" title="Current User" role="navigation">
+      <a href="#userid" class="prisme-link-button" id="userid" title="Current User">
         <div class="glyphicon glyphicon-user" title="Current User"></div>
         <%= raw (prisme_user.nil? ? '' : "&nbsp;#{prisme_user.user_name}") %>
       </a>
@@ -90,9 +90,8 @@
               <a href="<%= roles_sso_logout_path %>" onclick="polling.checkPolling(polling.pollEnum.LOGOUT);">SSO Log
                 out</a>
           <% else %>
-
               <a href="<%= destroy_user_session_path %>" class="prisme-link-button" id="logout"
-                 onclick="polling.checkPolling(polling.pollEnum.LOGOUT)" title="Logout" role="navigation">
+                 onclick="polling.checkPolling(polling.pollEnum.LOGOUT)" title="Logout">
                 <div class="glyphicon glyphicon-log-out" title="Logout"></div>
                 Logout
               </a>
