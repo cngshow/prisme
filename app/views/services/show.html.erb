@@ -27,5 +27,5 @@
     <% end %>
 <% end %>
 <hr>
-<%= link_to 'Edit', edit_service_path(@service), class: 'btn btn-primary btn-lg' %>
-<%= link_to 'List', services_path, class: 'btn btn-primary btn-lg' %>
+<button onclick="location.href='<%= edit_service_path(@service) %>';" class="'btn btn-primary btn-lg" type="button">Edit</button>
+<button onclick="location.href='<%= services_path %>';" class="'btn btn-primary btn-lg" type="button">List</button>

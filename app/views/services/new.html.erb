@@ -2,5 +2,5 @@
 <%= render 'form', mode: (local_assigns[:failure].nil? ? 'new' : 'failure') %>
 <div id="new_cancel">
   <hr>
-  <%= link_to 'Cancel', services_path, class: 'btn btn-primary btn-lg' %>
+  <%= button_to 'Cancel', services_path, class: 'btn btn-primary btn-lg', method: 'get' %>
 </div>

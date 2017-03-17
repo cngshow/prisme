@@ -19,7 +19,6 @@ module JenkinsJobConcern
       leaf_data['completed_at'] = prisme_job_ar_row.completed_at.to_i
       leaf_data[:elapsed_time] = ApplicationHelper.convert_seconds_to_time(leaf_data['completed_at'] - row_data['started_at'])
       row_data['leaf_data'] = leaf_data
-      $log.always("A FAILURE #{row_data}")
       return leaf_data
     end
 

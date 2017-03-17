@@ -24,11 +24,11 @@ module NexusConcern
       json = JSON.parse response.body
     rescue JSON::ParserError => ex
       if response.status.eql?(200)
-        return response.body
+        $log.warn("Nexus did not return valid jason with url #{url_string} and params #{params}.  The response was:")
+        $log.warn(response.body)
+        return []
       end
     end
-
-    return nil if json.nil?
     ret = []
 
     if json['totalCount'].to_i > 0
@@ -42,7 +42,13 @@ module NexusConcern
           a = artifact['artifactId']
           v = artifact['version']
           repo = artifact['latestReleaseRepositoryId']
-          c = artifact['artifactHits'].first['artifactLinks'].select { |al| al['extension'].eql?('lucene.zip') }.first['classifier']
+          c = nil
+          begin
+            c = artifact['artifactHits'].first['artifactLinks'].select { |al| al['extension'].eql?('lucene.zip') }.first['classifier']
+          rescue => ex
+            $log.warn("The nexus repository might have something naughty in it. The troublesome artifact is:")
+            $log.warn(artifact.inspect)
+          end
 
           url = nexus_url.clone
           url << g.gsub('.', '/') << '/'

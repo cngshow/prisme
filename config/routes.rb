@@ -27,6 +27,7 @@ Rails.application.routes.draw do
   get 'utilities/browser_tz_offset'
   get 'utilities/seed_services'
   get 'utilities/prisme_config'
+  get 'utilities/log_level'
 
 
   get 'roles/get_all_roles'#isaac rest is dependent on this route
