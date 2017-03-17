@@ -163,16 +163,21 @@ module HL7Messaging
 
     def kick_off(active_record_clazz, request_array)
       request_array.each do |request|
+        details = request.details.to_a
+        if ($PROPS['PRISME.site_restrictor'])
+          restricted = $PROPS['PRISME.site_restrictor'].split(',').map(&:strip)
+          details.select! do |d| restricted.include?(d.va_site.va_site_id) end
+          $log.always("I am restricting the request to the following sites: " + details.map do |d| d.va_site_id end.inspect)
+        end
         #the call to 'to_a' (below) inflates the models.
         if request.instance_of? DiscoveryRequest
-          task_array = get_discovery_task(discovery_detail_array: request.details.to_a)
+          task_array = get_discovery_task(discovery_detail_array: details)
         else
-          task_array = get_check_sum_task(checksum_detail_array: request.details.to_a)
+          task_array = get_check_sum_task(checksum_detail_array: details)
         end
 
         #the tasks in task array are all started!!
         task_to_detail_map = {}
-        details = request.details.to_a
         task_array.zip(details) do |task, detail|
           task_to_detail_map[task] = detail
         end
