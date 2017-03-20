@@ -42,7 +42,7 @@ gem 'trinidad', require: nil
 gem 'jquery-ui-rails'
 gem 'logging', '~> 2.0'
 gem 'gon'
-gem 'warbler', '>= 2.0.0.pre3'
+gem 'warbler', '~> 2.0.0'
 gem 'faraday', '~> 0.9.2'
 gem 'ci_reporter_test_unit'
 gem 'sucker_punch', '~> 2.0.0'

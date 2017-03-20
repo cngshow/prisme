@@ -1,5 +1,5 @@
 <h1>Service Provisioning</h1>
-<%= link_to 'New Service', new_service_path, class: 'btn btn-primary btn-lg' %>
+<%= button_to 'New Service', new_service_path, class: 'btn btn-primary btn-lg', method: 'get' %>
 <br>
 <hr>
 <table class="prisme-table table-striped table-hover">
@@ -18,14 +18,14 @@
         <td><%= service.name %></td>
         <td><%= service.description %></td>
         <td><%= service.service_type %></td>
-        <td><%= link_to 'Show', service, class: 'btn btn-primary' %></td>
-        <td><%= link_to 'Edit', edit_service_path(service), class: 'btn btn-primary' %></td>
+        <td><%= button_to 'Show', service, class: 'btn btn-primary', method: 'get' %></td>
+        <td><%= button_to 'Edit', edit_service_path(service), class: 'btn btn-primary', method: 'get' %></td>
         <% if (is_disabled?(service.service_type)) %>
             <td>
               <button type="button" class="btn prisme-btn-danger" disabled>Destroy</button>
             </td>
         <% else %>
-            <td><%= link_to 'Destroy', service, method: :delete, data: {confirm: 'Are you sure?'}, class: 'btn prisme-btn-danger', disabled: is_disabled?(service.service_type) %></td>
+            <td><%= button_to 'Destroy', service, method: :delete, data: {confirm: 'Are you sure?'}, class: 'btn prisme-btn-danger', disabled: is_disabled?(service.service_type) %></td>
         <% end %>
       </tr>
   <% end %>
