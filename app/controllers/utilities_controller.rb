@@ -15,6 +15,18 @@ class UtilitiesController < ApplicationController
     end
   end
 
+  def git_not_available
+  end
+
+  def nexus_not_available
+  end
+
+  def not_configured
+  end
+
+  def terminology_config_error
+  end
+
   def browser_tz_offset
     tz = params[:tzOffset]
     session[:tzOffset] = tz

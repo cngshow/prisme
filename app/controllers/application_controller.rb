@@ -35,10 +35,10 @@ class ApplicationController < ActionController::Base
 
     case exception
       when Faraday::ClientError
-        render :file => (trinidad? ? 'public/nexus_not_available.html' : "#{Rails.root}/../nexus_not_available.html")
+        redirect_to nexus_not_available_path
         return
       when JIsaacLibrary::GitFailureException
-        render :file => (trinidad? ? 'public/git_not_available.html' : "#{Rails.root}/../git_not_available.html")
+        redirect_to git_not_available_path
         return
       else
         raise exception
@@ -66,32 +66,25 @@ class ApplicationController < ActionController::Base
   end
 
   def ensure_services_configured
-    configured = true
+    unless defined? @@configured
+      configured = true
 
-    [PrismeService::NEXUS, PrismeService::JENKINS, PrismeService::TOMCAT, PrismeService::GIT].each do |svc|
-      configured = false unless Service.service_exists? svc
+      [PrismeService::NEXUS, PrismeService::JENKINS, PrismeService::TOMCAT, PrismeService::GIT].each do |svc|
+        configured = false unless Service.service_exists? svc
+      end
+
+      if configured
+        @@configured = true
+      else
+        redirect_to not_configured_path
+      end
     end
-
-    render :file => (trinidad? ? 'public/not_configured.html' : "#{Rails.root}/../not_configured.html") unless configured
   end
 
   def validate_terminology_config
     return unless $terminology_parse_errors
-    error_str = PrismeUtilities::terminology_config_errors.join("<br>")
-    erb = (trinidad? ? 'public/terminology_config_error.html.erb' : "#{Rails.root}/../terminology_config_error.html.erb")
-    erb_str = File.open(erb, 'r') { |file| file.read }
-    erb_str = ERB.new(erb_str).result(binding)
-    render html: erb_str.html_safe
-    return
-
-    # if exception.is_a?(Pundit::NotAuthorizedError) || exception.is_a?(Pundit::AuthorizationNotPerformedError)
-    #   erb = "#{Rails.root}/lib/rails_common/public/not_authorized.html.erb"
-    #   erb_str = File.open(erb, 'r') { |file| file.read }
-    #   erb_str = ERB.new(erb_str).result(binding)
-    #   render html: erb_str.html_safe
-    # else
-    #   raise exception
-    # end
+    error_str = PrismeUtilities::terminology_config_errors.join('<br>')
+    render terminology_config_error_path, locals: {error_str: error_str}
   end
 
   def add_pundit_methods
