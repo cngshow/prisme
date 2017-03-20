@@ -2,6 +2,9 @@ PRISME Changelog
 
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers where provided, and the git commit history.
 
+* 2017/03/?? - 3.1 - PENDING
+    *
+    
 * 2017/03/20 - 3.0
     * updated to fix defect 469188 (508 compliance) for services and admin user edit keyboard functionality
     * issue 476172 - refactored internal errors to route to utilities controller for git, nexus, and other configuration errors
