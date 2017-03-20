@@ -100,7 +100,7 @@ end
 
 version = "UNKNOWN"
 begin
-  version = IO.read('../version.txt')
+  version = IO.read('../version.txt') rescue IO.read('version.txt') #maven build will see it at 'version.txt'
   $log.always("The version is #{version}")
 rescue
   $log.warn("Could not read the version file!")
