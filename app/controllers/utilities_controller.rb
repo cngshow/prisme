@@ -15,6 +15,18 @@ class UtilitiesController < ApplicationController
     end
   end
 
+  def log_level
+    level = params[:level].to_sym if Logging::RAILS_COMMON_LEVELS.include? params[:level].to_sym
+    if level.nil?
+      render text: "Valid log levels are #{Logging::RAILS_COMMON_LEVELS.inspect}.<br><br>Sample invocation: http://localhost:3000/utilities/log_level?level=info"
+      return
+    end
+    ALL_LOGGERS.each do |logger|
+      logger.level= level
+    end
+    render text: "New level set"
+  end
+
   def git_not_available
   end
 

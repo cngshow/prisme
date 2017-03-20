@@ -27,6 +27,7 @@ Rails.application.routes.draw do
   get 'utilities/browser_tz_offset'
   get 'utilities/seed_services'
   get 'utilities/prisme_config'
+  get 'utilities/log_level'
   get 'utilities/git_not_available', as: :git_not_available
   get 'utilities/nexus_not_available', as: :nexus_not_available
   get 'utilities/not_configured', as: :not_configured
