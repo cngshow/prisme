@@ -1,14 +1,15 @@
 PRISME Changelog 
 
-This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
-where provided, and the git commit history.
+This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers where provided, and the git commit history.
 
-* 2017/03/?? - 1.61 - PENDING
+* 2017/03/20 - 3.0
     * updated to fix defect 469188 (508 compliance) for services and admin user edit keyboard functionality
     * issue 476172 - refactored internal errors to route to utilities controller for git, nexus, and other configuration errors
     * deleted unused files from source control
     * Defect 462564 -- Prisme Undeploy - "OK message repeats multiple times instead of one.
     * Defect 482682 Server Error in Integration Environment with the New Database builder in Terminology browser
+    * Reversioning from 1.61
+    * Production build for Release 3
 
 * 2017/03/16 - 1.60
     * fixed double submit in the GUI for: source package upload, database builder and terminology converter - 476184
