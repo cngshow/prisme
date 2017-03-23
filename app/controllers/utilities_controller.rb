@@ -15,9 +15,10 @@ class UtilitiesController < ApplicationController
     end
   end
 
+  #https://vaauscttweb81.aac.va.gov/rails_prisme/utilities/time_stats
   def time_stats
     stats = request.headers['HTTP_APACHE_TIME']
-    # stats = 'D=2265716,t=1490286593518305' #example ssoi header return value
+#    stats = 'D=2265716,t=1490286593518305' #example ssoi header return value
     if stats
       stats = stats.split(',').map do |e| e.split('=') end.to_h
       duration_of_apache_request = stats['D'].to_i/1000000.0
