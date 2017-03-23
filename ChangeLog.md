@@ -5,6 +5,7 @@ where provided, and the git commit history.
 
 * 2017/03/?? - 1.61 - PENDING
     * updated to fix defect 469188 (508 compliance) for services and admin user edit keyboard functionality
+    * added APACHE time statistics GUI at utilities\time_stats
 
 * 2017/03/16 - 1.60
     * fixed double submit in the GUI for: source package upload, database builder and terminology converter - 476184

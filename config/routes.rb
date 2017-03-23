@@ -24,6 +24,7 @@ Rails.application.routes.draw do
   get 'welcome/check_isaac_dependency', as: :check_isaac_dependency
 
   get 'utilities/warmup'
+  get 'utilities/time_stats'
   get 'utilities/browser_tz_offset'
   get 'utilities/seed_services'
   get 'utilities/prisme_config'
