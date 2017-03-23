@@ -14,7 +14,7 @@ class ApplicationController < ActionController::Base
   # use_growlyflash
 
   append_view_path 'lib/rails_common/views'
-
+  prepend_before_action :setup_time if self.respond_to? :setup_time
   prepend_before_action :add_pundit_methods
   after_action :verify_authorized, unless: :devise_controller?
   # Prevent CSRF attacks by raising an exception.

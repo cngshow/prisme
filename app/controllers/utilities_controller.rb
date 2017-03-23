@@ -15,6 +15,21 @@ class UtilitiesController < ApplicationController
     end
   end
 
+  def time_stats
+    stats = request.headers['HTTP_APACHE_TIME']
+    #stats = 'D=2265716,t=1490286593518305' #todo remove me.
+    if stats
+      stats = stats.split(',').map do |e| e.split('=') end.to_h
+      duration_of_apache_request = stats['D'].to_i/1000000.0
+      epoch_time = stats['t'].to_i/1000000.0
+      apache_to_rails_delta = (@req_start_time - epoch_time).round(3)
+      millis = apache_to_rails_delta.modulo(1).round(3).to_s.split('.').last.to_i.to_s + 'ms'
+      @delta_time = ApplicationHelper.convert_seconds_to_time(apache_to_rails_delta) + ' ' + millis
+      millis = duration_of_apache_request.modulo(1).round(3).to_s.split('.').last.to_i.to_s + 'ms'
+      @apache_time = ApplicationHelper.convert_seconds_to_time(duration_of_apache_request) + ' ' + millis
+    end
+  end
+
   def log_level
     level = params[:level].to_sym if Logging::RAILS_COMMON_LEVELS.include? params[:level].to_sym
     if level.nil?
@@ -79,6 +94,11 @@ class UtilitiesController < ApplicationController
   end
 
   private
+
+  def setup_time
+    @req_start_time = Time.now.to_f
+  end
+
   def write_service_seeds(seeds)
     # truncate the tables and seed them
     Service.destroy_all
