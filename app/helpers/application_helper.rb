@@ -104,4 +104,10 @@ module ApplicationHelper
   def prisme_user
     ssoi? ? SsoiUser.fetch_user(user_session(UserSession::SSOI_USER)) : current_user
   end
+
+  #like #devise_controller?
+  def utility_controller?
+    is_a? ::UtilitiesController
+  end
+
 end
