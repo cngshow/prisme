@@ -7,7 +7,11 @@ where provided, and the git commit history.
     * You must add: '-Djava.security.egd=file:/dev/./urandom' into /etc/init.d/tomcat
     *example:
     export CATALINA_OPTS="-Xmx14g -Xms10g -XX:+UseG1GC -XX:MetaspaceSize=100M -Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.port=8081 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Djava.rmi.server.hostname=10.226.85.244 -Dcom.sun.management.jmxremote.rmi.port=8082 -Djava.security.egd=file:/dev/./urandom"
-
+    ******However the above is apparently a security violation
+    **install haveged:
+    ** yum install haveged
+    ** chkconfig haveged on
+    ** service haveged start (should add this to tomcat script)
 
 * 2017/03/?? - 1.61 - PENDING
     * updated to fix defect 469188 (508 compliance) for services and admin user edit keyboard functionality
