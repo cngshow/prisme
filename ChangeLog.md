@@ -12,6 +12,7 @@ where provided, and the git commit history.
     ** yum install haveged
     ** chkconfig haveged on
     ** service haveged start (should add this to tomcat script)
+    ** to check your entropy: cat /proc/sys/kernel/random/entropy_avail
 
 * 2017/03/?? - 1.61 - PENDING
     * updated to fix defect 469188 (508 compliance) for services and admin user edit keyboard functionality
