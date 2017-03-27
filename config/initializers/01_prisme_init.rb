@@ -105,6 +105,7 @@ begin
 rescue
   $log.warn("Could not read the version file!")
 end
+$log.always("The JRuby version is #{JRUBY_VERSION}")
 PRISME_VERSION = version
 PRISME_ENVIRONMENT = PrismeUtilities.aitc_environment.fetch(Socket.gethostname) rescue 'DEV_BOX'
 $log.always { PrismeLogEvent.notify(PrismeLogEvent::LIFECYCLE_TAG, "#{Rails.application.class.parent_name} coming up!  The version is #{PRISME_VERSION}") }
