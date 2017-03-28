@@ -4,7 +4,7 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 where provided, and the git commit history.
 
 * JRuby upgrade branch
-    * You must add: '-Djava.security.egd=file:/dev/./urandom' into /etc/init.d/tomcat
+    * You must add: '-Djava.security.egd=file:/dev/./urandom' into /etc/init.d/tomcat (don't do this)
     *example:
     export CATALINA_OPTS="-Xmx14g -Xms10g -XX:+UseG1GC -XX:MetaspaceSize=100M -Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.port=8081 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Djava.rmi.server.hostname=10.226.85.244 -Dcom.sun.management.jmxremote.rmi.port=8082 -Djava.security.egd=file:/dev/./urandom"
     ******However the above is apparently a security violation
@@ -13,6 +13,7 @@ where provided, and the git commit history.
     ** chkconfig haveged on
     ** service haveged start (should add this to tomcat script)
     ** to check your entropy: cat /proc/sys/kernel/random/entropy_avail
+    ** restart tomcat (to clear out old JRuby libs)
 
 * 2017/03/?? - 1.61 - PENDING
     * updated to fix defect 469188 (508 compliance) for services and admin user edit keyboard functionality
