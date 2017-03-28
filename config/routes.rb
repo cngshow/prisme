@@ -29,6 +29,10 @@ Rails.application.routes.draw do
   get 'utilities/seed_services'
   get 'utilities/prisme_config'
   get 'utilities/log_level'
+  get 'utilities/git_not_available', as: :git_not_available
+  get 'utilities/nexus_not_available', as: :nexus_not_available
+  get 'utilities/not_configured', as: :not_configured
+  get 'utilities/terminology_config_error', as: :terminology_config_error
 
 
   get 'roles/get_all_roles'#isaac rest is dependent on this route
