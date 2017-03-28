@@ -3,7 +3,7 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
 where provided, and the git commit history.
 
-* JRuby upgrade branch
+* JRuby upgrade branch  from 9.0.4 to 9.1.8 (March 28th 2017)
     * You must add: '-Djava.security.egd=file:/dev/./urandom' into /etc/init.d/tomcat (don't do this)
     *example:
     export CATALINA_OPTS="-Xmx14g -Xms10g -XX:+UseG1GC -XX:MetaspaceSize=100M -Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.port=8081 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Djava.rmi.server.hostname=10.226.85.244 -Dcom.sun.management.jmxremote.rmi.port=8082 -Djava.security.egd=file:/dev/./urandom"
