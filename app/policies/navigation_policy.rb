@@ -13,6 +13,11 @@ class NavigationPolicy
     ! user.nil?
   end
 
+  def allow_local_login?
+    exclude_envs = ($PROPS['PRISME.disallow_local_logins_on']).split(',').map(&:strip) rescue []
+    ! exclude_envs.include? PRISME_ENVIRONMENT
+  end
+
   def add_dynamic_methods
     Roles::ALL_ROLES.each do |role|
       self.define_singleton_method("#{role}?".to_sym) do
