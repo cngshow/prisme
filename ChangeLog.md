@@ -6,17 +6,31 @@ where provided, and the git commit history.
 * 2017/03/?? - 1.61 - PENDING
     * updated to fix defect 469188 (508 compliance) for services and admin user edit keyboard functionality
     * added APACHE time statistics GUI at utilities\time_stats
+    * defect 427019. Test notes are included in Jazz.
+    * defects 486465 and 486454 - Testers will need to update their prisme.properties file and set the disallow_local_logins for their testing environment (example: INTEGRATION and TEST)
+        The following URLs will reject the user from going directly to the page when the local login on that environment is not allowed:
+
+        http://localhost:3000/rails_prisme/users/sign_up
+        http://localhost:3000/rails_prisme/users/sign_in
+        http://localhost:3000/rails_prisme/users/edit
+        http://localhost:3000/rails_prisme/users/cancel
+        http://localhost:3000/rails_prisme/users/password/new
+        http://localhost:3000/rails_prisme/users/password/edit
+        
+        Excluding the environment will hide the login and logout buttons for a given environment.
+        
     * JRuby upgrade branch  from 9.0.4 to 9.1.8 (March 28th 2017)
         * You must add: '-Djava.security.egd=file:/dev/./urandom' into /etc/init.d/tomcat (don't do this)
-        *example:
+        Example:
         export CATALINA_OPTS="-Xmx14g -Xms10g -XX:+UseG1GC -XX:MetaspaceSize=100M -Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.port=8081 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Djava.rmi.server.hostname=10.226.85.244 -Dcom.sun.management.jmxremote.rmi.port=8082 -Djava.security.egd=file:/dev/./urandom"
+        
         ******However the above is apparently a security violation
-        **install haveged:
-        ** yum install haveged
-        ** chkconfig haveged on
-        ** service haveged start (should add this to tomcat script)
-        ** to check your entropy: cat /proc/sys/kernel/random/entropy_avail
-        ** restart tomcat (to clear out old JRuby libs)
+        * install haveged:
+        * yum install haveged
+        * chkconfig haveged on
+        * service haveged start (should add this to tomcat script)
+        * to check your entropy: cat /proc/sys/kernel/random/entropy_avail
+        * restart tomcat (to clear out old JRuby libs)
 
 * 2017/03/16 - 1.60
     * fixed double submit in the GUI for: source package upload, database builder and terminology converter - 476184
