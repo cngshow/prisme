@@ -60,8 +60,6 @@ class NavigationPolicy
     end
   end
 
-  private
-
   def self.configured_for_local_login?
     exclude_envs = ($PROPS['PRISME.disallow_local_logins_on']).split(',').map(&:strip) rescue []
     !exclude_envs.include?(PRISME_ENVIRONMENT)
