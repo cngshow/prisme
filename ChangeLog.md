@@ -15,15 +15,16 @@ where provided, and the git commit history.
         You will only be able to see the Login button on the log in page. There is no Sign Up functionality in excluded environments.
         
     * JRuby upgrade branch  from 9.0.4 to 9.1.8 (March 28th 2017)
-        * You must add: '-Djava.security.egd=file:/dev/./urandom' into /etc/init.d/tomcat (don't do this)
-        Example:
-        export CATALINA_OPTS="-Xmx14g -Xms10g -XX:+UseG1GC -XX:MetaspaceSize=100M -Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.port=8081 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Djava.rmi.server.hostname=10.226.85.244 -Dcom.sun.management.jmxremote.rmi.port=8082 -Djava.security.egd=file:/dev/./urandom"
+        * JRuby now depends on Secure Random, but on quiet linux boxes, secure random is known to block for long periods of time.  
+            One solution would be to use this workaround on the linux boxes, '-Djava.security.egd=file:/dev/./urandom' into /etc/init.d/tomcat
+            but this disables secure random for the entire JVM, potentially leading to security holes with encryption libraries. 
         
-        ******However the above is apparently a security violation
+        An alternate solution, is to use a tool like 'haveged' http://www.issihosts.com/haveged/ to ensure that the entropy pool on the linux
+        box it always sufficient, so that Secure Random doesn't block.
         * install haveged:
         * yum install haveged
         * chkconfig haveged on
-        * service haveged start (should add this to tomcat script)
+        * service haveged start 
         * to check your entropy: cat /proc/sys/kernel/random/entropy_avail
         * restart tomcat (to clear out old JRuby libs)
 
