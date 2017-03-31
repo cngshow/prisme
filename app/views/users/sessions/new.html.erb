@@ -18,5 +18,5 @@
 
 
 <%- if policy(:navigation).allow_local_signup? %> <!-- remove this to easily test backend security-->
-    <%= render "devise/shared/links" %>
+    <%= render 'users/shared/links' %>
 <% end -%> <!-- remove this to easily test backend security-->
