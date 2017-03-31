@@ -57,7 +57,7 @@ class RolesController < ApplicationController
     @roles_hash = {user: user_id, roles: [], token: 'Not Authenticated'}
 
     if authenticated
-      @roles_hash[:roles] = user.roles.map(&:name) if NavigationPolicy.configured_for_local_login?
+      @roles_hash[:roles] = user.roles.map(&:name)
       @roles_hash[:token] = build_user_token(user)
       @roles_hash[:user] = user_id
     end

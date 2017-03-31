@@ -84,9 +84,7 @@
 
     <div>
       <% if prisme_user.nil? %>
-          <% if  policy(:navigation).allow_local_login? %>
-              <a href="<%= new_user_session_path %>" onclick="polling.checkPolling(polling.pollEnum.LOGIN);">Log in</a>
-          <% end %>
+          <a href="<%= new_user_session_path %>" onclick="polling.checkPolling(polling.pollEnum.LOGIN);">Log in</a>
       <% else %>
           <% if prisme_user.is_a?(SsoiUser) %>
               <a href="<%= roles_sso_logout_path %>" onclick="polling.checkPolling(polling.pollEnum.LOGOUT);">SSO Log out</a>
