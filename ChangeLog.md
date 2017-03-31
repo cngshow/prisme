@@ -16,17 +16,12 @@ where provided, and the git commit history.
       </Location>
       ------------------------------------------
     * defect 427019. Test notes are included in Jazz.
-    * defects 486465 and 486454 - Testers will need to update their prisme.properties file and set the disallow_local_logins for their testing environment (example: INTEGRATION and TEST)
+    * defects 486465 and 486454 - Testers will need to update their prisme.properties file and set the disallow_local_signups_on for their testing environment (example: INTEGRATION and TEST)
         The following URLs will reject the user from going directly to the page when the local login on that environment is not allowed:
 
         http://localhost:3000/rails_prisme/users/sign_up
-        http://localhost:3000/rails_prisme/users/sign_in
-        http://localhost:3000/rails_prisme/users/edit
-        http://localhost:3000/rails_prisme/users/cancel
-        http://localhost:3000/rails_prisme/users/password/new
-        http://localhost:3000/rails_prisme/users/password/edit
         
-        Excluding the environment will hide the login and logout buttons for a given environment.
+        You will only be able to see the Login button on the log in page. There is no Sign Up functionality in excluded environments.
         
     * JRuby upgrade branch  from 9.0.4 to 9.1.8 (March 28th 2017)
         * JRuby now depends on Secure Random, but on quiet linux boxes, secure random is known to block for long periods of time.  
