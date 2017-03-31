@@ -14,8 +14,11 @@ class NavigationPolicy
   end
 
   def allow_local_login?
-    exclude_envs = ($PROPS['PRISME.disallow_local_logins_on']).split(',').map(&:strip) rescue []
-    ! exclude_envs.include? PRISME_ENVIRONMENT
+    NavigationPolicy.configured_for_local_login?
+  end
+
+  def self.allow_local_login(controller)
+    controller.authorize(:navigation, :allow_local_login?)
   end
 
   def add_dynamic_methods
@@ -55,6 +58,11 @@ class NavigationPolicy
         authorize(:navigation, method_q) rescue false
       end
     end
+  end
+
+  def self.configured_for_local_login?
+    exclude_envs = ($PROPS['PRISME.disallow_local_logins_on']).split(',').map(&:strip) rescue []
+    !exclude_envs.include?(PRISME_ENVIRONMENT)
   end
 
 end
