@@ -6,6 +6,15 @@ where provided, and the git commit history.
 * 2017/03/?? - 1.61 - PENDING
     * updated to fix defect 469188 (508 compliance) for services and admin user edit keyboard functionality
     * added APACHE time statistics GUI at utilities\time_stats
+      Please modify the apache config as follows ( RequestHeader set  apache_time "%D,%t" ):
+      ----------------------------------------
+      <Location /rails_prisme/>
+      RequestHeader set  apache_time "%D,%t"
+      ProxyPass https://vaauscttdbs80.aac.va.gov:8080/rails_prisme/
+      ProxyPassReverse https://vaauscttdbs80.aac.va.gov:8080/rails_prisme/
+      SetEnv proxy-sendchunks 1
+      </Location>
+      ------------------------------------------
     * defect 427019. Test notes are included in Jazz.
     * defects 486465 and 486454 - Testers will need to update their prisme.properties file and set the disallow_local_logins for their testing environment (example: INTEGRATION and TEST)
         The following URLs will reject the user from going directly to the page when the local login on that environment is not allowed:
