@@ -120,11 +120,11 @@ module HL7Messaging
     end
 
     def build_discovery_task_active_record(user:, subset_hash:, site_ids_array:, save: true)
-      build_task_active_record(DiscoveryRequest, user, subset_hash, site_ids_array)
+      build_task_active_record(DiscoveryRequest, user, subset_hash, site_ids_array, save)
     end
 
     def build_checksum_task_active_record(user:, subset_hash:, site_ids_array:, save: true)
-      build_task_active_record(ChecksumRequest, user, subset_hash, site_ids_array)
+      build_task_active_record(ChecksumRequest, user, subset_hash, site_ids_array, save)
     end
 
     #this method is called by the controller.
