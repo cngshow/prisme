@@ -9,8 +9,9 @@ class DiscoveryDetail < ActiveRecord::Base
 
   alias_method(:request, :discovery_request)
 
-  def last_discovery
-    last_detail(discovery_detail_id, :last_discovery_detail, :discovery_detail_id)
+  #For checksum our naming is a little out of sync with discovery.  The referenced detail id is detail_id not checksum_detail_id.  Discovery is discovery_detail_id
+  def last_discovery(save_me = true)
+    last_detail(discovery_detail_id, :last_discovery_detail, :discovery_detail_id, save_me)
   end
 
   # csv = DiscoveryRequest.all.first.details.first.to_csv
