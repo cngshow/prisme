@@ -1,6 +1,7 @@
 <div id="checksum_selection_div">
   <%= render 'layouts/page_title_bar', locals: {title: "Terminology #{@nav_type.titlecase}",
-                                                actions: ["<button type='button' class='btn btn-info btn-sm btn-req-hl7_messaging'>Request #{@nav_type.titlecase}</button>"]} %>
+                                                actions: ["<button type='button' class='btn btn-info btn-sm btn-req-hl7_messaging'>Request #{@nav_type.titlecase}</button>",
+                                                          "<button type='button' class='btn btn-info btn-sm btn-req-hl7_messaging history'>#{@nav_type.titlecase} History</button>"]} %>
   <div style="width: 34%;" class="selection_div">
     <div style='background-color: transparent; height: 50px; padding: 5px;'>
       <div class='section_label'>Subset Selection(s)</div>
@@ -74,7 +75,7 @@
             if (id_split[0] === '<%= VaGroup.name %>') {
                 groups.push(id_split[1]);
             }
-            if (id_split[0] === '<%= VaSite.name %>' && $('#'+id).is(':visible')) {
+            if (id_split[0] === '<%= VaSite.name %>' && $('#' + id).is(':visible')) {
                 sites.push(id_split[1]);
             }
         }
@@ -133,7 +134,7 @@
      {"id":"j2_4","text":"Reactants","icon":true,"li_attr":{"id":"j2_4"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":true,"disabled":false},"data":{},"parent":"Allergy"},
      {"id":"Immunizations","text":"Immunizations","icon":"fa fa-object-group","li_attr":{"id":"Immunizations"},"a_attr":{"href":"#","id":"Immunizations_anchor"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"subset_root"},{"id":"j2_6","text":"Immunization Procedure","icon":true,"li_attr":{"id":"j2_6"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"Immunizations"},{"id":"j2_7","text":"Skin Test","icon":true,"li_attr":{"id":"j2_7"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"Immunizations"},{"id":"Pharmacy","text":"Pharmacy","icon":"fa fa-object-group","li_attr":{"id":"Pharmacy"},"a_attr":{"href":"#","id":"Pharmacy_anchor"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"subset_root"},{"id":"j2_9","text":"Medication Routes","icon":true,"li_attr":{"id":"j2_9"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"Pharmacy"},{"id":"Orders","text":"Orders","icon":"fa fa-object-group","li_attr":{"id":"Orders"},"a_attr":{"href":"#","id":"Orders_anchor"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"subset_root"},{"id":"j2_11","text":"Order Status","icon":true,"li_attr":{"id":"j2_11"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"Orders"},{"id":"j2_12","text":"Nature of Order","icon":true,"li_attr":{"id":"j2_12"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"Orders"},{"id":"TIU","text":"TIU","icon":"fa fa-object-group","li_attr":{"id":"TIU"},"a_attr":{"href":"#","id":"TIU_anchor"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"subset_root"},{"id":"j2_14","text":"TIU Status","icon":true,"li_attr":{"id":"j2_14"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"TIU"},{"id":"j2_15","text":"TIU Doctype","icon":true,"li_attr":{"id":"j2_15"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"TIU"},{"id":"j2_16","text":"TIU Role","icon":true,"li_attr":{"id":"j2_16"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"TIU"},{"id":"j2_17","text":"TIU SMD","icon":true,"li_attr":{"id":"j2_17"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"TIU"},{"id":"j2_18","text":"TIU Service","icon":true,"li_attr":{"id":"j2_18"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"TIU"},{"id":"j2_19","text":"TIU Setting","icon":true,"li_attr":{"id":"j2_19"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"TIU"},{"id":"j2_20","text":"TIU Titles","icon":true,"li_attr":{"id":"j2_20"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"TIU"},{"id":"Vitals","text":"Vitals","icon":"fa fa-object-group","li_attr":{"id":"Vitals"},"a_attr":{"href":"#","id":"Vitals_anchor"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"subset_root"},{"id":"j2_22","text":"Vital Types","icon":true,"li_attr":{"id":"j2_22"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"Vitals"},{"id":"j2_23","text":"Vital Categories","icon":true,"li_attr":{"id":"j2_23"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"Vitals"},{"id":"j2_24","text":"Vital Qualifiers","icon":true,"li_attr":{"id":"j2_24"},"a_attr":{"href":"#"},"state":{"loaded":true,"opened":false,"selected":false,"disabled":false},"data":{},"parent":"Vitals"}]
      */
-    function load_hl7_messaging_results() {
+    function load_hl7_messaging_results(history) {
         var subset_tree = $('#subsets');
         var selected_ids = subset_tree.jstree('get_checked');
         var all_subsets = subset_tree.jstree(true).get_json('#', {'flat': true});
@@ -175,34 +176,46 @@
         }
 
         wait_cursor(true);
-
-        $.post(gon.routes.hl7_messaging_results_table_path, {nav_type: '<%= @nav_type %>', subset_selections: JSON.stringify(tables), site_selections: JSON.stringify(site_selections)}, function (data) {
+        $.post(gon.routes.hl7_messaging_results_table_path, {nav_type: '<%= @nav_type %>', subset_selections: JSON.stringify(tables), site_selections: JSON.stringify(site_selections), history: history}, function (data) {
             <% if @nav_type.eql? 'checksum' %>
-              _checksum_results(data);
+              _checksum_results(data, history);
             <% else %>
-              _discovery_results(data);
+              _discovery_results(data, history);
             <% end %>
-        })
+        });
+
+        var title_div;
+        title_div = $('#checksum_results_div > div.page_title_bar > div.title');
+        if (history) {
+            title_div.text('Checksum - HISTORY');
+        } else {
+            title_div.text('Checksum Summary/Results');
+        }
     }
 
-    function _checksum_results(data) {
+    function _checksum_results(data, history) {
         $('#checksum_results').html(data);
         change_tabs('checksum');
         wait_cursor(false);
-        init_checksum_table_polling();
+
+        if (!history) {
+            init_checksum_table_polling();
+        }
     }
 
-    function _discovery_results(data) {
+    function _discovery_results(data, history) {
         $('#discovery_results').html(data);
         change_tabs('discovery');
         wait_cursor(false);
 
-        $('.<%= @nav_type %>_table').each(function (index, value) {
-            var table_id = $(this).attr('id');
-            setTimeout(function () {
-                checksum_discovery_table_poll(table_id, gon.routes.discovery_request_poll_path);
-            }, 5000);
-        });
+        if (!history) {
+            $('.<%= @nav_type %>_table').each(function (index, value) {
+                var table_id = $(this).attr('id');
+                setTimeout(function () {
+                    checksum_discovery_table_poll(table_id, gon.routes.discovery_request_poll_path);
+                }, 5000);
+            });
+        }
     }
 
     function sites() {
@@ -233,7 +246,7 @@
     }
 
     $(document).ready(function () {
-        $('input[type=radio][name=site_type]').change(function() {
+        $('input[type=radio][name=site_type]').change(function () {
             filter_sites(this.value, true);
         });
 
@@ -248,15 +261,15 @@
                     'data': [<%= raw @group_tree %>, <%= raw @site_tree %>],
                     'themes': {"stripes": true}
                 }
-            }).bind("open_node.jstree", function(event,data){
-                // re-filter the site listing when the site_root is closed and re-opened
-                if (data.node.id === 'site_root') {
-                  filter_sites(get_site_type());
-                }
-            }).bind('loaded.jstree', function(e, data) {
-                console.log("loaded complete....");
-              // invoked after jstree has loaded - call filter sites to get the production sites only based on the selected radio button
-              filter_sites(get_site_type(), true);
+            }).bind("open_node.jstree", function (event, data) {
+            // re-filter the site listing when the site_root is closed and re-opened
+            if (data.node.id === 'site_root') {
+                filter_sites(get_site_type());
+            }
+        }).bind('loaded.jstree', function (e, data) {
+            console.log("loaded complete....");
+            // invoked after jstree has loaded - call filter sites to get the production sites only based on the selected radio button
+            filter_sites(get_site_type(), true);
         });
 
         $('#subsets').jstree(
@@ -285,7 +298,7 @@
             }
 
             // load the results table
-            load_hl7_messaging_results();
+            load_hl7_messaging_results($(this).hasClass('history'));
         });
     });
 </script>

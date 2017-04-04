@@ -1,6 +1,7 @@
 module HL7RequestBase
 
   def sql_template(domain, subset, site_id, base_table, data_column, my_id)
+    my_id = -1 unless my_id
     %(
     select max(a.id) as last_detail_id
     from #{base_table}_DETAILS a, #{base_table}_REQUESTS b

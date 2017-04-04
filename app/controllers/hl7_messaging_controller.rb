@@ -7,12 +7,22 @@ class Hl7MessagingController < ApplicationController
   PREVIOUS_TAG = 'PREVIOUS'
   CURRENT_TAG = 'CURRENT'
 
+  def checksum
+    @nav_type = 'checksum'
+    index
+    render :index
+  end
+
+  def discovery
+    @nav_type = 'discovery'
+    index
+    render :index
+  end
 
   def index
     @active_subsets = subset_tree_data.to_json
     @group_tree = group_tree_data.to_json
     @site_tree = site_tree_data.to_json
-    @nav_type = params['nav']
   end
 
   def subset_tree_data
@@ -48,6 +58,7 @@ class Hl7MessagingController < ApplicationController
   public
   def hl7_messaging_results_table
     nav_type = params[:nav_type]
+    history = boolean(params[:history])
 
     # repackage selected sites
     site_selections = JSON.parse(params[:site_selections])
@@ -71,12 +82,12 @@ class Hl7MessagingController < ApplicationController
 
     if nav_type.eql? 'checksum'
       # build hl7_messaging request active records for display
-      @checksum_results = HL7Messaging.build_checksum_task_active_record(user: prisme_user.user_name, subset_hash: subset_hash, site_ids_array: sites_arr)
-      render partial: 'checksum_results_table'
+      @checksum_results = HL7Messaging.build_checksum_task_active_record(user: prisme_user.user_name, subset_hash: subset_hash, site_ids_array: sites_arr, save: ! history)
+      render partial: 'checksum_results_table', locals: {history: history}
     else
       # build hl7_messaging request active records for display
-      @results = HL7Messaging.build_discovery_task_active_record(user: prisme_user.user_name, subset_hash: subset_hash, site_ids_array: sites_arr)
-      render partial: 'discovery_results_table'
+      @results = HL7Messaging.build_discovery_task_active_record(user: prisme_user.user_name, subset_hash: subset_hash, site_ids_array: sites_arr, save: ! history)
+      render partial: 'discovery_results_table', locals: {history: history}
     end
   end
 
