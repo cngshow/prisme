@@ -120,7 +120,13 @@ module HL7Messaging
     end
 
     def build_discovery_task_active_record(user:, subset_hash:, site_ids_array:, save: true)
-      build_task_active_record(DiscoveryRequest, user, subset_hash, site_ids_array, save)
+      requests = build_task_active_record(DiscoveryRequest, user, subset_hash, site_ids_array, save)
+      unless save
+        requests.each do |r|
+          r.discovery_details= r.details.to_a.map do |d| d.last_discovery(false) end
+        end
+      end
+      requests
     end
 
     def build_checksum_task_active_record(user:, subset_hash:, site_ids_array:, save: true)
