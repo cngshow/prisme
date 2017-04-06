@@ -79,7 +79,7 @@ if (!STFU_MODE || $testing)
 
   #isaac utilities must be loaded after our appenders are set (if they are set.)
   require './lib/isaac_utilities'
-  require './lib/hl7_message'
+  require './lib/hl7/hl7_message'
   java_import 'gov.vha.isaac.ochre.api.LookupService' do |p, c|
     'JLookupService'
   end
