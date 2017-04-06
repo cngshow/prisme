@@ -1,5 +1,4 @@
-got_it = require 'CSV'
-puts "CRIS CRIS -- I GOT IT #{got_it}"
+require 'CSV'
 module HL7Messaging
 
   class DiscoveryCsv

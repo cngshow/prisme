@@ -279,7 +279,7 @@
 					</execution>
 
 					<execution>
-						<id>run discovery diff tests</id>
+						<id>run library unit tests</id>
 						<phase>compile</phase>
 						<goals>
 							<goal>exec</goal>
@@ -288,7 +288,7 @@
 							<jrubyVerbose>true</jrubyVerbose>
 							<jrubyJvmArgs>-Djava.awt.headless=true</jrubyJvmArgs>
 							<command>rake</command>
-							<args>TEST=./test/unit/lib/discovery_diff_test.rb</args>
+							<args>test:lib_unit</args>
 						</configuration>
 					</execution>
 
