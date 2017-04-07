@@ -3,6 +3,7 @@ require './lib/hl7/discovery_diff'
 
 #to run
 #rake TEST=./test/unit/lib/discovery_diff_test.rb
+#rake test:lib_unit
 class DiscoveryDiffTest < Test::Unit::TestCase
   include HL7Messaging
 
@@ -58,6 +59,12 @@ class DiscoveryDiffTest < Test::Unit::TestCase
   def test_no_diffs
     assert(@same_one.fetch_diffs(discovery_csv: @same_two).nil?, "There should not be diffs!")
     assert(@same_two.fetch_diffs(discovery_csv: @same_one).nil?, "There should not be diffs!")
+  end
+
+  def test_status_field_valid
+    leftovers = @alpha_1.discovery_data.clone.map do |e| e.last end.reject do |e| e.eql? HL7Messaging::DiscoveryCsv::ACTIVE_FLAG end
+    leftovers.reject! do |e| e.eql? HL7Messaging::DiscoveryCsv::INACTIVE_FLAG end
+    assert(leftovers.empty?, "We have invalid statuses in our data!  #{leftovers}")
   end
 
 end
