@@ -67,13 +67,19 @@ module HL7Messaging
       JIsaacLibrary::JHL7Messaging.isRunning
     end
 
+    #status is always last
     def discovery_hl7_to_csv(discovery_hl7:)
       return nil if discovery_hl7.nil?
       site_discovery = JIsaacLibrary::JHL7Messaging.convertDiscoveryText(discovery_hl7)
       csv = ''
-      csv << site_discovery.getHeaders.map do |e| "\"#{e}\"" end.join(',') << "\n"
-      site_discovery.getValues.each do |line|
-        csv << "#{line.map do |e| "\"#{e}\"" end.join(',')}\n"
+      headers = site_discovery.getHeaders.to_a
+      status_loc = headers.index("Status") #move status to last
+      headers.insert(headers.length - 1, headers.delete_at(status_loc))#move status to last
+      csv << headers.map do |e| "\"#{e}\"" end.join(',') << "\n"
+      site_discovery.getValues.each do |java_list|
+        values = java_list.to_a
+        values.insert(values.length - 1, values.delete_at(status_loc))#move status to last
+        csv << "#{values.map do |e| "\"#{e}\"" end.join(',')}\n"
       end
       csv
     end

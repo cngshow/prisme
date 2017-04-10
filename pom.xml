@@ -265,7 +265,7 @@
 					</execution>
 
 					<execution>
-						<id>run tests</id>
+						<id>run integration tests</id>
 						<phase>compile</phase>
 						<goals>
 							<goal>exec</goal>
@@ -275,6 +275,20 @@
 							<jrubyJvmArgs>-Djava.awt.headless=true</jrubyJvmArgs>
 							<command>rake</command>
 							<args>test:integration</args>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>run library unit tests</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<jrubyVerbose>true</jrubyVerbose>
+							<jrubyJvmArgs>-Djava.awt.headless=true</jrubyJvmArgs>
+							<command>rake</command>
+							<args>test:lib_unit</args>
 						</configuration>
 					</execution>
 
