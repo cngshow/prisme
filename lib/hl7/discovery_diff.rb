@@ -5,6 +5,8 @@ module HL7Messaging
 
     ACTIVE_FLAG = :"1"
     INACTIVE_FLAG = :"0"
+    TERM = :Term
+    DESIGNATION_NAME = :designation_name
 
     attr_reader :discovery_data, :headers
 
@@ -127,6 +129,8 @@ module HL7Messaging
       def initialize(discovery_one_current, discovery_two_comparing)
         @current = discovery_one_current
         @comparing = discovery_two_comparing
+        @current_term_index = discovery_one_current.headers.find_index(DiscoveryCsv::TERM)
+        @comparing_term_index = discovery_two_comparing.headers.find_index(DiscoveryCsv::TERM)
         @current_vuids = current.discovery_data.map(&:first)
         @comparing_vuids = comparing.discovery_data.map(&:first)
         @left_only_vuids = @current_vuids - @comparing_vuids
@@ -153,6 +157,7 @@ module HL7Messaging
           current_row = rows.first
           comparing_row = rows.last
           vuid = current_row.first
+          term = current_row[@current_term_index]
           current_row_hash = {}
           current.headers.each_with_index do |header, index|
             current_row_hash[header] = current_row[index]
@@ -185,6 +190,7 @@ module HL7Messaging
             @diff_data[vuid][header] << nil
             @diff_data[vuid][header] << comparing_row_hash[header]
           end
+          @diff_data[vuid][DiscoveryCsv::DESIGNATION_NAME] = term
         end
       end
 
