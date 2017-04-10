@@ -77,15 +77,15 @@ class DiscoveryDiffTest < Test::Unit::TestCase
       active_only_count +=1 if e.last == HL7Messaging::DiscoveryCsv::ACTIVE_FLAG
       inactive_only_count +=1 if e.last == HL7Messaging::DiscoveryCsv::INACTIVE_FLAG
     end
-    assert(inactive_only_count == 0, "Filtering out inactive flags failed")
+    assert(inactive_only_count == 0, "Filtering out inactive flags failed. inactive_only_count: #{inactive_only_count}")
     active_only_count = 0
     inactive_only_count = 0
     active_and_inactive.discovery_data.each do |e|
       active_only_count +=1 if e.last == HL7Messaging::DiscoveryCsv::ACTIVE_FLAG
       inactive_only_count +=1 if e.last == HL7Messaging::DiscoveryCsv::INACTIVE_FLAG
     end
-    assert(inactive_only_count != 0, "Allowing inactive flags failed")
-    assert(active_only_count != 0, "Allowing active flags failed")
+    assert(inactive_only_count != 0, "Allowing inactive flags failed. inactive_only_count: #{inactive_only_count}")
+    assert(active_only_count != 0, "Allowing active flags failed. active_only_count: #{active_only_count}")
   end
 
 end
