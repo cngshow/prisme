@@ -3,16 +3,16 @@ require './lib/jars'
 PrismeJars.load
 require './lib/rails_common/util/rescuable'
 require './lib/isaac_utilities'
-require './lib/hl7/hl7_message'
-require './lib/hl7/discovery_diff'
-require('./config/hl7/discovery_mocks/discovery_mock')
+require './lib/hl7/hl7_message' #require me?
+require './lib/hl7/discovery_diff' #require me Greg
+require('./config/hl7/discovery_mocks/discovery_mock')#require me Greg
 
 
 #to run
 #rake TEST=./test/unit/lib/discovery_diff_test.rb
 #rake test:lib_unit
 class DiscoveryDiffTest < Test::Unit::TestCase
-  include HL7Messaging
+  include HL7Messaging #mix me in Greg
 
   def setup
     alpha_1_string = File.open('./test/unit/lib/hl7_test_data/discovery_alpha_1.csv').read
@@ -100,10 +100,11 @@ class DiscoveryDiffTest < Test::Unit::TestCase
     discoveries = Dir.glob('./config/hl7/discovery_mocks/*.discovery')
     discoveries.each do |disc_file|
       discovery_text = File.open(disc_file, 'rb').read #discovery text is what you find in the model
-      csv_string = HL7Messaging.discovery_hl7_to_csv(discovery_hl7: discovery_text)
+      csv_string = HL7Messaging.discovery_hl7_to_csv(discovery_hl7: discovery_text) # you will call to_csv off the model.
       hl7_csv = DiscoveryCsv.new(hl7_csv_string: csv_string)
       mock = hl7_csv.diff_mock(right_diff_count: rdc, common_vuid_diff_count: 1, common_vuid_same_count: 1)
       diffs = hl7_csv.fetch_diffs(discovery_csv: mock).diff
+      # csv = DiscoveryCsv.new(some_model.to_csv)
       right_count = 0
       diffs.keys.each do |k|
         if diffs[k].is_a? Array
@@ -113,5 +114,36 @@ class DiscoveryDiffTest < Test::Unit::TestCase
       assert(right_count <= rdc, "Too many right diffs found, found #{right_count}")
     end
   end
+=begin
+   #filter lefts out
+  #diffs.reject do |k,v| v.first.eql?(:left_only) if v.is_a? Array end
 
+build a diff
+
+require './lib/hl7/discovery_diff' #require me Greg
+require('./config/hl7/discovery_mocks/discovery_mock')#require me Greg
+include HL7Messaging #mix me in Greg
+
+discoveries = Dir.glob('./config/hl7/discovery_mocks/*.discovery')
+reactants = File.open(discoveries.first, 'rb').read
+reactions = File.open(discoveries.last, 'rb').read
+reactants_csv_string = HL7Messaging.discovery_hl7_to_csv(discovery_hl7: reactants)
+reactions_csv_string = HL7Messaging.discovery_hl7_to_csv(discovery_hl7: reactions)
+reactants_csv = DiscoveryCsv.new(hl7_csv_string: reactants_csv_string)
+reactions_csv = DiscoveryCsv.new(hl7_csv_string: reactions_csv_string)
+rdc = 1
+#this builds a reactants mock with the same number of columns
+reactants_mock = reactants_csv.diff_mock(right_diff_count: rdc, common_vuid_diff_count: 1, common_vuid_same_count: 1)
+
+
+
+#get the diff hashes
+reactants_against_reactants_diff  = reactants_csv.fetch_diffs(discovery_csv: reactants_mock).diff
+
+#this builds a reactions mock with the same number of columns
+reactions_mock = reactions_csv.diff_mock(right_diff_count: rdc, common_vuid_diff_count: 1, common_vuid_same_count: 1)
+#different columns (if reactants and reactions have different columns, might need to pick another mock file)
+reactants_against_reactions_diff = reactants_csv.fetch_diffs(discovery_csv: reactions_mock).diff
+
+=end
 end

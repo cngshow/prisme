@@ -31,6 +31,7 @@ module HL7Messaging
 
     #returns a discovery csv
     # common vuid diff count variable makes a weak attempt to find common vuids.  The smaller your csv the less likely you get that many.
+    #right_diff_count, common_vuid_diff_count is up to that number, common_vuid_same_count is 0 - number
     def diff_mock(right_diff_count: 10, common_vuid_diff_count: 10, common_vuid_same_count: 10)
       mock = DiscoveryCsv.new(hl7_csv_string: 'vuid,alpha,beta,status')
       mock_discovery_data_right = []
