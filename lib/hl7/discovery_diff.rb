@@ -11,7 +11,7 @@ module HL7Messaging
     def initialize(hl7_csv_string:, ignore_inactive: false)
       @discovery_data = hl7_csv_string.split("\n").map do |line|
         parsed = CSV.parse_line(line) rescue CSV.parse_line(line.gsub("\"", '|'), quote_char: '|')
-        parsed.map(&:strip).map do |e|
+        parsed = parsed.map(&:strip).map do |e|
           e.gsub('"', '')
         end.map(&:to_sym)
         parsed
@@ -31,7 +31,7 @@ module HL7Messaging
 
     #returns a discovery csv
     # common vuid diff count variable makes a weak attempt to find common vuids.  The smaller your csv the less likely you get that many.
-    def diff_mock(right_diff_count: 10, common_vuid_diff_count: 10)
+    def diff_mock(right_diff_count: 10, common_vuid_diff_count: 10, common_vuid_same_count: 10)
       mock = DiscoveryCsv.new(hl7_csv_string: 'vuid,alpha,beta,status')
       mock_discovery_data_right = []
       common_discovery_data = []
@@ -43,6 +43,11 @@ module HL7Messaging
         e = Array.new discovery_data.sample
         e[1] = (e[1].to_s + '_different').to_sym if e[1]
         e[2] = (e[2].to_s + '_different').to_sym if e[2]
+        common_discovery_data << e unless seen_vuids[e.first]
+        seen_vuids[e.first] = true
+      end
+      common_vuid_same_count.times do
+        e = Array.new discovery_data.sample
         common_discovery_data << e unless seen_vuids[e.first]
         seen_vuids[e.first] = true
       end
@@ -230,8 +235,9 @@ d = @alpha_1.fetch_diffs(discovery_csv: @beta_2).diff
 d[:"5538527"]
 
 Fetch diff with mocks:
+load('./lib/hl7/discovery_diff.rb')
 @alpha_1 = DiscoveryCsv.new(hl7_csv_string: alpha_1_string)
-m = @alpha_1.diff_mock(right_diff_count:1, common_vuid_diff_count: 1)
-m.diff
+m = @alpha_1.diff_mock(right_diff_count:1, common_vuid_diff_count: 1, common_vuid_same_count: 1)
+@alpha_1.fetch_diffs(discovery_csv: m).diff
 #at this point check /tmp and diff
 =end

@@ -3,11 +3,8 @@ $CLASSPATH << "#{Rails.root}/lib/rails_common/logging/testLogConfig" if $rake
 ##
 # Do common initialization tasks in prisme
 #
-jars = Dir.glob('./lib/jars/*.jar')
-jars = Dir.glob('./lib/jars/*.jar')
-jars.each do |jar|
-  require jar
-end
+require './lib/jars'
+PrismeJars.load
 require './lib/rails_common/util/rescuable'
 require './lib/rails_common/logging/open_logging'
 require './lib/rails_common/logging/logging'

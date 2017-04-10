@@ -1,5 +1,12 @@
 require 'test/unit'
+require './lib/jars'
+PrismeJars.load
+require './lib/rails_common/util/rescuable'
+require './lib/isaac_utilities'
+require './lib/hl7/hl7_message'
 require './lib/hl7/discovery_diff'
+require('./config/hl7/discovery_mocks/discovery_mock')
+
 
 #to run
 #rake TEST=./test/unit/lib/discovery_diff_test.rb
@@ -86,6 +93,25 @@ class DiscoveryDiffTest < Test::Unit::TestCase
     end
     assert(inactive_only_count != 0, "Allowing inactive flags failed. inactive_only_count: #{inactive_only_count}")
     assert(active_only_count != 0, "Allowing active flags failed. active_only_count: #{active_only_count}")
+  end
+
+  def test_end_to_end
+    rdc = 1
+    discoveries = Dir.glob('./config/hl7/discovery_mocks/*.discovery')
+    discoveries.each do |disc_file|
+      discovery_text = File.open(disc_file, 'rb').read #discovery text is what you find in the model
+      csv_string = HL7Messaging.discovery_hl7_to_csv(discovery_hl7: discovery_text)
+      hl7_csv = DiscoveryCsv.new(hl7_csv_string: csv_string)
+      mock = hl7_csv.diff_mock(right_diff_count: rdc, common_vuid_diff_count: 1, common_vuid_same_count: 1)
+      diffs = hl7_csv.fetch_diffs(discovery_csv: mock).diff
+      right_count = 0
+      diffs.keys.each do |k|
+        if diffs[k].is_a? Array
+          right_count += 1 if diffs[k].first.eql? :right_only
+        end
+      end
+      assert(right_count <= rdc, "Too many right diffs found, found #{right_count}")
+    end
   end
 
 end
