@@ -8,14 +8,15 @@ module HL7Messaging
 
     attr_reader :discovery_data, :headers
 
-    def initialize(hl7_csv_string:)
-      @discovery_data = hl7_csv_string.split("\n").map do |e|
-        parsed = CSV.parse_line(e) rescue CSV.parse_line(e.gsub("\"", '|'), quote_char: '|')
+    def initialize(hl7_csv_string:, ignore_inactive: false)
+      @discovery_data = hl7_csv_string.split("\n").map do |line|
+        parsed = CSV.parse_line(line) rescue CSV.parse_line(line.gsub("\"", '|'), quote_char: '|')
         (parsed).map(&:strip).map do |e| e.gsub('"', '') end.map(&:to_sym)
       end
       @headers = @discovery_data.shift
       raise ArgumentError.new("Invalid hl7_csv_string. Status header is missing.") unless headers.last.to_s.casecmp('status').zero?
       raise ArgumentError.new("Invalid hl7_csv_string. VUID header is missing.") unless headers.first.to_s.casecmp('vuid').zero?
+      @discovery_data.reject! do |e| e.last == INACTIVE_FLAG end if ignore_inactive
       @discovery_data.sort! do |a,b| a.first <=> b.first end
       discovery_data.freeze
       headers.freeze

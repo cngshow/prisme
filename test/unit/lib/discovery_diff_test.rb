@@ -67,4 +67,25 @@ class DiscoveryDiffTest < Test::Unit::TestCase
     assert(leftovers.empty?, "We have invalid statuses in our data!  #{leftovers}")
   end
 
+  def test_ignore_inactive
+    inactive_active_string = File.open('./test/unit/lib/hl7_test_data/inactive_active.csv').read
+    active_only = DiscoveryCsv.new(hl7_csv_string: inactive_active_string, ignore_inactive: true)
+    active_and_inactive = DiscoveryCsv.new(hl7_csv_string: inactive_active_string)
+    active_only_count = 0
+    inactive_only_count = 0
+    active_only.discovery_data.each do |e|
+      active_only_count +=1 if e.last == HL7Messaging::DiscoveryCsv::ACTIVE_FLAG
+      inactive_only_count +=1 if e.last == HL7Messaging::DiscoveryCsv::INACTIVE_FLAG
+    end
+    assert(inactive_only_count == 0, "Filtering out inactive flags failed")
+    active_only_count = 0
+    inactive_only_count = 0
+    active_and_inactive.discovery_data.each do |e|
+      active_only_count +=1 if e.last == HL7Messaging::DiscoveryCsv::ACTIVE_FLAG
+      inactive_only_count +=1 if e.last == HL7Messaging::DiscoveryCsv::INACTIVE_FLAG
+    end
+    assert(inactive_only_count != 0, "Allowing inactive flags failed")
+    assert(active_only_count != 0, "Allowing active flags failed")
+  end
+
 end
