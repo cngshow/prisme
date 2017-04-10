@@ -11,15 +11,46 @@ module HL7Messaging
     def initialize(hl7_csv_string:, ignore_inactive: false)
       @discovery_data = hl7_csv_string.split("\n").map do |line|
         parsed = CSV.parse_line(line) rescue CSV.parse_line(line.gsub("\"", '|'), quote_char: '|')
-        (parsed).map(&:strip).map do |e| e.gsub('"', '') end.map(&:to_sym)
+        parsed.map(&:strip).map do |e|
+          e.gsub('"', '')
+        end.map(&:to_sym)
+        parsed
       end
       @headers = @discovery_data.shift
       raise ArgumentError.new("Invalid hl7_csv_string. Status header is missing.") unless headers.last.to_s.casecmp('status').zero?
       raise ArgumentError.new("Invalid hl7_csv_string. VUID header is missing.") unless headers.first.to_s.casecmp('vuid').zero?
-      @discovery_data.reject! do |e| e.last == INACTIVE_FLAG end if ignore_inactive
-      @discovery_data.sort! do |a,b| a.first <=> b.first end
+      @discovery_data.reject! do |e|
+        e.last == INACTIVE_FLAG
+      end if ignore_inactive
+      @discovery_data.sort! do |a, b|
+        a.first <=> b.first
+      end
       discovery_data.freeze
       headers.freeze
+    end
+
+    #returns a discovery csv
+    # common vuid diff count variable makes a weak attempt to find common vuids.  The smaller your csv the less likely you get that many.
+    def diff_mock(right_diff_count: 10, common_vuid_diff_count: 10)
+      mock = DiscoveryCsv.new(hl7_csv_string: 'vuid,alpha,beta,status')
+      mock_discovery_data_right = []
+      common_discovery_data = []
+      seen_vuids = {}
+      right_diff_count.times do
+        mock_discovery_data_right << mock_new_elems
+      end
+      common_vuid_diff_count.times do
+        e = Array.new discovery_data.sample
+        e[1] = (e[1].to_s + '_different').to_sym if e[1]
+        e[2] = (e[2].to_s + '_different').to_sym if e[2]
+        common_discovery_data << e unless seen_vuids[e.first]
+        seen_vuids[e.first] = true
+      end
+      mock.set_headers headers
+      mock.set_discovery_data(common_discovery_data + mock_discovery_data_right)
+      self.to_tmp_file("original.csv")
+      mock.to_tmp_file("mock.csv")
+      mock
     end
 
     def fetch_diffs(discovery_csv:)
@@ -50,6 +81,39 @@ module HL7Messaging
       headers.eql?(other.headers) && discovery_data.eql?(other.discovery_data)
     end
 
+    def to_tmp_file(name)
+      content = headers.map do |e|
+        "\"#{e}\""
+      end.join(',') + "\n"
+      discovery_data.each do |line|
+        line = line.map do |e|
+          "\"#{e}\""
+        end
+        line = line.join(',') + "\n"
+        content << line
+      end
+      File.write("./tmp/#{name}", content)
+    end
+
+    protected
+
+    def mock_new_elems()
+      random_elem = Array.new discovery_data.sample
+      r_string = '_' + [*('a'..'z'), *('0'..'9')].shuffle[0, 8].join
+      random_elem[0] = (random_elem[0].to_s + r_string +'_m').to_sym
+      random_elem
+    end
+
+    def set_headers(headers)
+      @headers = headers
+    end
+
+    def set_discovery_data(data)
+      @discovery_data = data
+    end
+
+    public
+
     class DiscoveryDiffs
 
       attr_reader :current, :comparing
@@ -64,8 +128,12 @@ module HL7Messaging
         @common_vuids = @current_vuids & @comparing_vuids
         @different_common_rows = []
         @common_vuids.each do |vuid|
-          current_row = @current.discovery_data.select do |row| row.first.eql? vuid end.first
-          comparing_row = @comparing.discovery_data.select do |row| row.first.eql? vuid end.first
+          current_row = @current.discovery_data.select do |row|
+            row.first.eql? vuid
+          end.first
+          comparing_row = @comparing.discovery_data.select do |row|
+            row.first.eql? vuid
+          end.first
           @different_common_rows << [current_row, comparing_row] unless current_row.eql? comparing_row
         end
         @diff_data = {}
@@ -108,25 +176,29 @@ module HL7Messaging
           right_only_headers.each do |header|
             @diff_data[vuid] ||= {}
             @diff_data[vuid][header] ||= []
-            @diff_data[vuid][header] <<  nil
+            @diff_data[vuid][header] << nil
             @diff_data[vuid][header] << comparing_row_hash[header]
           end
         end
       end
 
       def left_new_row(vuid)
-        @current.discovery_data.select do |row| row.first.eql? vuid end.first
+        @current.discovery_data.select do |row|
+          row.first.eql? vuid
+        end.first
       end
 
       def right_new_row(vuid)
-        @comparing.discovery_data.select do |row| row.first.eql? vuid end.first
+        @comparing.discovery_data.select do |row|
+          row.first.eql? vuid
+        end.first
       end
 
       def headers_aligned?
         @current.headers.eql? @comparing.headers
       end
 
-      #call the methods left and right off of this object.
+      #the diff data structure
       def diff
         @diff_data.deep_dup
       end
@@ -156,4 +228,10 @@ d = @alpha_1.fetch_diffs(discovery_csv: @alpha_2)
 
 d = @alpha_1.fetch_diffs(discovery_csv: @beta_2).diff
 d[:"5538527"]
+
+Fetch diff with mocks:
+@alpha_1 = DiscoveryCsv.new(hl7_csv_string: alpha_1_string)
+m = @alpha_1.diff_mock(right_diff_count:1, common_vuid_diff_count: 1)
+m.diff
+#at this point check /tmp and diff
 =end
