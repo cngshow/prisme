@@ -73,6 +73,10 @@
 					<groupId>javax.xml.bind</groupId>
 					<artifactId>jaxb-api</artifactId>
 				</exclusion>
+					<exclusion>  <!-- Cargo is using a nasty old version that conflicts with things. -->
+					<groupId>com.sun.xml.bind</groupId>
+					<artifactId>jaxb-impl</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -107,11 +111,6 @@
 			<groupId>gov.vha.isaac.ochre.modules</groupId>
 			<artifactId>hl7-messaging</artifactId>
 			<version>${isaac.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.xml.bind</groupId>
-			<artifactId>jaxb-core</artifactId>
-			<version>2.2.11</version>
 		</dependency>
 
 		<!-- Enable log4j, route slf4j and jdk logging into log4j -->

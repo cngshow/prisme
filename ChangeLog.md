@@ -41,6 +41,7 @@ This changelog summarizes changes and fixes which are a part of each revision.  
         * service haveged start 
         * to check your entropy: cat /proc/sys/kernel/random/entropy_avail
         * restart tomcat (to clear out old JRuby libs)
+    * Ban / remove more jaxb libraries to attempt to resolve the intermittent deployment issue 
         
 * 2017/03/21 - 3.0.1
     * Revert changes related to PRISME.war display name, which had unintended consequences
