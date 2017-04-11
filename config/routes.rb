@@ -5,7 +5,8 @@ Rails.application.routes.draw do
     end
   end
 
-  get 'hl7_messaging/index', as: 'hl7_messaging'
+  get 'hl7_messaging/checksum', as: 'checksum'
+  get 'hl7_messaging/discovery', as: 'discovery'
   get 'hl7_messaging/discovery_csv', as: 'discovery_csv'
   get 'hl7_messaging/retrieve_sites'
   get 'hl7_messaging/checksum_request_poll', as: 'checksum_request_poll'
@@ -24,6 +25,7 @@ Rails.application.routes.draw do
   get 'welcome/check_isaac_dependency', as: :check_isaac_dependency
 
   get 'utilities/warmup'
+  get 'utilities/time_stats'
   get 'utilities/browser_tz_offset'
   get 'utilities/seed_services'
   get 'utilities/prisme_config'

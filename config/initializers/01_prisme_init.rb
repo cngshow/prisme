@@ -3,11 +3,8 @@ $CLASSPATH << "#{Rails.root}/lib/rails_common/logging/testLogConfig" if $rake
 ##
 # Do common initialization tasks in prisme
 #
-jars = Dir.glob('./lib/jars/*.jar')
-jars = Dir.glob('./lib/jars/*.jar')
-jars.each do |jar|
-  require jar
-end
+require './lib/jars'
+PrismeJars.load
 require './lib/rails_common/util/rescuable'
 require './lib/rails_common/logging/open_logging'
 require './lib/rails_common/logging/logging'
@@ -79,7 +76,7 @@ if (!STFU_MODE || $testing)
 
   #isaac utilities must be loaded after our appenders are set (if they are set.)
   require './lib/isaac_utilities'
-  require './lib/hl7_message'
+  require './lib/hl7/hl7_message'
   java_import 'gov.vha.isaac.ochre.api.LookupService' do |p, c|
     'JLookupService'
   end
@@ -105,6 +102,7 @@ begin
 rescue
   $log.warn("Could not read the version file!")
 end
+$log.always("The JRuby version is #{JRUBY_VERSION}")
 PRISME_VERSION = version
 PRISME_ENVIRONMENT = PrismeUtilities.aitc_environment.fetch(Socket.gethostname) rescue 'DEV_BOX'
 $log.always { PrismeLogEvent.notify(PrismeLogEvent::LIFECYCLE_TAG, "#{Rails.application.class.parent_name} coming up!  The version is #{PRISME_VERSION}") }

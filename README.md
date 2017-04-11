@@ -2,12 +2,12 @@
 
 You need to first get JRuby, here is the link to the 64 bit msi installer:
 
-https://s3.amazonaws.com/jruby.org/downloads/9.0.4.0/jruby_windows_x64_9_0_4_0.exe
+https://s3.amazonaws.com/jruby.org/downloads/9.1.8.0/jruby_windows_x64_9_1_8_0.exe
 
 Get JRuby's complete jar file.  You can put it anywhere you want just remember where you put it!
 I put it in the directory where JRuby is installed.
 
-https://s3.amazonaws.com/jruby.org/downloads/9.0.4.0/jruby-complete-9.0.4.0.jar
+https://s3.amazonaws.com/jruby.org/downloads/9.1.8.0/jruby-complete-9.1.8.0.jar
 
 In rails root you will find a file called setup.bat.template.
 Move this file to setup.bat, then you will need to modify the following environment variables:
@@ -48,9 +48,21 @@ In RubyMine you may see a message concerning rails_common being under source con
 
 Now you need to run (after installing maven)
 ```
-mvn -U initialize
+jars.bat
 ```
 This will set up the ISAAC stuff and downloads all of the necessary jars
+
+run:
+
+```
+startup.bat
+```
+
+To bring up the server
+
+BTW, on windows you will have to install:<br><br>
+**Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files**
+<br><br>Google has plenty of help for this install on your jdk/jre.
 
 <br>
 <hr>
@@ -138,7 +150,7 @@ This should run the migrations creating all of the tables in your configured Ora
 8 - On AITC boxes, move the oracle_database.yml file to /app/prismeData if you are using Oracle. Otherwise the H2 database will be the default.
 
 What if you want to use H2?
-The standard database.yml file is configured for the H2 databse that was migrated into your war.  If you are deploying to a standard AITC box, just"
+The standard database.yml file is configured for the H2 database that was migrated into your war.  If you are deploying to a standard AITC box, just"
 ```
 cd /app/prismeData
 mv oracle_database.yml oracle_database.yml.bak
@@ -176,64 +188,6 @@ There is seed data for the following environments:
 
 <p>If any of the data specifying the locations or credentials for any of these environments change then we will need to update the seed files accordingly. If, after running for your environment, you are not connecting to a given service then go into services and update the url(s) and user credentials and re-test.</p> 
 
-<h2>Notes for deployment to production</h2>
-
-```
-set RAILS_ENV=production
-```
-
-```
-set RAILS_SERVE_STATIC_FILES=true (if and only if you do not have apache or nginx serving static files)
-```
-
-```
-rake assets:precompile
-```
-
-
-How do you run this in a J2EE server like GlassFish?  Here are some GlassFish instructions!  These instructions have been tested on GlassFish version 4.1.1.  You can obtain it here:
-
-https://glassfish.java.net/download.html
-
-Follow the install instructions on the site (you pretty much unzip it).
-
-Before bringing up GlassFish, ensure that <b>jruby-complete-9.0.4.0.jar</b> is placed into the domain you intend to deploy your application.  In my case, on my box, in the directory:
-```
-C:\work\ETS\glassfish\glassfish4\glassfish\domains\domain1\lib\ext
-```
-
-You will want to bring GlassFish up via:
-```
-glassfish4/bin/asadmin start-domain
-```
-
-GlassFish deploys war files, so we will end up converting our rails app into a war file using the warbler gem.  Before running warbler though you need to run the asset pipeline to properly set up the application's javascript, css, and images for the war file.  In addition to that, if you intend to have a context root other than '/' you need to tell the asset pipeline!  By default the  the context root will be 'ets_tooling', so you should do this (from rails root):
-
-```
-set RAILS_RELATIVE_URL_ROOT=/rails_prisme
-```
-
-Then run the asset pipeline:
-```
-rake assets:precompile
-```
-
-Note:  Warbler uses 'production' as the default rails environment if you haven't set the appropriate environment variable.  Thus, if you wish to build a war file that defaults to test or development before running warble do this:
-```
-set RAILS_ENV=test
-```
-
-
-Now you can run warbler to generate your war:
-
-```
-warble
-```
-
-
-You will have a war file named rails_prisme.war.  Deploy it to GlassFish!!
-
-http://localhost:4848/common/index.jsf
 
 <hr>
 <a href="#roles">Roles</a>
@@ -323,3 +277,31 @@ public class RoleFetchSample {
 }
 
 ```
+
+<hr>
+<h1>Special routes</h1>
+If you are on the homepage, appending the following to your url:<br>
+
+**/utilities/warmup**
+
+will take you to prisme's warmup page.  You would call this whenever you restart the Apache SSOI server (not Prisme).
+This will open a page that will, via ajax, motivate 500 http(s) requests to get Apache's workers warm and toasty. 
+Obviously, this will not work if you hit prisme locally.  Prisme must be hit through SSOI.
+This page has another nice feature.  The page it reloads 500 times show all the header information
+prisme gets from SSOI (including any others).  If you want to snoop on SSOI head here.
+
+Appending:<br>
+
+**/utilities/time_stats**
+
+This page will show you two statistics:<br><br>
+
+<ol>
+    <li>Request Time in Apache -- How much time elapsed between apache getting the request from your browser to apache placing the headers on the wire.
+    If this time is large, SSOI may be to blame.</li>
+    <li>Time from Apache to Rails -- The time Apache received the request to the time rails recieved it.  It does not include the time Rails spent rendering the page. If the other statistic is small suspect network latency.</li>
+
+
+ 
+
+

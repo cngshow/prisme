@@ -15,14 +15,14 @@ development:
     #url: jdbc:oracle:thin:@<hostname>:<port>:<sid>
     #to ask oracle it's sid:  select instance from v$thread;
   username: rails_development
-  password: rails
+  password: "real password here"
 test:
   <<: *default
   url: jdbc:oracle:thin:@localhost:1521:xe
      #url: jdbc:oracle:thin:@<hostname>:<port>:<sid>
      #to ask oracle it's sid:  select instance from v$thread;
   username: rails_development
-  password: rails
+  password: "real password here"
 
 production:
   <<: *default
@@ -30,7 +30,7 @@ production:
       #url: jdbc:oracle:thin:@<hostname>:<port>:<sid>
       #to ask oracle it's sid:  select instance from v$thread;
   username: rails_development
-  password: rails
+  password: "real password here"
 
 
 # create a user in oracle:

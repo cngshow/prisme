@@ -8,12 +8,12 @@
 	<parent>
 		<groupId>gov.vha.isaac.ochre</groupId>
 		<artifactId>isaac-parent</artifactId>
-		<version>3.42</version><!--TODO Eliminate Snapshot if present -->
+		<version>3.43</version><!--TODO Eliminate Snapshot if present -->
 	</parent>
 
 	<groupId>gov.vha.isaac.gui.rails</groupId>
 	<artifactId>rails_prisme</artifactId>
-	<version>3.0.1</version><!--TODO THIS IS THE ONLY PLACE SNAPSHOT CAN EXIST BEFORE MAKING A RELEASE!!-->
+	<version>3.1</version><!--TODO THIS IS THE ONLY PLACE SNAPSHOT CAN EXIST BEFORE MAKING A RELEASE!!-->
 	<packaging>pom</packaging>
 
 	<name>ISAAC Rails PRISME</name>
@@ -23,9 +23,9 @@
 	</description>
 
 	<properties>
-		<rails_common.version>1.63</rails_common.version> <!--TODO Put new rails common version here if it has been changed -->
+		<rails_common.version>1.64</rails_common.version> <!--TODO Put new rails common version here if it has been changed -->
 		<!--Open up the assembly.xml file in rails common if new directories are added. -->
-		<isaac.version>3.42</isaac.version><!--TODO Eliminate Snapshot if present -->
+		<isaac.version>3.43</isaac.version><!--TODO Eliminate Snapshot if present -->
 		<!-- railsMode is automatically set to 'test' or 'production' - 'test' if the version number ends with '-SNAPSHOT'
 		or 'production' otherwise.	See ant execution below-->
 	</properties>
@@ -38,7 +38,7 @@
 		<dependency>
 			<groupId>org.jruby</groupId>
 			<artifactId>jruby-complete</artifactId>
-			<version>9.0.4.0</version>
+			<version>9.1.8.0</version>
 		</dependency>
 		<dependency>
 			<groupId>rubygems</groupId>
@@ -72,6 +72,10 @@
 				<exclusion>  <!-- Cargo is using a nasty old version that conflicts with things. -->
 					<groupId>javax.xml.bind</groupId>
 					<artifactId>jaxb-api</artifactId>
+				</exclusion>
+					<exclusion>  <!-- Cargo is using a nasty old version that conflicts with things. -->
+					<groupId>com.sun.xml.bind</groupId>
+					<artifactId>jaxb-impl</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -107,11 +111,6 @@
 			<groupId>gov.vha.isaac.ochre.modules</groupId>
 			<artifactId>hl7-messaging</artifactId>
 			<version>${isaac.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.xml.bind</groupId>
-			<artifactId>jaxb-core</artifactId>
-			<version>2.2.11</version>
 		</dependency>
 
 		<!-- Enable log4j, route slf4j and jdk logging into log4j -->
@@ -265,7 +264,7 @@
 					</execution>
 
 					<execution>
-						<id>run tests</id>
+						<id>run integration tests</id>
 						<phase>compile</phase>
 						<goals>
 							<goal>exec</goal>
@@ -275,6 +274,20 @@
 							<jrubyJvmArgs>-Djava.awt.headless=true</jrubyJvmArgs>
 							<command>rake</command>
 							<args>test:integration</args>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>run library unit tests</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<jrubyVerbose>true</jrubyVerbose>
+							<jrubyJvmArgs>-Djava.awt.headless=true</jrubyJvmArgs>
+							<command>rake</command>
+							<args>test:lib_unit</args>
 						</configuration>
 					</execution>
 

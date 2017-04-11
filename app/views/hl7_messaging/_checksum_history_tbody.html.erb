@@ -1,0 +1,35 @@
+<%
+  subset = nil
+  striped = 'transparent'
+  done, req_id = [], nil
+
+  checksum_details.each do |row|
+    done << row.done?
+    req_id ||= row.checksum_request.id
+    last = row.last_checksum(false)
+
+    unless row.subset.eql?(subset)
+      subset = row.subset
+      striped = (striped.eql?('transparent') ? '#f2f2f2;' : 'transparent')
+    end
+    tr_id = "#{row.va_site_id}_#{row.subset.gsub(' ','')}_checksum_history"
+%>
+    <tr id="<%= tr_id %>" style="background-color: <%= striped %>">
+      <td class="site_name"><%= "#{row.va_site_id} - #{row.va_site.name}" %></td>
+      <td class="subset_name"><%= row.subset %></td>
+      <td style="text-align: right"><span style="font-weight: bold">User Name:</span><br>
+        <span style="font-weight: bold">Status:</span><br>
+        <span style="font-weight: bold">Version:</span><br>
+        <span style="font-weight: bold">Request Time:</span><br>
+        <span style="font-weight: bold">Response Time:</span><br>
+        <span style="font-weight: bold">Checksum:</span><br>
+      </td>
+      <td>
+        <%= render partial: 'checksum_display', locals: {detail: last} %>
+      </td>
+    </tr>
+<% end %>
+<script type="text/javascript" charset="utf-8">
+    var req_tbl = $('#checksum_' + '<%= req_id %>');
+    req_tbl.data('done', <%= ! (done.uniq.include? false) %>);
+</script>

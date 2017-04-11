@@ -47,9 +47,11 @@ class Hl7MessagingTest < ActionDispatch::IntegrationTest
       end
     end
     #HL7Messaging.start_hl7_task(task: task)
+    results = []
     task_array.each do |task|
-      HL7Messaging.fetch_result(task: task) #blocking call
+      results << HL7Messaging.fetch_result(task: task) #blocking call
     end
+    results.reject do |e| e.nil? end
   end
 
   def request_checksum(observing = false)
@@ -81,7 +83,10 @@ class Hl7MessagingTest < ActionDispatch::IntegrationTest
       puts result.backtrace.join("\n")
     end
     #result = 'fizzle' #to force a failure
-    assert(result.eql?(nil), 'Expected a result of nil, received a result of ' + result.to_s)
+    assert(result.length == 2, "Expected two results for two sites and one subest.  Received #{result.length}")
+    result.each do |r|
+      assert((result.to_s =~ /no response/i), "Expected no response, got #{result}")
+    end
   end
 
   test 'discovery' do
@@ -91,8 +96,10 @@ class Hl7MessagingTest < ActionDispatch::IntegrationTest
       puts result.backtrace.join("\n")
     end
     #result = 'fizzle' #to force a failure
-    assert(result.eql?(nil), 'Expected a result of nil, received a result of ' + result.to_s)
-  end
+    assert(result.length == 2, "Expected two results for two sites and one subest.  Received #{result.length}")
+    result.each do |r|
+      assert((result.to_s =~ /no response/i), "Expected no response, got #{result}")
+    end  end
 
   test 'not_using_interface_engine' do
     use_interface_engine = @app_prop.getUseInterfaceEngine

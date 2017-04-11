@@ -13,6 +13,14 @@ class NavigationPolicy
     ! user.nil?
   end
 
+  def allow_local_signup?
+    NavigationPolicy.configured_for_local_signup?
+  end
+
+  def self.allow_local_signup(controller)
+    controller.authorize(:navigation, :allow_local_signup?)
+  end
+
   def add_dynamic_methods
     Roles::ALL_ROLES.each do |role|
       self.define_singleton_method("#{role}?".to_sym) do
@@ -50,6 +58,13 @@ class NavigationPolicy
         authorize(:navigation, method_q) rescue false
       end
     end
+  end
+
+  private
+
+  def self.configured_for_local_signup?
+    exclude_envs = ($PROPS['PRISME.disallow_local_signups_on']).split(',').map(&:strip) rescue []
+    !exclude_envs.include?(PRISME_ENVIRONMENT)
   end
 
 end

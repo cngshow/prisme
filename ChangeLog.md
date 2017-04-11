@@ -2,13 +2,57 @@ PRISME Changelog
 
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers where provided, and the git commit history.
 
+* 2017/04/11 - 3.1
+    * added APACHE time statistics GUI at utilities\time_stats
+      Please modify the apache config as follows ( RequestHeader set  apache_time "%D,%t" ):
+      -------------------NEW---------------------
+      <Location /rails_prisme/>
+        RequestHeader set  apache_time "%D,%t"
+        ProxyPass https://vaauscttdbs80.aac.va.gov:8080/rails_prisme/
+        ProxyPassReverse https://vaauscttdbs80.aac.va.gov:8080/rails_prisme/
+        SetEnv proxy-sendchunks 1
+      </Location>
+      ------------------------------------------
+      -------------------OLD---------------------
+      <Location /rails_prisme/>
+        ProxyPass https://vaauscttdbs80.aac.va.gov:8080/rails_prisme/
+        ProxyPassReverse https://vaauscttdbs80.aac.va.gov:8080/rails_prisme/
+        SetEnv proxy-sendchunks 1
+      </Location>
+            ------------------------------------------
+    * defect 427019. Test notes are included in Jazz.
+    * defects 486465 and 486454 - Testers will need to update their prisme.properties file and set the disallow_local_signups_on for their testing environment (example: INTEGRATION and TEST)
+        The following URLs will reject the user from going directly to the page when the local login on that environment is not allowed:
+
+        http://localhost:3000/rails_prisme/users/sign_up
+        
+        You will only be able to see the Login button on the log in page. There is no Sign Up functionality in excluded environments.
+        
+    * JRuby upgrade branch  from 9.0.4 to 9.1.8 (March 28th 2017)
+        * JRuby now depends on Secure Random, but on quiet linux boxes, secure random is known to block for long periods of time.  
+            One solution would be to use this workaround on the linux boxes, '-Djava.security.egd=file:/dev/./urandom' into /etc/init.d/tomcat
+            but this disables secure random for the entire JVM, potentially leading to security holes with encryption libraries. 
+        
+        An alternate solution, is to use a tool like 'haveged' http://www.issihosts.com/haveged/ to ensure that the entropy pool on the linux
+        box it always sufficient, so that Secure Random doesn't block.
+        * install haveged:
+        * yum install haveged
+        * chkconfig haveged on
+        * service haveged start 
+        * to check your entropy: cat /proc/sys/kernel/random/entropy_avail
+        * restart tomcat (to clear out old JRuby libs)
+    * Ban / remove more jaxb libraries to attempt to resolve the intermittent deployment issue 
+        
 * 2017/03/21 - 3.0.1
+    * Revert changes related to PRISME.war display name, which had unintended consequences
     * Rebuild of Release 3
-    
+
 * 2017/03/20 - 3.0
     * updated to fix defect 469188 (508 compliance) for services and admin user edit keyboard functionality
+    * removed a jaxb jar that is involved in database build intermittent failures
     * issue 476172 - refactored internal errors to route to utilities controller for git, nexus, and other configuration errors
     * deleted unused files from source control
+    * added display name to PRISME.war so it shows up in tomcat
     * Defect 462564 -- Prisme Undeploy - "OK message repeats multiple times instead of one.
     * Defect 482682 Server Error in Integration Environment with the New Database builder in Terminology browser
     * Reversioning from 1.61

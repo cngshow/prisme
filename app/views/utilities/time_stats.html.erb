@@ -1,0 +1,6 @@
+<h1>APACHE Time Statistics</h1>
+<hr>
+<div style="width: 600px; padding: 10px">
+  <span style="font-weight: bold">Request Time in Apache:</span>&nbsp;&nbsp;<%= @apache_time.nil? ? 'No Header Information' : @apache_time %><br><br>
+  <span style="font-weight: bold">Time from Apache to Rails:</span>&nbsp;&nbsp;<%= @delta_time.nil? ? 'No Header Information' : @delta_time %><br><br>
+</div>

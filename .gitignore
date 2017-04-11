@@ -28,3 +28,5 @@ context.txt
 db/schema.rb
 /db/data/*
 /version.txt
+/config/oracle_database.yml
+test/reports/*
