@@ -1,10 +1,11 @@
 PRISME Changelog 
 
-This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers 
-where provided, and the git commit history.
+This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers where provided, and the git commit history.
 
-* 2017/03/?? - 1.61 - PENDING
-    * updated to fix defect 469188 (508 compliance) for services and admin user edit keyboard functionality
+* 2017/04/?? - 3.2 - PENDING
+    *
+
+* 2017/04/11 - 3.1
     * added APACHE time statistics GUI at utilities\time_stats
       Please modify the apache config as follows ( RequestHeader set  apache_time "%D,%t" ):
       -------------------NEW---------------------
@@ -43,6 +44,22 @@ where provided, and the git commit history.
         * service haveged start 
         * to check your entropy: cat /proc/sys/kernel/random/entropy_avail
         * restart tomcat (to clear out old JRuby libs)
+    * Ban / remove more jaxb libraries to attempt to resolve the intermittent deployment issue 
+        
+* 2017/03/21 - 3.0.1
+    * Revert changes related to PRISME.war display name, which had unintended consequences
+    * Rebuild of Release 3
+
+* 2017/03/20 - 3.0
+    * updated to fix defect 469188 (508 compliance) for services and admin user edit keyboard functionality
+    * removed a jaxb jar that is involved in database build intermittent failures
+    * issue 476172 - refactored internal errors to route to utilities controller for git, nexus, and other configuration errors
+    * deleted unused files from source control
+    * added display name to PRISME.war so it shows up in tomcat
+    * Defect 462564 -- Prisme Undeploy - "OK message repeats multiple times instead of one.
+    * Defect 482682 Server Error in Integration Environment with the New Database builder in Terminology browser
+    * Reversioning from 1.61
+    * Production build for Release 3
 
 * 2017/03/16 - 1.60
     * fixed double submit in the GUI for: source package upload, database builder and terminology converter - 476184
