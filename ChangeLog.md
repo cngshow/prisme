@@ -3,7 +3,7 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers where provided, and the git commit history.
 
 * 2017/04/?? - 3.2 - PENDING
-    *
+    *  This is a temporary branch in case Greg's MSI box does not survive repair.
 
 * 2017/04/11 - 3.1
     * added APACHE time statistics GUI at utilities\time_stats
