@@ -23,6 +23,11 @@
         <span style="font-weight: bold">Request Time:</span><br>
         <span style="font-weight: bold">Response Time:</span><br>
         <span style="font-weight: bold">Has Data:</span><br>
+        <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+          <button id='btn_discovery_csv' type="button" class="btn btn-secondary btn-sm" onclick="discoveryCsv(this);">Export as CSV</button>
+          <button id='btn_discovery_diffs' type="button" class="btn btn-secondary btn-sm" onclick="discoveryCsv(this);">Export as CSV</button>
+          <button id='btn_discovery_hl7' type="button" class="btn btn-secondary btn-sm" onclick="discoveryCsv(this);">Export as CSV</button>
+        </div>
       </td>
       <td>
         <%= render partial: 'discovery_display', locals: {tr_id: tr_id, detail: row, current: true} %>
@@ -33,6 +38,66 @@
     </tr>
 <% end %>
 <script type="text/javascript" charset="utf-8">
-    var req_tbl = $('#discovery_' + '<%= req_id %>');
-    req_tbl.data('done', <%= ! (done.uniq.include? false) %>);
+    function discoveryCsv(btn) {
+        var id = $(btn).data('detail_id');
+        $(btn).attr('disabled', true);
+
+        $.get(gon.routes.discovery_csv_path, {format: 'txt', discovery_detail_id: id}, function(data) {
+            var blob = new Blob([data], {type: "text/plain;charset=utf-8"});
+            saveAs(blob,'discovery_'+id+'.csv');
+            $(btn).attr('disabled', false);
+        });
+    }
+
+    function greg(btn) {
+        alert($(btn).data('greg'));
+    }
+
+    (function() {
+        var req_tbl = $('#discovery_' + '<%= req_id %>');
+        req_tbl.data('done', <%= ! (done.uniq.include? false) %>);
+        $('#btn_discovery_csv').on('click', discoveryCsv(this));
+        $('#greg').on('click', greg(this))
+    })();
 </script>
+
+
+<!-- modal popup for viewing checksum hl7 -->
+<style>
+  textarea#textarea_discovery_hl7 {
+    width:100%;
+    direction:rtl;
+    display:block;
+    max-width:100%;
+    line-height:1.5;
+    padding:15px 15px 30px;
+    border-radius:3px;
+    border:1px solid #F7E98D;
+    font:13px Tahoma, cursive;
+    transition:box-shadow 0.5s ease;
+    box-shadow:0 4px 6px rgba(0,0,0,0.1);
+    font-smoothing:subpixel-antialiased;
+    background:-o-linear-gradient(#F9EFAF, #F7E98D);
+    background:-ms-linear-gradient(#F9EFAF, #F7E98D);
+    background:-moz-linear-gradient(#F9EFAF, #F7E98D);
+    background:-webkit-linear-gradient(#F9EFAF, #F7E98D);
+    background:linear-gradient(#F9EFAF, #F7E98D);
+    height:100%;
+  }
+</style>
+<div id="view_discovery_hl7_modal" class="modal fade modal-wide50" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 style="padding-top: 5px"><span id="discovery_label" style="font-style: oblique"></span>&nbsp;Discovery HL7 for:&nbsp;<strong><span id="view_discovery_hl7_modal_title"></span></strong></h4>
+      </div>
+      <div class="modal-body scrollable_div">
+        <div>
+          <textarea id="textarea_discovery_hl7" rows="20" readonly></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
