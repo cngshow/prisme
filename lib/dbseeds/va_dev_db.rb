@@ -3,7 +3,7 @@ module SeedData
       {
           service: {name: 'Tomcat Application Server', description: 'Tomcat Application Server', service_type: PrismeService::TOMCAT},
           props: [
-              {key: PrismeService::CARGO_REMOTE_USERNAME, value: 'devtest'},
+              {key: PrismeService::CARGO_REMOTE_USERNAME, value: 'devadmin'},
               {key: PrismeService::CARGO_REMOTE_PASSWORD, value: '["jK\x90\xA1\x1Fk\x87\xB6\xAB\xA3\xC5\xE7~\xBA\x1AK", "k]\x95\xD8w\x15\xFE\xD3\xC7\xDC\xAC\x9E\x1C\xD0bG"]'},
               {key: PrismeService::CARGO_REMOTE_URL, value: 'https://vadev.mantech.com:4848/manager'}
           ]
