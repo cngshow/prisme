@@ -9,32 +9,14 @@ class Hl7MessagingController < ApplicationController
 
   def checksum
     @nav_type = 'checksum'
-    index
+    setup
     render :index
   end
 
   def discovery
     @nav_type = 'discovery'
-    index
+    setup
     render :index
-  end
-
-  def index
-    @active_subsets = subset_tree_data.to_json
-    @group_tree = group_tree_data.to_json
-    @site_tree = site_tree_data.to_json
-  end
-
-  def subset_tree_data
-    # {"Allergy"=>["Reactions", "Reactants"], "Immunizations"=>["Immunization Procedure", "Skin Test"], "Pharmacy"=>["Medication Routes"], "Orders"=>["Order Status", "Nature of Order"], "TIU"=>["TIU Status", "TIU Doctype", "TIU Role", "TIU SMD", "TIU Service", "TIU Setting", "TIU Titles"], "Vitals"=>["Vital Types", "Vital Categories", "Vital Qualifiers"]}
-
-    subset_root = {id: 'subset_root', text: 'Subsets', icon: 'fa fa-sitemap', state: {opened: true}, children: []}
-    subsets = active_subsets
-    subsets.each_pair do |subset, children|
-      g = {id: subset, text: subset, icon: 'fa fa-object-group', children: children}
-      subset_root[:children] << g
-    end
-    subset_root
   end
 
   #http://localhost:3000/hl7_messaging/discovery_csv.txt?discovery_detail_id=10106_CURRENT
@@ -54,8 +36,6 @@ class Hl7MessagingController < ApplicationController
     end
   end
 
-
-  public
   def hl7_messaging_results_table
     nav_type = params[:nav_type]
     history = boolean(params[:history])
@@ -110,6 +90,43 @@ class Hl7MessagingController < ApplicationController
     render partial: 'discovery_results_tbody', locals: {discovery_details: dr.discovery_details}
   end
 
+  def retrieve_sites
+    sites = params[:sites]
+    groups = params[:groups]
+    all_sites = []
+    VaGroup.find(groups.split(',')).each do |g|
+      all_sites = all_sites + g.all_sites_activerecord
+    end
+
+    all_sites = all_sites + VaSite.find(sites.split(','))
+    all_sites.uniq!
+    render json: all_sites.as_json
+  end
+
+  def verify_hl7_engine
+    running = HL7Messaging.running?
+    flash_alert(message: 'The HL7 messaging engine is not running!  Please contact an administrator.') unless running
+  end
+
+  private
+  def setup
+    @active_subsets = subset_tree_data.to_json
+    @group_tree = group_tree_data.to_json
+    @site_tree = site_tree_data.to_json
+  end
+
+  def subset_tree_data
+    # {"Allergy"=>["Reactions", "Reactants"], "Immunizations"=>["Immunization Procedure", "Skin Test"], "Pharmacy"=>["Medication Routes"], "Orders"=>["Order Status", "Nature of Order"], "TIU"=>["TIU Status", "TIU Doctype", "TIU Role", "TIU SMD", "TIU Service", "TIU Setting", "TIU Titles"], "Vitals"=>["Vital Types", "Vital Categories", "Vital Qualifiers"]}
+
+    subset_root = {id: 'subset_root', text: 'Subsets', icon: 'fa fa-sitemap', state: {opened: true}, children: []}
+    subsets = active_subsets
+    subsets.each_pair do |subset, children|
+      g = {id: subset, text: subset, icon: 'fa fa-object-group', children: children}
+      subset_root[:children] << g
+    end
+    subset_root
+  end
+
   def group_tree_data
     group_root = {id: 'group_root', text: 'Groups', icon: 'fa fa-sitemap', state: {opened: true}, children: []}
 
@@ -135,23 +152,5 @@ class Hl7MessagingController < ApplicationController
       site_root[:children] << s
     end
     site_root
-  end
-
-  def retrieve_sites
-    sites = params[:sites]
-    groups = params[:groups]
-    all_sites = []
-    VaGroup.find(groups.split(',')).each do |g|
-      all_sites = all_sites + g.all_sites_activerecord
-    end
-
-    all_sites = all_sites + VaSite.find(sites.split(','))
-    all_sites.uniq!
-    render json: all_sites.as_json
-  end
-
-  def verify_hl7_engine
-    running = HL7Messaging.running?
-    flash_alert(message: 'The HL7 messaging engine is not running!  Please contact an administrator.') unless running
   end
 end

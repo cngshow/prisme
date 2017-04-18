@@ -8,10 +8,10 @@
     <%= render 'checksum_discovery_selections' %>
   </div>
   <div id="tp-checksum">
-    <%= render 'checksum_results' %>
+    <%= render partial: 'checksum_discovery_results', locals: {tp_action: 'checksum'} %>
   </div>
   <div id="tp-discovery">
-    <%= render 'discovery_results' %>
+    <%= render partial: 'checksum_discovery_results', locals: {tp_action: 'discovery'} %>
   </div>
 </div>
 <script>

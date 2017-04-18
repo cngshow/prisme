@@ -1,4 +1,4 @@
-<% if detail %>
+<% if detail&.id %>
     <div style="float: right"><%= detail.discovery_request.username %></div><br>
     <div style="float: right; color: <%= detail.status.eql?('FAILED') ? 'red' : 'green' %>" title="<%= detail.failure_message %>">
       <% if detail.status.eql?('FAILED') %>
@@ -16,5 +16,5 @@
       <% end %>
     </div><br>
 <% else %>
-    <span style="color:red">Previous Discovery is not available</span>
+    <span style="color:red">Discovery is not available</span>
 <% end %>

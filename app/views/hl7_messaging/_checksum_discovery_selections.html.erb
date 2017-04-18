@@ -187,7 +187,7 @@
         var title_div;
         title_div = $('#checksum_results_div > div.page_title_bar > div.title');
         if (history) {
-            title_div.text('Checksum - HISTORY');
+            title_div.text('Checksum - HISTORY');//change this to use nav_type?
         } else {
             title_div.text('Checksum Summary/Results');
         }
@@ -209,6 +209,8 @@
         wait_cursor(false);
 
         if (!history) {
+            init_checksum_table_polling();
+
             $('.<%= @nav_type %>_table').each(function (index, value) {
                 var table_id = $(this).attr('id');
                 setTimeout(function () {

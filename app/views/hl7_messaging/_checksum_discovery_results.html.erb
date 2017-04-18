@@ -1,0 +1,6 @@
+<div id="<%= tp_action.downcase %>_results_div">
+  <%= render 'layouts/page_title_bar', locals: {title: "#{tp_action.capitalize} Summary/Results",
+                                                actions: ['<button type="button" class="btn btn-info btn-sm btn-back_to_selection">Back</button>',
+                                                ]} %>
+  <div id="<%= tp_action %>_results"></div>
+</div>
