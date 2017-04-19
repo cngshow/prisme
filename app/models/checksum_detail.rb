@@ -55,6 +55,7 @@ cr = ChecksumRequest.new
 cd = cr.checksum_details.build all_sites
 cr.save #this save also save every single checksum detail
 
+@results = HL7Messaging.build_discovery_task_active_record(user: 'Cris', subset_hash: h, site_ids_array: sites, save: false)
 
 end
 

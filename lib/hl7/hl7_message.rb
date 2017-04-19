@@ -129,7 +129,11 @@ module HL7Messaging
       requests = build_task_active_record(DiscoveryRequest, user, subset_hash, site_ids_array, save)
       unless save
         requests.each do |r|
-          r.discovery_details= r.details.to_a.map do |d| d.last_discovery(false) end
+          r.discovery_details= r.details.to_a.map do |d|
+            detail = d.last_discovery(false)
+            detail = detail.nil? ? d : detail
+            detail
+          end
         end
       end
       requests
@@ -169,7 +173,6 @@ module HL7Messaging
         end
         kick_off(active_record_clazz, request_array)
       end
-
       request_array
     end
 
@@ -338,7 +341,7 @@ m.getQueryLimitedRequestUnits
 
 =end
 =begin
-load('./lib/hl7_message.rb')
+load('./lib/hl7/hl7_message.rb')
 
 site = JIsaacLibrary::Site.new
 pm = JIsaacLibrary::PublishMessageDTO.new(1,site)

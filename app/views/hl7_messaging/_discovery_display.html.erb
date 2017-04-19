@@ -10,11 +10,15 @@
     </div><br>
     <div style="float: right"><%= display_time(detail.start_time) %></div><br>
     <div style="float: right"><%= display_time(detail.finish_time) %></div><br>
-    <div style="float: right">
-      <%if detail.hl7_message %>
-          <a tabindex="0" data-hl7_message="<%= detail.hl7_message %>" onclick="discovery_hl7_message(this, {tr_id: '<%= tr_id %>', current: <%= current %>});"><i class="fa fa-check" aria-hidden="true"></i></a>
-      <% end %>
-    </div><br>
+    <%if detail.hl7_message %>
+      <div class="btn-group btn-group-xs" role="group" aria-label="Button group with nested dropdown" data-btngroup_detail_id="<%= detail.id %>" style="float: right" >
+        <button id='btn_discovery_csv' type="button" class="btn btn-primary" onclick="discoveryCsv(this);">Export as CSV</button>
+        <button id='btn_discovery_diffs' type="button" class="btn btn-info" onclick="discoveryCsv(this);">Discovery Diffs</button>
+        <button id='btn_discovery_hl7' type="button" class="btn btn-primary" data-hl7_message="<%= detail.hl7_message %>" onclick="discovery_hl7_message(this, {tr_id: '<%= tr_id %>', current: <%= current %>});;">View HL7</button>
+      </div>
+    <% else %>
+        <div aria-label="Data is not available" style="float: right; font-weight: bold">HL7 data is not available</div>
+    <% end %>
 <% else %>
-    <span style="color:red">Discovery is not available</span>
+    <span style="color:red">Discovery Data is not available</span>
 <% end %>

@@ -14,6 +14,7 @@ module HL7RequestBase
 
     if my_id != -1
       sql << %(
+        and   a.id < #{my_id}
         and   a.FINISH_TIME is not null
         and   a.#{data_column} is not null
       )
@@ -80,8 +81,11 @@ module HL7DetailBase
   public
 
   #if the underlying task is complete we are dun!
+  #if the id is nil we are an in memory poro.  We will never start, so we are dun.
   def done?
-    [SUCCEEDED, CANCELLED, FAILED].map(&:to_s).include?(self.status)
+    r_val = self.id.nil? || [SUCCEEDED, CANCELLED, FAILED].map(&:to_s).include?(self.status)
+    $log.debug {"done is returning  #{r_val}"}
+    r_val
   end
 
   # Java methods
@@ -107,6 +111,11 @@ module HL7DetailBase
 
 
 end
+
+#Common request methods (CheckSumRequest, ChecksumDetail)
+module HL7RequestCommon
+
+end
 =begin
-load('./app/models/HL7Base.rb')
+load('./app/models/concerns/HL7Base.rb')
 =end

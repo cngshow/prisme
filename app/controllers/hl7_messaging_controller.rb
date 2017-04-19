@@ -22,17 +22,17 @@ class Hl7MessagingController < ApplicationController
   #http://localhost:3000/hl7_messaging/discovery_csv.txt?discovery_detail_id=10106_CURRENT
   #http://localhost:3000/hl7_messaging/discovery_csv.xml?discovery_detail_id=10106_PREVIOUS
   def discovery_csv
-    id,detail =  params[:discovery_detail_id].split('_') #id is the id of the current record. detail is either current or previous.
+    id, detail = params[:discovery_detail_id].split('_') #id is the id of the current record. detail is either current or previous.
     #if detail is previous get the last detail
     detail_record = DiscoveryDetail.find(id) rescue DiscoveryDetail.new
-    if(detail.eql? PREVIOUS_TAG)
+    if (detail.eql? PREVIOUS_TAG)
       last_discovery = detail_record.last_discovery
       detail_record = last_discovery unless last_discovery.nil?
     end
     csv = detail_record.to_csv
     respond_to do |format|
-      format.text { render :text =>  csv}
-      format.xml { render :xml =>  detail}
+      format.text { render :text => csv }
+      format.xml { render :xml => detail }
     end
   end
 
@@ -60,14 +60,25 @@ class Hl7MessagingController < ApplicationController
       subset_hash[group['id']] = subsets
     end
 
+    session['hl7_request'] ||= {}
+    session['hl7_request']['sites'] = sites_arr
+    session['hl7_request']['subsets'] = subset_hash
+
     if nav_type.eql? 'checksum'
       # build hl7_messaging request active records for display
-      @checksum_results = HL7Messaging.build_checksum_task_active_record(user: prisme_user.user_name, subset_hash: subset_hash, site_ids_array: sites_arr, save: ! history)
+      @checksum_results = HL7Messaging.build_checksum_task_active_record(user: prisme_user.user_name, subset_hash: subset_hash, site_ids_array: sites_arr, save: !history)
       render partial: 'checksum_results_table', locals: {history: history}
     else
       # build hl7_messaging request active records for display
-      @results = HL7Messaging.build_discovery_task_active_record(user: prisme_user.user_name, subset_hash: subset_hash, site_ids_array: sites_arr, save: ! history)
-      render partial: 'discovery_results_table', locals: {history: history}
+      @results = HL7Messaging.build_discovery_task_active_record(user: prisme_user.user_name, subset_hash: subset_hash, site_ids_array: sites_arr, save: !history)
+      begin
+        render partial: 'discovery_results_table', locals: {history: history}
+      rescue => ex
+        $log.error("Strange error in hl7 result table")
+        $log.error(ex.to_s)
+        $log.error(ex.backtrace.join("\n"))
+        raise ex
+      end
     end
   end
 
@@ -86,8 +97,23 @@ class Hl7MessagingController < ApplicationController
 
   def discovery_request_poll
     discovery_request_id = params[:request_id]
-    dr = DiscoveryRequest.find(discovery_request_id)
-    render partial: 'discovery_results_tbody', locals: {discovery_details: dr.discovery_details}
+    domain = params[:domain]
+    if discovery_request_id.empty?
+      dr = HL7Messaging.build_discovery_task_active_record(user: prisme_user.user_name, subset_hash: session['hl7_request']['subsets'], site_ids_array: session['hl7_request']['sites'], save: false).select do
+      |request|
+        request.domain.eql?(domain)
+      end.first
+    else
+      dr = DiscoveryRequest.find(discovery_request_id)
+    end
+    begin
+      render partial: 'discovery_results_tbody', locals: {discovery_details: dr.details, request_ar: dr}
+    rescue => ex
+      $log.always("Strange error under discovery poll")
+      $log.always(ex.to_s)
+      $log.always(ex.backtrace.join("\n"))
+      raise ex
+    end
   end
 
   def retrieve_sites

@@ -1,10 +1,12 @@
 <% if @results %>
-    <% @results.each do |row| %>
+    <% @results.each do |row|
+      domain = row.domain.sub(/\s+/,'')
+    %>
         <div class="result_hdr" style="border-left: 3px solid green; padding-left: 5px">
           <%= render partial: 'checksum_discovery_result_table_hdr', locals: {row: row}%><!-- use this on checksum! -->
 
           <div class="result_table">
-            <table class="prisme-table table-hover discovery_table" id="<%= "discovery_#{row.id}" %>">
+            <table class="prisme-table table-hover discovery_table" id="<%= "discovery_#{row.id}_#{domain}" %>" data-domain="<%= domain %>">
               <thead>
               <tr>
                 <th scope="col" width="20%">Site</th>
@@ -14,7 +16,7 @@
               </tr>
               </thead>
               <tbody>
-              <%= render partial: 'discovery_results_tbody', locals: {discovery_details: row.discovery_details} %>
+              <%= render partial: 'discovery_results_tbody', locals: {discovery_details: row.discovery_details, request_ar: row} %>
               </tbody>
             </table>
           </div>

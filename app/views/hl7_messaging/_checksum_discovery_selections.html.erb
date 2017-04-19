@@ -176,11 +176,17 @@
         }
 
         wait_cursor(true);
-        $.post(gon.routes.hl7_messaging_results_table_path, {nav_type: '<%= @nav_type %>', subset_selections: JSON.stringify(tables), site_selections: JSON.stringify(site_selections), history: history}, function (data) {
+        $.post(gon.routes.hl7_messaging_results_table_path,
+            {nav_type: '<%= @nav_type %>',
+                subset_selections: JSON.stringify(tables),
+                site_selections: JSON.stringify(site_selections),
+                history: history
+            },
+            function (data) {
             <% if @nav_type.eql? 'checksum' %>
               _checksum_results(data, history);
             <% else %>
-              _discovery_results(data, history);
+              _discovery_results(data);
             <% end %>
         });
 
@@ -203,21 +209,21 @@
         }
     }
 
-    function _discovery_results(data, history) {
+    function _discovery_results(data) {
         $('#discovery_results').html(data);
         change_tabs('discovery');
         wait_cursor(false);
+        init_discovery_polling();
+/*
 
-        if (!history) {
-            init_checksum_table_polling();
-
-            $('.<%= @nav_type %>_table').each(function (index, value) {
-                var table_id = $(this).attr('id');
-                setTimeout(function () {
-                    checksum_discovery_table_poll(table_id, gon.routes.discovery_request_poll_path);
-                }, 5000);
-            });
-        }
+        $('.<%#= @nav_type %>_table').each(function (index, value) {
+            var table_id = $(this).attr('id');
+            var kma = $(this);
+            setTimeout(function () {
+                checksum_discovery_table_poll(table_id, gon.routes.discovery_request_poll_path, kma);
+            }, 5000);
+        });
+*/
     }
 
     function sites() {

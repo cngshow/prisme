@@ -3,7 +3,7 @@ require './app/models/concerns/cleanup_concern'
 
 class DiscoveryRequest < ActiveRecord::Base
   extend HL7RequestBase, Cleanup
-  include HL7RequestSerializer
+  include HL7RequestSerializer, HL7RequestCommon
   has_many :discovery_details, :dependent => :destroy
 
   alias_method(:details, :discovery_details)

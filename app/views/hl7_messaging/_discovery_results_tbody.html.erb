@@ -1,33 +1,29 @@
 <%
   subset = nil
   striped = 'transparent'
-  done, req_id = [], nil
+  done = []
+  domain = discovery_details.first.discovery_request.domain.gsub(/\s+/,'')
 
   discovery_details.each do |row|
     done << row.done?
-    req_id ||= row.discovery_request.id
     last = row.last_discovery
 
     unless row.subset.eql?(subset)
       subset = row.subset
       striped = (striped.eql?('transparent') ? '#f2f2f2;' : 'transparent')
     end
-    tr_id = "#{row.va_site_id}_#{row.id}_#{row.subset.gsub(' ','')}_discovery"
+    tr_id = "#{row.va_site_id}_#{row.id}_#{domain}_#{row.subset.gsub(/\s+/,'')}_discovery"
 %>
     <tr id="<%= tr_id %>" style="background-color: <%= striped %>">
       <td class="site_name"><%= "#{row.va_site_id} - #{row.va_site.name}" %></td>
       <td class="subset_name"><%= row.subset %></td>
-      <td style="text-align: right" width="10%">
-        <span style="font-weight: bold">User Name:</span><br>
-        <span style="font-weight: bold">Status:</span><br>
-        <span style="font-weight: bold">Request Time:</span><br>
-        <span style="font-weight: bold">Response Time:</span><br>
-        <span style="font-weight: bold">Has Data:</span><br>
-        <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-          <button id='btn_discovery_csv' type="button" class="btn btn-secondary btn-sm" onclick="discoveryCsv(this);">Export as CSV</button>
-          <button id='btn_discovery_diffs' type="button" class="btn btn-secondary btn-sm" onclick="discoveryCsv(this);">Export as CSV</button>
-          <button id='btn_discovery_hl7' type="button" class="btn btn-secondary btn-sm" onclick="discoveryCsv(this);">Export as CSV</button>
-        </div>
+      <td style="text-align: right; font-weight: bold" width="10%">
+        User Name:<br>
+        Status:<br>
+        Request Time:<br>
+        Response Time:<br>
+        <!--Has Data:<br>-->
+        Actions:<br>
       </td>
       <td>
         <%= render partial: 'discovery_display', locals: {tr_id: tr_id, detail: row, current: true} %>
@@ -39,25 +35,19 @@
 <% end %>
 <script type="text/javascript" charset="utf-8">
     function discoveryCsv(btn) {
-        var id = $(btn).data('detail_id');
+        var detail_id = $(btn).closest('.btn-group').data('btngroup_detail_id');
         $(btn).attr('disabled', true);
 
-        $.get(gon.routes.discovery_csv_path, {format: 'txt', discovery_detail_id: id}, function(data) {
+        $.get(gon.routes.discovery_csv_path, {format: 'txt', discovery_detail_id: detail_id}, function(data) {
             var blob = new Blob([data], {type: "text/plain;charset=utf-8"});
-            saveAs(blob,'discovery_'+id+'.csv');
+            saveAs(blob,'discovery_'+detail_id+'.csv');
             $(btn).attr('disabled', false);
         });
     }
 
-    function greg(btn) {
-        alert($(btn).data('greg'));
-    }
-
     (function() {
-        var req_tbl = $('#discovery_' + '<%= req_id %>');
+        var req_tbl = $('#discovery_' + '<%= "#{request_ar.id}_#{domain.sub(/\s+/,'')}"%>');
         req_tbl.data('done', <%= ! (done.uniq.include? false) %>);
-        $('#btn_discovery_csv').on('click', discoveryCsv(this));
-        $('#greg').on('click', greg(this))
     })();
 </script>
 
