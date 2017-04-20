@@ -3,7 +3,17 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers where provided, and the git commit history.
 
 * 2017/04/?? - 3.2 - PENDING
-    *
+    *  site_restriction_ignored property added to prisme.properties, so prisme.properties now has:
+    #If this key is present, only sites in the csv will be executed. (comment out when done with it.)
+    site_restrictor= 950, 951
+    #ignore site restriction(above) on environments below
+    site_restriction_ignored=PRE_PROD,PROD
+    * Refactor of history page for both Checksum and Discovery added.  Now when a checksum (or discovery) is actively running
+      leaving the page is not a big deal.  Reselect the sites and Domains/Subsets and return via history button
+    * Buttons for viewing HL7, diffs, CSV download changed.  Currently, the diff button only does a CSV download (the diff work is incomplete)
+    * Sylvia found a nasty bug (not written up) where the Checksum page on integration completely bombed out (you could not even get to the result page).
+      Somehow an old migration that we never expected to be deployed was.  A new migration that will fix the malformed column name if it is present has been added.
+      
 
 * 2017/04/11 - 3.1
     * added APACHE time statistics GUI at utilities\time_stats

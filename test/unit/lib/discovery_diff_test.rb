@@ -48,6 +48,8 @@ class DiscoveryDiffTest < Test::Unit::TestCase
     assert(! @beta_1.eql?(@alpha_1),  "These very different csv files are not equal but we think they are!")
     assert(! @beta_2.eql?(@alpha_2),  "These very different csv files are not equal but we think they are!")
     assert(! @beta_1.eql?(@alpha_2),  "These very different csv files are not equal but we think they are!")
+    assert("asdfasdf")
+
   end
 
   def test_equal
@@ -95,7 +97,6 @@ class DiscoveryDiffTest < Test::Unit::TestCase
     assert(active_only_count != 0, "Allowing active flags failed. active_only_count: #{active_only_count}")
   end
 
-=begin
   def test_end_to_end
     rdc = 1
     discoveries = Dir.glob('./config/hl7/discovery_mocks/*.discovery')
@@ -115,7 +116,6 @@ class DiscoveryDiffTest < Test::Unit::TestCase
       assert(right_count <= rdc, "Too many right diffs found, found #{right_count}")
     end
   end
-=end
 =begin
    #filter lefts out
   #diffs.reject do |k,v| v.first.eql?(:left_only) if v.is_a? Array end
@@ -137,6 +137,8 @@ rdc = 1
 #this builds a reactants mock with the same number of columns
 reactants_mock = reactants_csv.diff_mock(right_diff_count: rdc, common_vuid_diff_count: 1, common_vuid_same_count: 1)
 
+# get the headers
+reactants_headers = reactants_csv.headers
 
 
 #get the diff hashes
@@ -147,5 +149,11 @@ reactions_mock = reactions_csv.diff_mock(right_diff_count: rdc, common_vuid_diff
 #different columns (if reactants and reactions have different columns, might need to pick another mock file)
 reactants_against_reactions_diff = reactants_csv.fetch_diffs(discovery_csv: reactions_mock).diff
 
+
+[:VUID, :Term, :Allergy_Type, :has_drug_class, :has_drug_ingredient, :Search_Term, :VistA_Mapping_Target, :Status]
+Vuid -> designation -> followed by field names (TDS)
+
+
+reactants_csv = DiscoveryCsv.new(hl7_csv_string: reactants_csv_string, ignore_inactive: true)
 =end
 end

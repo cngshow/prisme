@@ -2,17 +2,24 @@ module HL7RequestBase
 
   def sql_template(domain, subset, site_id, base_table, data_column, my_id)
     my_id = -1 unless my_id
-    %(
-    select max(a.id) as last_detail_id
+    sql = %(
+    select nvl(max(a.id),-1) as last_detail_id
     from #{base_table}_DETAILS a, #{base_table}_REQUESTS b
     where a.#{base_table}_REQUEST_ID = b.id
     and   b.domain = '#{domain}'
-    and   a.FINISH_TIME is not null
     and   a.SUBSET = '#{subset}'
     and   a.VA_SITE_ID = '#{site_id}'
-    and   a.#{data_column} is not null
     and   a.id != #{my_id}
     )
+
+    if my_id != -1
+      sql << %(
+        and   a.id < #{my_id}
+        and   a.FINISH_TIME is not null
+        and   a.#{data_column} is not null
+      )
+    end
+    sql
   end
 
   def save_with_details(request:)
@@ -22,7 +29,7 @@ module HL7RequestBase
   end
 
   def kick_off_task(request:)
-    raise "Not yet implemented!"
+    raise 'Not yet implemented!'
   end
 end
 
@@ -63,7 +70,7 @@ module HL7DetailBase
   def last_detail(detail_id, last_detail_method, column_name_id, save_me = true)
     unless detail_id
       last_id = request.class.send(last_detail_method, request.domain, subset, va_site_id, self.id)
-      return nil if last_id.nil?
+      return nil if last_id == -1
       self[column_name_id] = last_id
       save if save_me
     end
@@ -74,8 +81,11 @@ module HL7DetailBase
   public
 
   #if the underlying task is complete we are dun!
+  #if the id is nil we are an in memory poro.  We will never start, so we are dun.
   def done?
-    [SUCCEEDED, CANCELLED, FAILED].map(&:to_s).include?(self.status)
+    r_val = self.id.nil? || [SUCCEEDED, CANCELLED, FAILED].map(&:to_s).include?(self.status)
+    $log.debug {"done is returning  #{r_val}"}
+    r_val
   end
 
   # Java methods
@@ -101,6 +111,11 @@ module HL7DetailBase
 
 
 end
+
+#Common request methods (CheckSumRequest, ChecksumDetail)
+module HL7RequestCommon
+
+end
 =begin
-load('./app/models/HL7Base.rb')
+load('./app/models/concerns/HL7Base.rb')
 =end

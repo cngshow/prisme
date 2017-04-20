@@ -1,45 +1,30 @@
-<% if @checksum_results %>
-    <% @checksum_results.each do |row| %>
+<% if @results %>
+    <% @results.each do |row|
+      request_id = row.id
+      domain = row.domain.sub(/\s+/, '')
+      table_id = "checksum_#{request_id}_#{domain}"
+    %>
         <div class="result_hdr" style="border-left: 3px solid green; padding-left: 5px">
-          <div style='background-color: transparent; height: 50px; padding: 5px;'>
-            <div style='float: left; color: black; font-weight: bold; font-size: 18px; padding-left: 5px' onclick="toggleResultTable(this);">
-              <i class="fa fa-minus-square" aria-hidden="true"></i>
-              <%= row.domain %>
-            </div>
-          </div>
+          <%= render partial: 'checksum_discovery_result_table_hdr', locals: {row: row} %>
+
           <div class="result_table">
-            <% if history %>
-                <table class="prisme-table table-hover checksum_table">
-                  <thead>
-                  <tr>
-                    <th scope="col" width="20%">Site</th>
-                    <th scope="col" width="15%">Subset</th>
-                    <th scope="col" width="65%" colspan="2">Last Checksum</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <%= render partial: 'checksum_history_tbody', locals: {checksum_details: row.checksum_details} %>
-                  </tbody>
-                </table>
-            <% else %>
-              <table class="prisme-table table-hover checksum_table" id="<%= "checksum_#{row.id}" %>">
-                <thead>
-                <tr>
-                  <th scope="col" width="20%">Site</th>
-                  <th scope="col" width="15%">Subset</th>
-                  <th scope="col" width="35%" colspan="2">Current Checksum</th>
-                  <th scope="col" width="25%">Previous Checksum</th>
-                  <th scope="col" width="5%">Discovery</th>
-                </tr>
-                </thead>
-                <tbody>
-                <%= render partial: 'checksum_results_tbody', locals: {checksum_details: row.checksum_details} %>
-                </tbody>
-              </table>
-            <% end %>
-          </div>
-        </div>
-        <br>
-        <br>
+            <table class="prisme-table table-hover checksum_table" id="<%= table_id %>" data-domain="<%= domain %>" data-request_id="<%= request_id %>">
+              <thead>
+              <tr>
+                <th scope="col" width="20%">Site</th>
+                <th scope="col" width="15%">Subset</th>
+                <th scope="col" width="35%" colspan="2">Current Checksum</th>
+                <th scope="col" width="25%">Previous Checksum</th>
+                <th scope="col" width="5%">Discovery</th>
+              </tr>
+              </thead>
+              <tbody>
+              <%= render partial: 'checksum_results_tbody', locals: {table_id: table_id, checksum_details: row.checksum_details} %>
+              </tbody>
+            </table>
     <% end %>
+    </div>
+    </div>
+    <br>
+    <br>
 <% end %>

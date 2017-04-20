@@ -8,9 +8,8 @@ class ChecksumDetail < ActiveRecord::Base
 
   alias_method(:request, :checksum_request)
 
-  #For checksum our naming is a little out of sync with discovery.  The referenced detail id is detail_id not checksum_detail_id.  Discovery is discovery_detail_id
   def last_checksum(save_me = true)
-    last_detail(checksum_detail_id,:last_checksum_detail, :detail_id, save_me)
+    last_detail(checksum_detail_id,:last_checksum_detail, :checksum_detail_id, save_me)
   end
 
   #Java methods here:
@@ -55,6 +54,7 @@ cr = ChecksumRequest.new
 cd = cr.checksum_details.build all_sites
 cr.save #this save also save every single checksum detail
 
+@results = HL7Messaging.build_discovery_task_active_record(user: 'Cris', subset_hash: h, site_ids_array: sites, save: false)
 
 end
 

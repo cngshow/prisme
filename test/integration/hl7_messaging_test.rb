@@ -126,7 +126,7 @@ class Hl7MessagingTest < ActionDispatch::IntegrationTest
   test 'message_id' do
     h = {'Allergy' => ['Reaction', 'Reactants'], 'Immunizations' => ['Immunization Procedure']}
     sites =["443", "444"]
-    checksum_request = HL7Messaging.build_checksum_task_active_record(user: 'Cris', subset_hash: h, site_ids_array: sites)
+    checksum_request = HL7Messaging.build_checksum_discovery_ar(nav_type: 'checksum', user: 'Cris', subset_hash: h, site_ids_array: sites)
     checksum_request.first.checksum_details.first.to_java.getMessageId
     assert(checksum_request.first.checksum_details.first.to_java.getMessageId.to_java.is_a?(java.lang.Long), "The message id is not a long")
   end

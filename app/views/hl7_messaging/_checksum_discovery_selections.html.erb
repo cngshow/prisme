@@ -176,46 +176,38 @@
         }
 
         wait_cursor(true);
-        $.post(gon.routes.hl7_messaging_results_table_path, {nav_type: '<%= @nav_type %>', subset_selections: JSON.stringify(tables), site_selections: JSON.stringify(site_selections), history: history}, function (data) {
+        $.post(gon.routes.hl7_messaging_results_table_path,
+            {nav_type: '<%= @nav_type %>',
+                subset_selections: JSON.stringify(tables),
+                site_selections: JSON.stringify(site_selections),
+                history: history
+            },
+            function (data) {
             <% if @nav_type.eql? 'checksum' %>
               _checksum_results(data, history);
             <% else %>
-              _discovery_results(data, history);
+              _discovery_results(data);
             <% end %>
         });
 
         var title_div;
-        title_div = $('#checksum_results_div > div.page_title_bar > div.title');
-        if (history) {
-            title_div.text('Checksum - HISTORY');
-        } else {
-            title_div.text('Checksum Summary/Results');
-        }
+        title_div = $('#<%= @nav_type.downcase %>_results_div > div.page_title_bar > div.title');
+        var hdr_text = '<%= @nav_type.capitalize %>' + (history ? ' - HISTORY' : ' Summary/Results');
+        title_div.text(hdr_text);
     }
 
     function _checksum_results(data, history) {
         $('#checksum_results').html(data);
         change_tabs('checksum');
         wait_cursor(false);
-
-        if (!history) {
-            init_checksum_table_polling();
-        }
+        init_checksum_table_polling();
     }
 
-    function _discovery_results(data, history) {
+    function _discovery_results(data) {
         $('#discovery_results').html(data);
         change_tabs('discovery');
         wait_cursor(false);
-
-        if (!history) {
-            $('.<%= @nav_type %>_table').each(function (index, value) {
-                var table_id = $(this).attr('id');
-                setTimeout(function () {
-                    checksum_discovery_table_poll(table_id, gon.routes.discovery_request_poll_path);
-                }, 5000);
-            });
-        }
+        init_discovery_polling();
     }
 
     function sites() {

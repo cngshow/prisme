@@ -125,22 +125,22 @@ module HL7Messaging
       (HashWithIndifferentAccess.new HL7Messaging.hl7_message_config).deep_dup
     end
 
-    def build_discovery_task_active_record(user:, subset_hash:, site_ids_array:, save: true)
-      requests = build_task_active_record(DiscoveryRequest, user, subset_hash, site_ids_array, save)
+    #this method is called by the controller.
+    #subset_hash looks like {'Allergy' => ['Reaction', 'Reactants'], 'Immunizations' => ['Immunization Procedure']}
+    def build_checksum_discovery_ar(nav_type:,user:, subset_hash:, site_ids_array:, save: true)
+      clazz = nav_type.eql?('checksum') ? ChecksumRequest : DiscoveryRequest
+      requests = build_task_active_record(clazz, user, subset_hash, site_ids_array, save)
       unless save
         requests.each do |r|
-          r.discovery_details= r.details.to_a.map do |d| d.last_discovery(false) end
+          r.details= r.details.to_a.map do |d|
+            detail = nav_type.eql?('checksum') ? d.last_checksum(false) : d.last_discovery(false)
+            detail = detail.nil? ? d : detail
+            detail
+          end
         end
       end
       requests
     end
-
-    def build_checksum_task_active_record(user:, subset_hash:, site_ids_array:, save: true)
-      build_task_active_record(ChecksumRequest, user, subset_hash, site_ids_array, save)
-    end
-
-    #this method is called by the controller.
-    #subset_hash looks like {'Allergy' => ['Reaction', 'Reactants'], 'Immunizations' => ['Immunization Procedure']}
 
     private
 
@@ -169,14 +169,14 @@ module HL7Messaging
         end
         kick_off(active_record_clazz, request_array)
       end
-
       request_array
     end
 
     def kick_off(active_record_clazz, request_array)
       request_array.each do |request|
         details = request.details.to_a
-        if ($PROPS['PRISME.site_restrictor'])
+        exclude_envs = ($PROPS['PRISME.site_restriction_ignored']).split(',').map(&:strip) rescue []
+        if ($PROPS['PRISME.site_restrictor'] && !(exclude_envs.include? PRISME_ENVIRONMENT))
           restricted = $PROPS['PRISME.site_restrictor'].split(',').map(&:strip)
           details.select! do |d| restricted.include?(d.va_site.va_site_id) end
           $log.always("I am restricting the request to the following sites: " + details.map do |d| d.va_site_id end.inspect)
@@ -338,7 +338,7 @@ m.getQueryLimitedRequestUnits
 
 =end
 =begin
-load('./lib/hl7_message.rb')
+load('./lib/hl7/hl7_message.rb')
 
 site = JIsaacLibrary::Site.new
 pm = JIsaacLibrary::PublishMessageDTO.new(1,site)
