@@ -2,7 +2,7 @@ PRISME Changelog
 
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers where provided, and the git commit history.
 
-* 2017/04/?? - 3.2 - PENDING
+* 2017/04/20 - 3.2
     *  site_restriction_ignored property added to prisme.properties, so prisme.properties now has:
     #If this key is present, only sites in the csv will be executed. (comment out when done with it.)
     site_restrictor= 950, 951
