@@ -200,10 +200,7 @@
         $('#checksum_results').html(data);
         change_tabs('checksum');
         wait_cursor(false);
-
-        if (!history) {
-            init_checksum_table_polling();
-        }
+        init_checksum_table_polling();
     }
 
     function _discovery_results(data) {
