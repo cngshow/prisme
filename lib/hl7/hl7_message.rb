@@ -125,21 +125,8 @@ module HL7Messaging
       (HashWithIndifferentAccess.new HL7Messaging.hl7_message_config).deep_dup
     end
 
-    # todo delete me? usages? cris
-    def build_discovery_task_active_record(user:, subset_hash:, site_ids_array:, save: true)
-      requests = build_task_active_record(DiscoveryRequest, user, subset_hash, site_ids_array, save)
-      unless save
-        requests.each do |r|
-          r.details= r.details.to_a.map do |d|
-            detail = d.last_discovery(false)
-            detail = detail.nil? ? d : detail
-            detail
-          end
-        end
-      end
-      requests
-    end
-
+    #this method is called by the controller.
+    #subset_hash looks like {'Allergy' => ['Reaction', 'Reactants'], 'Immunizations' => ['Immunization Procedure']}
     def build_checksum_discovery_ar(nav_type:,user:, subset_hash:, site_ids_array:, save: true)
       clazz = nav_type.eql?('checksum') ? ChecksumRequest : DiscoveryRequest
       requests = build_task_active_record(clazz, user, subset_hash, site_ids_array, save)
@@ -153,15 +140,7 @@ module HL7Messaging
         end
       end
       requests
-
     end
-
-    def build_checksum_task_active_record(user:, subset_hash:, site_ids_array:, save: true)
-      build_task_active_record(ChecksumRequest, user, subset_hash, site_ids_array, save)
-    end
-
-    #this method is called by the controller.
-    #subset_hash looks like {'Allergy' => ['Reaction', 'Reactants'], 'Immunizations' => ['Immunization Procedure']}
 
     private
 
