@@ -179,7 +179,8 @@ module HL7Messaging
     def kick_off(active_record_clazz, request_array)
       request_array.each do |request|
         details = request.details.to_a
-        if ($PROPS['PRISME.site_restrictor'])
+        exclude_envs = ($PROPS['PRISME.site_restriction_ignored']).split(',').map(&:strip) rescue []
+        if ($PROPS['PRISME.site_restrictor'] && !(exclude_envs.include? PRISME_ENVIRONMENT))
           restricted = $PROPS['PRISME.site_restrictor'].split(',').map(&:strip)
           details.select! do |d| restricted.include?(d.va_site.va_site_id) end
           $log.always("I am restricting the request to the following sites: " + details.map do |d| d.va_site_id end.inspect)
