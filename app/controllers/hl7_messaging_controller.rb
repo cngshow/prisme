@@ -74,7 +74,7 @@ class Hl7MessagingController < ApplicationController
       begin
         render partial: 'discovery_results_table', locals: {history: history}
       rescue => ex
-        $log.error("Strange error in hl7 result table")
+        $log.error('Strange error in hl7 result table')
         $log.error(ex.to_s)
         $log.error(ex.backtrace.join("\n"))
         raise ex
@@ -98,6 +98,8 @@ class Hl7MessagingController < ApplicationController
   def discovery_request_poll
     discovery_request_id = params[:request_id]
     domain = params[:domain]
+    table_id = params[:table_id]
+
     if discovery_request_id.empty?
       dr = HL7Messaging.build_discovery_task_active_record(user: prisme_user.user_name, subset_hash: session['hl7_request']['subsets'], site_ids_array: session['hl7_request']['sites'], save: false).select do
       |request|
@@ -107,9 +109,9 @@ class Hl7MessagingController < ApplicationController
       dr = DiscoveryRequest.find(discovery_request_id)
     end
     begin
-      render partial: 'discovery_results_tbody', locals: {discovery_details: dr.details, request_ar: dr}
+      render partial: 'discovery_results_tbody', locals: {table_id: table_id, discovery_details: dr.details}
     rescue => ex
-      $log.always("Strange error under discovery poll")
+      $log.always('Strange error under discovery poll')
       $log.always(ex.to_s)
       $log.always(ex.backtrace.join("\n"))
       raise ex

@@ -191,12 +191,9 @@
         });
 
         var title_div;
-        title_div = $('#checksum_results_div > div.page_title_bar > div.title');
-        if (history) {
-            title_div.text('Checksum - HISTORY');//change this to use nav_type?
-        } else {
-            title_div.text('Checksum Summary/Results');
-        }
+        title_div = $('#<%= @nav_type.downcase %>_results_div > div.page_title_bar > div.title');
+        var hdr_text = '<%= @nav_type.capitalize %>' + (history ? ' - HISTORY' : ' Summary/Results');
+        title_div.text(hdr_text);
     }
 
     function _checksum_results(data, history) {
@@ -214,16 +211,6 @@
         change_tabs('discovery');
         wait_cursor(false);
         init_discovery_polling();
-/*
-
-        $('.<%#= @nav_type %>_table').each(function (index, value) {
-            var table_id = $(this).attr('id');
-            var kma = $(this);
-            setTimeout(function () {
-                checksum_discovery_table_poll(table_id, gon.routes.discovery_request_poll_path, kma);
-            }, 5000);
-        });
-*/
     }
 
     function sites() {
