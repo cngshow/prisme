@@ -39,6 +39,7 @@ class Hl7MessagingController < ApplicationController
   def hl7_messaging_results_table
     nav_type = params[:nav_type]
     history = boolean(params[:history])
+    partial = "#{nav_type}_results_table"
 
     # repackage selected sites
     site_selections = JSON.parse(params[:site_selections])
@@ -64,21 +65,16 @@ class Hl7MessagingController < ApplicationController
     session['hl7_request']['sites'] = sites_arr
     session['hl7_request']['subsets'] = subset_hash
 
-    if nav_type.eql? 'checksum'
-      # build hl7_messaging request active records for display
-      @checksum_results = HL7Messaging.build_checksum_task_active_record(user: prisme_user.user_name, subset_hash: subset_hash, site_ids_array: sites_arr, save: !history)
-      render partial: 'checksum_results_table', locals: {history: history}
-    else
-      # build hl7_messaging request active records for display
-      @results = HL7Messaging.build_discovery_task_active_record(user: prisme_user.user_name, subset_hash: subset_hash, site_ids_array: sites_arr, save: !history)
-      begin
-        render partial: 'discovery_results_table', locals: {history: history}
-      rescue => ex
-        $log.error('Strange error in hl7 result table')
-        $log.error(ex.to_s)
-        $log.error(ex.backtrace.join("\n"))
-        raise ex
-      end
+    # build hl7_messaging request active records for display
+    @results = HL7Messaging.build_checksum_discovery_ar(nav_type: nav_type, user: prisme_user.user_name, subset_hash: subset_hash, site_ids_array: sites_arr, save: !history)
+
+    begin
+      render partial: partial, locals: {history: history}
+    rescue => ex
+      $log.error('Strange error in hl7 result table')
+      $log.error(ex.to_s)
+      $log.error(ex.backtrace.join("\n"))
+      raise ex
     end
   end
 
@@ -91,8 +87,26 @@ class Hl7MessagingController < ApplicationController
 
   def checksum_request_poll
     checksum_request_id = params[:request_id]
-    cr = ChecksumRequest.find(checksum_request_id)
-    render partial: 'checksum_results_tbody', locals: {checksum_details: cr.checksum_details}
+    domain = params[:domain]
+    table_id = params[:table_id]
+
+    if checksum_request_id.empty?
+      cr = HL7Messaging.build_checksum_discovery_ar(nav_type: 'checksum', user: prisme_user.user_name, subset_hash: session['hl7_request']['subsets'], site_ids_array: session['hl7_request']['sites'], save: false).select do
+      |request|
+        request.domain.eql?(domain)
+      end.first
+    else
+      cr = ChecksumRequest.find(checksum_request_id)
+    end
+
+    begin
+      render partial: 'checksum_results_tbody', locals: {table_id: table_id, checksum_details: cr.checksum_details}
+    rescue => ex
+      $log.always('Strange error under checksum poll')
+      $log.always(ex.to_s)
+      $log.always(ex.backtrace.join("\n"))
+      raise ex
+    end
   end
 
   def discovery_request_poll
@@ -101,7 +115,7 @@ class Hl7MessagingController < ApplicationController
     table_id = params[:table_id]
 
     if discovery_request_id.empty?
-      dr = HL7Messaging.build_discovery_task_active_record(user: prisme_user.user_name, subset_hash: session['hl7_request']['subsets'], site_ids_array: session['hl7_request']['sites'], save: false).select do
+      dr = HL7Messaging.build_checksum_discovery_ar(nav_type: 'discovery', user: prisme_user.user_name, subset_hash: session['hl7_request']['subsets'], site_ids_array: session['hl7_request']['sites'], save: false).select do
       |request|
         request.domain.eql?(domain)
       end.first

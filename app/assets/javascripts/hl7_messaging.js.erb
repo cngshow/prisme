@@ -17,11 +17,12 @@ function discoveryCsv(btn) {
     });
 }
 
-function init_checksum_table_polling() { // todo rename this - refactor this to use checksum_discovery_table_poll function
+function init_checksum_table_polling() {
     $('.checksum_table').each(function (index, value) {
-        var table_id = $(this).attr('id');
+        var jqt = $(this);
+
         setTimeout(function () {
-            checksum_discovery_table_poll(table_id, gon.routes.checksum_request_poll_path);
+            checksum_discovery_table_poll(gon.routes.checksum_request_poll_path, jqt);
         }, 5000);
     });
 }

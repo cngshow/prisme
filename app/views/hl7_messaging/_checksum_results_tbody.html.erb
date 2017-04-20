@@ -1,39 +1,42 @@
 <%
   subset = nil
   striped = 'transparent'
-  done, req_id = [], nil
+  done = []
+  domain = checksum_details.first.request.domain.gsub(/\s+/,'')
 
   checksum_details.each do |row|
     done << row.done?
-    req_id ||= row.checksum_request.id
     last = row.last_checksum
 
     unless row.subset.eql?(subset)
       subset = row.subset
       striped = (striped.eql?('transparent') ? '#f2f2f2;' : 'transparent')
     end
-    tr_id = "#{row.va_site_id}_#{row.id}_#{row.subset.gsub(' ','')}_checksum"
+    tr_id = "#{row.va_site_id}_#{row.id}_#{domain}_#{row.subset.gsub(/\s+/,'')}_checksum"
 %>
     <tr id="<%= tr_id %>" style="background-color: <%= striped %>">
       <td class="site_name"><%= "#{row.va_site_id} - #{row.va_site.name}" %></td>
       <td class="subset_name"><%= row.subset %></td>
-      <td style="text-align: right"><span style="font-weight: bold">User Name:</span><br>
-        <span style="font-weight: bold">Status:</span><br>
-        <span style="font-weight: bold">Version:</span><br>
-        <span style="font-weight: bold">Request Time:</span><br>
-        <span style="font-weight: bold">Response Time:</span><br>
-        <span style="font-weight: bold">Checksum:</span><br>
+      <td style="text-align: right; font-weight: bold" width="10%">
+        User Name:<br>
+        Status:<br>
+        Version:<br>
+        Request Time:<br>
+        Response Time:<br>
+        Checksum:<br>
       </td>
       <td>
-        <%= render partial: 'checksum_display', locals: {detail: row} %>
+        <%= render partial: 'checksum_display', locals: {tr_id: tr_id, detail: row, current: true} %>
       </td>
       <td>
-        <%= render partial: 'checksum_display', locals: {detail: last} %>
+        <%= render partial: 'checksum_display', locals: {tr_id: tr_id, detail: last, current: false} %>
       </td>
       <td>Request Data</td>
     </tr>
 <% end %>
 <script type="text/javascript" charset="utf-8">
-    var req_tbl = $('#checksum_' + '<%= req_id %>');
-    req_tbl.data('done', <%= ! (done.uniq.include? false) %>);
+    (function() {
+        var req_tbl = $('#<%= table_id %>');
+        req_tbl.data('done', <%= ! (done.uniq.include? false) %>);
+    })();
 </script>

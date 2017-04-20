@@ -5,7 +5,9 @@ class ChecksumRequest < ActiveRecord::Base
   extend HL7RequestBase, Cleanup
   has_many :checksum_details, :dependent => :destroy
   include HL7RequestSerializer, HL7RequestCommon
+
   alias_method(:details, :checksum_details)
+  alias_method(:details=, :checksum_details=)
 
   def self.last_checksum_detail(domain, subset, site_id, my_id)
     sql = sql_template(domain, subset, site_id, 'CHECKSUM', 'checksum', my_id)

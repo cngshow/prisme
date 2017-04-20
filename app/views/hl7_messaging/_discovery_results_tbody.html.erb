@@ -2,7 +2,7 @@
   subset = nil
   striped = 'transparent'
   done = []
-  domain = discovery_details.first.discovery_request.domain.gsub(/\s+/,'')
+  domain = discovery_details.first.request.domain.gsub(/\s+/,'')
 
   discovery_details.each do |row|
     done << row.done?
