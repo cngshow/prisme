@@ -6,37 +6,64 @@ function toggleResultTable(elem) {
     });
 }
 
-function init_checksum_table_polling() { // todo rename this - refactor this to use checksum_discovery_table_poll function
+function discoveryCsv(btn) {
+    var detail_id = $(btn).closest('.btn-group').data('btngroup_detail_id');
+    $(btn).attr('disabled', true);
+
+    $.get(gon.routes.discovery_csv_path, {format: 'txt', discovery_detail_id: detail_id}, function(data) {
+        var blob = new Blob([data], {type: "text/plain;charset=utf-8"});
+        saveAs(blob,'discovery_'+detail_id+'.csv');
+        $(btn).attr('disabled', false);
+    });
+}
+
+function init_checksum_table_polling() {
     $('.checksum_table').each(function (index, value) {
-        var table_id = $(this).attr('id');
+        var jqt = $(this);
+
         setTimeout(function () {
-            checksum_discovery_table_poll(table_id, gon.routes.checksum_request_poll_path);
+            checksum_discovery_table_poll(gon.routes.checksum_request_poll_path, jqt);
         }, 5000);
     });
 }
 
-function checksum_discovery_table_poll(table_id, poll_path) {
-    var poll_table_info = table_id.split('_');
-    var id = poll_table_info[1];
+function init_discovery_polling() {
+    $('.discovery_table').each(function (index, value) {
+        var jqt = $(this);
 
-    if ($('#'+table_id).attr('id') == undefined) {
-        console.log("table "+ + table_id + " is no longer available so bailing out...");
+        setTimeout(function () {
+            checksum_discovery_table_poll(gon.routes.discovery_request_poll_path, jqt);
+        }, 500);
+    });
+}
+
+function checksum_discovery_table_poll(poll_path, jqt) {
+    var domain = jqt.data('domain');
+    var id = jqt.data('request_id');
+    var table_id = jqt.attr('id');
+    var poll_done = jqt.data('done');
+
+    console.log("domain is ->" + domain + "<-");
+    console.log("request_id is ->" + id + "<-");
+    console.log("table_id is ->" + table_id + "<-");
+
+    // check to see if the table is still in the DOM
+    if ($('#' + table_id).length == 0) {
+        console.log("table "+ table_id + " is no longer available so bailing out...");
         return false;
     }
 
-    $.get(poll_path, {request_id: id}, function (data) {
-        var req_tbl = $('#' + table_id);
-        req_tbl.find('tbody').html(data);
+    $.get(poll_path, {request_id: id, domain: domain, table_id: table_id}, function (data) {
+        jqt.find('tbody').html(data);
 
-        console.log("polling " + table_id + "------------done? " + req_tbl.data('done'));
+        console.log("polling " + table_id + "------------done? " + poll_done);
 
         //check if we continue polling
-        if (!req_tbl.data('done')) {
+        if (poll_done !== undefined && !poll_done) {
             setTimeout(function () {
-                checksum_discovery_table_poll(table_id, poll_path);
+                checksum_discovery_table_poll(poll_path, jqt);
             }, 5000);
         }
-        // awaiting_poll_results = false;
     });
 }
 

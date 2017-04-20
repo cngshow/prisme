@@ -1,28 +1,28 @@
 <%
   subset = nil
   striped = 'transparent'
-  done, req_id = [], nil
+  done = []
+  domain = discovery_details.first.request.domain.gsub(/\s+/,'')
 
   discovery_details.each do |row|
     done << row.done?
-    req_id ||= row.discovery_request.id
     last = row.last_discovery
 
     unless row.subset.eql?(subset)
       subset = row.subset
       striped = (striped.eql?('transparent') ? '#f2f2f2;' : 'transparent')
     end
-    tr_id = "#{row.va_site_id}_#{row.id}_#{row.subset.gsub(' ','')}_discovery"
+    tr_id = "#{row.va_site_id}_#{row.id}_#{domain}_#{subset.gsub(/\s+/,'')}_discovery"
 %>
     <tr id="<%= tr_id %>" style="background-color: <%= striped %>">
       <td class="site_name"><%= "#{row.va_site_id} - #{row.va_site.name}" %></td>
       <td class="subset_name"><%= row.subset %></td>
-      <td style="text-align: right" width="10%">
-        <span style="font-weight: bold">User Name:</span><br>
-        <span style="font-weight: bold">Status:</span><br>
-        <span style="font-weight: bold">Request Time:</span><br>
-        <span style="font-weight: bold">Response Time:</span><br>
-        <span style="font-weight: bold">Has Data:</span><br>
+      <td style="text-align: right; font-weight: bold" width="10%">
+        User Name:<br>
+        Status:<br>
+        Request Time:<br>
+        Response Time:<br>
+        Actions:<br>
       </td>
       <td>
         <%= render partial: 'discovery_display', locals: {tr_id: tr_id, detail: row, current: true} %>
@@ -32,7 +32,27 @@
       </td>
     </tr>
 <% end %>
+<!-- modal popup for viewing checksum hl7 -->
+<div id="view_discovery_hl7_modal" class="modal fade modal-wide50" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 style="padding-top: 5px"><span id="discovery_label" style="font-style: oblique"></span>&nbsp;Discovery HL7 for:&nbsp;<strong><span id="view_discovery_hl7_modal_title"></span></strong></h4>
+      </div>
+      <div class="modal-body scrollable_div">
+        <div>
+          <textarea id="textarea_discovery_hl7" rows="20" readonly></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <script type="text/javascript" charset="utf-8">
-    var req_tbl = $('#discovery_' + '<%= req_id %>');
-    req_tbl.data('done', <%= ! (done.uniq.include? false) %>);
+    (function() {
+        var req_tbl = $('#<%= table_id %>');
+        req_tbl.data('done', <%= ! (done.uniq.include? false) %>);
+    })();
 </script>
+

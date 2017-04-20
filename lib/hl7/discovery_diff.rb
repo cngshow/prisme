@@ -44,8 +44,8 @@ module HL7Messaging
       end
       common_vuid_diff_count.times do
         e = Array.new discovery_data.sample
-        e[1] = (e[1].to_s + '_different').to_sym if e[1]
         e[2] = (e[2].to_s + '_different').to_sym if e[2]
+        e[3] = (e[3].to_s + '_different').to_sym if e[3]
         common_discovery_data << e unless seen_vuids[e.first]
         seen_vuids[e.first] = true
       end

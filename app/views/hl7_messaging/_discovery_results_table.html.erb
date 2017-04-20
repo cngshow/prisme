@@ -1,14 +1,14 @@
 <% if @results %>
-    <% @results.each do |row| %>
-        <div class="result_hdr" style="border-left: 3px solid green; padding-left: 5px"><%#= tbl_border_color %>
-          <div style='background-color: transparent; height: 50px; padding: 5px;'>
-            <div style='float: left; color: black; font-weight: bold; font-size: 18px; padding-left: 5px' onclick="toggleResultTable(this);">
-              <i class="fa fa-minus-square" aria-hidden="true"></i>
-              <%= row.domain %>
-            </div>
-          </div>
+    <% @results.each do |row|
+      request_id = row.id
+      domain = row.domain.sub(/\s+/,'')
+      table_id = "discovery_#{request_id}_#{domain}"
+    %>
+        <div class="result_hdr" style="border-left: 3px solid green; padding-left: 5px">
+          <%= render partial: 'checksum_discovery_result_table_hdr', locals: {row: row}%>
+
           <div class="result_table">
-            <table class="prisme-table table-hover discovery_table" id="<%= "discovery_#{row.id}" %>">
+            <table class="prisme-table table-hover discovery_table" id="<%= table_id %>" data-domain="<%= domain %>" data-request_id="<%= request_id %>">
               <thead>
               <tr>
                 <th scope="col" width="20%">Site</th>
@@ -18,7 +18,7 @@
               </tr>
               </thead>
               <tbody>
-              <%= render partial: 'discovery_results_tbody', locals: {discovery_details: row.discovery_details} %>
+              <%= render partial: 'discovery_results_tbody', locals: {table_id: table_id, discovery_details: row.discovery_details} %>
               </tbody>
             </table>
           </div>
@@ -27,33 +27,3 @@
         <br>
     <% end %>
 <% end %>
-<!-- modal popup for viewing checksum hl7 -->
-<div id="view_discovery_hl7_modal" class="modal fade modal-wide50" role="dialog">
-  <div class="modal-dialog modal-lg">
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 style="padding-top: 5px"><span id="discovery_label" style="font-style: oblique"></span>&nbsp;Discovery HL7 for:&nbsp;<strong><span id="view_discovery_hl7_modal_title"></span></strong></h4>
-      </div>
-      <div class="modal-body scrollable_div">
-        <div>
-          <button id='btn_discovery_csv' data-detail_id="" onclick="discoveryCsv(this);" class="btn btn-info btn-sm">Export as CSV</button><br><br>
-          <textarea id="textarea_discovery_hl7" rows="20" cols="120" readonly></textarea>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<script type="text/javascript" charset="utf-8">
-  function discoveryCsv(btn) {
-      var id = $(btn).data('detail_id');
-      $(btn).attr('disabled', true);
-      $.get(gon.routes.discovery_csv_path, {format: 'txt', discovery_detail_id: id}, function(data) {
-          var blob = new Blob([data], {type: "text/plain;charset=utf-8"});
-          saveAs(blob,'discovery_'+id+'.csv');
-          $(btn).attr('disabled', false);
-      });
-  }
-
-</script>
