@@ -184,7 +184,7 @@
             },
             function (data) {
             <% if @nav_type.eql? 'checksum' %>
-              _checksum_results(data, history);
+              _checksum_results(data);
             <% else %>
               _discovery_results(data);
             <% end %>
@@ -196,7 +196,7 @@
         title_div.text(hdr_text);
     }
 
-    function _checksum_results(data, history) {
+    function _checksum_results(data) {
         $('#checksum_results').html(data);
         change_tabs('checksum');
         wait_cursor(false);
