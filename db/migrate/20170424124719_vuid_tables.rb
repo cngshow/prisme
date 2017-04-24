@@ -8,7 +8,7 @@ class VuidTables < ActiveRecord::Migration
     java.sql.DriverManager.getConnection(url,user,pass).createStatement
   end
 
-  def change
+  def up
     r_val = create_table(:vuids, id: false) do |t|
       t.integer :next_vuid, null: false
       t.integer :start_vuid, null: false
@@ -66,5 +66,9 @@ class VuidTables < ActiveRecord::Migration
       end
     end
     r_val
+  end
+
+  def down
+    drop_table :vuids, force: :cascade
   end
 end
