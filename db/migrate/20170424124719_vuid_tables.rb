@@ -1,11 +1,11 @@
 class VuidTables < ActiveRecord::Migration
 
-  def get_statement
+  def get_connection
     ora_env = Rails.configuration.database_configuration[Rails.env]
     url = ora_env['url']
     user = ora_env['username']
     pass = ora_env['password']
-    java.sql.DriverManager.getConnection(url,user,pass).createStatement
+    java.sql.DriverManager.getConnection(url,user,pass)
   end
 
   def up
@@ -56,13 +56,18 @@ class VuidTables < ActiveRecord::Migration
         END;
       }
       begin
-        get_statement.executeQuery trigger_sql
+        @connection= get_connection
+        @statement = @connection.createStatement
+        @statement.executeQuery trigger_sql
       rescue => ex
         if $log
           $log.error("VUID trigger failed to be placed in the DB!")
           $log.error(ex.to_s)
         end
         puts ex.to_s
+      ensure
+        @statement.close
+        @connection.close
       end
     end
     r_val
