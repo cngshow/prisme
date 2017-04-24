@@ -66,8 +66,8 @@ class VuidTables < ActiveRecord::Migration
         end
         puts ex.to_s
       ensure
-        @statement.close
-        @connection.close
+        @statement.close rescue nil#Don't let the initializer fail
+        @connection.close rescue nil
       end
     end
     r_val
