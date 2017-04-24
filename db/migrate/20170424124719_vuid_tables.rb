@@ -1,6 +1,15 @@
 class VuidTables < ActiveRecord::Migration
+
+  def get_statement
+    ora_env = Rails.configuration.database_configuration[Rails.env]
+    url = ora_env['url']
+    user = ora_env['username']
+    pass = ora_env['password']
+    java.sql.DriverManager.getConnection(url,user,pass).createStatement
+  end
+
   def change
-    create_table(:vuids, id: false) do |t|
+    r_val = create_table(:vuids, id: false) do |t|
       t.integer :next_vuid, null: false
       t.integer :start_vuid, null: false
       t.integer :end_vuid, null: false
@@ -19,7 +28,7 @@ class VuidTables < ActiveRecord::Migration
     if $database.eql?(RailsPrisme::ORACLE)
       # -20000 to -20999 for  customized error messages.
       # http://www.oracle.com/technetwork/database/enterprise-edition/parameterized-custom-messages-098893.html
-      execute %q{
+      trigger_sql =  %q{
         CREATE OR REPLACE TRIGGER vuids_before_insert
         BEFORE INSERT
            ON vuids
@@ -46,6 +55,16 @@ class VuidTables < ActiveRecord::Migration
           END IF;
         END;
       }
+      begin
+        get_statement.executeQuery trigger_sql
+      rescue => ex
+        if $log
+          $log.error("VUID trigger failed to be placed in the DB!")
+          $log.error(ex.to_s)
+        end
+        puts ex.to_s
+      end
     end
+    r_val
   end
 end
