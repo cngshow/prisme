@@ -28,40 +28,79 @@ class VuidTables < ActiveRecord::Migration
     if $database.eql?(RailsPrisme::ORACLE)
       # -20000 to -20999 for  customized error messages.
       # http://www.oracle.com/technetwork/database/enterprise-edition/parameterized-custom-messages-098893.html
-      trigger_sql =  %q{
-        CREATE OR REPLACE TRIGGER vuids_before_insert
-        BEFORE INSERT
-           ON vuids
-           FOR EACH ROW
+      proc_sql =  %q{
+  CREATE OR REPLACE PROCEDURE PROC_REQUEST_VUID
+  (
+    A_RANGE IN NUMBER
+  , A_USERNAME IN VARCHAR2
+  , A_REASON IN VARCHAR2
+  , LAST_ID OUT NUMBER
+  )
+  IS
+    v_cnt              NUMBER;
+    v_max_next_vuid    vuids.next_vuid%TYPE;
 
-        DECLARE
-           v_max_next_vuid    vuids.next_vuid%TYPE;
-           v_next_vuid        vuids.next_vuid%TYPE;
+  BEGIN
+    SELECT count(*)
+    INTO v_cnt
+    FROM vuids
+    where NEXT_VUID < 0;
 
-        BEGIN
-          -- find the max next vuid
-          SELECT max(next_vuid)
-          INTO v_max_next_vuid
-          FROM vuids;
+    IF (v_cnt = 0) THEN
+      insert into vuids (NEXT_VUID, START_VUID, END_VUID, REQUEST_DATETIME, REQUEST_REASON, USERNAME)
+      VALUES (-1, 0, 0, sysdate, 'seeding database', 'system');
+    end if;
 
-          --get the calculated next vuid for the record that is about to be inserted
-          SELECT next_vuid
-          INTO   v_next_vuid
-          FROM   vuids
-          WHERE  next_vuid=:NEW.next_vuid;
+    SELECT count(*)
+    INTO v_cnt
+    FROM vuids
+    where NEXT_VUID > 0;
 
-          IF(v_next_vuid <= v_max_next_vuid) THEN
-              raise_application_error(-20000, 'Invalid VUID request. The next VUID being inserted into the table has already been requested.'); --to restrict the insertion`.
-          END IF;
-        END;
-      }
+    IF (v_cnt = 0) THEN
+      insert into vuids (NEXT_VUID, START_VUID, END_VUID, REQUEST_DATETIME, REQUEST_REASON, USERNAME)
+      VALUES (1, 0, 0, sysdate, 'seeding database', 'system');
+      commit;
+    end if;
+
+    IF (A_RANGE = 0) THEN
+      raise_application_error(-20000, 'Invalid VUID request. The range passed cannot be zero.');
+    ELSIF (A_RANGE < 0) then
+      select next_vuid
+      into v_max_next_vuid
+      from vuids
+      where ROWNUM = 1
+      order by next_vuid asc
+      for update;
+    ELSE
+      select next_vuid
+      into v_max_next_vuid
+      from vuids
+      where ROWNUM = 1
+      order by next_vuid desc
+      for update;
+    END IF;
+
+    if A_RANGE < 0 then
+      insert into vuids (NEXT_VUID, START_VUID, END_VUID, REQUEST_DATETIME, REQUEST_REASON, USERNAME)
+      VALUES (v_max_next_vuid + A_RANGE, v_max_next_vuid, v_max_next_vuid + A_RANGE + 1, sysdate, A_REASON, A_USERNAME);
+      LAST_ID := v_max_next_vuid + A_RANGE;
+    else
+      insert into vuids (NEXT_VUID, START_VUID, END_VUID, REQUEST_DATETIME, REQUEST_REASON, USERNAME)
+      VALUES (v_max_next_vuid + A_RANGE, v_max_next_vuid, v_max_next_vuid + A_RANGE - 1, sysdate, A_REASON, A_USERNAME);
+      LAST_ID := v_max_next_vuid + A_RANGE;
+    end if;
+
+    commit;
+
+  END PROC_REQUEST_VUID;
+}
       begin
         @connection= get_connection
         @statement = @connection.createStatement
-        @statement.executeQuery trigger_sql
+        @statement.executeQuery proc_sql
       rescue => ex
         if $log
-          $log.error("VUID trigger failed to be placed in the DB!")
+          $log.error('VUID proc failed to be placed in the DB!')
           $log.error(ex.to_s)
         end
         puts ex.to_s
@@ -75,5 +114,6 @@ class VuidTables < ActiveRecord::Migration
 
   def down
     drop_table :vuids, force: :cascade
+    get_connection.createStatement.executeQuery %q{drop procedure PROC_REQUEST_VUID}
   end
 end
