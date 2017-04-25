@@ -288,7 +288,7 @@ will take you to prisme's warmup page.  You would call this whenever you restart
 This will open a page that will, via ajax, motivate 500 http(s) requests to get Apache's workers warm and toasty. 
 Obviously, this will not work if you hit prisme locally.  Prisme must be hit through SSOI.
 This page has another nice feature.  The page it reloads 500 times show all the header information
-prisme gets from SSOI (including any others).  If you want to snoop on SSOI head here.
+prisme gets from SSOI (including any others).  If you want to snoop on SSOI this is the place to go.
 
 Appending:<br>
 

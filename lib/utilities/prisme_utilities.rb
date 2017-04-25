@@ -305,6 +305,28 @@ module PrismeUtilities
     file
   end
 
+  ##
+  # writes the json data to a file
+  # @param json - the JSON data to write out
+  # @param file_name - the filename to write out to the /tmp directory
+  def self.json_to_yaml_file(json, file_name)
+    prefix = '#Fixture created on ' + Time.now.strftime('%F %H:%M:%S') + "\n"
+    File.write("#{file_name}", prefix + json.to_yaml)
+    $log.trace{"Writing yaml file #{file_name}"}
+  end
+
+  def self.write_vuid_db
+    file = $PROPS['PRISME.data_directory'] + '/' + $PROPS['PRISME.vuid_db_file']
+    json = Rails.configuration.database_configuration[Rails.env]
+    begin
+      json_to_yaml_file(json, file)
+    rescue => ex
+      $log.error("The file #{file} was not written.  This will impact the vuid server!")
+      $log.error(ex.to_s)
+      $log.error(ex.backtrace.join("\n"))
+    end
+  end
+
 end
 
 module URI
