@@ -14,7 +14,7 @@ module VUID
   LOCK = Mutex.new
   class <<self
 
-    #todo refactor with a prepared statemnt
+    #todo refactor with a prepared statement
     def fetch_rows(num_rows:)
       num_rows = num_rows.to_i #prevent sql injection hack
       rs = nil
