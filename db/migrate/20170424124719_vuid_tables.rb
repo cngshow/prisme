@@ -5,7 +5,7 @@ class VuidTables < ActiveRecord::Migration
     url = ora_env['url']
     user = ora_env['username']
     pass = ora_env['password']
-    java.sql.DriverManager.getConnection(url,user,pass)
+    java.sql.DriverManager.getConnection(url, user, pass)
   end
 
   def up
@@ -24,11 +24,11 @@ class VuidTables < ActiveRecord::Migration
     add_index :vuids, :username
 
 
-  #   if we are in oracle then create a pre-insert trigger that will prevent users from inserting the new record with an invalid vuid (one that has already been requested)
+    #   if we are in oracle then create a pre-insert trigger that will prevent users from inserting the new record with an invalid vuid (one that has already been requested)
     if $database.eql?(RailsPrisme::ORACLE)
       # -20000 to -20999 for  customized error messages.
       # http://www.oracle.com/technetwork/database/enterprise-edition/parameterized-custom-messages-098893.html
-      proc_sql =  %q{
+      proc_sql = %q{
   CREATE OR REPLACE PROCEDURE PROC_REQUEST_VUID
   (
     A_RANGE IN NUMBER
@@ -105,7 +105,7 @@ class VuidTables < ActiveRecord::Migration
         end
         puts ex.to_s
       ensure
-        @statement.close rescue nil#Don't let the initializer fail
+        @statement.close rescue nil #Don't let the initializer fail
         @connection.close rescue nil
       end
     end
@@ -114,6 +114,31 @@ class VuidTables < ActiveRecord::Migration
 
   def down
     drop_table :vuids, force: :cascade
-    get_connection.createStatement.executeQuery %q{drop procedure PROC_REQUEST_VUID}
+    begin
+      get_connection.createStatement.executeQuery %q{drop procedure PROC_REQUEST_VUID}
+    rescue => ex
+      puts "Drop procedure failed! #{ex}"
+    end
   end
 end
+
+=begin
+Example proc call (java side)
+
+load('./db/migrate/20170424124719_vuid_tables.rb')
+#con is a jdbc connection
+conn = VuidTables.new.get_connection
+
+cStmt = conn.prepareCall("{call PROC_REQUEST_VUID(?,?,?,?)}")
+cStmt.setInt('A_RANGE',5)
+cStmt.setString('A_REASON','I am Groot!')
+cStmt.setString('A_USERNAME',"cshupp")
+cStmt.registerOutParameter("LAST_ID",java.sql.Types::INTEGER)
+cStmt.execute()
+id = cStmt.getInt("LAST_ID")
+
+    A_RANGE IN NUMBER
+  , A_USERNAME IN VARCHAR2
+  , A_REASON IN VARCHAR2
+  , LAST_ID OUT NUMBER
+=end
