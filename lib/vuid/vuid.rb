@@ -1,38 +1,52 @@
 module VUID
 
-  VuidResults = Struct.new(:range, :reason, :username, :next_id, :error)
-
+  VuidResults = Struct.new(:range, :reason, :username, :start_vuid, :end_vuid, :request_datetime, :next_id, :error)
+  LOCK = Mutex.new
   class <<self
 
     def request_vuid(range:, reason:, username:)
-      range = -(range.abs) unless PrismeUtilities.aitc_production?
-      next_id = nil
-      error = nil
-      begin
-        if $database.eql?(RailsPrisme::ORACLE)
-          coonn = nil
-          c_stmt = nil
-          begin
-            conn = get_ora_connection
-            c_stmt = conn.prepareCall("{call PROC_REQUEST_VUID(?,?,?,?)}")
-            c_stmt.setInt('A_RANGE', range)
-            c_stmt.setString('A_REASON', reason)
-            c_stmt.setString('A_USERNAME', username)
-            c_stmt.registerOutParameter("LAST_ID", java.sql.Types::INTEGER)
-            c_stmt.execute
-            next_id = c_stmt.getInt("LAST_ID")
-          ensure
-            c_stmt.close rescue nil
-            conn.close rescue nil
+      LOCK.synchronize do
+        range = -(range.abs) unless PrismeUtilities.aitc_production?
+        next_id = nil
+        error = nil
+        begin
+          if $database.eql?(RailsPrisme::ORACLE)
+            conn = nil
+            c_stmt = nil
+            start_vuid = nil
+            end_vuid = nil
+            request_datetime = nil
+            begin
+              conn = get_ora_connection
+              c_stmt = conn.prepareCall("{call PROC_REQUEST_VUID(?,?,?,?,?,?,?)}")
+              c_stmt.setInt('in_RANGE', range)
+              c_stmt.setString('in_REASON', reason)
+              c_stmt.setString('in_USERNAME', username)
+              c_stmt.registerOutParameter("out_LAST_ID", java.sql.Types::INTEGER)
+              c_stmt.registerOutParameter("out_START_VUID", java.sql.Types::INTEGER)
+              c_stmt.registerOutParameter("out_END_VUID", java.sql.Types::INTEGER)
+              c_stmt.registerOutParameter("out_REQUEST_DATETIME", java.sql.Types::TIMESTAMP)
+              c_stmt.execute
+              next_id = c_stmt.getInt("out_LAST_ID")
+              start_vuid = c_stmt.getInt("out_START_VUID")
+              end_vuid = c_stmt.getInt("out_END_VUID")
+              request_datetime = c_stmt.getTimestamp("out_REQUEST_DATETIME")
+            rescue => ex
+              raise ex
+            ensure
+              c_stmt.close rescue nil
+              conn.close rescue nil
+            end
+          else
+            #todo
+            #we are H2, implement after we get stored procedure.
           end
-        else
-          #todo
-          #we are H2, implement after we get stored procedure.
+        rescue => ex
+          error = ex
         end
-      rescue => ex
-        error = ex
+        time = Time.at(request_datetime.getTime/1000) rescue nil
+        VuidResults.new(range, reason, username, start_vuid, end_vuid, time, next_id, error)
       end
-      VuidResults.new(range, reason, username, next_id, error)
     end
 
     private
