@@ -1,13 +1,58 @@
 module VUID
 
-  VuidResults = Struct.new(:range, :reason, :username, :start_vuid, :end_vuid, :request_datetime, :next_id, :error) do
+  VuidResult = Struct.new(:range, :reason, :username, :start_vuid, :end_vuid, :request_datetime, :next_vuid, :error) do
     def get_vuids
       vuids = [start_vuid, end_vuid]
       Range.new(vuids.min, vuids.max).to_a
     end
+
+    def size
+      vuids = [start_vuid, end_vuid]
+      Range.new(vuids.min, vuids.max).size
+    end
   end
   LOCK = Mutex.new
   class <<self
+
+    #todo refactor with a prepared statemnt
+    def fetch_rows(num_rows:)
+      num_rows = num_rows.to_i #prevent sql injection hack
+      rs = nil
+      results = []
+      begin
+        conn = get_ora_connection
+        statement = nil
+        sql =%Q{
+                select NEXT_VUID, START_VUID, END_VUID, REQUEST_DATETIME, REQUEST_REASON, USERNAME
+                from vuids
+                where rownum <= #{num_rows}
+                and username != 'system' -- remove seed rows
+                order by REQUEST_DATETIME desc
+        }
+        statement = conn.createStatement
+        rs = statement.executeQuery sql
+        while (rs.next) do
+          #:range, :reason, :username, :start_vuid, :end_vuid, :request_datetime, :next_id, :error
+          sv = rs.getInt('START_VUID')
+          nv = rs.getInt('END_VUID')
+          time = Time.at(rs.getTimestamp('REQUEST_DATETIME').getTime/1000)
+          vuids = [sv, nv]
+          range = Range.new(vuids.min, vuids.max).size
+          range = -range if sv < 0
+          results << VuidResult.new(range, rs.getString('REQUEST_REASON'), rs.getString('USERNAME'), sv, nv, time, rs.getInt('NEXT_VUID'), nil)
+          #:range, :reason, :username, :start_vuid, :end_vuid, :request_datetime, :next_id, :error
+        end
+      rescue => ex
+          $log.error(ex.to_s)
+          $log.error(ex.backtrace.join("\n"))
+          return []
+      ensure
+        rs.close rescue nil
+        statment.close rescue nil
+        conn.close rescue nil
+      end
+      results
+    end
 
     def request_vuid(range:, reason:, username:)
       LOCK.synchronize do
@@ -50,7 +95,7 @@ module VUID
           error = ex
         end
         time = Time.at(request_datetime.getTime/1000) rescue nil
-        VuidResults.new(range, reason, username, start_vuid, end_vuid, time, next_id, error)
+        VuidResult.new(range, reason, username, start_vuid, end_vuid, time, next_id, error)
       end
     end
 
@@ -69,4 +114,5 @@ end
 =begin
 load('./lib/vuid/vuid.rb')
 VUID.request_vuid(range: 4, reason: 'I am Groot!', username: 'billy')
+VUID.fetch_rows(num_rows: 2)
 =end
