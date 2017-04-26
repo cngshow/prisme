@@ -14,45 +14,37 @@ module VUID
   LOCK = Mutex.new
   class <<self
 
-    #todo refactor with a prepared statement
+    # results = ActiveRecord::Base.connection.exec_query("select NEXT_VUID, START_VUID, END_VUID, REQUEST_DATETIME, REQUEST_REASON, USERNAME from vuids where username != 'system'")
+    # results.to_hash.as_json
+
     def fetch_rows(num_rows:)
-      num_rows = num_rows.to_i #prevent sql injection hack
-      rs = nil
+      num_rows = num_rows.to_i rescue 1#prevent sql injection hack
       results = []
-      begin
-        conn = get_ora_connection
-        statement = nil
-        sql =%Q{
+      sql =%Q{
                 select NEXT_VUID, START_VUID, END_VUID, REQUEST_DATETIME, REQUEST_REASON, USERNAME
                 from vuids
                 where rownum <= #{num_rows}
                 and username != 'system' -- remove seed rows
                 order by REQUEST_DATETIME desc
         }
-        statement = conn.createStatement
-        rs = statement.executeQuery sql
-        while (rs.next) do
-          #:range, :reason, :username, :start_vuid, :end_vuid, :request_datetime, :next_id, :error
-          sv = rs.getInt('START_VUID')
-          nv = rs.getInt('END_VUID')
-          time = Time.at(rs.getTimestamp('REQUEST_DATETIME').getTime/1000)
-          vuids = [sv, nv]
-          range = Range.new(vuids.min, vuids.max).size
-          range = -range if sv < 0
-          results << VuidResult.new(range, rs.getString('REQUEST_REASON'), rs.getString('USERNAME'), sv, nv, time, rs.getInt('NEXT_VUID'), nil)
-          #:range, :reason, :username, :start_vuid, :end_vuid, :request_datetime, :next_id, :error
-        end
+      begin
+        result_ar = ActiveRecord::Base.connection.exec_query sql
       rescue => ex
-          $log.error(ex.to_s)
-          $log.error(ex.backtrace.join("\n"))
-          return []
-      ensure
-        rs.close rescue nil
-        statment.close rescue nil
-        conn.close rescue nil
+        $log.error("I could not fetch the VUID rows!")
+        $log.error ex.to_s
+        $log.error(ex.backtrace.join("\n"))
+      end
+      result_ar&.each do |row|
+        sv = row['start_vuid']
+        nv = row['end_vuid']
+        vuids = [sv, nv]
+        range = Range.new(vuids.min, vuids.max).size
+        range = -range if sv < 0
+        results << VuidResult.new(range, row['request_reason'], row['username'], sv, nv, row['request_datetime'], row['next_vuid'], nil)
       end
       results
     end
+
 
     def request_vuid(range:, reason:, username:)
       LOCK.synchronize do
@@ -99,20 +91,30 @@ module VUID
       end
     end
 
-    private
-
     def get_ora_connection
       ora_env = Rails.configuration.database_configuration[Rails.env]
       url = ora_env['url']
       user = ora_env['username']
       pass = ora_env['password']
-      java.sql.DriverManager.getConnection(url, user, pass)
+      properties = java.util.Properties.new
+      properties.put("user", user)
+      properties.put("password", pass)
+      ORACLE_DRIVER.connect(url, properties)
     end
   end
 end
 
 =begin
 load('./lib/vuid/vuid.rb')
-VUID.request_vuid(range: 4, reason: 'I am Groot!', username: 'billy')
+a = VUID.request_vuid(range: 4, reason: 'I am Groot!', username: 'billy')
 VUID.fetch_rows(num_rows: 2)
+
+from our driver gem
+        begin
+            @raw_connection = java.sql.DriverManager.getConnection(url, properties)
+          rescue
+            # bypass DriverManager to work in cases where ojdbc*.jar
+            # is added to the load path at runtime and not on the
+            # system classpath
+            @raw_connection = ORACLE_DRIVER.connect(url, properties)
 =end
