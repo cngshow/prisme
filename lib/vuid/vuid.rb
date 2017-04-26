@@ -1,6 +1,11 @@
 module VUID
 
-  VuidResults = Struct.new(:range, :reason, :username, :start_vuid, :end_vuid, :request_datetime, :next_id, :error)
+  VuidResults = Struct.new(:range, :reason, :username, :start_vuid, :end_vuid, :request_datetime, :next_id, :error) do
+    def get_vuids
+      vuids = [start_vuid, end_vuid]
+      Range.new(vuids.min, vuids.max).to_a
+    end
+  end
   LOCK = Mutex.new
   class <<self
 
