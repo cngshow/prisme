@@ -5,6 +5,10 @@ Rails.application.routes.draw do
     end
   end
 
+  get 'vuid_requests' => 'vuid#index'
+  get 'vuid_poll' => 'vuid#ajax_vuid_polling', :constraints => OnlyAjaxRequest.new
+  post 'request_vuid' => 'vuid#request_vuid'
+
   get 'hl7_messaging/checksum', as: 'checksum'
   get 'hl7_messaging/discovery', as: 'discovery'
   get 'hl7_messaging/discovery_csv', as: 'discovery_csv'

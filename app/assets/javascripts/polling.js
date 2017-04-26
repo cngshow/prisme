@@ -13,6 +13,7 @@ var polling = (function () {
         DISCOVERY: 'discovery',
         ADMIN_USER_EDIT: 'admin_user_edit',
         SERVICES: 'services',
+        VUID_REQUESTS: 'vuid_requests',
         LOGIN: 'log_in',
         LOGOUT: 'log_out'
     };

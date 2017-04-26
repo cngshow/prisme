@@ -1,0 +1,16 @@
+<% if @results %>
+  <% @results.each do |row| %>
+    <tr>
+      <td><%= display_time(row.request_datetime ) %></td>
+      <td><%= row.reason %></td>
+      <td><%= row.username %></td>
+      <td><%= row.range %></td>
+      <td><%= row.start_vuid %></td>
+      <td><%= row.end_vuid %></td>
+    </tr>
+  <% end %>
+<% else %>
+    <tr>
+      <td colspan="6">No results were returned from the polling call</td>
+    </tr>
+<% end %>

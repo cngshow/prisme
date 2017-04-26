@@ -1,0 +1,97 @@
+<!-- Trigger the modal with a button -->
+<br>
+<button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Request VUIDs</button>
+<div class="page-header">
+  <h1>VUID Requests Dashboard</h1>
+</div>
+
+<%= render 'layouts/filter_table_poll_results', filter_id: 'vuid_filter_rows', filter_label: 'Filter Results', include_all_rows: true, poll: 'poll' %>
+
+<table id="vuid-table" class="prisme-table table-striped table-hover">
+  <thead>
+  <tr>
+    <th scope="col">Request Date</th>
+    <th scope="col">Request Reason</th>
+    <th scope="col">User Name</th>
+    <th scope="col">VUID Count</th>
+    <th scope="col">Beginning VUID</th>
+    <th scope="col">Ending VUID</th>
+  </tr>
+  </thead>
+  <tbody>
+    <%= render partial: 'vuid/vuid_results_tbody'%>
+  </tbody>
+</table>
+<br/>
+
+<!-- Modal -->
+<div id="myModal" class="modal fade modal-wide50" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
+        <h2 class="modal-title">Request VUIDs</h2>
+      </div>
+      <div class="modal-body">
+        <%= form_tag request_vuid_path, id: 'myForm', method: 'post' do %>
+            <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+            <div title="Number of VUIDs" class="input_div">
+              <%= label_tag 'range', 'Number of VUIDs' %><br>
+              <%= text_field_tag 'range', nil, data: {required: true}, placeholder: 'Enter the Number of VUIDs Needed', maxlength: 75, size: 75, class: 'form-control' %>
+            </div>
+            <br>
+            <div title="Reason for VUID Request" class="input_div">
+              <%= label_tag 'reason', 'Number of VUIDs' %><br>
+              <%= text_area_tag 'reason', nil, placeholder: 'Enter the Reason for this VUID Request', rows: '3', cols: 76, class: 'form-control' %>
+              <!-- input_525 -->
+            </div>
+            <br>
+        <% end %>
+        <button class="btn btn-primary btn-lg" onclick="submitRequest()" id="btn_submit">Submit VUID Request</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript" charset="utf-8">
+    function submitRequest() { //todo make this a partial and include this in the application.js file -- search for submitRequest
+        var $btnSubmit = $("#btn_submit");
+        $btnSubmit.attr('disabled', true);
+
+        if ($btnSubmit.hasClass('processing')) {
+            return false;
+        } else {
+            $btnSubmit.addClass('processing');
+        }
+
+        var $myForm = $('#myForm');
+        if ($myForm.valid()) {
+            $btnSubmit.html('<span><i class="fa fa-cog fa-spin fa-fw" aria-hidden="true"></i>Processing Request...Please Wait</span>');
+            $myForm.submit();
+        } else {
+            console.log("validation errors so re-enabling button...");
+            $btnSubmit.attr('disabled', false);
+            $btnSubmit.removeClass('processing');
+        }
+    }
+
+    var awaiting_poll_results = false;
+
+    function vuid_requests_poll() {
+        console.log('polling vuid requests...');
+        awaiting_poll_results = true;
+        $.get('<%= vuid_requests_path %>', {}, function (data) {
+            $('#vuid-table').find('tbody').html(data);
+            awaiting_poll_results = false;
+        });
+    }
+
+    $(document).ready(function () {
+//        vuid_requests_poll();
+
+        //register for polling
+//        polling.registerPolling(polling.pollEnum.VUID_REQUESTS, vuid_requests_poll, 30000);
+    });
+</script>
