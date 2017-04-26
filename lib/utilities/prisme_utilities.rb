@@ -230,6 +230,10 @@ module PrismeUtilities
     (HashWithIndifferentAccess.new PrismeUtilities.aitc_env).deep_dup
   end
 
+  def self.aitc_production?
+    PRISME_ENVIRONMENT.eql? 'PROD'
+  end
+
   def self.server_config
     return (HashWithIndifferentAccess.new PrismeUtilities.config).deep_dup unless PrismeUtilities.config.nil?
     PrismeUtilities.config = PrismeUtilities.fetch_yml 'server_config.yml'
