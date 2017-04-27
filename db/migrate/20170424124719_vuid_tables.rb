@@ -51,7 +51,7 @@ class VuidTables < ActiveRecord::Migration
 
     IF (v_cnt = 0) THEN
       insert into vuids (NEXT_VUID, START_VUID, END_VUID, REQUEST_DATETIME, REQUEST_REASON, USERNAME)
-      VALUES (-1, 0, 0, sysdate, 'seeding database', 'system');
+      VALUES (-1, 0, 0, sys_extract_utc(systimestamp), 'seeding database', 'system');
     end if;
 
     SELECT count(*)
@@ -61,7 +61,7 @@ class VuidTables < ActiveRecord::Migration
 
     IF (v_cnt = 0) THEN
       insert into vuids (NEXT_VUID, START_VUID, END_VUID, REQUEST_DATETIME, REQUEST_REASON, USERNAME)
-      VALUES (1, 0, 0, sysdate, 'seeding database', 'system');
+      VALUES (1, 0, 0, sys_extract_utc(systimestamp), 'seeding database', 'system');
     end if;
 
     IF (in_RANGE = 0) THEN
@@ -84,11 +84,11 @@ class VuidTables < ActiveRecord::Migration
 
     if in_RANGE < 0 then
       insert into vuids (NEXT_VUID, START_VUID, END_VUID, REQUEST_DATETIME, REQUEST_REASON, USERNAME)
-      VALUES (v_max_next_vuid + in_RANGE, v_max_next_vuid, v_max_next_vuid + in_RANGE + 1, sysdate, in_REASON, in_USERNAME);
+      VALUES (v_max_next_vuid + in_RANGE, v_max_next_vuid, v_max_next_vuid + in_RANGE + 1, sys_extract_utc(systimestamp), in_REASON, in_USERNAME);
       out_LAST_ID := v_max_next_vuid + in_RANGE;
     else
       insert into vuids (NEXT_VUID, START_VUID, END_VUID, REQUEST_DATETIME, REQUEST_REASON, USERNAME)
-      VALUES (v_max_next_vuid + in_RANGE, v_max_next_vuid, v_max_next_vuid + in_RANGE - 1, sysdate, in_REASON, in_USERNAME);
+      VALUES (v_max_next_vuid + in_RANGE, v_max_next_vuid, v_max_next_vuid + in_RANGE - 1, sys_extract_utc(systimestamp), in_REASON, in_USERNAME);
       out_LAST_ID := v_max_next_vuid + in_RANGE;
     end if;
 
