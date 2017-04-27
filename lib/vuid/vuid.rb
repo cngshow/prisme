@@ -70,7 +70,7 @@ module VUID
     #jdbc example for rest team
     def request_vuid_jdbc(range:, reason:, username:)
       LOCK.synchronize do
-        range = -(range.abs) unless PrismeUtilities.aitc_production?
+        range = -(range.to_i.abs) unless PrismeUtilities.aitc_production?
         next_id = nil
         error = nil
         begin

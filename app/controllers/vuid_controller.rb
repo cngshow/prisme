@@ -1,13 +1,10 @@
 require './lib/vuid/vuid'
-PrismeJars.load
+# PrismeJars.load
 
 class VuidController < ApplicationController
   before_action :can_deploy
 
   def index
-    @results = VUID.fetch_rows(num_rows: 15)
-    # a = VUID.request_vuid(range: 1, reason: 'reason', username: prisme_user.user_name)
-    # g = @results
   end
 
   def request_vuid
@@ -34,7 +31,8 @@ class VuidController < ApplicationController
 
   def ajax_vuid_polling
     #   look at filter results partial
-    @results = VUID.fetch_rows(num_rows: 15)
+    row_limit = params['row_limit'].to_i
+    @results = VUID.fetch_rows(num_rows: row_limit)
     render partial: 'vuid_results_tbody'
   end
 
