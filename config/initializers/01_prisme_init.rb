@@ -116,6 +116,7 @@ $log.always { PrismeLogEvent.notify(PrismeLogEvent::LIFECYCLE_TAG, "#{Rails.appl
 PRISME_NAME = $PROPS['PRISME.application_name']
 KOMET_NAME = $PROPS['PRISME.komet_name']
 HL7Messaging::init_messaging_engine unless (STFU_MODE || $testing)
+PrismeUtilities.write_vuid_db
 
 # ensure super_user and admin for cboden for demo
 =begin

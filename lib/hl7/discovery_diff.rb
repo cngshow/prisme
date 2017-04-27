@@ -90,6 +90,7 @@ module HL7Messaging
     end
 
     def to_tmp_file(name)
+      begin
       content = headers.map do |e|
         "\"#{e}\""
       end.join(',') + "\n"
@@ -101,6 +102,9 @@ module HL7Messaging
         content << line
       end
       File.write("./tmp/#{name}", content)
+      rescue =>ex
+        $log.warn("The Diff file #{name} could not be written. #{ex}") if $log #automated unit test will not have a logger
+      end
     end
 
     protected
