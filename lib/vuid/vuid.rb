@@ -50,7 +50,7 @@ module VUID
         range = -(range.to_i.abs) unless PrismeUtilities.aitc_production?
         begin
           if $database.eql?(RailsPrisme::ORACLE)
-            hash = plsql.PROC_REQUEST_VUID(range,reason,username)
+            hash = plsql.PROC_REQUEST_VUID(range,username,reason)
           else
             #todo
             #we are H2, implement after we get stored procedure.
