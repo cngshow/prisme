@@ -45,8 +45,29 @@ module VUID
       results
     end
 
-
     def request_vuid(range:, reason:, username:)
+      LOCK.synchronize do
+        range = -(range.abs) unless PrismeUtilities.aitc_production?
+        begin
+          if $database.eql?(RailsPrisme::ORACLE)
+            hash = plsql.PROC_REQUEST_VUID(range,reason,username)
+          else
+            #todo
+            #we are H2, implement after we get stored procedure.
+          end
+        rescue => ex
+          $log.error("vuid request for user #{username} failed!")
+          $log.error(ex.to_s)
+          $log.error(ex.backtrace.join("\n"))
+          error = ex.to_s
+        end
+        VuidResult.new(range, reason, username, hash[:out_start_vuid], hash[:out_end_vuid], hash[:out_request_datetime], hash[:out_end_vuid], error)
+      end
+    end
+
+
+    #jdbc example for rest team
+    def request_vuid_jdbc(range:, reason:, username:)
       LOCK.synchronize do
         range = -(range.abs) unless PrismeUtilities.aitc_production?
         next_id = nil
@@ -107,6 +128,7 @@ end
 =begin
 load('./lib/vuid/vuid.rb')
 a = VUID.request_vuid(range: 4, reason: 'I am Groot!', username: 'billy')
+a = VUID.request_vuid_jdbc(range: 4, reason: 'I am Groot!', username: 'billy')
 VUID.fetch_rows(num_rows: 2)
 
 from our driver gem
@@ -117,4 +139,15 @@ from our driver gem
             # is added to the load path at runtime and not on the
             # system classpath
             @raw_connection = ORACLE_DRIVER.connect(url, properties)
+
+n = 1000
+Benchmark.bm do |x|
+  x.report { n.times do  VUID.request_vuid_jdbc(range: 4, reason: 'I am Groot!', username: 'billy') end }
+end
+
+n = 1000
+Benchmark.bm do |x|
+  x.report { n.times do  VUID.request_vuid(range: 4, reason: 'I am Groot!', username: 'billy') end }
+end
+
 =end

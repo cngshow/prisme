@@ -3,8 +3,6 @@ PrismeJars.load
 
 class VuidController < ApplicationController
   before_action :can_deploy
-  # skip_after_action :verify_authorized, only: [:log_event]
-  # skip_before_action :verify_authenticity_token, only: [:log_event]
 
   def index
     @results = VUID.fetch_rows(num_rows: 15)
@@ -17,6 +15,21 @@ class VuidController < ApplicationController
     reason = params['reason']
     VUID.request_vuid(range: range, reason: reason, username: prisme_user.user_name)
     redirect_to vuid_requests_path
+  end
+
+  def rest_request_vuid
+    range = params['range']
+    reason = params['reason']
+    user = params['username']
+    vuids = VUID.request_vuid(range: range, reason: reason, username: user)
+    render json: vuids.to_json
+  end
+
+  def rest_fetch_vuids
+    rows = params['num_vuids']
+    rows = 1000 if rows.nil?
+    rows = VUID.fetch_rows
+    render json: rows.to_json
   end
 
   def ajax_vuid_polling

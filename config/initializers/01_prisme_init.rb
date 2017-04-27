@@ -6,6 +6,7 @@ $CLASSPATH << "#{Rails.root}/lib/rails_common/logging/testLogConfig" if $rake
 require './lib/jars'
 PrismeJars.load
 
+
 require './lib/rails_common/util/rescuable'
 require './lib/rails_common/logging/open_logging'
 require './lib/rails_common/logging/logging'

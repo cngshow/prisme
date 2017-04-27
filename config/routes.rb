@@ -4,7 +4,7 @@ Rails.application.routes.draw do
       request.xhr?
     end
   end
-
+  match '/render_props' => 'services#render_props', :as => :services_render_props, via: [:get]
   get 'vuid_requests' => 'vuid#index'
   get 'vuid_poll' => 'vuid#ajax_vuid_polling', :constraints => OnlyAjaxRequest.new
   post 'request_vuid' => 'vuid#request_vuid'
