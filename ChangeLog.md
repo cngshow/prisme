@@ -2,8 +2,8 @@ PRISME Changelog
 
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers where provided, and the git commit history.
 
-* 2017/04/?? - 3.3 - PENDING
-    *
+* 2017/04/27 - 3.3
+    * Refactor and cleanup for checksum and discovery
 
 * 2017/04/20 - 3.2
     *  site_restriction_ignored property added to prisme.properties, so prisme.properties now has:
