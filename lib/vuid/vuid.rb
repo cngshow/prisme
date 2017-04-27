@@ -47,7 +47,7 @@ module VUID
 
     def request_vuid(range:, reason:, username:)
       LOCK.synchronize do
-        range = -(range.abs) unless PrismeUtilities.aitc_production?
+        range = -(range.to_i.abs) unless PrismeUtilities.aitc_production?
         begin
           if $database.eql?(RailsPrisme::ORACLE)
             hash = plsql.PROC_REQUEST_VUID(range,reason,username)
@@ -60,6 +60,7 @@ module VUID
           $log.error(ex.to_s)
           $log.error(ex.backtrace.join("\n"))
           error = ex.to_s
+          hash = {} if hash.nil?
         end
         VuidResult.new(range, reason, username, hash[:out_start_vuid], hash[:out_end_vuid], hash[:out_request_datetime], hash[:out_end_vuid], error)
       end
@@ -128,6 +129,8 @@ end
 =begin
 load('./lib/vuid/vuid.rb')
 a = VUID.request_vuid(range: 4, reason: 'I am Groot!', username: 'billy')
+a = VUID.request_vuid(range: 0, reason: 'I am Groot!', username: 'billy')
+
 a = VUID.request_vuid_jdbc(range: 4, reason: 'I am Groot!', username: 'billy')
 VUID.fetch_rows(num_rows: 2)
 

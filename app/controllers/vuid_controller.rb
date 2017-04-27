@@ -18,7 +18,7 @@ class VuidController < ApplicationController
   end
 
   def rest_request_vuid
-    range = params['range']
+    range = params['range'].to_i
     reason = params['reason']
     user = params['username']
     vuids = VUID.request_vuid(range: range, reason: reason, username: user)
@@ -26,10 +26,10 @@ class VuidController < ApplicationController
   end
 
   def rest_fetch_vuids
-    rows = params['num_vuids']
-    rows = 1000 if rows.nil?
-    rows = VUID.fetch_rows
-    render json: rows.to_json
+    num_rows = params['num_vuids']
+    num_rows = 1000 if num_rows.nil?
+    result = VUID.fetch_rows(num_rows: num_rows)
+    render json: result.to_json
   end
 
   def ajax_vuid_polling
