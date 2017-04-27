@@ -5,17 +5,17 @@
   <h1>VUID Requests Dashboard</h1>
 </div>
 
-<%= render 'layouts/filter_table_poll_results', filter_id: 'vuid_filter_rows', filter_label: 'Filter Results', include_all_rows: true, poll: 'poll' %>
+<%= render 'layouts/filter_table_poll_results', filter_id: 'vuid_filter_rows', filter_label: 'Filter Results', include_all_rows: true, poll: 'vuid_requests_poll' %>
 
 <table id="vuid-table" class="prisme-table table-striped table-hover">
   <thead>
   <tr>
-    <th scope="col">Request Date</th>
-    <th scope="col">Request Reason</th>
-    <th scope="col">User Name</th>
-    <th scope="col">VUID Count</th>
-    <th scope="col">Beginning VUID</th>
-    <th scope="col">Ending VUID</th>
+    <th scope="col" width="125px">Request Date</th>
+    <th scope="col" width="50%">Request Reason</th>
+    <th scope="col" width="125px">User Name</th>
+    <th scope="col" width="95px">VUID Count</th>
+    <th scope="col" width="95px">Beginning VUID</th>
+    <th scope="col" width="95px">Ending VUID</th>
   </tr>
   </thead>
   <tbody>
@@ -25,7 +25,7 @@
 <br/>
 
 <!-- Modal -->
-<div id="myModal" class="modal fade modal-wide50" role="dialog">
+<div id="myModal" class="modal fade" role="dialog">
   <div class="modal-dialog">
 
     <!-- Modal content-->
@@ -39,13 +39,12 @@
             <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
             <div title="Number of VUIDs" class="input_div">
               <%= label_tag 'range', 'Number of VUIDs' %><br>
-              <%= text_field_tag 'range', nil, data: {required: true}, placeholder: 'Enter the Number of VUIDs Needed', maxlength: 75, size: 75, class: 'form-control' %>
+              <%= number_field_tag 'range', nil, min: 1, data: {required: true}, placeholder: 'Enter the Number of VUIDs Needed', class: 'form-control' %>
             </div>
             <br>
             <div title="Reason for VUID Request" class="input_div">
-              <%= label_tag 'reason', 'Number of VUIDs' %><br>
-              <%= text_area_tag 'reason', nil, placeholder: 'Enter the Reason for this VUID Request', rows: '3', cols: 76, class: 'form-control' %>
-              <!-- input_525 -->
+              <%= label_tag 'reason', 'Request Reason' %><br>
+              <%= text_area_tag 'reason', nil, data: {required: true}, placeholder: 'Enter the Reason for this VUID Request', rows: '3', cols: 76, class: 'form-control' %>
             </div>
             <br>
         <% end %>
@@ -80,16 +79,43 @@
     var awaiting_poll_results = false;
 
     function vuid_requests_poll() {
-        console.log('polling vuid requests...');
+        var rowlimit = arguments[0];
+
+        if (rowlimit === undefined) {
+            rowlimit = $('#vuid_filter_rows').find('option:selected').val();
+        }
+
         awaiting_poll_results = true;
-        $.get('<%= vuid_requests_path %>', {}, function (data) {
+        $.get('<%= vuid_poll_path %>', {row_limit: rowlimit}, function (data) {
             $('#vuid-table').find('tbody').html(data);
             awaiting_poll_results = false;
         });
     }
 
     $(document).ready(function () {
-//        vuid_requests_poll();
+        $('#myModal').on('show.bs.modal', function () {
+            $("#myForm").validate().resetForm();
+            document.getElementById("myForm").reset();
+        });
+        $('#myModal').on('shown.bs.modal', function () {
+            $('#range').focus()
+        });
+        // initialize the jquery validation plugin
+        $('#myForm').validate({
+            rules: {
+                range: {
+                    required: true
+                },
+                reason: {
+                    required: true
+                }
+            }, // Specify validation error messages
+            messages: {
+                range: "Please enter the number of VUIDs you need.",
+                reason: "Please enter your reason requesting these VUIDs."
+            }
+        });
+        vuid_requests_poll();
 
         //register for polling
 //        polling.registerPolling(polling.pollEnum.VUID_REQUESTS, vuid_requests_poll, 30000);
