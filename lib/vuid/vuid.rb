@@ -60,19 +60,19 @@ module VUID
             request_datetime = nil
             begin
               conn = get_ora_connection
-              c_stmt = conn.prepareCall("{call PROC_REQUEST_VUID(?,?,?,?,?,?,?)}")
+              c_stmt = conn.prepareCall('{call PROC_REQUEST_VUID(?,?,?,?,?,?,?)}')
               c_stmt.setInt('in_RANGE', range)
               c_stmt.setString('in_REASON', reason)
               c_stmt.setString('in_USERNAME', username)
-              c_stmt.registerOutParameter("out_LAST_ID", java.sql.Types::INTEGER)
-              c_stmt.registerOutParameter("out_START_VUID", java.sql.Types::INTEGER)
-              c_stmt.registerOutParameter("out_END_VUID", java.sql.Types::INTEGER)
-              c_stmt.registerOutParameter("out_REQUEST_DATETIME", java.sql.Types::TIMESTAMP)
+              c_stmt.registerOutParameter('out_LAST_ID', java.sql.Types::INTEGER)
+              c_stmt.registerOutParameter('out_START_VUID', java.sql.Types::INTEGER)
+              c_stmt.registerOutParameter('out_END_VUID', java.sql.Types::INTEGER)
+              c_stmt.registerOutParameter('out_REQUEST_DATETIME', java.sql.Types::TIMESTAMP)
               c_stmt.execute
-              next_id = c_stmt.getInt("out_LAST_ID")
-              start_vuid = c_stmt.getInt("out_START_VUID")
-              end_vuid = c_stmt.getInt("out_END_VUID")
-              request_datetime = c_stmt.getTimestamp("out_REQUEST_DATETIME")
+              next_id = c_stmt.getInt('out_LAST_ID')
+              start_vuid = c_stmt.getInt('out_START_VUID')
+              end_vuid = c_stmt.getInt('out_END_VUID')
+              request_datetime = c_stmt.getTimestamp('out_REQUEST_DATETIME')
             rescue => ex
               raise ex
             ensure
@@ -97,8 +97,8 @@ module VUID
       user = ora_env['username']
       pass = ora_env['password']
       properties = java.util.Properties.new
-      properties.put("user", user)
-      properties.put("password", pass)
+      properties.put('user', user)
+      properties.put('password', pass)
       ORACLE_DRIVER.connect(url, properties)
     end
   end
