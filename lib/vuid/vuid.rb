@@ -1,3 +1,5 @@
+require './lib/oracle/ora'
+
 module VUID
 
   VuidResult = Struct.new(:range, :reason, :username, :start_vuid, :end_vuid, :request_datetime, :next_vuid, :error) do
@@ -47,7 +49,7 @@ module VUID
 
     def request_vuid(range:, reason:, username:)
       LOCK.synchronize do
-        range = -(range.to_i.abs) unless PrismeUtilities.aitc_production?
+        range = -(range.to_i.abs) unless PrismeUtilities.real_vuids?
         begin
           if $database.eql?(RailsPrisme::ORACLE)
             hash = plsql.PROC_REQUEST_VUID(range,username,reason)
@@ -81,7 +83,7 @@ module VUID
             end_vuid = nil
             request_datetime = nil
             begin
-              conn = get_ora_connection
+              conn = PrismeOracle.get_ora_connection
               c_stmt = conn.prepareCall('{call PROC_REQUEST_VUID(?,?,?,?,?,?,?)}')
               c_stmt.setInt('in_RANGE', range)
               c_stmt.setString('in_REASON', reason)
@@ -111,17 +113,6 @@ module VUID
         time = Time.at(request_datetime.getTime/1000) rescue nil
         VuidResult.new(range, reason, username, start_vuid, end_vuid, time, next_id, error)
       end
-    end
-
-    def get_ora_connection
-      ora_env = Rails.configuration.database_configuration[Rails.env]
-      url = ora_env['url']
-      user = ora_env['username']
-      pass = ora_env['password']
-      properties = java.util.Properties.new
-      properties.put('user', user)
-      properties.put('password', pass)
-      ORACLE_DRIVER.connect(url, properties)
     end
   end
 end
