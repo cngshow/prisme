@@ -30,18 +30,20 @@ module VUID
       begin
         result_ar = ActiveRecord::Base.connection.exec_query sql
       rescue => ex
-        $log.error("I could not fetch the VUID rows!")
+        $log.error('I could not fetch the VUID rows!')
         $log.error ex.to_s
         $log.error(ex.backtrace.join("\n"))
       end
       result_ar&.each do |row|
         sv = row['start_vuid']
         nv = row['end_vuid']
+        tv = row['request_datetime'].is_a?(String) ? Time.parse(row['request_datetime']) : row['request_datetime']
         vuids = [sv, nv]
         range = Range.new(vuids.min, vuids.max).size
         range = -range if sv < 0
-        results << VuidResult.new(range, row['request_reason'], row['username'], sv, nv, row['request_datetime'], row['next_vuid'], nil)
+        results << VuidResult.new(range, row['request_reason'], row['username'], sv, nv, tv, row['next_vuid'], nil)
       end
+      $log.always("results are #{results.inspect}")
       results
     end
 
@@ -52,8 +54,26 @@ module VUID
           if $database.eql?(RailsPrisme::ORACLE)
             hash = plsql.PROC_REQUEST_VUID(range,username,reason)
           else
-            #todo
-            #we are H2, implement after we get stored procedure.
+            # we are working against H2 - All VUIDs will be negative
+            hash = {}
+
+            check_min_sql = 'select nvl(min(next_vuid),min(next_vuid),0) as min_vuid from vuids'
+            min_ar = ActiveRecord::Base.connection.exec_query check_min_sql
+            last_vuid = min_ar.first['min_vuid']
+            last_vuid = -1 if last_vuid >= 0
+            next_vuid = last_vuid + range
+
+            req_datetime = Time.now.to_i
+            insert_sql = %Q{
+            INSERT into VUIDS (NEXT_VUID, START_VUID, END_VUID, REQUEST_DATETIME, REQUEST_REASON, USERNAME)
+            VALUES (#{next_vuid}, #{last_vuid}, #{next_vuid + 1}, CURRENT_TIMESTAMP(#{req_datetime}), '#{reason}', '#{username}')
+            }
+
+            ActiveRecord::Base.connection.execute insert_sql
+            hash[:out_last_id] = next_vuid
+            hash[:out_start_vuid] = last_vuid
+            hash[:out_end_vuid] = next_vuid + 1
+            hash[:out_request_datetime] = Time.at(req_datetime)
           end
         rescue => ex
           $log.error("vuid request for user #{username} failed!")
@@ -62,7 +82,7 @@ module VUID
           error = ex.to_s
           hash = {} if hash.nil?
         end
-        VuidResult.new(range, reason, username, hash[:out_start_vuid], hash[:out_end_vuid], hash[:out_request_datetime], hash[:out_end_vuid], error)
+        VuidResult.new(range, reason, username, hash[:out_start_vuid], hash[:out_end_vuid], hash[:out_request_datetime], hash[:out_last_id], error)
       end
     end
 
