@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  apipie
   class OnlyAjaxRequest
     def matches?(request)
       request.xhr?

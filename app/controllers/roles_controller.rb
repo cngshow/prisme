@@ -2,6 +2,11 @@ require 'uri'
 require 'cgi'
 class RolesController < ApplicationController
 
+  resource_description do
+    short 'Role APIs'
+    formats ['json','html']
+  end
+
   skip_after_action :verify_authorized
   skip_before_action :verify_authenticity_token
   force_ssl if: :ssl_configured_delegator? # port: 8443
@@ -16,8 +21,16 @@ class RolesController < ApplicationController
     redirect_to logout_url
   end
 
-  #sample invocation
-  #http://localhost:3000/roles/get_all_roles.json
+
+  api :GET, '/roles/get_all_roles.json', 'Request all roles as JSON.'
+  api :GET, '/roles/get_all_roles', 'Request all roles as HTML.'
+  description %Q{
+Returns all the roles defined on the system
+
+sample invocation JSON:   #{$API_PIE_URLS[:roles_get_all_roles_url]}.json
+
+sample invocation HTML:   #{$API_PIE_URLS[:roles_get_all_roles_url]}
+}
   def get_all_roles
     @roles_hash = Roles::ALL_ROLES
     respond_to do |format|
@@ -28,6 +41,15 @@ class RolesController < ApplicationController
 
   #sample invocation
   #http://localhost:3000/roles/get_ssoi_roles.json?id=cboden
+  api :GET, '/roles/get_ssoi_roles.json', 'Request all roles for a VA Single Sign on User user as JSON.'
+  api :GET, '/roles/get_ssoi_roles', 'Request all roles for a VA Single Sign on User user as HTML.'
+  description %Q{
+Returns all the roles for a user
+
+sample invocation JSON:  #{$API_PIE_URLS[:roles_get_ssoi_roles_url]}.json?#{CGI.escape({id: :cboden}.to_query)}
+
+sample invocation HTML:  #{$API_PIE_URLS[:roles_get_ssoi_roles_url]}?#{CGI.escape({id: :cboden}.to_query)}
+}
   def get_ssoi_roles
     ssoi_user = params[:id]
     user = SsoiUser.fetch_user(ssoi_user)
@@ -80,7 +102,7 @@ class RolesController < ApplicationController
     if (@parsed)
       user = User.find_by(email: @user_name) if @user_type.eql? PrismeUserConcern::DEVISE_USER.to_s
       user = SsoiUser.fetch_user(@user_name) if @user_type.eql? PrismeUserConcern::SSOI_USER.to_s
-      $log.info("The user I found is #{user} with id #{user.id}, the id in the token is #{@user_id}, the user type is #{@user_type}, token name is #{@user_name}")
+      $log.info("The user I found is #{user} with id #{user&.id}, the id in the token is #{@user_id}, the user type is #{@user_type}, token name is #{@user_name}")
       if(!user.nil? && user.id.eql?(@user_id))
         @roles_hash[:user] = @user_name
         @roles_hash[:type] = @user_type

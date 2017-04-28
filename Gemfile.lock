@@ -41,6 +41,8 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
+    apipie-rails (0.5.1)
+      rails (>= 4.1)
     arel (6.0.4)
     autoprefixer-rails (6.1.2)
       execjs
@@ -215,6 +217,7 @@ PLATFORMS
 DEPENDENCIES
   activerecord-jdbch2-adapter
   activerecord-oracle_enhanced-adapter
+  apipie-rails (~> 0.5.1)
   awesome_print
   bootstrap-growl-rails
   bootstrap-sass (~> 3.3.6)
