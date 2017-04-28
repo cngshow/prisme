@@ -13,6 +13,7 @@ module PrismeUtilities
     #of your data structure
     attr_accessor :ssoi_logout_url
     attr_accessor :config #server_config.yml
+    attr_accessor :vuid_config #VUID_config.yml
     attr_accessor :aitc_env #aitc_environment.yml
   end
 
@@ -234,6 +235,17 @@ module PrismeUtilities
     PRISME_ENVIRONMENT.eql? 'PROD'
   end
 
+  def self.real_vuids?
+    return false if $database.eql?(RailsPrisme::H2) #H2 is never real
+    boolean PrismeUtilities.fetch_vuid_config[:real_vuids]
+  end
+
+  def self.fetch_vuid_config
+    return (HashWithIndifferentAccess.new PrismeUtilities.vuid_config).deep_dup unless PrismeUtilities.vuid_config.nil?
+    PrismeUtilities.vuid_config = PrismeUtilities.fetch_yml 'VUID_config.yml'
+    (HashWithIndifferentAccess.new PrismeUtilities.vuid_config).deep_dup
+  end
+
   def self.server_config
     return (HashWithIndifferentAccess.new PrismeUtilities.config).deep_dup unless PrismeUtilities.config.nil?
     PrismeUtilities.config = PrismeUtilities.fetch_yml 'server_config.yml'
@@ -322,6 +334,7 @@ module PrismeUtilities
   def self.write_vuid_db
     file = $PROPS['PRISME.data_directory'] + '/' + $PROPS['PRISME.vuid_db_file']
     json = Rails.configuration.database_configuration[Rails.env]
+    json.merge! PrismeUtilities.fetch_vuid_config
     begin
       json_to_yaml_file(json, file)
     rescue => ex

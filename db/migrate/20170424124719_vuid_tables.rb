@@ -1,12 +1,6 @@
-class VuidTables < ActiveRecord::Migration
+require './lib/oracle/ora'
 
-  def get_connection
-    ora_env = Rails.configuration.database_configuration[Rails.env]
-    url = ora_env['url']
-    user = ora_env['username']
-    pass = ora_env['password']
-    java.sql.DriverManager.getConnection(url, user, pass)
-  end
+class VuidTables < ActiveRecord::Migration
 
   def up
     r_val = create_table(:vuids, id: false) do |t|
@@ -103,7 +97,7 @@ class VuidTables < ActiveRecord::Migration
   END PROC_REQUEST_VUID;
 }
       begin
-        @connection= get_connection
+        @connection= PrismeOracle.get_ora_connection
         @statement = @connection.createStatement
         @statement.executeQuery proc_sql
       rescue => ex
@@ -123,7 +117,7 @@ class VuidTables < ActiveRecord::Migration
   def down
     drop_table :vuids, force: :cascade
     begin
-      get_connection.createStatement.executeQuery %q{drop procedure PROC_REQUEST_VUID}
+      PrismeOracle.get_ora_connection.createStatement.executeQuery %q{drop procedure PROC_REQUEST_VUID}
     rescue => ex
       puts "Drop procedure failed! #{ex}"
     end
