@@ -27,6 +27,9 @@ data_directory = <%= RbConfig::CONFIG['host_os'].eql?('mswin32') ? %q{./tmp} : %
 #prisme will write the db config it is using to the data_directory
 vuid_db_file = database_vuid.yml
 
+
+real_vuids = false
+
 #flag determining if we should show the log events tab page
 show_log_events=true
 
