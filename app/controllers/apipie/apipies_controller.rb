@@ -11,10 +11,10 @@ module Apipie
     before_action :authenticate
 
     def set_urls
-      if $API_PIE_URLS.nil?
-        $API_PIE_URLS = {}
-        Rails.application.routes.named_routes.helpers.select {|h| h.to_s =~ /_url/ }.each do |url|
-          $API_PIE_URLS[url] = self.send(url).to_s
+      if $API_PIE_ROUTES.nil? #We will assume no dynamic routes
+        $API_PIE_ROUTES = {}
+        Rails.application.routes.named_routes.helpers.to_a.each do |url_or_path|
+          $API_PIE_ROUTES[url_or_path] = self.send(url_or_path).to_s rescue nil
         end
       end
     end
