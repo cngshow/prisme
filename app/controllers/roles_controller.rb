@@ -22,15 +22,11 @@ class RolesController < ApplicationController
   end
 
 
-  api :GET, "#{$API_PIE_ROUTES[:roles_get_all_roles_path]}.json", 'Request all roles as JSON.'
-  api :GET, "#{$API_PIE_ROUTES[:roles_get_all_roles_path]}", 'Request all roles as HTML.'
-  description %Q{
+  api :GET,  APIString.new("<%=$API_PIE_ROUTES[:roles_get_all_roles_path]%>.json"), 'Request all roles as JSON.'
+  api :GET,  APIString.new("<%=$API_PIE_ROUTES[:roles_get_all_roles_path]%>"), 'Request all roles as HTML.'
+  description  APIString.new(%q{
 Returns all the roles defined on the system
-
-sample invocation JSON:   #{$API_PIE_ROUTES[:roles_get_all_roles_url]}.json
-
-sample invocation HTML:   #{$API_PIE_ROUTES[:roles_get_all_roles_url]}
-}
+                             })
   def get_all_roles
     @roles_hash = Roles::ALL_ROLES
     respond_to do |format|
@@ -41,15 +37,11 @@ sample invocation HTML:   #{$API_PIE_ROUTES[:roles_get_all_roles_url]}
 
   #sample invocation
   #http://localhost:3000/roles/get_ssoi_roles.json?id=cboden
-  api :GET, "#{$API_PIE_ROUTES[:roles_get_ssoi_roles_path]}.json", 'Request all roles for a VA Single Sign on User user as JSON.'
-  api :GET, "#{$API_PIE_ROUTES[:roles_get_ssoi_roles_path]}", 'Request all roles for a VA Single Sign on User user as HTML.'
-  description %Q{
+  api :GET, APIString.new("<%=$API_PIE_ROUTES[:roles_get_ssoi_roles_path]%>.json"), 'Request all roles for a VA Single Sign on User user as JSON.'
+  api :GET, APIString.new("<%=$API_PIE_ROUTES[:roles_get_ssoi_roles_path]%>"), 'Request all roles for a VA Single Sign on User user as HTML.'
+  description APIString.new(%q{
 Returns all the roles for a user
-
-sample invocation JSON:  #{$API_PIE_ROUTES[:roles_get_ssoi_roles_url]}.json?#{CGI.escape({id: :cboden}.to_query)}
-
-sample invocation HTML:  #{$API_PIE_ROUTES[:roles_get_ssoi_roles_url]}?#{CGI.escape({id: :cboden}.to_query)}
-}
+  })
   def get_ssoi_roles
     ssoi_user = params[:id]
     user = SsoiUser.fetch_user(ssoi_user)

@@ -45,7 +45,6 @@ module VUID
         range = -range if sv < 0
         results << VuidResult.new(range, row['request_reason'], row['username'], sv, nv, tv, row['next_vuid'], nil)
       end
-      $log.always("results are #{results.inspect}")
       results
     end
 

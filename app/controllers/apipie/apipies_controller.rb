@@ -11,8 +11,7 @@ module Apipie
     before_action :authenticate
 
     def set_urls
-      if $API_PIE_ROUTES.nil? #We will assume no dynamic routes
-        $API_PIE_ROUTES = {}
+      if $API_PIE_ROUTES.empty? #We will assume no dynamic routes
         Rails.application.routes.named_routes.helpers.to_a.each do |url_or_path|
           $API_PIE_ROUTES[url_or_path] = self.send(url_or_path).to_s rescue nil
         end
