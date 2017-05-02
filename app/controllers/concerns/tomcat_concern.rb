@@ -134,7 +134,7 @@ module TomcatConcern
       response = conn.get(path)
     rescue Faraday::ClientError => ex
       $log.warn("#{path} is unreachable! #{ex.message}")
-      return version
+      return version_hash
     end
     body = response.body
     json = {}
