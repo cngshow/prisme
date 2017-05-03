@@ -1,0 +1,36 @@
+<%
+  if rows && ! rows.empty?
+     greenbar = %w(transparent #eeeeee)
+     vuid_cnt = 0
+%>
+    <% rows.each do |row|
+      vuid = row[:vuid]
+      designation = row[:designation]
+      vuid_cnt += 1
+    %>
+        <% row[:diffs].each_with_index do |diff, idx| %>
+            <tr style="background-color: <%= greenbar[vuid_cnt % 2] %>">
+              <% if idx == 0 %>
+                  <td><%= vuid %></td>
+                  <td><%= designation %></td>
+              <% else %>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+              <% end %>
+
+              <td><%= diff.keys.first %></td><!-- todo format the designation?-->
+              <td><%= diff.values.first.first %></td>
+              <td><%= diff.values.first.last %></td>
+            </tr>
+        <% end %>
+    <% end %>
+<% else %>
+    <tr style="background-color: transparent">
+      <td colspan="8">There are no differences between VistA and ISAAC in records that they have in common.</td>
+    </tr>
+<% end %>
+<style>
+  td {
+    vertical-align:top;
+  }
+</style>

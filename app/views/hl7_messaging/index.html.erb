@@ -14,6 +14,42 @@
     <%= render partial: 'checksum_discovery_results', locals: {tp_action: 'discovery'} %>
   </div>
 </div>
+
+<!--modal for discovery differences-->
+<div id="discoveryDiffsModal" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-lg" style="width: 90%">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <span style="font-size: large; font-weight: bold; color: navy">Discovery Differences</span>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <!--<button type="button" class="btn btn-primary btn-sm" onclick="site_selections();">Select Site(s)</button>-->
+      </div>
+      <div class="modal-body">
+        <div id="diffs_site_subset_header" style="padding-bottom: 5px">
+          <span id="site_hdr" style="font-size: large; font-weight: bold"></span>&nbsp;&nbsp;-&nbsp;&nbsp;<span id="subset_hdr" style="font-size: medium; font-weight: bold"></span>
+        </div>
+        <div id="discovery_diff_tabs">
+          <ul>
+            <li><a href='#tp-diffs'>Discovery Diffs</a></li>
+            <li><a href='#tp-vista_only'>VistA Only (left)</a></li>
+            <li><a href='#tp-isaac_only'>ISAAC Only (right)</a></li>
+          </ul>
+          <div id="tp-diffs" class="scrollable_div">
+            <%= render 'discovery_diffs' %>
+          </div>
+          <div id="tp-vista_only" class="scrollable_div">
+            <%= render 'discovery_diffs_vista_isaac_only', locals: {table_id: 'tbl_discovery_diffs_vista_only'} %>
+          </div>
+          <div id="tp-isaac_only" class="scrollable_div">
+            <%= render 'discovery_diffs_vista_isaac_only', locals: {table_id: 'tbl_discovery_diffs_isaac_only'} %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
     var tabpages = {'selections' : 0, 'checksum' : 1, 'discovery' : 2};
 
@@ -23,6 +59,7 @@
 
     $(document).ready(function () {
         $("#tabs").tabs();
+        $("#discovery_diff_tabs").tabs();
 
         // wire the back button to swap the panels
         $('.btn-back_to_selection').on("click", function () {

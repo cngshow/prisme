@@ -13,7 +13,7 @@
     <%if detail.hl7_message %>
       <div class="btn-group btn-group-xs" role="group" aria-label="Button group with nested dropdown" data-btngroup_detail_id="<%= detail.id %>" style="float: right" >
         <button id='btn_discovery_csv' type="button" class="btn btn-primary" onclick="discoveryCsv(this);">Export as CSV</button>
-        <button id='btn_discovery_diffs' type="button" class="btn btn-info" onclick="discoveryCsv(this);">Discovery Diffs</button>
+        <button id='btn_discovery_diffs' type="button" class="btn btn-info" onclick="discoveryDiffs(this);">Discovery Diffs</button>
         <button id='btn_discovery_hl7' type="button" class="btn btn-primary" data-hl7_message="<%= detail.hl7_message %>" onclick="discovery_hl7_message(this, {tr_id: '<%= tr_id %>', current: <%= current %>});;">View HL7</button>
       </div>
     <% else %>
