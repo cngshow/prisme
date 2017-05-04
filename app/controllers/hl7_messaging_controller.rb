@@ -1,5 +1,5 @@
-require './lib/hl7/hl7_message' #require me?
-require './lib/hl7/discovery_diff' #require me Greg
+require 'will_paginate/array'
+require './lib/hl7/hl7_message'
 
 class Hl7MessagingController < ApplicationController
   include ChecksumDiscoveryConcern
@@ -26,7 +26,7 @@ class Hl7MessagingController < ApplicationController
   def discovery_diffs
     detail_id = params['detail_id'] # todo use this one day when we have an API
     data = get_diff_data(detail_id: detail_id)
-    vista_only, isaac_only, deltas = [],[],[]
+    vista_only, isaac_only, deltas = [], [], []
 
     data.each_pair do |vuid, vals|
       if vals.is_a? Array
@@ -48,8 +48,6 @@ class Hl7MessagingController < ApplicationController
       end
     end
 
-
-
     # diffs = [{:vuid=>:"4636847", :designation=>:SOAPS, :diffs=>[{:Allergy_Type=>[:OTHER, :OTHER_different]}, {:has_drug_class=>[:"", :_different]}]}]
     # vista = [[:"4538520", :"OTHER ALLERGY/ADVERSE REACTION", :OTHER, :"", :"", :"", :"", :"0"], [:"4538521", :IODINE, :DRUG, :"DE101|DX101|PH000", :IODINE, :"", :"", :"0"], [:"4538522", :IRONFILLINGS, :OTHER, :"", :"", :"", :"", :"0"], [:"4538987", :SPICES, :FOOD, :"", :"", :"", :"", :"1"], [:"4539033", :COSMETICS, :OTHER, :"", :"", :"MAKE-UP|MAKEUP", :"", :"1"], [:"4539335", :"RAW VEGETABLES", :FOOD, :"", :"", :"VEGETABLES, RAW", :"", :"1"], [:"4541166", :BETAHISTINE, :DRUG, :"", :"", :"BETAHISTINE 8 MG", :"", :"0"], [:"4636630", :"EGG SUBSTITUTES", :FOOD, :"", :"", :"", :"", :"1"], [:"4636659", :"CONTRAST MEDIA", :DRUG, :"DX201|DX109|DX000|DX102|DX200|DX100|DX101|DX202", :"IODOHIPPURATE SODIUM,I-131|METRIZAMIDE|OXTAFLUOROPROPANE|SINCALIDE|GALLIUM CITRATE,GA-67|PROPYLIODONE|EVANS BLUE|SODIUM PERTECHNETATE (Tc 99m)|MEDRONATE DISODIUM|IOHEXOL|IOPAMIDOL|IOCETAMIC ACID|XENON,XE-133|FANOLESOMAB|GADOPENTETATE DIMEGLUMINE|SODIUM CHROMATE,CR-51|IOPROMIDE|POTASSIUM PERCHLORATE|ISOSULFAN BLUE|ALBUMIN,IODINATED I-125 SERUM|IOTROLAN|FLUDEOXYGLUCOSE|INDOCYANINE GREEN|SELENOMETHIONINE,SE-75|IPODATE|CALDIAMIDE SODIUM|BARIUM SULFATE|GADOVERSETAMIDE|IODIXANOL|SODIUM PHOSPHATE,P-32|IOPANOIC ACID|SODIUM IODIDE|ALBUMIN,IODINATED I-131 SERUM|PERFLEXANE LIPID MICROSHERE|ADRENOCORTICOTROPIN (ACTH 1-18),I-125 (TYR)|IOXAGLATE|YTTERBIUM,YB-169|THALLOUS CHLORIDE,TL-201|DIATRIZOATE|IODINE|CYANOCOBALAMIN,CO-57|RUBIDIUM (Rb-82)|SUCCIMER|GADODIAMIDE|ALBUMIN,CHROMATED CR-51 SERUM|IODIPAMIDE MEGLUMINE|IOPHENDYLATE|MOLYBDENUM,MO-99|PERFLUTREN|FERROUS CITRATE,FE-59|DISOFENIN|INDIUM In 111 CAPROMAB PENDETIDE|IOTHALAMATE|TECHNETIUM Tc 99m|ROSE BENGAL|ALBUMIN|AMINOHIPPURATE|GLUCEPTATE|OXIDRONATE|PENTETATE|FIBRINOGEN", :"RADIO DYES|CT SCAN DYES|CT SCAN CONTRAST DYES|X-RAY DYES|RADIOLOGICAL CONTRAST DYES|RADIOLOGIC DYES|RADIO CONTRAST MEDIA|RADIATION CONTRASTS|CT CONTRAST DYES|DYE CONTRASTS|RADIOCONTRAST DYES|RADIOLOGY CONTRAST DYES|XRAY CONTRAST DYES|CT DYES|RADIOGRAPHIC CONTRAST DYES|RADIOLOGIC CONTRAST MEDIA|RADIOLOGY DYES|RADIOPAQUE CONTRAST DYES|RADIOPAQUE CONTRAST MEDIA|RADIOGRAPHIC DYES|CT CONTRAST MEDIA|RADIOACTIVE DYES|DIAGNOSTIC DYES|X-RAY CONTRAST MEDIA|RADIOLOGICAL DYES|X RAY DYES|RADIOLOGICAL/CONTRAST MEDIA|RADIOOPAQUE DYES|RADIO OPAQUE DYES|RADIOPAQUE DYES|RADIOLOGIC CONTRAST DYES|CONTRAST MATERIALS|CONTRAST MEDIUM|CAT SCAN DYES|RADIOLOGY CONTRAST MEDIA|RADIOGRAPHIC CONTRAST MEDIA|XRAY DYES|RADIOCONTRAST MEDIA|X-RAY CONTRAST DYES|CONTRAST MEDIA DYES|CONTRAST DYES|RADIOLOGICAL CONTRAST MEDIA|CONTRAST AGENTS", :"", :"1"], [:"4636664", :DATES, :FOOD, :"", :"", :"", :"", :"1"], [:"4636696", :"BRUSSELS SPROUTS", :FOOD, :"", :"", :"BRUSSEL SPROUTS", :"", :"1"], [:"7246488", :"NDS ALLERGY TEST: NUMBER ONE", :"DRUG, FOOD", :"", :"", :"", :"", :"0"]]
     # isaac = [[:"4636897_z9ugk05l_m", :"RAYON TAPE", :OTHER, :"", :"", :"RAYON TAPES", :"", :"1"]]
@@ -60,11 +58,13 @@ class Hl7MessagingController < ApplicationController
 
     # g = render_to_string(partial: 'discovery_diffs_rows', formats: :html, layout: false, locals: { rows: [], app1: 'VistA', app2: 'ISAAC'})
     # b = 'stud'
-deltas = []
+    #deltas = deltas.paginate(:page => 1, :per_page => 5) #params[:page] for :page
+    vista_only = vista_only.paginate(:page => 1, :per_page => 5)
+    isaac_only = isaac_only.paginate(:page => 1, :per_page => 5)
     render json: {
-        diff_rows: render_to_string(partial: 'discovery_diffs_rows', formats: :html, layout: false, locals: { rows: deltas}),
-        vista_rows: render_to_string(partial: 'discovery_diffs_vista_isaac_only_rows', formats: :html, layout: false, locals: { rows: vista_only, app1: 'VistA', app2: 'ISAAC'}),
-        isaac_rows: render_to_string(partial: 'discovery_diffs_vista_isaac_only_rows', formats: :html, layout: false, locals: { rows: isaac_only, app1: 'ISAAC', app2: 'VistA'})
+        diff_rows: render_to_string(partial: 'discovery_diffs_rows', formats: :html, layout: false, locals: {rows: deltas}),
+        vista_rows: render_to_string(partial: 'discovery_diffs_vista_isaac_only_rows', formats: :html, layout: false, locals: {rows: vista_only, app1: 'VistA', app2: 'ISAAC'}),
+        isaac_rows: render_to_string(partial: 'discovery_diffs_vista_isaac_only_rows', formats: :html, layout: false, locals: {rows: isaac_only, app1: 'ISAAC', app2: 'VistA'})
     }
   end
 
@@ -80,8 +80,8 @@ deltas = []
     end
     csv = detail_record.to_csv
     respond_to do |format|
-      format.text { render :text => csv }
-      format.xml { render :xml => detail }
+      format.text {render :text => csv}
+      format.xml {render :xml => detail}
     end
   end
 
@@ -171,8 +171,9 @@ deltas = []
     @site_tree = site_tree_data.to_json
   end
 
+  public #todo don't check public in
   def get_diff_data(detail_id:)
-    require('./config/hl7/discovery_mocks/discovery_mock')#require me Greg
+    require('./config/hl7/discovery_mocks/discovery_mock') #require me Greg
     discoveries = Dir.glob('./config/hl7/discovery_mocks/*.discovery')
     reactants = File.open(discoveries.first, 'rb').read
     # reactions = File.open(discoveries.last, 'rb').read
@@ -180,20 +181,20 @@ deltas = []
     # reactions_csv_string = HL7Messaging.discovery_hl7_to_csv(discovery_hl7: reactions)
     reactants_csv = DiscoveryCsv.new(hl7_csv_string: reactants_csv_string)
     # reactions_csv = DiscoveryCsv.new(hl7_csv_string: reactions_csv_string)
-    rdc = 0
+    rdc = 40
 
     #this builds a reactants mock with the same number of columns
-    reactants_mock = reactants_csv.diff_mock(right_diff_count: rdc, common_vuid_diff_count: 0, common_vuid_same_count: 0)
+    reactants_mock = reactants_csv.diff_mock(right_diff_count: rdc, common_vuid_diff_count: 30, common_vuid_same_count: 50)
 
     # get the headers
     reactants_headers = reactants_csv.headers
 
     #get the diff hashes
-    reactants_against_reactants_diff  = reactants_csv.fetch_diffs(discovery_csv: reactants_mock).diff
+    reactants_against_reactants_diff = reactants_csv.fetch_diffs(discovery_csv: reactants_mock).diff
     reactants_against_reactants_diff
   end
 
-  def hl7_poll_helper(klass:, navtype:,&render_block)
+  def hl7_poll_helper(klass:, navtype:, &render_block)
     request_id = params[:request_id]
     domain = params[:domain]
     table_id = params[:table_id]
@@ -204,7 +205,7 @@ deltas = []
         request.domain.eql?(domain)
       end.first
     else
-      request = klass.send(:find,request_id)
+      request = klass.send(:find, request_id)
     end
     begin
       render_block.call(table_id, request)
@@ -255,3 +256,7 @@ deltas = []
     site_root
   end
 end
+
+=begin
+load('./app/controllers/hl7_messaging_controller.rb')
+=end
