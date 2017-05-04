@@ -1,4 +1,4 @@
-require 'will_paginate/array'
+#require 'will_paginate/array'
 require './lib/hl7/hl7_message'
 
 class Hl7MessagingController < ApplicationController
