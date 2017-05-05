@@ -1,13 +1,20 @@
 Rails.application.routes.draw do
+  apipie
   class OnlyAjaxRequest
     def matches?(request)
       request.xhr?
     end
   end
+  match '/vuid/request' => 'vuid#rest_request_vuid', :as => :rest_request_vuid, via: [:get,:put,:post]
+  match '/vuid/view' => 'vuid#rest_fetch_vuids', :as => :rest_fetch_vuids, via: [:get,:put,:post]
+  get 'vuid_requests' => 'vuid#index'
+  get 'vuid_poll' => 'vuid#ajax_vuid_polling', :constraints => OnlyAjaxRequest.new
+  post 'request_vuid' => 'vuid#request_vuid'
 
   get 'hl7_messaging/checksum', as: 'checksum'
   get 'hl7_messaging/discovery', as: 'discovery'
   get 'hl7_messaging/discovery_csv', as: 'discovery_csv'
+  get 'hl7_messaging/discovery_diffs', as: 'discovery_diffs', :constraints => OnlyAjaxRequest.new
   get 'hl7_messaging/retrieve_sites'
   get 'hl7_messaging/checksum_request_poll', as: 'checksum_request_poll'
   get 'hl7_messaging/discovery_request_poll', as: 'discovery_request_poll'

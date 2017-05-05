@@ -1,0 +1,123 @@
+<!-- Trigger the modal with a button -->
+<br>
+<button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Request VUIDs</button>
+<div class="page-header">
+  <h1>VUID Requests Dashboard</h1>
+</div>
+
+<%= render 'layouts/filter_table_poll_results', filter_id: 'vuid_filter_rows', filter_label: 'Filter Results', include_all_rows: true, poll: 'vuid_requests_poll' %>
+
+<table id="vuid-table" class="prisme-table table-striped table-hover">
+  <thead>
+  <tr>
+    <th scope="col" width="125px">Request Date</th>
+    <th scope="col" width="50%">Request Reason</th>
+    <th scope="col" width="125px">User Name</th>
+    <th scope="col" width="95px">VUID Count</th>
+    <th scope="col" width="95px">Beginning VUID</th>
+    <th scope="col" width="95px">Ending VUID</th>
+  </tr>
+  </thead>
+  <tbody>
+    <%= render partial: 'vuid/vuid_results_tbody'%>
+  </tbody>
+</table>
+<br/>
+
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
+        <h2 class="modal-title">Request VUIDs</h2>
+      </div>
+      <div class="modal-body">
+        <%= form_tag request_vuid_path, id: 'myForm', method: 'post' do %>
+            <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+            <div title="Number of VUIDs" class="input_div">
+              <%= label_tag 'range', 'Number of VUIDs' %><br>
+              <%= number_field_tag 'range', nil, min: 1, data: {required: true}, placeholder: 'Enter the Number of VUIDs Needed', class: 'form-control' %>
+            </div>
+            <br>
+            <div title="Reason for VUID Request" class="input_div">
+              <%= label_tag 'reason', 'Request Reason' %><br>
+              <%= text_area_tag 'reason', nil, data: {required: true}, placeholder: 'Enter the Reason for this VUID Request', rows: '3', cols: 76, class: 'form-control' %>
+            </div>
+            <br>
+        <% end %>
+        <button class="btn btn-primary btn-lg" onclick="submitRequest()" id="btn_submit">Submit VUID Request</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript" charset="utf-8">
+    function submitRequest() { //todo make this a partial and include this in the application.js file -- search for submitRequest
+        var $btnSubmit = $("#btn_submit");
+        $btnSubmit.attr('disabled', true);
+
+        if ($btnSubmit.hasClass('processing')) {
+            return false;
+        } else {
+            $btnSubmit.addClass('processing');
+        }
+
+        var $myForm = $('#myForm');
+        if ($myForm.valid()) {
+            $btnSubmit.html('<span><i class="fa fa-cog fa-spin fa-fw" aria-hidden="true"></i>Processing Request...Please Wait</span>');
+            $myForm.submit();
+        } else {
+            console.log("validation errors so re-enabling button...");
+            $btnSubmit.attr('disabled', false);
+            $btnSubmit.removeClass('processing');
+        }
+    }
+
+    var awaiting_poll_results = false;
+
+    function vuid_requests_poll() {
+        var rowlimit = arguments[0];
+
+        if (rowlimit === undefined) {
+            rowlimit = $('#vuid_filter_rows').find('option:selected').val();
+        }
+
+        awaiting_poll_results = true;
+        $.get('<%= vuid_poll_path %>', {row_limit: rowlimit}, function (data) {
+            $('#vuid-table').find('tbody').html(data);
+            awaiting_poll_results = false;
+        });
+    }
+
+    $(document).ready(function () {
+        $('#myModal').on('show.bs.modal', function () {
+            $("#myForm").validate().resetForm();
+            document.getElementById("myForm").reset();
+        });
+        $('#myModal').on('shown.bs.modal', function () {
+            $('#range').focus()
+        });
+        // initialize the jquery validation plugin
+        $('#myForm').validate({
+            rules: {
+                range: {
+                    required: true
+                },
+                reason: {
+                    required: true
+                }
+            }, // Specify validation error messages
+            messages: {
+                range: "Please enter the number of VUIDs you need.",
+                reason: "Please enter your reason requesting these VUIDs."
+            }
+        });
+        vuid_requests_poll();
+
+        //register for polling
+//        polling.registerPolling(polling.pollEnum.VUID_REQUESTS, vuid_requests_poll, 30000);
+    });
+</script>

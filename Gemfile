@@ -59,7 +59,8 @@ gem 'jdbc-h2', '1.4.181'
 gem 'activerecord-jdbch2-adapter'
 #We will use H2 for running rake tasks (tests) so we have no dependency on Oracle during the build.
 gem 'activerecord-oracle_enhanced-adapter'
-
+gem 'ruby-plsql'
+gem 'apipie-rails', '~> 0.5.1' #https://github.com/Apipie/apipie-rails/issues/539
 group :development do
   gem 'awesome_print', require:'ap'
   gem 'yard'

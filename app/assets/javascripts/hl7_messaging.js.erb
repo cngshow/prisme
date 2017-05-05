@@ -17,6 +17,36 @@ function discoveryCsv(btn) {
     });
 }
 
+function discoveryDiffs(btn) {
+    var btnGroup = $(btn).closest('.btn-group');
+    var detail_id = btnGroup.data('btngroup_detail_id');
+    var site_name =  $(btn).closest('tr').find('.site_name').text();
+    var subset_name =  $(btn).closest('tr').find('.subset_name').text();
+    var loading_data_msg = '<tr><td colspan="99">LOADING....</td></tr>'
+
+    //  disable the btn and set the loading message into each table. Data is replaced with the AJAX results
+    $(btn).attr('disabled', true);
+    $('#tbl_discovery_diffs').find('tbody').html(loading_data_msg);
+    $('#tbl_discovery_diffs_vista_only').find('tbody').html(loading_data_msg);
+    $('#tbl_discovery_diffs_isaac_only').find('tbody').html(loading_data_msg);
+
+    //set the title for the modal
+    var $diffsSiteSubsetHeader = $('#diffs_site_subset_header');
+    $diffsSiteSubsetHeader.find('span#site_hdr').text(site_name);
+    $diffsSiteSubsetHeader.find('span#subset_hdr').text(subset_name);
+
+    // show the modal and re-enable the button
+    $('#discoveryDiffsModal').modal('show');
+    $(btn).attr('disabled', false);
+
+//    todo  you need to turn off polling while this is open? yes?!
+    $.get(gon.routes.discovery_diffs_path, {discovery_detail_id: detail_id}, function(data) {
+        $('#tbl_discovery_diffs').find('tbody').html(data['diff_rows'])
+        $('#tbl_discovery_diffs_vista_only').find('tbody').html(data['vista_rows'])
+        $('#tbl_discovery_diffs_isaac_only').find('tbody').html(data['isaac_rows'])
+    });
+}
+
 function init_checksum_table_polling() {
     $('.checksum_table').each(function (index, value) {
         var jqt = $(this);

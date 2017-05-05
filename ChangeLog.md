@@ -2,7 +2,10 @@ PRISME Changelog
 
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers where provided, and the git commit history.
 
-* 2017/05/02 - 4.0 - PENDING
+* 2017/05/05 - 4.1
+    * VUID feature merged into this release.(501714, 501713, 501657, 501660)
+
+* 2017/05/02 - 4.0
     * Fixing a bug that caused prisme to fail when a komet was in a bad state
 
 * 2017/04/27 - 3.3

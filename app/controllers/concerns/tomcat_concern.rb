@@ -79,11 +79,15 @@ module TomcatConcern
     begin
       response = conn.get('/manager/text/list', {})
     rescue Faraday::ClientError => ex
+      $log.error("Could not get the listing of applications from Tomcat: #{ex}")
+      $log.error(ex.backtrace.join("\n"))
       return {failed: ex.message}
     end
 
     if response.status.eql?(200)
       data = response.body
+      $log.trace('manager/text list is:')
+      $log.trace("#{data}")
 
       # parse the response body
       data = data.split("\n") # get each line

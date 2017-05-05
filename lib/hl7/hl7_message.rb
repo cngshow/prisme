@@ -1,3 +1,5 @@
+require './lib/isaac_utilities'
+
 module JIsaacLibrary
 
   java_import 'gov.vha.isaac.ochre.deployment.hapi.extension.hl7.message.HL7Messaging' do |p, c|
@@ -79,7 +81,7 @@ module HL7Messaging
       site_discovery.getValues.each do |java_list|
         values = java_list.to_a
         values.insert(values.length - 1, values.delete_at(status_loc))#move status to last
-        csv << "#{values.map do |e| "\"#{e}\"" end.join(',')}\n"
+        csv << "#{values.map do |e| "\"#{e&.gsub('|', ' | ')}\"" end.join(',')}\n"
       end
       csv
     end

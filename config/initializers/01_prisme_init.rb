@@ -3,14 +3,9 @@ $CLASSPATH << "#{Rails.root}/lib/rails_common/logging/testLogConfig" if $rake
 ##
 # Do common initialization tasks in prisme
 #
-# require './lib/jars'
-# PrismeJars.load
+require './lib/jars'
+PrismeJars.load
 
-jars = Dir.glob('./lib/jars/*.jar')
-# jars = Dir.glob('./lib/jars/*.jar')
-jars.each do |jar|
-  require jar
-end
 
 require './lib/rails_common/util/rescuable'
 require './lib/rails_common/logging/open_logging'
@@ -31,6 +26,7 @@ require './lib/utilities/prisme_utilities'
 props = java.lang.System.getProperties
 props.put('java.util.logging.manager', $PROPS['PRISME.log_manager'])
 $SERVICE_TYPES = YAML.load_file('./config/service/service_types.yml').freeze
+OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE unless (boolean $PROPS['PRISME.ssl_verification'])
 
 unless ($rake || defined?(Rails::Generators))
   STFU_MODE = false
@@ -84,6 +80,7 @@ if (!STFU_MODE || $testing)
   #isaac utilities must be loaded after our appenders are set (if they are set.)
   require './lib/isaac_utilities'
   require './lib/hl7/hl7_message'
+  require './lib/hl7/discovery_diff'
   java_import 'gov.vha.isaac.ochre.api.LookupService' do |p, c|
     'JLookupService'
   end

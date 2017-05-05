@@ -3,8 +3,8 @@ module HL7Messaging
 
   class DiscoveryCsv
 
-    ACTIVE_FLAG = :"1"
-    INACTIVE_FLAG = :"0"
+    ACTIVE_FLAG = :'1'
+    INACTIVE_FLAG = :'0'
     TERM = :Term
     DESIGNATION_NAME = :designation_name
 
@@ -19,8 +19,8 @@ module HL7Messaging
         parsed
       end
       @headers = @discovery_data.shift
-      raise ArgumentError.new("Invalid hl7_csv_string. Status header is missing.") unless headers.last.to_s.casecmp('status').zero?
-      raise ArgumentError.new("Invalid hl7_csv_string. VUID header is missing.") unless headers.first.to_s.casecmp('vuid').zero?
+      raise ArgumentError.new('Invalid hl7_csv_string. Status header is missing.') unless headers.last.to_s.casecmp('status').zero?
+      raise ArgumentError.new('Invalid hl7_csv_string. VUID header is missing.') unless headers.first.to_s.casecmp('vuid').zero?
       @discovery_data.reject! do |e|
         e.last == INACTIVE_FLAG
       end if ignore_inactive
@@ -56,13 +56,13 @@ module HL7Messaging
       end
       mock.set_headers headers
       mock.set_discovery_data(common_discovery_data + mock_discovery_data_right)
-      self.to_tmp_file("original.csv")
-      mock.to_tmp_file("mock.csv")
+      self.to_tmp_file('original.csv')
+      mock.to_tmp_file('mock.csv')
       mock
     end
 
     def fetch_diffs(discovery_csv:)
-      raise ArgumentError.new("Discovery CSV object cannot be nil!") if discovery_csv.nil?
+      raise ArgumentError.new('Discovery CSV object cannot be nil!') if discovery_csv.nil?
       return nil if self.eql?(discovery_csv)
       return DiscoveryDiffs.new(self, discovery_csv)
     end
