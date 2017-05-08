@@ -27,3 +27,55 @@
         <br>
     <% end %>
 <% end %>
+<a class="tooltipz" title="this is a test to see if the TT is styled..." onclick="greg()">greg</a>
+<br>
+<div id="myGrid" style="height: 400px;" class="ag-fresh"></div>
+<script type="text/javascript" charset="utf-8">
+    // specify the columns
+    var columnDefs = [
+        {headerName: 'VUID', field: 'vuid', width: 90},
+        {headerName: 'Designation', field: 'Term'},
+        {headerName: 'Allergy Type', field: 'Allergy_Type'},
+        {headerName: 'Has Drug Class', field: 'has_drug_class'},
+        {headerName: 'Has Drug Ingredient', field: 'has_drug_ingredient', cellRenderer: renderWithTitle},
+        {headerName: 'Search Term', field: 'Search_Term'},
+        {headerName: 'VistA Mapping Target', field: 'VistA_Mapping_Target'},
+        {headerName: 'Status', field: 'Status', valueGetter: getStatus, width: 75 },
+    ];
+
+    function renderWithTitle(params) {
+
+        // put a tooltip on the value
+        return '<span class="tooltipz" title="' + params.value + '">'+params.value+'</span>';
+    }
+
+    function getStatus(params) {
+        return params.data.Status === '0' ? 'Inactive' : 'Active';
+    }
+
+    function popTitle(elem) {
+        $(elem).attr('title', $(elem).text());
+        $(elem).tooltip();
+    }
+
+    function greg() {
+        // let the grid know which columns and what data to use
+        var gridOptions = {
+            columnDefs: columnDefs,
+            rowData: [],
+            pagination: true,
+            paginationAutoPageSize: true
+        };
+
+        $.get(gon.routes.discovery_diffs_path, {discovery_detail_id: 'detail_id'}, function(data) {
+            // specify the data
+            gridOptions['rowData'] = data['greg'];
+
+            // lookup the container we want the Grid to use
+            var eGridDiv = document.getElementById('myGrid');
+
+            // create the grid passing in the div to use together with the columns & data we want to use
+            new agGrid.Grid(eGridDiv, gridOptions);
+        });
+    }
+</script>
