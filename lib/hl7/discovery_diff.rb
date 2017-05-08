@@ -46,6 +46,7 @@ module HL7Messaging
         e = Array.new discovery_data.sample
         e[2] = (e[2].to_s + '_different').to_sym if e[2]
         e[3] = (e[3].to_s + '_different').to_sym if e[3]
+        e[4] = (e[4].to_s + '_different').to_sym if (e[4] && rand(2).eql?(1))
         common_discovery_data << e unless seen_vuids[e.first]
         seen_vuids[e.first] = true
       end
