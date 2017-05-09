@@ -64,7 +64,9 @@
             columnDefs: columnDefs,
             rowData: [],
             pagination: true,
-            paginationAutoPageSize: true
+            paginationAutoPageSize: true,
+            enableColResize: true,
+            onCellClicked:  cellClicked
         };
 
         $.get(gon.routes.discovery_diffs_path, {discovery_detail_id: 'detail_id'}, function(data) {
@@ -77,5 +79,18 @@
             // create the grid passing in the div to use together with the columns & data we want to use
             new agGrid.Grid(eGridDiv, gridOptions);
         });
+    }
+    var popupOn = ['has_drug_class', 'has_drug_ingredient'];
+    cris_p = null;
+    function cellClicked(params) {
+        for(var s in popupOn) {
+            var val = popupOn[s];
+            var text = params.key;
+            if(val === params.column.colId) {
+                console.log("popup!!");
+                break;
+            }
+        }
+        cris_p = params;
     }
 </script>
