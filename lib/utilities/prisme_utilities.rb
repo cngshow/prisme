@@ -335,6 +335,7 @@ module PrismeUtilities
     file = $PROPS['PRISME.data_directory'] + '/' + $PROPS['PRISME.vuid_db_file']
     json = Rails.configuration.database_configuration[Rails.env]
     json.merge! PrismeUtilities.fetch_vuid_config
+    json.merge!({'epoch_time_seconds' => Time.now.to_i})
     begin
       json_to_yaml_file(json, file)
     rescue => ex
