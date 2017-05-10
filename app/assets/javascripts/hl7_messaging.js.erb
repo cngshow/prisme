@@ -10,9 +10,9 @@ function discoveryCsv(btn) {
     var detail_id = $(btn).closest('.btn-group').data('btngroup_detail_id');
     $(btn).attr('disabled', true);
 
-    $.get(gon.routes.discovery_csv_path, {format: 'txt', discovery_detail_id: detail_id}, function(data) {
+    $.get(gon.routes.discovery_csv_path, {format: 'txt', discovery_detail_id: detail_id}, function (data) {
         var blob = new Blob([data], {type: "text/plain;charset=utf-8"});
-        saveAs(blob,'discovery_'+detail_id+'.csv');
+        saveAs(blob, 'discovery_' + detail_id + '.csv');
         $(btn).attr('disabled', false);
     });
 }
@@ -20,8 +20,8 @@ function discoveryCsv(btn) {
 function discoveryDiffs(btn) {
     var btnGroup = $(btn).closest('.btn-group');
     var detail_id = btnGroup.data('btngroup_detail_id');
-    var site_name =  $(btn).closest('tr').find('.site_name').text();
-    var subset_name =  $(btn).closest('tr').find('.subset_name').text();
+    var site_name = $(btn).closest('tr').find('.site_name').text();
+    var subset_name = $(btn).closest('tr').find('.subset_name').text();
     var loading_data_msg = '<tr><td colspan="99">LOADING....</td></tr>'
 
     // disable the btn and set the loading message into each table. Data is replaced with the AJAX results
@@ -39,13 +39,16 @@ function discoveryDiffs(btn) {
     $('#discoveryDiffsModal').modal('show');
     $(btn).attr('disabled', false);
 
+    var vistaOnly = VistaGrid.singletonBuild('ag-grid_vista_only');
+    vistaOnly.refreshRows([], []);
+
 //    todo  you need to turn off polling while this is open? yes?!
-    $.get(gon.routes.discovery_diffs_path, {discovery_detail_id: detail_id}, function(data) {
+    $.get(gon.routes.discovery_diffs_path, {discovery_detail_id: detail_id}, function (data) {
         $('#tbl_discovery_diffs').find('tbody').html(data['diff_rows'])
 //        $('#tbl_discovery_diffs_vista_only').find('tbody').html(data['vista_rows'])
         $('#tbl_discovery_diffs_isaac_only').find('tbody').html(data['isaac_rows'])
-
-        VistaGrid.refreshRows(data['greg']);
+        var headers = data['headers']
+        vistaOnly.refreshRows(headers, data['greg']);
 //        isaacOnly.refreshRows(data['bowman']);
     });
 }
@@ -82,7 +85,7 @@ function checksum_discovery_table_poll(poll_path, jqt) {
 
     // check to see if the table is still in the DOM
     if ($('#' + table_id).length == 0) {
-        console.log("table "+ table_id + " is no longer available so bailing out...");
+        console.log("table " + table_id + " is no longer available so bailing out...");
         return false;
     }
 
@@ -123,26 +126,18 @@ function discovery_hl7_message(link, obj) {
 //var vistaOnly = null;
 //var isaacOnly = null;
 
-var VistaGrid = (function() {
-    var columnDefs = [
-        {headerName: 'VUID', field: 'vuid', width: 90, minWidth: 90, maxWidth: 90, suppressResize: true, suppressSizeToFit: true},
-        {headerName: 'Designation', field: 'term', cellRenderer: renderWithTitle},
-        {headerName: 'Allergy Type', field: 'allergy_type', cellRenderer: renderWithTitle},
-        {headerName: 'Has Drug Class', field: 'has_drug_class', cellRenderer: renderWithTitle},
-        {headerName: 'Has Drug Ingredient', field: 'has_drug_ingredient', cellRenderer: renderWithTitle},
-        {headerName: 'Search Term', field: 'search_term', cellRenderer: renderWithTitle},
-        {headerName: 'VistA Mapping Target', field: 'vista_mapping_target', cellRenderer: renderWithTitle},
-        {headerName: 'Status', field: 'status', width: 75, minWidth: 75, maxWidth: 75, suppressResize: true, suppressSizeToFit: true, valueGetter: getStatus},
-    ];
+var VistaGrid = (function () {
+//    var columnDefs = [
+//        {headerName: 'VUID', field: 'vuid', width: 90, minWidth: 90, maxWidth: 90, suppressResize: true, suppressSizeToFit: true},
+//        {headerName: 'Designation', field: 'term', cellRenderer: renderWithTitle},
+//        {headerName: 'Allergy Type', field: 'allergy_type', cellRenderer: renderWithTitle},
+//        {headerName: 'Has Drug Class', field: 'has_drug_class', cellRenderer: renderWithTitle},
+//        {headerName: 'Has Drug Ingredient', field: 'has_drug_ingredient', cellRenderer: renderWithTitle},
+//        {headerName: 'Search Term', field: 'search_term', cellRenderer: renderWithTitle},
+//        {headerName: 'VistA Mapping Target', field: 'vista_mapping_target', cellRenderer: renderWithTitle},
+//        {headerName: 'Status', field: 'status', width: 75, minWidth: 75, maxWidth: 75, suppressResize: true, suppressSizeToFit: true, valueGetter: getStatus},
+//    ];
 
-    var gridOptions = {
-        columnDefs: columnDefs,
-        rowData: [],
-        enableColResize: true,
-        pagination: true,
-        paginationAutoPageSize: true,
-//        onPaginationChanged: resizeColumnsOnPaginationChanged
-    };
 
   /*
    function resizeColumnsOnPaginationChanged() {
@@ -159,36 +154,56 @@ var VistaGrid = (function() {
         return params.data.status === '0' ? 'Inactive' : 'Active';
     }
 
-    var myDivId = null;
+    var instanceMap = new Object();
 
     function init(div_id) {
-        myDivId = div_id
-        // lookup the container we want the Grid to use
-        var eGridDiv = document.getElementById(myDivId);
+        if (instanceMap[div_id] === undefined) {
+            instanceMap[div_id] = new Object();
 
-        // create the grid passing in the div to use together with the columns & data we want to use
-/*
-        if (div_id === 'ag-grid_vista_only') {
-            vistaOnly = new agGrid.Grid(eGridDiv, gridOptions);
-        } else {
-            isaacOnly = new agGrid.Grid(eGridDiv, gridOptions);
+            instanceMap[div_id].cellClicked = function (params) {
+                var text = params.key;
+                console.log(text);
+            }
+
+            instanceMap[div_id].grid_options = new Object();
+
+            //class methods go here
+            instanceMap[div_id].refreshRows = function (headers, data) {
+                //process headers
+                if (this.grid_options.api !== undefined) {
+                    this.grid_options.api.destroy();
+                }
+                var gridOptions = {
+                    columnDefs: [],
+                    rowData: [],
+                    enableColResize: true,
+                    pagination: true,
+                    paginationAutoPageSize: true,
+                    onCellClicked: instanceMap[div_id].cellClicked,
+                    suppressMovableColumns: true
+//        onPaginationChanged: resizeColumnsOnPaginationChanged
+                };
+                // lookup the container we want the Grid to use
+                this.eGridDiv = document.getElementById(div_id);
+                this.grid_options = gridOptions;//JSON.parse(JSON.stringify(gridOptions));//Clone it.
+                this.grid = new agGrid.Grid(this.eGridDiv, this.grid_options);
+                var headerArray = [];
+//                {headerName: 'Designation', field: 'term', cellRenderer: renderWithTitle},
+
+                for (var s in headers) {
+                    headerArray.push({headerName: headers[s], field: headers[s], cellRenderer: renderWithTitle})
+                }
+                this.grid_options.api.setColumnDefs(headerArray);
+
+                this.grid_options.api.setRowData(data);
+                this.grid_options.api.sizeColumnsToFit();
+            }
         }
-*/
-        new agGrid.Grid(eGridDiv, gridOptions);
-    }
 
-    function whoAmI() {
-        console.log("myDivId is " + myDivId);
-    }
-
-    function refreshRows(data) {
-        gridOptions.api.setRowData(data);
-        gridOptions.api.sizeColumnsToFit();
+        return instanceMap[div_id];
     }
 
     return {
-        initialize: init,
-        refreshRows: refreshRows,
-        whoAmI: whoAmI,
+        singletonBuild: init,
     };
 })();
