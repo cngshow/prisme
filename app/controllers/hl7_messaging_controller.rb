@@ -23,6 +23,12 @@ class Hl7MessagingController < ApplicationController
     render :index
   end
 
+  def reformat_row(data)
+    row = {}
+    data.each_with_index { |col, idx| row[VISTA_ISAAC_ONLY_COLS[idx]] = col }
+    row
+  end
+
   def discovery_diffs
     detail_id = params['detail_id'] # todo use this one day when we have an API
     data = get_diff_data(detail_id: detail_id)
@@ -30,6 +36,7 @@ class Hl7MessagingController < ApplicationController
 
     data.each_pair do |vuid, vals|
       if vals.is_a? Array
+        # (vals.first.eql?(:left_only) ? vista_only : isaac_only) << reformat_row(vals.last) todo use this once we only use ag-grid
         vista_only << vals.last if vals.first.eql?(:left_only)
         isaac_only << vals.last if vals.first.eql?(:right_only)
       else
@@ -56,15 +63,20 @@ class Hl7MessagingController < ApplicationController
 
     greg = []
     vista_only.each do |row|
-      r = {vuid: row[0], Term: row[1], Allergy_Type: row[2], has_drug_class: row[3], has_drug_ingredient: row[4], Search_Term: row[5], VistA_Mapping_Target: row[6], Status: row[7]}
-      greg << r
+      greg << reformat_row(row)
+      # r = {vuid: row[0], Term: row[1], Allergy_Type: row[2], has_drug_class: row[3], has_drug_ingredient: row[4], Search_Term: row[5], VistA_Mapping_Target: row[6], Status: row[7]}
+      # greg << r
     end
+
+    bowman = isaac_only.map{|row| reformat_row(row)}
+    bowman = [{"vuid":"4538686_28kdf0a7_m","term":"HYDROCODONE","allergy_type":"DRUG","has_drug_class":"CN101 | RE301","has_drug_ingredient":"HYDROCODONE with a lot of other text to try to wrapp up|some more|and more","search_term":"","vista_mapping_target":"RxNorm:5489","status":"1"}]
 
     render json: {
         diff_rows: render_to_string(partial: 'discovery_diffs_rows', formats: :html, layout: false, locals: { rows: deltas}),
         vista_rows: render_to_string(partial: 'discovery_diffs_vista_isaac_only_rows', formats: :html, layout: false, locals: { rows: vista_only, app1: 'VistA', app2: 'ISAAC'}),
         isaac_rows: render_to_string(partial: 'discovery_diffs_vista_isaac_only_rows', formats: :html, layout: false, locals: { rows: isaac_only, app1: 'ISAAC', app2: 'VistA'}),
-        greg: greg
+        greg: greg,
+        bowman: bowman
     }
   end
 

@@ -1,4 +1,6 @@
 module Hl7MessagingHelper
+  VISTA_ISAAC_ONLY_COLS = [:vuid, :term, :allergy_type, :has_drug_class, :has_drug_ingredient, :search_term, :vista_mapping_target, :status]
+
   def render_results_table(subsets:, sites:)
     @subset_request_hash = {}
     @site_request_array = []

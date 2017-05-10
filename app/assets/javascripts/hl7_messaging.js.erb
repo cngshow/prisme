@@ -24,10 +24,10 @@ function discoveryDiffs(btn) {
     var subset_name =  $(btn).closest('tr').find('.subset_name').text();
     var loading_data_msg = '<tr><td colspan="99">LOADING....</td></tr>'
 
-    //  disable the btn and set the loading message into each table. Data is replaced with the AJAX results
+    // disable the btn and set the loading message into each table. Data is replaced with the AJAX results
     $(btn).attr('disabled', true);
     $('#tbl_discovery_diffs').find('tbody').html(loading_data_msg);
-    $('#tbl_discovery_diffs_vista_only').find('tbody').html(loading_data_msg);
+//    $('#tbl_discovery_diffs_vista_only').find('tbody').html(loading_data_msg);
     $('#tbl_discovery_diffs_isaac_only').find('tbody').html(loading_data_msg);
 
     //set the title for the modal
@@ -42,8 +42,11 @@ function discoveryDiffs(btn) {
 //    todo  you need to turn off polling while this is open? yes?!
     $.get(gon.routes.discovery_diffs_path, {discovery_detail_id: detail_id}, function(data) {
         $('#tbl_discovery_diffs').find('tbody').html(data['diff_rows'])
-        $('#tbl_discovery_diffs_vista_only').find('tbody').html(data['vista_rows'])
+//        $('#tbl_discovery_diffs_vista_only').find('tbody').html(data['vista_rows'])
         $('#tbl_discovery_diffs_isaac_only').find('tbody').html(data['isaac_rows'])
+
+        VistaGrid.refreshRows(data['greg']);
+//        isaacOnly.refreshRows(data['bowman']);
     });
 }
 
@@ -63,7 +66,7 @@ function init_discovery_polling() {
 
         setTimeout(function () {
             checksum_discovery_table_poll(gon.routes.discovery_request_poll_path, jqt);
-        }, 500);
+        }, 5000);
     });
 }
 
@@ -97,26 +100,6 @@ function checksum_discovery_table_poll(poll_path, jqt) {
     });
 }
 
-//function for displaying hl7 data
-/*
-function greg(tr_id) {
-    var row = $('#' + tr_id);
-    var vista = row.data('hl7_message');
-    var site_name = row.find('td.site_name').text();
-    var subset_name = row.find('td.subset_name').text();
-    console.log("tr_id is " + tr_id + " :: " + vista + ' :: ' + site_name);
-
-    // make ajax call to get isaac hl7 hash
-    $.get(gon.routes.isaac_hl7_path, {id: tr_id}, function (data) {
-        $('#view_hashes_modal_title').text(site_name + ' - ' + subset_name);
-        $('#textarea_vista_hl7').val(vista);
-        $('#textarea_isaac_hl7').val(data['isaac_hl7']);
-        $('#view_hashes_modal').modal('show');
-    });
-
-}
-*/
-
 //function for displaying hl7 message data with discovery
 function discovery_hl7_message(link, obj) {
     var $viewDiscoveryHl7Modal = $('#view_discovery_hl7_modal');
@@ -136,3 +119,76 @@ function discovery_hl7_message(link, obj) {
     $('#btn_discovery_csv').data('detail_id', tr_id.split('_')[1] + '_' + label);
     $viewDiscoveryHl7Modal.modal('show');
 }
+
+//var vistaOnly = null;
+//var isaacOnly = null;
+
+var VistaGrid = (function() {
+    var columnDefs = [
+        {headerName: 'VUID', field: 'vuid', width: 90, minWidth: 90, maxWidth: 90, suppressResize: true, suppressSizeToFit: true},
+        {headerName: 'Designation', field: 'term', cellRenderer: renderWithTitle},
+        {headerName: 'Allergy Type', field: 'allergy_type', cellRenderer: renderWithTitle},
+        {headerName: 'Has Drug Class', field: 'has_drug_class', cellRenderer: renderWithTitle},
+        {headerName: 'Has Drug Ingredient', field: 'has_drug_ingredient', cellRenderer: renderWithTitle},
+        {headerName: 'Search Term', field: 'search_term', cellRenderer: renderWithTitle},
+        {headerName: 'VistA Mapping Target', field: 'vista_mapping_target', cellRenderer: renderWithTitle},
+        {headerName: 'Status', field: 'status', width: 75, minWidth: 75, maxWidth: 75, suppressResize: true, suppressSizeToFit: true, valueGetter: getStatus},
+    ];
+
+    var gridOptions = {
+        columnDefs: columnDefs,
+        rowData: [],
+        enableColResize: true,
+        pagination: true,
+        paginationAutoPageSize: true,
+//        onPaginationChanged: resizeColumnsOnPaginationChanged
+    };
+
+  /*
+   function resizeColumnsOnPaginationChanged() {
+   gridOptions.api.sizeColumnsToFit();
+   }
+   */
+
+    function renderWithTitle(params) {
+        // put a tooltip on the value
+        return '<span title="' + params.value + '">' + params.value + '</span>';
+    }
+
+    function getStatus(params) {
+        return params.data.status === '0' ? 'Inactive' : 'Active';
+    }
+
+    var myDivId = null;
+
+    function init(div_id) {
+        myDivId = div_id
+        // lookup the container we want the Grid to use
+        var eGridDiv = document.getElementById(myDivId);
+
+        // create the grid passing in the div to use together with the columns & data we want to use
+/*
+        if (div_id === 'ag-grid_vista_only') {
+            vistaOnly = new agGrid.Grid(eGridDiv, gridOptions);
+        } else {
+            isaacOnly = new agGrid.Grid(eGridDiv, gridOptions);
+        }
+*/
+        new agGrid.Grid(eGridDiv, gridOptions);
+    }
+
+    function whoAmI() {
+        console.log("myDivId is " + myDivId);
+    }
+
+    function refreshRows(data) {
+        gridOptions.api.setRowData(data);
+        gridOptions.api.sizeColumnsToFit();
+    }
+
+    return {
+        initialize: init,
+        refreshRows: refreshRows,
+        whoAmI: whoAmI,
+    };
+})();
