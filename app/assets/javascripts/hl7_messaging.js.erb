@@ -18,10 +18,12 @@ function discoveryCsv(btn) {
 }
 
 function discoveryDiffs(btn) {
-    var btnGroup = $(btn).closest('.btn-group');
-    var detail_id = btnGroup.data('btngroup_detail_id');
+    var status_filter = $(btn).data('status');
+    var btnGroupHL7Actions = $(btn).closest('.hl7-actions');
+    var detail_id = btnGroupHL7Actions.data('btngroup_detail_id');
     var site_name = $(btn).closest('tr').find('.site_name').text();
     var subset_name = $(btn).closest('tr').find('.subset_name').text();
+    subset_name += ' (' + (status_filter === 'active_only' ? 'Active Only' : 'All') + ')';
 
     // disable the btn and set the loading message into each table. Data is replaced with the AJAX results
     $(btn).attr('disabled', true);
@@ -43,7 +45,7 @@ function discoveryDiffs(btn) {
     diffs.refreshGrid([], []);
 
 //    todo  you need to turn off polling while this is open? yes?!
-    $.get(gon.routes.discovery_diffs_path, {discovery_detail_id: detail_id}, function (data) {
+    $.get(gon.routes.discovery_diffs_path, {discovery_detail_id: detail_id, status_filter: status_filter}, function (data) {
         var headers = data['headers']
         vistaOnly.refreshGrid(headers, data['vista_only']);
         isaacOnly.refreshGrid(headers, data['isaac_only']);

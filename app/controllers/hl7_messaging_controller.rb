@@ -25,7 +25,8 @@ class Hl7MessagingController < ApplicationController
 
   def discovery_diffs
     detail_id = params['detail_id'] # todo use this one day when we have an API
-    data = get_diff_data(detail_id: detail_id)
+    status_filter = params['status_filter']
+    data = get_diff_data(detail_id: detail_id, status_filter: status_filter)
     headers = data[:headers]
     data.delete(:headers)
     vista_only, isaac_only, deltas = [],[],[]
@@ -160,14 +161,14 @@ class Hl7MessagingController < ApplicationController
   end
 
   public #todo don't check public in
-  def get_diff_data(detail_id:)
+  def get_diff_data(detail_id:, status_filter:)
     require('./config/hl7/discovery_mocks/discovery_mock') #require me Greg
     discoveries = Dir.glob('./config/hl7/discovery_mocks/*.discovery')
     discovery = File.open(discoveries.sample, 'rb').read
     # reactions = File.open(discoveries.last, 'rb').read
     discovery_csv_string = HL7Messaging.discovery_hl7_to_csv(discovery_hl7: discovery)
     # reactions_csv_string = HL7Messaging.discovery_hl7_to_csv(discovery_hl7: reactions)
-    discovery_csv = DiscoveryCsv.new(hl7_csv_string: discovery_csv_string)
+    discovery_csv = DiscoveryCsv.new(hl7_csv_string: discovery_csv_string, ignore_inactive: status_filter.eql?('active_only'))
     # reactions_csv = DiscoveryCsv.new(hl7_csv_string: reactions_csv_string)
     rdc = 1
 
