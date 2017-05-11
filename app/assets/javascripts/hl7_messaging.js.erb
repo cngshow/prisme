@@ -42,9 +42,9 @@ function discoveryDiffs(btn) {
     var vistaOnly = GridHelper.singletonBuild('ag-grid_vista_only');
     var isaacOnly = GridHelper.singletonBuild('ag-grid_isaac_only');
     var diffs = GridHelper.singletonBuild('ag-grid_diffs');
-    vistaOnly.refreshRows([], []);
-    isaacOnly.refreshRows([], []);
-    diffs.refreshRows([], []);
+    vistaOnly.refreshGrid([], []);
+    isaacOnly.refreshGrid([], []);
+    diffs.refreshGrid([], []);
 
 //    todo  you need to turn off polling while this is open? yes?!
     $.get(gon.routes.discovery_diffs_path, {discovery_detail_id: detail_id}, function (data) {
@@ -52,21 +52,11 @@ function discoveryDiffs(btn) {
 //        $('#tbl_discovery_diffs_vista_only').find('tbody').html(data['vista_rows'])
 //        $('#tbl_discovery_diffs_isaac_only').find('tbody').html(data['isaac_rows'])
         var headers = data['headers']
-        vistaOnly.refreshRows(headers, data['vista_only']);
-        isaacOnly.refreshRows(headers, data['isaac_only']);
+        vistaOnly.refreshGrid(headers, data['vista_only']);
+        isaacOnly.refreshGrid(headers, data['isaac_only']);
 
-        var diffHeaders = [
-            {headerName: 'VUID', field: 'vuid', width: 90, minWidth: 90, maxWidth: 90, suppressResize: true, suppressSizeToFit: true},
-//            {headerName: 'Designation', field: 'designation', cellRenderer: diffs.renderWithTitle},
-            {headerName: 'Designation', field: 'designation'},
-            {headerName: 'Field Name', field: 'field_name'},
-            {headerName: 'VistA Value', field: 'vista_value'},
-            {headerName: 'ISAAC Value', field: 'isaac_value'},
-        ];
-console.log("diff data is " + JSON.stringify(data['diffs']));
-//        "[{:vuid=>:"4688714",   :designation=>"UPPER ARM",   :field_name=>"VistA_Mapping_Target",   :vista_value=>"SCT",   :isaac_value=>"SCT_different"},  {:vuid=>:"4688714",   :designation=>"UPPER ARM",   :field_name=>"VistA_Short_Name",   :vista_value=>"UpA",   :isaac_value=>"UpA_different"}] "
-
-        //        diffs.refreshRows(diffHeaders, data['diffs']);
+        diffHeaders = ['vuid', 'designation', 'field_name', 'vista_value', 'isaac_value'];
+         diffs.refreshGrid(diffHeaders, data['diffs']);
     });
 }
 
@@ -139,7 +129,7 @@ function discovery_hl7_message(link, obj) {
     $('#btn_discovery_csv').data('detail_id', tr_id.split('_')[1] + '_' + label);
     $viewDiscoveryHl7Modal.modal('show');
 }
-
+cris = null;
 var GridHelper = (function () {
     function renderWithTitle(params) {
         // put a tooltip on the value
@@ -151,15 +141,16 @@ var GridHelper = (function () {
         if (instanceMap[div_id] === undefined) {
             instanceMap[div_id] = {};
 
-            instanceMap[div_id].cellClicked = function (params) {
-                var text = params.key;
+            instanceMap[div_id].cellDoubleClicked = function (params) {
+                var text = params.value;
+                cris = params;
                 console.log(text);
             }
 
             instanceMap[div_id].grid_options = {};
 
             //class methods go here
-            instanceMap[div_id].refreshRows = function (headers, data) {
+            instanceMap[div_id].refreshGrid = function (headers, data) {
                 //process headers
                 if (this.grid_options.api !== undefined) {
                     this.grid_options.api.destroy();
@@ -170,7 +161,7 @@ var GridHelper = (function () {
                     enableColResize: true,
                     pagination: true,
                     paginationAutoPageSize: true,
-                    onCellClicked: instanceMap[div_id].cellClicked,
+                    onCellDoubleClicked: instanceMap[div_id].cellDoubleClicked,
                     suppressMovableColumns: true
 //        onPaginationChanged: resizeColumnsOnPaginationChanged
                 };

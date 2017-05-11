@@ -23,6 +23,7 @@
 //= require jquery-validation/jquery.validate.min
 //= require moment/moment
 //= require ag-grid/ag-grid-9.1.0.min.js
+// require ag-grid/ag-grid.js
 // this is for ajax_flash notifications
 //= require bootstrap-notify
 // = require_tree .
