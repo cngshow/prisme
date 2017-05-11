@@ -23,7 +23,6 @@
       <div class="modal-header">
         <span style="font-size: large; font-weight: bold; color: navy">Discovery Differences</span>
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <!--<button type="button" class="btn btn-primary btn-sm" onclick="site_selections();">Select Site(s)</button>-->
       </div>
       <div class="modal-body">
         <div id="diffs_site_subset_header" style="padding-bottom: 5px">
@@ -37,15 +36,12 @@
           </ul>
           <div id="tp-diffs" class="scrollable_div">
             <div id="ag-grid_diffs" style="height: 400px;" class="ag-fresh"></div><!-- set the height of the div dynamically?!-->
-            <%#= render 'discovery_diffs' %>
           </div>
           <div id="tp-vista_only" class="scrollable_div">
             <div id="ag-grid_vista_only" style="height: 400px;" class="ag-fresh"></div><!-- set the height of the div dynamically?!-->
-            <%#= render 'discovery_diffs_vista_isaac_only', locals: {table_id: 'tbl_discovery_diffs_vista_only'} %>
           </div>
           <div id="tp-isaac_only" class="scrollable_div">
             <div id="ag-grid_isaac_only" style="height: 400px;" class="ag-fresh"></div><!-- set the height of the div dynamically?!-->
-            <%#= render 'discovery_diffs_vista_isaac_only', locals: {table_id: 'tbl_discovery_diffs_isaac_only'} %>
           </div>
         </div>
       </div>

@@ -22,13 +22,9 @@ function discoveryDiffs(btn) {
     var detail_id = btnGroup.data('btngroup_detail_id');
     var site_name = $(btn).closest('tr').find('.site_name').text();
     var subset_name = $(btn).closest('tr').find('.subset_name').text();
-//    var loading_data_msg = '<tr><td colspan="99">LOADING....</td></tr>'
 
     // disable the btn and set the loading message into each table. Data is replaced with the AJAX results
     $(btn).attr('disabled', true);
-//    $('#tbl_discovery_diffs').find('tbody').html(loading_data_msg);
-//    $('#tbl_discovery_diffs_vista_only').find('tbody').html(loading_data_msg);
-//    $('#tbl_discovery_diffs_isaac_only').find('tbody').html(loading_data_msg);
 
     //set the title for the modal
     var $diffsSiteSubsetHeader = $('#diffs_site_subset_header');
@@ -48,15 +44,12 @@ function discoveryDiffs(btn) {
 
 //    todo  you need to turn off polling while this is open? yes?!
     $.get(gon.routes.discovery_diffs_path, {discovery_detail_id: detail_id}, function (data) {
-//        $('#tbl_discovery_diffs').find('tbody').html(data['diff_rows'])
-//        $('#tbl_discovery_diffs_vista_only').find('tbody').html(data['vista_rows'])
-//        $('#tbl_discovery_diffs_isaac_only').find('tbody').html(data['isaac_rows'])
         var headers = data['headers']
         vistaOnly.refreshGrid(headers, data['vista_only']);
         isaacOnly.refreshGrid(headers, data['isaac_only']);
 
-        diffHeaders = ['vuid', 'designation', 'field_name', 'vista_value', 'isaac_value'];
-         diffs.refreshGrid(diffHeaders, data['diffs']);
+        var diffHeaders = ['vuid', 'designation', 'field_name', 'vista_value', 'isaac_value'];
+        diffs.refreshGrid(diffHeaders, data['diffs']);
     });
 }
 
@@ -129,12 +122,13 @@ function discovery_hl7_message(link, obj) {
     $('#btn_discovery_csv').data('detail_id', tr_id.split('_')[1] + '_' + label);
     $viewDiscoveryHl7Modal.modal('show');
 }
-cris = null;
+
 var GridHelper = (function () {
     function renderWithTitle(params) {
         // put a tooltip on the value
         return '<span title="' + params.value + '">' + params.value + '</span>';
     }
+
     var instanceMap = {};
 
     function init(div_id) {
@@ -143,8 +137,7 @@ var GridHelper = (function () {
 
             instanceMap[div_id].cellDoubleClicked = function (params) {
                 var text = params.value;
-                cris = params;
-                console.log(text);
+                copyToClipboard(text);
             }
 
             instanceMap[div_id].grid_options = {};
@@ -167,15 +160,15 @@ var GridHelper = (function () {
                 };
                 // lookup the container we want the Grid to use
                 this.eGridDiv = document.getElementById(div_id);
-                this.grid_options = gridOptions;//JSON.parse(JSON.stringify(gridOptions));//Clone it.
+                this.grid_options = gridOptions;
                 this.grid = new agGrid.Grid(this.eGridDiv, this.grid_options);
                 var headerArray = [];
 
                 for (var s in headers) {
-                    headerArray.push({headerName: headers[s], field: headers[s], cellRenderer: renderWithTitle})
+                    headerArray.push({headerName: headers[s], field: headers[s], cellRenderer: renderWithTitle});
                 }
-                this.grid_options.api.setColumnDefs(headerArray);
 
+                this.grid_options.api.setColumnDefs(headerArray);
                 this.grid_options.api.setRowData(data);
                 this.grid_options.api.sizeColumnsToFit();
             }
