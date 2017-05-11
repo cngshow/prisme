@@ -38,49 +38,35 @@ class Hl7MessagingController < ApplicationController
 
     data.each_pair do |vuid, vals|
       if vals.is_a? Array
+        # status is always the last column in the array so interpret the value
         vals.last[-1] = vals.last.last.to_s.eql?('0') ? 'Inactive' : 'Active';
-            # (vals.first.eql?(:left_only) ? vista_only : isaac_only) << reformat_row(vals.last) todo use this once we only use ag-grid
-        vista_only << vals.last if vals.first.eql?(:left_only)
-        isaac_only << vals.last if vals.first.eql?(:right_only)
+        (vals.first.eql?(:left_only) ? vista_only : isaac_only) << Hash[headers.zip vals.last]
       else
-        diffs = []
-        diff = {vuid: vuid, designation: vals[:designation_name]}
+        # :"4636847"=>{:Allergy_Type=>[:OTHER, :OTHER_different], :has_drug_class=>[:"", :_different], :designation_name=>:SOAPS}}
         vals.each do |prop|
+          diff = {vuid: vuid, designation: vals[:designation_name].to_s}# todo change me based on headers?
           unless prop.first.eql? :designation_name
-            hash_key = prop.first
-            hash_val = prop.last
-            prop_hash = {hash_key.to_sym => hash_val}
-            diffs << prop_hash
+            diff[:field_name] = prop.first.to_s
+            diff[:vista_value] = prop.last.first.to_s
+            diff[:isaac_value] = prop.last.last.to_s
+            deltas << diff
           end
         end
-        diff[:diffs] = diffs
-        deltas << diff
       end
     end
-
-#        return params.data.status === '0' ? 'Inactive' : 'Active';
-
 
 # diffs = [{:vuid=>:"4636847", :designation=>:SOAPS, :diffs=>[{:Allergy_Type=>[:OTHER, :OTHER_different]}, {:has_drug_class=>[:"", :_different]}]}]
     # vista = [[:"4538520", :"OTHER ALLERGY/ADVERSE REACTION", :OTHER, :"", :"", :"", :"", :"0"], [:"4538521", :IODINE, :DRUG, :"DE101|DX101|PH000", :IODINE, :"", :"", :"0"], [:"4538522", :IRONFILLINGS, :OTHER, :"", :"", :"", :"", :"0"], [:"4538987", :SPICES, :FOOD, :"", :"", :"", :"", :"1"], [:"4539033", :COSMETICS, :OTHER, :"", :"", :"MAKE-UP|MAKEUP", :"", :"1"], [:"4539335", :"RAW VEGETABLES", :FOOD, :"", :"", :"VEGETABLES, RAW", :"", :"1"], [:"4541166", :BETAHISTINE, :DRUG, :"", :"", :"BETAHISTINE 8 MG", :"", :"0"], [:"4636630", :"EGG SUBSTITUTES", :FOOD, :"", :"", :"", :"", :"1"], [:"4636659", :"CONTRAST MEDIA", :DRUG, :"DX201|DX109|DX000|DX102|DX200|DX100|DX101|DX202", :"IODOHIPPURATE SODIUM,I-131|METRIZAMIDE|OXTAFLUOROPROPANE|SINCALIDE|GALLIUM CITRATE,GA-67|PROPYLIODONE|EVANS BLUE|SODIUM PERTECHNETATE (Tc 99m)|MEDRONATE DISODIUM|IOHEXOL|IOPAMIDOL|IOCETAMIC ACID|XENON,XE-133|FANOLESOMAB|GADOPENTETATE DIMEGLUMINE|SODIUM CHROMATE,CR-51|IOPROMIDE|POTASSIUM PERCHLORATE|ISOSULFAN BLUE|ALBUMIN,IODINATED I-125 SERUM|IOTROLAN|FLUDEOXYGLUCOSE|INDOCYANINE GREEN|SELENOMETHIONINE,SE-75|IPODATE|CALDIAMIDE SODIUM|BARIUM SULFATE|GADOVERSETAMIDE|IODIXANOL|SODIUM PHOSPHATE,P-32|IOPANOIC ACID|SODIUM IODIDE|ALBUMIN,IODINATED I-131 SERUM|PERFLEXANE LIPID MICROSHERE|ADRENOCORTICOTROPIN (ACTH 1-18),I-125 (TYR)|IOXAGLATE|YTTERBIUM,YB-169|THALLOUS CHLORIDE,TL-201|DIATRIZOATE|IODINE|CYANOCOBALAMIN,CO-57|RUBIDIUM (Rb-82)|SUCCIMER|GADODIAMIDE|ALBUMIN,CHROMATED CR-51 SERUM|IODIPAMIDE MEGLUMINE|IOPHENDYLATE|MOLYBDENUM,MO-99|PERFLUTREN|FERROUS CITRATE,FE-59|DISOFENIN|INDIUM In 111 CAPROMAB PENDETIDE|IOTHALAMATE|TECHNETIUM Tc 99m|ROSE BENGAL|ALBUMIN|AMINOHIPPURATE|GLUCEPTATE|OXIDRONATE|PENTETATE|FIBRINOGEN", :"RADIO DYES|CT SCAN DYES|CT SCAN CONTRAST DYES|X-RAY DYES|RADIOLOGICAL CONTRAST DYES|RADIOLOGIC DYES|RADIO CONTRAST MEDIA|RADIATION CONTRASTS|CT CONTRAST DYES|DYE CONTRASTS|RADIOCONTRAST DYES|RADIOLOGY CONTRAST DYES|XRAY CONTRAST DYES|CT DYES|RADIOGRAPHIC CONTRAST DYES|RADIOLOGIC CONTRAST MEDIA|RADIOLOGY DYES|RADIOPAQUE CONTRAST DYES|RADIOPAQUE CONTRAST MEDIA|RADIOGRAPHIC DYES|CT CONTRAST MEDIA|RADIOACTIVE DYES|DIAGNOSTIC DYES|X-RAY CONTRAST MEDIA|RADIOLOGICAL DYES|X RAY DYES|RADIOLOGICAL/CONTRAST MEDIA|RADIOOPAQUE DYES|RADIO OPAQUE DYES|RADIOPAQUE DYES|RADIOLOGIC CONTRAST DYES|CONTRAST MATERIALS|CONTRAST MEDIUM|CAT SCAN DYES|RADIOLOGY CONTRAST MEDIA|RADIOGRAPHIC CONTRAST MEDIA|XRAY DYES|RADIOCONTRAST MEDIA|X-RAY CONTRAST DYES|CONTRAST MEDIA DYES|CONTRAST DYES|RADIOLOGICAL CONTRAST MEDIA|CONTRAST AGENTS", :"", :"1"], [:"4636664", :DATES, :FOOD, :"", :"", :"", :"", :"1"], [:"4636696", :"BRUSSELS SPROUTS", :FOOD, :"", :"", :"BRUSSEL SPROUTS", :"", :"1"], [:"7246488", :"NDS ALLERGY TEST: NUMBER ONE", :"DRUG, FOOD", :"", :"", :"", :"", :"0"]]
     # isaac = [[:"4636897_z9ugk05l_m", :"RAYON TAPE", :OTHER, :"", :"", :"RAYON TAPES", :"", :"1"]]
-
-    greg = []
-    vista_only.each do |row|
-      greg << reformat_row(row)
-      # r = {vuid: row[0], Term: row[1], Allergy_Type: row[2], has_drug_class: row[3], has_drug_ingredient: row[4], Search_Term: row[5], VistA_Mapping_Target: row[6], Status: row[7]}
-      # greg << r
-    end
-
-    bowman = isaac_only.map{|row| reformat_row(row)}
-    bowman = [{"vuid":"4538686_28kdf0a7_m","term":"HYDROCODONE","allergy_type":"DRUG","has_drug_class":"CN101 | RE301","has_drug_ingredient":"HYDROCODONE with a lot of other text to try to wrapp up|some more|and more","search_term":"","vista_mapping_target":"RxNorm:5489","status":"1"}]
+a = deltas.pretty_inspect
 
     render json: {
-        diff_rows: render_to_string(partial: 'discovery_diffs_rows', formats: :html, layout: false, locals: { rows: deltas}),
-        vista_rows: render_to_string(partial: 'discovery_diffs_vista_isaac_only_rows', formats: :html, layout: false, locals: { rows: vista_only, app1: 'VistA', app2: 'ISAAC'}),
-        isaac_rows: render_to_string(partial: 'discovery_diffs_vista_isaac_only_rows', formats: :html, layout: false, locals: { rows: isaac_only, app1: 'ISAAC', app2: 'VistA'}),
-        greg: greg,
-        bowman: bowman,
+        # diff_rows: render_to_string(partial: 'discovery_diffs_rows', formats: :html, layout: false, locals: { rows: deltas}),
+        # vista_rows: render_to_string(partial: 'discovery_diffs_vista_isaac_only_rows', formats: :html, layout: false, locals: { rows: vista_only, app1: 'VistA', app2: 'ISAAC'}),
+        # isaac_rows: render_to_string(partial: 'discovery_diffs_vista_isaac_only_rows', formats: :html, layout: false, locals: { rows: isaac_only, app1: 'ISAAC', app2: 'VistA'}),
+        diffs: deltas,
+        vista_only: vista_only,
+        isaac_only: isaac_only,
         headers: headers
     }
   end
@@ -201,7 +187,7 @@ class Hl7MessagingController < ApplicationController
     rdc = 1
 
     #this builds a reactants mock with the same number of columns
-    discovery_mock = discovery_csv.diff_mock(right_diff_count: rdc, common_vuid_diff_count: 0, common_vuid_same_count: 0)
+    discovery_mock = discovery_csv.diff_mock(right_diff_count: rdc, common_vuid_diff_count: 1, common_vuid_same_count: 1)
 
     # get the headers
     discovery_headers = discovery_csv.headers

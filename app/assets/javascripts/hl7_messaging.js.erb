@@ -22,13 +22,13 @@ function discoveryDiffs(btn) {
     var detail_id = btnGroup.data('btngroup_detail_id');
     var site_name = $(btn).closest('tr').find('.site_name').text();
     var subset_name = $(btn).closest('tr').find('.subset_name').text();
-    var loading_data_msg = '<tr><td colspan="99">LOADING....</td></tr>'
+//    var loading_data_msg = '<tr><td colspan="99">LOADING....</td></tr>'
 
     // disable the btn and set the loading message into each table. Data is replaced with the AJAX results
     $(btn).attr('disabled', true);
-    $('#tbl_discovery_diffs').find('tbody').html(loading_data_msg);
+//    $('#tbl_discovery_diffs').find('tbody').html(loading_data_msg);
 //    $('#tbl_discovery_diffs_vista_only').find('tbody').html(loading_data_msg);
-    $('#tbl_discovery_diffs_isaac_only').find('tbody').html(loading_data_msg);
+//    $('#tbl_discovery_diffs_isaac_only').find('tbody').html(loading_data_msg);
 
     //set the title for the modal
     var $diffsSiteSubsetHeader = $('#diffs_site_subset_header');
@@ -39,17 +39,34 @@ function discoveryDiffs(btn) {
     $('#discoveryDiffsModal').modal('show');
     $(btn).attr('disabled', false);
 
-    var vistaOnly = VistaGrid.singletonBuild('ag-grid_vista_only');
+    var vistaOnly = GridHelper.singletonBuild('ag-grid_vista_only');
+    var isaacOnly = GridHelper.singletonBuild('ag-grid_isaac_only');
+    var diffs = GridHelper.singletonBuild('ag-grid_diffs');
     vistaOnly.refreshRows([], []);
+    isaacOnly.refreshRows([], []);
+    diffs.refreshRows([], []);
 
 //    todo  you need to turn off polling while this is open? yes?!
     $.get(gon.routes.discovery_diffs_path, {discovery_detail_id: detail_id}, function (data) {
-        $('#tbl_discovery_diffs').find('tbody').html(data['diff_rows'])
+//        $('#tbl_discovery_diffs').find('tbody').html(data['diff_rows'])
 //        $('#tbl_discovery_diffs_vista_only').find('tbody').html(data['vista_rows'])
-        $('#tbl_discovery_diffs_isaac_only').find('tbody').html(data['isaac_rows'])
+//        $('#tbl_discovery_diffs_isaac_only').find('tbody').html(data['isaac_rows'])
         var headers = data['headers']
-        vistaOnly.refreshRows(headers, data['greg']);
-//        isaacOnly.refreshRows(data['bowman']);
+        vistaOnly.refreshRows(headers, data['vista_only']);
+        isaacOnly.refreshRows(headers, data['isaac_only']);
+
+        var diffHeaders = [
+            {headerName: 'VUID', field: 'vuid', width: 90, minWidth: 90, maxWidth: 90, suppressResize: true, suppressSizeToFit: true},
+//            {headerName: 'Designation', field: 'designation', cellRenderer: diffs.renderWithTitle},
+            {headerName: 'Designation', field: 'designation'},
+            {headerName: 'Field Name', field: 'field_name'},
+            {headerName: 'VistA Value', field: 'vista_value'},
+            {headerName: 'ISAAC Value', field: 'isaac_value'},
+        ];
+console.log("diff data is " + JSON.stringify(data['diffs']));
+//        "[{:vuid=>:"4688714",   :designation=>"UPPER ARM",   :field_name=>"VistA_Mapping_Target",   :vista_value=>"SCT",   :isaac_value=>"SCT_different"},  {:vuid=>:"4688714",   :designation=>"UPPER ARM",   :field_name=>"VistA_Short_Name",   :vista_value=>"UpA",   :isaac_value=>"UpA_different"}] "
+
+        //        diffs.refreshRows(diffHeaders, data['diffs']);
     });
 }
 
@@ -123,49 +140,23 @@ function discovery_hl7_message(link, obj) {
     $viewDiscoveryHl7Modal.modal('show');
 }
 
-//var vistaOnly = null;
-//var isaacOnly = null;
-
-var VistaGrid = (function () {
-//    var columnDefs = [
-//        {headerName: 'VUID', field: 'vuid', width: 90, minWidth: 90, maxWidth: 90, suppressResize: true, suppressSizeToFit: true},
-//        {headerName: 'Designation', field: 'term', cellRenderer: renderWithTitle},
-//        {headerName: 'Allergy Type', field: 'allergy_type', cellRenderer: renderWithTitle},
-//        {headerName: 'Has Drug Class', field: 'has_drug_class', cellRenderer: renderWithTitle},
-//        {headerName: 'Has Drug Ingredient', field: 'has_drug_ingredient', cellRenderer: renderWithTitle},
-//        {headerName: 'Search Term', field: 'search_term', cellRenderer: renderWithTitle},
-//        {headerName: 'VistA Mapping Target', field: 'vista_mapping_target', cellRenderer: renderWithTitle},
-//        {headerName: 'Status', field: 'status', width: 75, minWidth: 75, maxWidth: 75, suppressResize: true, suppressSizeToFit: true, valueGetter: getStatus},
-//    ];
-
-
-  /*
-   function resizeColumnsOnPaginationChanged() {
-   gridOptions.api.sizeColumnsToFit();
-   }
-   */
-
+var GridHelper = (function () {
     function renderWithTitle(params) {
         // put a tooltip on the value
         return '<span title="' + params.value + '">' + params.value + '</span>';
     }
-
-    function getStatus(params) {
-        return params.data.status === '0' ? 'Inactive' : 'Active';
-    }
-
-    var instanceMap = new Object();
+    var instanceMap = {};
 
     function init(div_id) {
         if (instanceMap[div_id] === undefined) {
-            instanceMap[div_id] = new Object();
+            instanceMap[div_id] = {};
 
             instanceMap[div_id].cellClicked = function (params) {
                 var text = params.key;
                 console.log(text);
             }
 
-            instanceMap[div_id].grid_options = new Object();
+            instanceMap[div_id].grid_options = {};
 
             //class methods go here
             instanceMap[div_id].refreshRows = function (headers, data) {
@@ -188,7 +179,6 @@ var VistaGrid = (function () {
                 this.grid_options = gridOptions;//JSON.parse(JSON.stringify(gridOptions));//Clone it.
                 this.grid = new agGrid.Grid(this.eGridDiv, this.grid_options);
                 var headerArray = [];
-//                {headerName: 'Designation', field: 'term', cellRenderer: renderWithTitle},
 
                 for (var s in headers) {
                     headerArray.push({headerName: headers[s], field: headers[s], cellRenderer: renderWithTitle})
@@ -207,3 +197,4 @@ var VistaGrid = (function () {
         singletonBuild: init,
     };
 })();
+

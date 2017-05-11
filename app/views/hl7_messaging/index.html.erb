@@ -36,15 +36,16 @@
             <li><a href='#tp-isaac_only'>ISAAC Only (right)</a></li>
           </ul>
           <div id="tp-diffs" class="scrollable_div">
-            <%= render 'discovery_diffs' %>
+            <div id="ag-grid_diffs" style="height: 400px;" class="ag-fresh"></div><!-- set the height of the div dynamically?!-->
+            <%#= render 'discovery_diffs' %>
           </div>
           <div id="tp-vista_only" class="scrollable_div">
             <div id="ag-grid_vista_only" style="height: 400px;" class="ag-fresh"></div><!-- set the height of the div dynamically?!-->
             <%#= render 'discovery_diffs_vista_isaac_only', locals: {table_id: 'tbl_discovery_diffs_vista_only'} %>
           </div>
           <div id="tp-isaac_only" class="scrollable_div">
-            <!--<div id="ag-grid_isaac_only" style="height: 400px;" class="ag-fresh"></div>&lt;!&ndash; set the height of the div dynamically?!&ndash;&gt;-->
-            <%= render 'discovery_diffs_vista_isaac_only', locals: {table_id: 'tbl_discovery_diffs_isaac_only'} %>
+            <div id="ag-grid_isaac_only" style="height: 400px;" class="ag-fresh"></div><!-- set the height of the div dynamically?!-->
+            <%#= render 'discovery_diffs_vista_isaac_only', locals: {table_id: 'tbl_discovery_diffs_isaac_only'} %>
           </div>
         </div>
       </div>
@@ -62,8 +63,6 @@
     $(document).ready(function () {
         $("#tabs").tabs();
         $("#discovery_diff_tabs").tabs();
-     //   var vistaOnly = VistaGrid.new('ag-grid_vista_only');
-//        VistaGrid.initialize('ag-grid_isaac_only');
 
         // wire the back button to swap the panels
         $('.btn-back_to_selection').on("click", function () {
