@@ -340,7 +340,7 @@ module PrismeUtilities
     begin
       json_to_yaml_file(json, VUID_DB_FILE)
     rescue => ex
-      $log.error("The file #{file} was not written.  This will impact the vuid server!")
+      $log.error("The file #{VUID_DB_FILE} was not written.  This will impact the vuid server!")
       $log.error(ex.to_s)
       $log.error(ex.backtrace.join("\n"))
     end
