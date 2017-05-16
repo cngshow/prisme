@@ -3,6 +3,7 @@ require './lib/vuid/vuid'
 
 class VuidController < ApplicationController
   before_action :can_deploy
+  REASON_PROMPT = 'Enter the Reason for this VUID Request'
 
   def index
   end
@@ -10,24 +11,19 @@ class VuidController < ApplicationController
   def request_vuid
     range = params['range']
     reason = params['reason']
-    VUID.request_vuid(range: range, reason: reason, username: prisme_user.user_name)
+    vuid = nil
+    if (reason.eql?(REASON_PROMPT) || reason.to_s.empty?)
+      vuid =  VUID::VuidResult.new(nil, nil, nil, nil, nil, nil, nil, 'Invalid VUID reason')
+    else
+      vuid = VUID.request_vuid(range: range, reason: reason, username: prisme_user.user_name)
+    end
+    if(vuid.error)
+      $log.error("The user #{prisme_user.user_name} requested a VUID that failed to be created. Reason: #{vuid.error}")
+      flash_alert(message: vuid.error)
+    end
     redirect_to vuid_requests_path
   end
 
-  def rest_request_vuid
-    range = params['range'].to_i
-    reason = params['reason']
-    user = params['username']
-    vuids = VUID.request_vuid(range: range, reason: reason, username: user)
-    render json: vuids.to_json
-  end
-
-  def rest_fetch_vuids
-    num_rows = params['num_vuids']
-    num_rows = 1000 if num_rows.nil?
-    result = VUID.fetch_rows(num_rows: num_rows)
-    render json: result.to_json
-  end
 
   def ajax_vuid_polling
     #   look at filter results partial

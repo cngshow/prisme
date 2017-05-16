@@ -44,7 +44,7 @@
             <br>
             <div title="Reason for VUID Request" class="input_div">
               <%= label_tag 'reason', 'Request Reason' %><br>
-              <%= text_area_tag 'reason', nil, data: {required: true}, placeholder: 'Enter the Reason for this VUID Request', rows: '3', cols: 76, class: 'form-control' %>
+              <%= text_area_tag 'reason', nil, data: {required: true}, placeholder: VuidController::REASON_PROMPT, rows: '3', cols: 76, class: 'form-control' %>
             </div>
             <br>
         <% end %>

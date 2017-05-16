@@ -48,8 +48,9 @@ Copyright Notice
     $(document).ready(function () {
         var localTime = new Date();
         var tz = localTime.getTimezoneOffset() / 60 * (-1);
-
-        $.get(gon.routes.utilities_browser_tz_offset_path, {tzOffset: tz}, function () {
+        console.log("The timezone being sent is " + tz.toString());
+        $.get(gon.routes.utilities_browser_tz_offset_path, {tzOffset: tz}, function (data) {
+            console.log("The timezone set was " + JSON.stringify(data));
         })
     });
 </script>

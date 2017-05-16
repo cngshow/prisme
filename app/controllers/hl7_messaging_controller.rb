@@ -173,7 +173,7 @@ class Hl7MessagingController < ApplicationController
     rdc = 1
 
     #this builds a reactants mock with the same number of columns
-    discovery_mock = discovery_csv.diff_mock(right_diff_count: rdc, common_vuid_diff_count: 20, common_vuid_same_count: 1)
+    discovery_mock = discovery_csv.diff_mock(right_diff_count: rdc, common_vuid_diff_count: 1, common_vuid_same_count: 1)
 
     # get the headers
     discovery_headers = discovery_csv.headers
