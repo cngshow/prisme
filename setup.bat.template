@@ -4,4 +4,5 @@ set JRUBY_HOME=C:\languages\ruby\jruby-9.1.8.0
 set JRUBY_PATH=C:\languages\ruby\jruby-9.1.8.0
 set JRUBY_JAR=%JRUBY_PATH%\jruby-complete-9.1.8.0.jar
 set JAVA_HOME=C:\languages\Java\jdk1.8.0_65
+set ISAAC_PATH=C:\VA_UI\isaac-rest
 set PATH=%GEM_HOME%\bin;%JRUBY_PATH%\bin;%JAVA_HOME%\bin;%PATH%;
