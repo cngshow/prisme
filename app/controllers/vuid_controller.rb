@@ -12,8 +12,10 @@ class VuidController < ApplicationController
     range = params['range']
     reason = params['reason']
     vuid = nil
-    if (reason.eql?(REASON_PROMPT) || reason.to_s.empty?)
-      vuid =  VUID::VuidResult.new(nil, nil, nil, nil, nil, nil, nil, 'Invalid VUID reason')
+    too_big = range.to_i > 1000000
+    if (reason.eql?(REASON_PROMPT) || reason.to_s.empty? || too_big)
+      vuid =  VUID::VuidResult.new(nil, nil, nil, nil, nil, nil, nil, 'Invalid VUID reason') unless too_big
+      vuid =  VUID::VuidResult.new(nil, nil, nil, nil, nil, nil, nil, 'VUID range cannot exceed 1 million!') if too_big
     else
       vuid = VUID.request_vuid(range: range, reason: reason, username: prisme_user.user_name)
     end
