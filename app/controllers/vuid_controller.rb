@@ -2,7 +2,7 @@ require './lib/vuid/vuid'
 # PrismeJars.load
 
 class VuidController < ApplicationController
-  before_action :can_deploy
+  before_action :can_get_vuids
   REASON_PROMPT = 'Enter the Reason for this VUID Request'
 
   def index
