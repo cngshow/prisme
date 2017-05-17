@@ -39,7 +39,7 @@
             <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
             <div title="Number of VUIDs" class="input_div">
               <%= label_tag 'range', 'Number of VUIDs' %><br>
-              <%= number_field_tag 'range', nil, min: 1, data: {required: true}, placeholder: 'Enter the Number of VUIDs Needed', class: 'form-control' %>
+              <%= number_field_tag 'range', nil, min: 1, max: 1000000, data: {required: true}, placeholder: 'Enter the Number of VUIDs Needed', class: 'form-control' %>
             </div>
             <br>
             <div title="Reason for VUID Request" class="input_div">
@@ -93,25 +93,27 @@
     }
 
     $(document).ready(function () {
-        $('#myModal').on('show.bs.modal', function () {
+        var $myModal = $('#myModal');
+        $myModal.on('show.bs.modal', function () {
             $("#myForm").validate().resetForm();
             document.getElementById("myForm").reset();
         });
-        $('#myModal').on('shown.bs.modal', function () {
+        $myModal.on('shown.bs.modal', function () {
             $('#range').focus()
         });
         // initialize the jquery validation plugin
         $('#myForm').validate({
             rules: {
                 range: {
-                    required: true
+                    required: true,
+                    range: [1,1000000]
                 },
                 reason: {
                     required: true
                 }
             }, // Specify validation error messages
             messages: {
-                range: "Please enter the number of VUIDs you need.",
+                range: "Please enter the number of VUIDs you need (up to 1,000,000).",
                 reason: "Please enter your reason requesting these VUIDs."
             }
         });
