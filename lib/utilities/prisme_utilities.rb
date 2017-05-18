@@ -7,6 +7,8 @@ module PrismeUtilities
   ISAAC_APPLICATION = /^isaac-rest/
   ALL_APPLICATION = /.*/
   VALID_APPLICATIONS = [KOMET_APPLICATION, ISAAC_APPLICATION, ALL_APPLICATION]
+  VUID_DB_FILE = $PROPS['PRISME.data_directory'] + '/' + $PROPS['PRISME.vuid_db_file']
+
 
   class << self
     #these do leak internal state.  In most cases you should call the corresponding method below to get a defensive copy
@@ -332,15 +334,23 @@ module PrismeUtilities
   end
 
   def self.write_vuid_db
-    file = $PROPS['PRISME.data_directory'] + '/' + $PROPS['PRISME.vuid_db_file']
     json = Rails.configuration.database_configuration[Rails.env]
     json.merge! PrismeUtilities.fetch_vuid_config
+    json.merge!({'epoch_time_seconds' => Time.now.to_i})
     begin
-      json_to_yaml_file(json, file)
+      json_to_yaml_file(json, VUID_DB_FILE)
     rescue => ex
-      $log.error("The file #{file} was not written.  This will impact the vuid server!")
+      $log.error("The file #{VUID_DB_FILE} was not written.  This will impact the vuid server!")
       $log.error(ex.to_s)
       $log.error(ex.backtrace.join("\n"))
+    end
+  end
+
+  def self.remove_vuid_db
+    begin
+      File.unlink VUID_DB_FILE
+    rescue => ex
+      $log.error("I could not delete the file #{VUID_DB_FILE}, reason is #{ex}")
     end
   end
 

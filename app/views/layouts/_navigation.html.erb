@@ -35,32 +35,36 @@
           <a href="<%= app_deployer_path %>" class="prisme-link-button" onclick="polling.checkPolling(polling.pollEnum.DEPLOYER);" title="Deploy Applications">Application
             Deployer</a>
         </div>
+    <% end %>
 
-
+    <% if policy(:navigation).any_administrator? || policy(:navigation).can_get_vuids? %>
         <div class="dropdown" role="presentation">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="Terminology">Terminology
             <span class="caret"></span></a>
 
           <ul class="dropdown-menu" aria-hidden="true" aria-label="Terminology Submenu">
-            <li role="menuitem">
-              <a href="<%= terminology_source_packages_path %>" onclick="polling.checkPolling(polling.pollEnum.TERM_SOURCE);" title="Source Package Upload">
-                Source Package Upload</a></li>
-            <li role="menuitem">
-              <a href="<%= terminology_converter_path %>" onclick="polling.checkPolling(polling.pollEnum.CONVERTER);" title="Convert Terminology">
-                Convert Terminology</a></li>
-            <li role="menuitem">
-              <a href="<%= terminology_db_builder_path %>" onclick="polling.checkPolling(polling.pollEnum.DB_BUILDER);" title="Database Builder">
-                Database Builder</a></li>
+            <% if policy(:navigation).any_administrator? %>
+                <li role="menuitem">
+                  <a href="<%= terminology_source_packages_path %>" onclick="polling.checkPolling(polling.pollEnum.TERM_SOURCE);" title="Source Package Upload">
+                    Source Package Upload</a></li>
+                <li role="menuitem">
+                  <a href="<%= terminology_converter_path %>" onclick="polling.checkPolling(polling.pollEnum.CONVERTER);" title="Convert Terminology">
+                    Convert Terminology</a></li>
+                <li role="menuitem">
+                  <a href="<%= terminology_db_builder_path %>" onclick="polling.checkPolling(polling.pollEnum.DB_BUILDER);" title="Database Builder">
+                    Database Builder</a></li>
+            <% end %>
 
-            <% if policy(:navigation).can_deploy? %>
-              <li role="menuitem">
-                <a href="<%= vuid_requests_path %>" onclick="polling.checkPolling(polling.pollEnum.VUID_REQUESTS);" title="VUID Server">
-                  VUID Server</a></li>
-              <% end %>
+            <% if policy(:navigation).can_get_vuids? %>
+                <li role="menuitem">
+                  <a href="<%= vuid_requests_path %>" onclick="polling.checkPolling(polling.pollEnum.VUID_REQUESTS);" title="VUID Server">
+                    VUID Server</a></li>
+            <% end %>
           </ul>
         </div>
+    <% end %>
 
-
+    <% if policy(:navigation).any_administrator? %>
         <div class="dropdown" role="presentation">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="Administration">Administration
             <span class="caret"></span></a>
@@ -75,8 +79,6 @@
           </ul>
         </div>
     <% end %>
-
-
   </div>
 
   <div class="prisme-navbar-tools" role="navigation">

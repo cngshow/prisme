@@ -13,6 +13,7 @@
 //= require jquery2
 //= require jquery_ujs
 //= require jquery-ui
+//= require jquery.contextMenu/jquery.contextMenu.min.js
 //= require bootstrap
 //= require turbolinks
 //= require jsTree/jstree
@@ -22,11 +23,13 @@
 //= require jquery.steps-1.1.0/jquery.steps
 //= require jquery-validation/jquery.validate.min
 //= require moment/moment
+//= require ag-grid/ag-grid-9.1.0.min.js
+// require ag-grid/ag-grid.js
 // this is for ajax_flash notifications
 //= require bootstrap-notify
 // = require_tree .
 
-// JS method for bootstrap nootification flashes
+// JS method for bootstrap notification flashes
 function flash_notify(options, settings) {
     $.notify(options, settings);
 }
@@ -37,6 +40,18 @@ function wait_cursor(on) {
     } else {
         $('body').removeClass('wait');
     }
+}
+
+function copyToClipboard(text) {
+    // have to create a fake element with the value on the page to get copy to work
+    var textArea = document.createElement('textarea');
+    textArea.setAttribute('style', 'width:1px;border:0;opacity:0;');
+    document.body.appendChild(textArea);
+    textArea.value = text;
+    textArea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textArea);
+    flash_notify({message: 'The text was copied to your clipboard!'}, {type: 'success', delay: 2500, z_index: 9999999});
 }
 
 function format_epoch_in_local(epoch) {

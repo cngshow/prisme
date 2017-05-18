@@ -23,7 +23,6 @@
       <div class="modal-header">
         <span style="font-size: large; font-weight: bold; color: navy">Discovery Differences</span>
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <!--<button type="button" class="btn btn-primary btn-sm" onclick="site_selections();">Select Site(s)</button>-->
       </div>
       <div class="modal-body">
         <div id="diffs_site_subset_header" style="padding-bottom: 5px">
@@ -32,17 +31,17 @@
         <div id="discovery_diff_tabs">
           <ul>
             <li><a href='#tp-diffs'>Discovery Diffs</a></li>
-            <li><a href='#tp-vista_only'>VistA Only (left)</a></li>
-            <li><a href='#tp-isaac_only'>ISAAC Only (right)</a></li>
+            <li><a href='#tp-vista_only'>VistA Only</a></li>
+            <li><a href='#tp-isaac_only'>ISAAC Only</a></li>
           </ul>
           <div id="tp-diffs" class="scrollable_div">
-            <%= render 'discovery_diffs' %>
+            <div id="ag-grid_diffs" style="height: 400px;" class="ag-fresh"></div><!-- set the height of the div dynamically?!-->
           </div>
           <div id="tp-vista_only" class="scrollable_div">
-            <%= render 'discovery_diffs_vista_isaac_only', locals: {table_id: 'tbl_discovery_diffs_vista_only'} %>
+            <div id="ag-grid_vista_only" style="height: 400px;" class="ag-fresh"></div><!-- set the height of the div dynamically?!-->
           </div>
           <div id="tp-isaac_only" class="scrollable_div">
-            <%= render 'discovery_diffs_vista_isaac_only', locals: {table_id: 'tbl_discovery_diffs_isaac_only'} %>
+            <div id="ag-grid_isaac_only" style="height: 400px;" class="ag-fresh"></div><!-- set the height of the div dynamically?!-->
           </div>
         </div>
       </div>

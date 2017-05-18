@@ -43,7 +43,7 @@ unless ($rake || defined?(Rails::Generators))
   at_exit do
     unless $testing
       #do cleanup
-      $log.always { PrismeLogEvent.notify(PrismeLogEvent::LIFECYCLE_TAG, 'Shutdown called!  Rails Prisme has been ruthlessly executed :-(') }
+      $log.always {PrismeLogEvent.notify(PrismeLogEvent::LIFECYCLE_TAG, 'Shutdown called!  Rails Prisme has been ruthlessly executed :-(')}
       if ($database.eql?('H2'))
         begin
           ActiveRecord::Base.connection.execute('SHUTDOWN')
@@ -109,11 +109,15 @@ end
 $log.always("The JRuby version is #{JRUBY_VERSION}")
 PRISME_VERSION = version
 PRISME_ENVIRONMENT = PrismeUtilities.aitc_environment.fetch(Socket.gethostname) rescue 'DEV_BOX'
-$log.always { PrismeLogEvent.notify(PrismeLogEvent::LIFECYCLE_TAG, "#{Rails.application.class.parent_name} coming up!  The version is #{PRISME_VERSION}") }
+$log.always {PrismeLogEvent.notify(PrismeLogEvent::LIFECYCLE_TAG, "#{Rails.application.class.parent_name} coming up!  The version is #{PRISME_VERSION}")}
 PRISME_NAME = $PROPS['PRISME.application_name']
 KOMET_NAME = $PROPS['PRISME.komet_name']
 HL7Messaging::init_messaging_engine unless (STFU_MODE || $testing)
+
 PrismeUtilities.write_vuid_db
+at_exit do
+  PrismeUtilities.remove_vuid_db
+end
 
 # ensure super_user and admin for cboden for demo
 =begin

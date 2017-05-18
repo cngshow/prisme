@@ -301,7 +301,9 @@ This page will show you two statistics:<br><br>
     If this time is large, SSOI may be to blame.</li>
     <li>Time from Apache to Rails -- The time Apache received the request to the time rails recieved it.  It does not include the time Rails spent rendering the page. If the other statistic is small suspect network latency.</li>
 
+Appending:<br>
+**/utilities/log_level?level=debug**
 
- 
+Will change the log level.  To see a list of current levels try changing 'debug' to 'showlevels'.
 
 

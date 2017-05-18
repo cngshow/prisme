@@ -2,11 +2,9 @@ Rails.application.routes.draw do
   apipie
   class OnlyAjaxRequest
     def matches?(request)
-      request.xhr?
+      request.xhr? || Rails.env.development?
     end
   end
-  match '/vuid/request' => 'vuid#rest_request_vuid', :as => :rest_request_vuid, via: [:get,:put,:post]
-  match '/vuid/view' => 'vuid#rest_fetch_vuids', :as => :rest_fetch_vuids, via: [:get,:put,:post]
   get 'vuid_requests' => 'vuid#index'
   get 'vuid_poll' => 'vuid#ajax_vuid_polling', :constraints => OnlyAjaxRequest.new
   post 'request_vuid' => 'vuid#request_vuid'

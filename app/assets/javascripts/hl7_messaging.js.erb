@@ -10,25 +10,23 @@ function discoveryCsv(btn) {
     var detail_id = $(btn).closest('.btn-group').data('btngroup_detail_id');
     $(btn).attr('disabled', true);
 
-    $.get(gon.routes.discovery_csv_path, {format: 'txt', discovery_detail_id: detail_id}, function(data) {
+    $.get(gon.routes.discovery_csv_path, {format: 'txt', discovery_detail_id: detail_id}, function (data) {
         var blob = new Blob([data], {type: "text/plain;charset=utf-8"});
-        saveAs(blob,'discovery_'+detail_id+'.csv');
+        saveAs(blob, 'discovery_' + detail_id + '.csv');
         $(btn).attr('disabled', false);
     });
 }
 
 function discoveryDiffs(btn) {
-    var btnGroup = $(btn).closest('.btn-group');
-    var detail_id = btnGroup.data('btngroup_detail_id');
-    var site_name =  $(btn).closest('tr').find('.site_name').text();
-    var subset_name =  $(btn).closest('tr').find('.subset_name').text();
-    var loading_data_msg = '<tr><td colspan="99">LOADING....</td></tr>'
+    var status_filter = $(btn).data('status');
+    var btnGroupHL7Actions = $(btn).closest('.hl7-actions');
+    var detail_id = btnGroupHL7Actions.data('btngroup_detail_id');
+    var site_name = $(btn).closest('tr').find('.site_name').text();
+    var subset_name = $(btn).closest('tr').find('.subset_name').text();
+    subset_name += ' (' + (status_filter === 'active_only' ? 'Active Only' : 'All') + ')';
 
-    //  disable the btn and set the loading message into each table. Data is replaced with the AJAX results
+    // disable the btn and set the loading message into each table. Data is replaced with the AJAX results
     $(btn).attr('disabled', true);
-    $('#tbl_discovery_diffs').find('tbody').html(loading_data_msg);
-    $('#tbl_discovery_diffs_vista_only').find('tbody').html(loading_data_msg);
-    $('#tbl_discovery_diffs_isaac_only').find('tbody').html(loading_data_msg);
 
     //set the title for the modal
     var $diffsSiteSubsetHeader = $('#diffs_site_subset_header');
@@ -39,11 +37,21 @@ function discoveryDiffs(btn) {
     $('#discoveryDiffsModal').modal('show');
     $(btn).attr('disabled', false);
 
+    var vistaOnly = GridHelper.singletonBuild('ag-grid_vista_only');
+    var isaacOnly = GridHelper.singletonBuild('ag-grid_isaac_only');
+    var diffs = GridHelper.singletonBuild('ag-grid_diffs');
+    vistaOnly.refreshGrid([], []);
+    isaacOnly.refreshGrid([], []);
+    diffs.refreshGrid([], []);
+
 //    todo  you need to turn off polling while this is open? yes?!
-    $.get(gon.routes.discovery_diffs_path, {discovery_detail_id: detail_id}, function(data) {
-        $('#tbl_discovery_diffs').find('tbody').html(data['diff_rows'])
-        $('#tbl_discovery_diffs_vista_only').find('tbody').html(data['vista_rows'])
-        $('#tbl_discovery_diffs_isaac_only').find('tbody').html(data['isaac_rows'])
+    $.get(gon.routes.discovery_diffs_path, {discovery_detail_id: detail_id, status_filter: status_filter}, function (data) {
+        var headers = data['headers']
+        vistaOnly.refreshGrid(headers, data['vista_only']);
+        isaacOnly.refreshGrid(headers, data['isaac_only']);
+
+        var diffHeaders = ['vuid', 'designation', 'field_name', 'vista_value', 'isaac_value'];
+        diffs.refreshGrid(diffHeaders, data['diffs']);
     });
 }
 
@@ -63,7 +71,7 @@ function init_discovery_polling() {
 
         setTimeout(function () {
             checksum_discovery_table_poll(gon.routes.discovery_request_poll_path, jqt);
-        }, 500);
+        }, 5000);
     });
 }
 
@@ -79,7 +87,7 @@ function checksum_discovery_table_poll(poll_path, jqt) {
 
     // check to see if the table is still in the DOM
     if ($('#' + table_id).length == 0) {
-        console.log("table "+ table_id + " is no longer available so bailing out...");
+        console.log("table " + table_id + " is no longer available so bailing out...");
         return false;
     }
 
@@ -96,26 +104,6 @@ function checksum_discovery_table_poll(poll_path, jqt) {
         }
     });
 }
-
-//function for displaying hl7 data
-/*
-function greg(tr_id) {
-    var row = $('#' + tr_id);
-    var vista = row.data('hl7_message');
-    var site_name = row.find('td.site_name').text();
-    var subset_name = row.find('td.subset_name').text();
-    console.log("tr_id is " + tr_id + " :: " + vista + ' :: ' + site_name);
-
-    // make ajax call to get isaac hl7 hash
-    $.get(gon.routes.isaac_hl7_path, {id: tr_id}, function (data) {
-        $('#view_hashes_modal_title').text(site_name + ' - ' + subset_name);
-        $('#textarea_vista_hl7').val(vista);
-        $('#textarea_isaac_hl7').val(data['isaac_hl7']);
-        $('#view_hashes_modal').modal('show');
-    });
-
-}
-*/
 
 //function for displaying hl7 message data with discovery
 function discovery_hl7_message(link, obj) {
@@ -136,3 +124,63 @@ function discovery_hl7_message(link, obj) {
     $('#btn_discovery_csv').data('detail_id', tr_id.split('_')[1] + '_' + label);
     $viewDiscoveryHl7Modal.modal('show');
 }
+
+var GridHelper = (function () {
+    function renderWithTitle(params) {
+        // put a tooltip on the value
+        return '<span title="' + params.value + '">' + params.value + '</span>';
+    }
+
+    var instanceMap = {};
+
+    function init(div_id) {
+        if (instanceMap[div_id] === undefined) {
+            instanceMap[div_id] = {};
+
+            instanceMap[div_id].cellDoubleClicked = function (params) {
+                var text = params.value;
+                copyToClipboard(text);
+            }
+
+            instanceMap[div_id].grid_options = {};
+
+            //class methods go here
+            instanceMap[div_id].refreshGrid = function (headers, data) {
+                //process headers
+                if (this.grid_options.api !== undefined) {
+                    this.grid_options.api.destroy();
+                }
+                var gridOptions = {
+                    columnDefs: [],
+                    rowData: [],
+                    enableColResize: true,
+                    pagination: true,
+                    paginationAutoPageSize: true,
+                    onCellDoubleClicked: instanceMap[div_id].cellDoubleClicked,
+                    suppressMovableColumns: true
+//        onPaginationChanged: resizeColumnsOnPaginationChanged
+                };
+                // lookup the container we want the Grid to use
+                this.eGridDiv = document.getElementById(div_id);
+                this.grid_options = gridOptions;
+                this.grid = new agGrid.Grid(this.eGridDiv, this.grid_options);
+                var headerArray = [];
+
+                for (var s in headers) {
+                    headerArray.push({headerName: headers[s], field: headers[s], cellRenderer: renderWithTitle});
+                }
+
+                this.grid_options.api.setColumnDefs(headerArray);
+                this.grid_options.api.setRowData(data);
+                this.grid_options.api.sizeColumnsToFit();
+            }
+        }
+
+        return instanceMap[div_id];
+    }
+
+    return {
+        singletonBuild: init,
+    };
+})();
+
