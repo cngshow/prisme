@@ -17,6 +17,7 @@ class ApplicationController < ActionController::Base
   prepend_before_action :setup_time, :only => :time_stats #found in utility_controller
   prepend_before_action :add_pundit_methods
   after_action :verify_authorized, unless: :devise_controller?
+  after_action :log_user_activity, unless: :devise_controller?
   before_action :verify_local_login, if: :devise_controller?
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.

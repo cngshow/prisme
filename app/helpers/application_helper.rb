@@ -65,10 +65,10 @@ module ApplicationHelper
 
   def errors_to_flash(errors)
     retval = []
-    errors.each { |attr, error_array|
+    errors.each {|attr, error_array|
       error_array = [error_array] unless error_array.is_a? Array
       formatted_attr = attr.to_s.gsub('_', ' ').capitalize
-      retval << error_array.map { |elem|
+      retval << error_array.map {|elem|
         formatted_attr += "\t" + elem.to_s
       }
     }
@@ -98,7 +98,7 @@ module ApplicationHelper
   end
 
   def ssoi?
-    ! user_session(UserSession::SSOI_USER).nil?
+    !user_session(UserSession::SSOI_USER).nil?
   end
 
   def prisme_user
@@ -110,4 +110,16 @@ module ApplicationHelper
     is_a? ::UtilitiesController
   end
 
+  def log_user_activity
+    if prisme_user && ! request.xhr?
+      user_name = prisme_user.user_name
+      UserActivity.new({username: user_name, last_activity_at: Time.now, request_url: request.original_url}).save
+      count = UserActivity.where('username = ?', user_name).count
+      trim_count = $PROPS['PRISME.user_activity_trim'].to_i
+
+      if count > trim_count
+        UserActivity.where('username = ?', user_name).order('last_activity_at ASC').first(count - trim_count).each {|r| r.destroy}
+      end
+    end
+  end
 end

@@ -13,6 +13,11 @@ module AdminUserEditHelper
   end
 
   def no_match_row
-    '<tr valign="top"><td colspan="3" align="center">No Users found that match the filter criteria</td></tr>'.html_safe
+    '<tr valign="top"><td colspan="4" align="center">No Users found that match the filter criteria</td></tr>'.html_safe
+  end
+
+  def last_user_activity(username:)
+    last_activity_record = UserActivity.where('username = ?', username).order('last_activity_at DESC').first
+    last_activity_record ? display_time(last_activity_record.last_activity_at) : 'Unknown'
   end
 end
