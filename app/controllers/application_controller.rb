@@ -17,7 +17,7 @@ class ApplicationController < ActionController::Base
   prepend_before_action :setup_time, :only => :time_stats #found in utility_controller
   prepend_before_action :add_pundit_methods
   after_action :verify_authorized, unless: :devise_controller?
-  after_action :log_user_activity, unless: :devise_controller?
+  after_action :log_user_activity, unless: [:devise_controller?, :documentation_controller?]
   before_action :verify_local_login, if: :devise_controller?
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
@@ -97,6 +97,10 @@ class ApplicationController < ActionController::Base
      u = request.url
      return if (u.eql?(user_session_url) || u.eql?(new_user_session_url) || u.eql?(destroy_user_session_url))#you can login, you can logout.  That is it...
     NavigationPolicy.allow_local_signup self
+  end
+
+  def documentation_controller?
+    false
   end
 
 end

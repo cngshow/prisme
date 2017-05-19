@@ -18,6 +18,10 @@ module Apipie
       end
     end
 
+    def documentation_controller?
+      true
+    end
+
     def authenticate
       if Apipie.configuration.authenticate
         instance_eval(&Apipie.configuration.authenticate)
