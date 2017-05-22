@@ -15,5 +15,6 @@ module PrismeConstants
   module URL
     SCHEME = Rails.env.development? ?  'http' : 'https'
     CONTEXT = 'rails_prisme'
+    PORT = Rails.env.development? ? 3000 : 8080
   end
 end

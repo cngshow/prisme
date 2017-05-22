@@ -22,7 +22,7 @@ class RolesController < ApplicationController
   end
 
 
-  api :GET,  APIString.new("<%=$API_PIE_ROUTES[:roles_get_all_roles_path]%>"), 'Request all roles as HTML or JSON.'
+  api :GET,  PrismeUtilities::RouteHelper.route(:roles_get_all_roles_path), 'Request all roles as HTML or JSON.'
   description  %q{
 Returns all the roles defined on the system.<br>
 <br>Append .json to the end of the url to change the format away from html.
@@ -37,7 +37,7 @@ Returns all the roles defined on the system.<br>
 
   #sample invocation
   #http://localhost:3000/roles/get_ssoi_roles.json?id=cboden
-  api :GET, APIString.new("<%=$API_PIE_ROUTES[:roles_get_ssoi_roles_path]%>"), 'Request all roles for a VA Single Sign on User user as HTML or JSON.'
+  api :GET,PrismeUtilities::RouteHelper.route(:roles_get_ssoi_roles_path), 'Request all roles for a VA Single Sign on User user as HTML or JSON.'
   param :id, String, desc: 'The SSO user id as defined by the header HTTP_ADSAMACCOUNTNAME', required: true
   description %q{
 Returns all the roles for an SSOi user.
@@ -62,11 +62,13 @@ JSON keys are user => user_string, roles => roles_array, token => user_token.<br
   end
 
   #token for the current user
-  api :GET, APIString.new("<%=$API_PIE_ROUTES[:roles_my_token_path]%>"), 'Request the role token for the current user as JSON, HTML or text.'
+  api :GET, PrismeUtilities::RouteHelper.route(:roles_my_token_path), 'Request the role token for the current user as JSON, HTML or text.'
   formats ['json','html', 'text']
-  description %q{
+  description %Q{
 Displays the token for the currently logged in user.<br>Displays 'INVALID USER' if logged out.<br>
 Append .json or .text to the end of the url to change the format away from html.
+<br>Try it!<br>
+#{PrismeUtilities::RouteHelper.route(:roles_my_token_url)}
   }
   def my_token
     @token = build_user_token prisme_user
@@ -80,7 +82,7 @@ Append .json or .text to the end of the url to change the format away from html.
   #sample invocation
   #http://localhost:3000/roles/get_user_roles.json?id=devtest@devtest.gov&password=devtest@devtest.gov
   #http://localhost:3000/roles/get_user_roles.json?id=cris@cris.com&password=cris@cris.com
-  api :GET, APIString.new("<%=$API_PIE_ROUTES[:roles_get_user_roles_path]%>"), 'Request the roles for the given locally signed on user as JSON, HTML.'
+  api :GET, PrismeUtilities::RouteHelper.route(:roles_get_user_roles_path), 'Request the roles for the given locally signed on user as JSON, HTML.'
   param :id, String, desc: 'The email address of the local user.', required: true
   param :password, String, desc: 'The password of the local user.', required: true
   description %q{
@@ -110,7 +112,7 @@ JSON keys are user => user_string, roles => roles_array, token => user_token.<br
 
 
   # http://localhost:3000/roles/get_roles_by_token.json?token=%5B%22u%5Cf%5Cx8F%5CxB1X%5C%22%5CxC2%5CxEE%5CxFA%5CxE1%5Cx91%5CxBF3%5CxA9%5Cx16K%22%2C+%22~K%5CxC4%5CxEFXk%5Cx80%5CxB1%5CxA3%5CxF3%5Cx8D%5CxB1%5Cx7F%5CxBC%5Cx02K%22%2C+%22k%5Cf%5CxDC%5CxF7%5Cx19z%5Cx9C%5CxBA%5CxAF%5CxBF%5Cx83%5CxEE%5Cx15%5CxD9kN%22%5D
-  api :GET, APIString.new("<%=$API_PIE_ROUTES[:roles_get_roles_by_token_path]%>"), 'Request the roles for the given token as JSON, HTML.'
+  api :GET, PrismeUtilities::RouteHelper.route(:roles_get_roles_by_token_path), 'Request the roles for the given token as JSON, HTML.'
   param :token, String, desc: 'The token for the given user.', required: true
   description %q{
 Gets the roles for a given token.  There will be a key called 'roles' pointing to an array of hashes containing role data.<br>

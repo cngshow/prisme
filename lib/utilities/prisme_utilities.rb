@@ -333,22 +333,6 @@ module PrismeUtilities
     $log.trace{"Writing yaml file #{file_name}"}
   end
 
-  # cannot invoke during initilization.  Only during post initialization or after.
-  def self.write_vuid_db
-    json = Rails.configuration.database_configuration[Rails.env]
-    json.merge! PrismeUtilities.fetch_vuid_config
-    json.merge!({'epoch_time_seconds' => Time.now.to_i})
-    json.merge!({'epoch_time_seconds' => Time.now.to_i})
-    json.merge!({'log_events_url' =>  PrismeUtilities::RouteHelper.route(:log_event_url, security_token: CipherSupport.instance.generate_security_token)})
-    begin
-      json_to_yaml_file(json, VUID_DB_FILE)
-    rescue => ex
-      $log.error("The file #{VUID_DB_FILE} was not written.  This will impact the vuid server!")
-      $log.error(ex.to_s)
-      $log.error(ex.backtrace.join("\n"))
-    end
-  end
-
   def self.remove_vuid_db
     begin
       File.unlink VUID_DB_FILE
