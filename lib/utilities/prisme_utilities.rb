@@ -3,8 +3,6 @@ require 'uri'
 #methods for Prisme, but not Komet go here, for Komet visibility see helpers.rb in rails common.
 module PrismeUtilities
 
-  include Rails.application.routes.url_helpers
-
   KOMET_APPLICATION = /^rails_komet/
   ISAAC_APPLICATION = /^isaac-rest/
   ALL_APPLICATION = /.*/
@@ -335,12 +333,13 @@ module PrismeUtilities
     $log.trace{"Writing yaml file #{file_name}"}
   end
 
+  # cannot invoke during initilization.  Only during post initialization or after.
   def self.write_vuid_db
     json = Rails.configuration.database_configuration[Rails.env]
     json.merge! PrismeUtilities.fetch_vuid_config
     json.merge!({'epoch_time_seconds' => Time.now.to_i})
     json.merge!({'epoch_time_seconds' => Time.now.to_i})
-    json.merge!({'log_events_url' => Rails.application.routes.url_helpers.log_event_url(protocol: PrismeConstants::URL::SCHEME, host: Socket.gethostname, relative_url_root: '/' + PrismeConstants::URL::CONTEXT, params: {security_token: CipherSupport.instance.generate_security_token})})
+    json.merge!({'log_events_url' =>  PrismeUtilities::RouteHelper.route(:log_event_url, security_token: CipherSupport.instance.generate_security_token)})
     begin
       json_to_yaml_file(json, VUID_DB_FILE)
     rescue => ex

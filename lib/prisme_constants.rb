@@ -13,7 +13,7 @@ module PrismeConstants
     DEV_BOX = :DEV_BOX
   end
   module URL
-    SCHEME = 'https'
+    SCHEME = Rails.env.development? ?  'http' : 'https'
     CONTEXT = 'rails_prisme'
   end
 end
