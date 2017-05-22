@@ -12,4 +12,8 @@ module PrismeConstants
     PROD = :PROD
     DEV_BOX = :DEV_BOX
   end
+  module URL
+    SCHEME = 'https'
+    CONTEXT = 'rails_prisme'
+  end
 end
