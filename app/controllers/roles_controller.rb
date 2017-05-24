@@ -66,16 +66,15 @@ JSON keys are user => user_string, roles => roles_array, token => user_token.<br
   #token for the current user
   api :GET, PrismeUtilities::RouteHelper.route(:roles_my_token_path), 'Request the role token for the current user as JSON, HTML or text.'
   formats ['json', 'html', 'text']
-  desc = %Q{
+  desc = <<END_DESC
 Displays the token for the currently logged in user.<br>Displays 'INVALID USER' if logged out.<br>
 Append .json or .text to the end of the url to change the format away from html.
-<br>Try it!<br><br>
-Local: #{PrismeUtilities::RouteHelper.route(:roles_my_token_url)}
-  }
-  unless PrismeUtilities.aitc_production?
-    desc << %Q{
+Try it!<br>
 SSO: #{PrismeUtilities::RouteHelper.route(:roles_my_token_url, true)}
-    }
+<br><br>
+END_DESC
+  unless PrismeUtilities.aitc_production?
+    desc << "Local: #{PrismeUtilities::RouteHelper.route(:roles_my_token_url)}"
   end
   description desc
 
