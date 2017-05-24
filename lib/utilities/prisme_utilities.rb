@@ -6,9 +6,14 @@ module PrismeUtilities
   module RouteHelper
     include Rails.application.routes.url_helpers
 
-    def self.route(url_or_path, **params)
+    def self.route(url_or_path, proxify = false, **params)
       host = PRISME_ENVIRONMENT.eql?(PrismeConstants::ENVIRONMENT::DEV_BOX.to_s) ? 'localhost' : Socket.gethostname
-      Rails.application.routes.url_helpers.send(url_or_path.to_sym, {port:PrismeConstants::URL::PORT, protocol: PrismeConstants::URL::SCHEME, host: host, relative_url_root: '/' + PrismeConstants::URL::CONTEXT}.merge(params))
+      url = Rails.application.routes.url_helpers.send(url_or_path.to_sym, {port:PrismeConstants::URL::PORT, protocol: PrismeConstants::URL::SCHEME, host: host, relative_url_root: '/' + PrismeConstants::URL::CONTEXT}.merge(params))
+      if proxify
+        root = Rails.application.routes.url_helpers.send(:root_url, {port:PrismeConstants::URL::PORT, protocol: PrismeConstants::URL::SCHEME, host: host, relative_url_root: '/' + PrismeConstants::URL::CONTEXT})
+        url = url.gsub(root,URI(root).proxify.to_s)
+      end
+      url
     end
   end
 
