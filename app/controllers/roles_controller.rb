@@ -4,7 +4,7 @@ class RolesController < ApplicationController
 
   resource_description do
     short 'Role APIs'
-    formats ['json','html']
+    formats ['json', 'html']
   end
 
   skip_after_action :verify_authorized
@@ -22,28 +22,30 @@ class RolesController < ApplicationController
   end
 
 
-  api :GET,  PrismeUtilities::RouteHelper.route(:roles_get_all_roles_path), 'Request all roles as HTML or JSON.'
-  description  %q{
+  api :GET, PrismeUtilities::RouteHelper.route(:roles_get_all_roles_path), 'Request all roles as HTML or JSON.'
+  description %q{
 Returns all the roles defined on the system.<br>
 <br>Append .json to the end of the url to change the format away from html.
  }
+
   def get_all_roles
     @roles_hash = Roles::ALL_ROLES
     respond_to do |format|
       format.html # get_all_roles.html.erb
-      format.json { render :json => @roles_hash }
+      format.json {render :json => @roles_hash}
     end
   end
 
   #sample invocation
   #http://localhost:3000/roles/get_ssoi_roles.json?id=cboden
-  api :GET,PrismeUtilities::RouteHelper.route(:roles_get_ssoi_roles_path), 'Request all roles for a VA Single Sign on User user as HTML or JSON.'
+  api :GET, PrismeUtilities::RouteHelper.route(:roles_get_ssoi_roles_path), 'Request all roles for a VA Single Sign on User user as HTML or JSON.'
   param :id, String, desc: 'The SSO user id as defined by the header HTTP_ADSAMACCOUNTNAME', required: true
   description %q{
 Returns all the roles for an SSOi user.
 <br>Append .json to the end of the url to change the format away from html.<br>
 JSON keys are user => user_string, roles => roles_array, token => user_token.<br>
   }
+
   def get_ssoi_roles
     ssoi_user = params[:id]
     user = SsoiUser.fetch_user(ssoi_user)
@@ -57,25 +59,31 @@ JSON keys are user => user_string, roles => roles_array, token => user_token.<br
 
     respond_to do |format|
       format.html # get_ssoi_roles.html.erb
-      format.json { render :json => @roles_hash }
+      format.json {render :json => @roles_hash}
     end
   end
 
   #token for the current user
   api :GET, PrismeUtilities::RouteHelper.route(:roles_my_token_path), 'Request the role token for the current user as JSON, HTML or text.'
-  formats ['json','html', 'text']
-  description %Q{
+  formats ['json', 'html', 'text']
+  desc = <<END_DESC
 Displays the token for the currently logged in user.<br>Displays 'INVALID USER' if logged out.<br>
 Append .json or .text to the end of the url to change the format away from html.
-<br>Try it!<br>
-#{PrismeUtilities::RouteHelper.route(:roles_my_token_url)}
-  }
+Try it!<br>
+SSO: #{PrismeUtilities::RouteHelper.route(:roles_my_token_url, true)}
+<br><br>
+END_DESC
+  unless PrismeUtilities.aitc_production?
+    desc << "Local: #{PrismeUtilities::RouteHelper.route(:roles_my_token_url)}"
+  end
+  description desc
+
   def my_token
     @token = build_user_token prisme_user
     respond_to do |format|
       format.html #my_token.html.erb
-      format.json { render json: {token: @token}}
-      format.text { render text: @token}
+      format.json {render json: {token: @token}}
+      format.text {render text: @token}
     end
   end
 
@@ -90,6 +98,7 @@ Gets the roles for a given locally signed on user.<br>
 Append .json the end of the url to change the format away from html.<br>
 JSON keys are user => user_string, roles => roles_array, token => user_token.<br>
   }
+
   def get_user_roles
     user_id = params[:id]
     password = params[:password]
@@ -106,7 +115,7 @@ JSON keys are user => user_string, roles => roles_array, token => user_token.<br
 
     respond_to do |format|
       format.html # get_all_roles.html.erb
-      format.json { render :json => @roles_hash }
+      format.json {render :json => @roles_hash}
     end
   end
 
@@ -120,6 +129,7 @@ Each hash in the role array contains metadata about the role.  The most importan
 to the name of the role.
 Append .json the end of the url to change the format away from html.
   }
+
   def get_roles_by_token
     token = params[:token]
     roles = []
@@ -131,7 +141,7 @@ Append .json the end of the url to change the format away from html.
       user = User.find_by(email: @user_name) if @user_type.eql? PrismeUserConcern::DEVISE_USER.to_s
       user = SsoiUser.fetch_user(@user_name) if @user_type.eql? PrismeUserConcern::SSOI_USER.to_s
       $log.info("The user I found is #{user} with id #{user&.id}, the id in the token is #{@user_id}, the user type is #{@user_type}, token name is #{@user_name}")
-      if(!user.nil? && user.id.eql?(@user_id))
+      if (!user.nil? && user.id.eql?(@user_id))
         @roles_hash[:user] = @user_name
         @roles_hash[:type] = @user_type
         @roles_hash[:id] = @user_id
@@ -144,7 +154,7 @@ Append .json the end of the url to change the format away from html.
     end
     respond_to do |format|
       format.html # get_roles_by_token.html.erb
-      format.json { render :json => @roles_hash }
+      format.json {render :json => @roles_hash}
     end
   end
 
@@ -194,8 +204,8 @@ Append .json the end of the url to change the format away from html.
     @token_hash[:denomination] = ['1 dollar', '5 dollars', '10 dollars', '20 dollars', '50 dollars', '100 dollars'].sample
     token_string = CipherSupport.instance.stringify_token CipherSupport.instance.encrypt(unencrypted_string: @token_hash.to_json.to_s)
     respond_to do |format|
-      format.text { render :text =>  token_string} if token_valid
-      format.text { render :text =>  token_error} unless token_valid
+      format.text {render :text => token_string} if token_valid
+      format.text {render :text => token_error} unless token_valid
     end
     $log.debug(token_string)
     $log.debug(CipherSupport.instance.decrypt(encrypted_string: CipherSupport.instance.jsonize_token(token_string)))
@@ -224,7 +234,7 @@ Append .json the end of the url to change the format away from html.
     begin
       result = CipherSupport.instance.decrypt(encrypted_string: (CGI::unescape token))
       $log.debug(result)
-      hash = JSON.parse  result
+      hash = JSON.parse result
       @user_id = hash[:id.to_s].to_i
       @user_type = hash[:type.to_s]
       @user_name = hash[:name.to_s]

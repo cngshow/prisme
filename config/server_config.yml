@@ -38,3 +38,5 @@ proxy_config_root:
       proxy_location: /3/rails_komet_a
     - incoming_url_path: http://localhost:3001/rails_komet_b
       proxy_location: /3/rails_komet_b
+    - incoming_url_path: http://localhost:3000/rails_prisme
+      proxy_location: /3/rails_prisme_b
