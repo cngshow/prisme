@@ -3,6 +3,20 @@ require 'uri'
 #methods for Prisme, but not Komet go here, for Komet visibility see helpers.rb in rails common.
 module PrismeUtilities
 
+  module RouteHelper
+    include Rails.application.routes.url_helpers
+
+    def self.route(url_or_path, proxify = false, **params)
+      host = PRISME_ENVIRONMENT.eql?(PrismeConstants::ENVIRONMENT::DEV_BOX.to_s) ? 'localhost' : Socket.gethostname
+      url = Rails.application.routes.url_helpers.send(url_or_path.to_sym, {port:PrismeConstants::URL::PORT, protocol: PrismeConstants::URL::SCHEME, host: host, relative_url_root: '/' + PrismeConstants::URL::CONTEXT}.merge(params))
+      if proxify
+        root = Rails.application.routes.url_helpers.send(:root_url, {port:PrismeConstants::URL::PORT, protocol: PrismeConstants::URL::SCHEME, host: host, relative_url_root: '/' + PrismeConstants::URL::CONTEXT})
+        url = url.gsub(root,URI(root).proxify.to_s)
+      end
+      url
+    end
+  end
+
   KOMET_APPLICATION = /^rails_komet/
   ISAAC_APPLICATION = /^isaac-rest/
   ALL_APPLICATION = /.*/
@@ -333,10 +347,13 @@ module PrismeUtilities
     $log.trace{"Writing yaml file #{file_name}"}
   end
 
+  #only works post init.
   def self.write_vuid_db
     json = Rails.configuration.database_configuration[Rails.env]
     json.merge! PrismeUtilities.fetch_vuid_config
     json.merge!({'epoch_time_seconds' => Time.now.to_i})
+    json.merge!({'epoch_time_seconds' => Time.now.to_i})
+    json.merge!({'log_events_url' =>  PrismeUtilities::RouteHelper.route(:log_event_url, security_token: CipherSupport.instance.generate_security_token)})
     begin
       json_to_yaml_file(json, VUID_DB_FILE)
     rescue => ex

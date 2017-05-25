@@ -98,5 +98,4 @@ class ApplicationController < ActionController::Base
      return if (u.eql?(user_session_url) || u.eql?(new_user_session_url) || u.eql?(destroy_user_session_url))#you can login, you can logout.  That is it...
     NavigationPolicy.allow_local_signup self
   end
-
 end

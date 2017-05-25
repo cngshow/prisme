@@ -6,8 +6,11 @@ This changelog summarizes changes and fixes which are a part of each revision.  
     *
 
 * 2017/05/12 - 4.2
-    * Task 512272, 512276 - development support pagination in GUI (backend support for pagination for discovery diff) - test team, your testing strategy will be tied to the demo we provided
-    * Defect 515147 - DEV ISSUE : VUID Terminology Dashboard - Request Date format. Anu this is not fixed.  We are only able to replicate this sometimes in test never dev.  We have put some javascript console logs to help debug this.  I am marking this ready for review.  If you can make it happen again please grab me so we can see the output.
+    * Task 512272, 512276 - development support pagination in GUI (backend support for pagination for discovery diff) - test team, your testing strategy will be tied to 
+        the demo we provided
+    * Defect 515147 - DEV ISSUE : VUID Terminology Dashboard - Request Date format. Anu this is not fixed.  We are only able to replicate this sometimes in test never 
+        dev.  We have put some javascript console logs to help debug this.  I am marking this ready for review.  If you can make it happen again please grab me so we 
+        can see the output.
     * Defect 514246 - DEV ISSUE : VUID Terminology Dashboard - Reason for request should be mandatory and the validator is not working
     * Story 509029 - Add diff functionality to discovery. Ready for review
     * VUID_REQUESTOR role added
