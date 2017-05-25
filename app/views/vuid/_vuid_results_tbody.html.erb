@@ -4,7 +4,7 @@
       <td><%= display_time(row.request_datetime ) %></td>
       <td><%= row.reason %></td>
       <td><%= row.username %></td>
-      <td><%= row.range %></td>
+      <td><%= row.range.abs %></td>
       <td><%= row.start_vuid %></td>
       <td><%= row.end_vuid %></td>
     </tr>
