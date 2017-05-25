@@ -195,9 +195,9 @@ module IsaacUploader
       hash[:expected_name_regex] = uf.getExpectedNamingPatternRegExpPattern.to_s
       hash[:sample_name] = uf.getSampleName.to_s
       hash[:file_required] = uf.fileIsRequired
-      hash[:version_validation] = { regex: converter.getSourceVersionRegExpValidator, description: converter.getSourceVersionDescription}
 
       CONVERTER_TYPE_GUI_HASH[converter][:upload_file_info] << hash
+      CONVERTER_TYPE_GUI_HASH[converter][:version_validation] = { regex: converter.getSourceVersionRegExpValidator, description: converter.getSourceVersionDescription}
     end
   end
   CONVERTER_TYPE_GUI_HASH.freeze
