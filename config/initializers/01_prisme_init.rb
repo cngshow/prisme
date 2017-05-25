@@ -114,11 +114,6 @@ PRISME_NAME = $PROPS['PRISME.application_name']
 KOMET_NAME = $PROPS['PRISME.komet_name']
 HL7Messaging::init_messaging_engine unless (STFU_MODE || $testing)
 
-PrismeUtilities.write_vuid_db
-at_exit do
-  PrismeUtilities.remove_vuid_db
-end
-
 # ensure super_user and admin for cboden for demo
 =begin
 cboden = SsoiUser.find_by_ssoi_user_name('cboden')
