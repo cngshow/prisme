@@ -195,6 +195,8 @@ module IsaacUploader
       hash[:expected_name_regex] = uf.getExpectedNamingPatternRegExpPattern.to_s
       hash[:sample_name] = uf.getSampleName.to_s
       hash[:file_required] = uf.fileIsRequired
+      hash[:version_validation] = { regex: converter.getSourceVersionRegExpValidator, description: converter.getSourceVersionDescription}
+
       CONVERTER_TYPE_GUI_HASH[converter][:upload_file_info] << hash
     end
   end
@@ -225,15 +227,6 @@ module IsaacUploader
       raise UploadException.new(ex)
     end
   end
-
-  #returns a hash.
-  # :validator => regular expression as a string that must be met.
-  # :description => the description to display to the user for the version number.
-  def self.source_upload_version_validator(supported_converter_type)
-    supported_converter_type = JIsaacLibrary::SupportedConverterTypes.valueOf(supported_converter_type) if (supported_converter_type.kind_of? String)
-    { validator: supported_converter_type.getSourceVersionRegExpValidator, description: supported_converter_type.getSourceVersionDescription}
-  end
-
 
   def self.start_work(task:)
     $log.info("Starting work on a task!")
