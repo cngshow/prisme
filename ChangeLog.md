@@ -2,8 +2,16 @@ PRISME Changelog
 
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers where provided, and the git commit history.
 
-* 2017/05/?? - 4.3 - PENDING
-    *
+* 2017/05/25 - 4.3
+   * Making backend vuid controller reject vuids ranges greater than 1000000.
+   * Added VUID_REQUESTOR role and added role navigation for vuid requestor.
+   * Added user activity model and migration for admin user edit page.
+   * Documenting roles api. Adding my_token path to get my role token.
+   * Adding in log event url for the vuid server.
+   * Cleaning apipie to use routes outside of a request and added docs for leg events.
+   * Adding support for proxifying url in my_token apipie docs.
+   * Updating doc to only show SSO link if production.
+   * Modified range to use absolute value on VUID server request PRISME GUI
 
 * 2017/05/12 - 4.2
     * Task 512272, 512276 - development support pagination in GUI (backend support for pagination for discovery diff) - test team, your testing strategy will be tied to 
