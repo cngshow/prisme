@@ -1,5 +1,7 @@
 require 'cgi'
 
+#This base class can be used for encrypting and decrypting things that don't depend on the aitc environment.  The salt is constant.
+#Currently, it is used to encrypt/decrypt service passowrds (git, tomcat, nexus etc)
 class CipherSupport
   include Singleton
 
@@ -66,6 +68,11 @@ class CipherSupport
     parsed && !date.nil?
   end
 
+  protected
+  def my_secret
+    Rails.application.secrets.secret_key_cipher_support['SERVICES']
+  end
+
   private
   def init
     #128 bit AES Cipher Feedback (CFB)
@@ -73,11 +80,19 @@ class CipherSupport
     @decrypt = OpenSSL::Cipher::AES.new(128, :CFB)
    # @encrypt.padding=256
    # @decrypt.padding=256
-    secret = Rails.application.secrets.secret_key_cipher_support
+    secret = my_secret
     @encrypt.key = secret
     @decrypt.key = secret
     @encrypt.encrypt
     @decrypt.decrypt
+  end
+end
+
+#The salt is tied to the aitc environment.
+class TokenSupport < CipherSupport
+  protected
+  def my_secret
+    Rails.application.secrets.secret_key_cipher_support[PRISME_ENVIRONMENT]
   end
 end
 

@@ -353,7 +353,7 @@ module PrismeUtilities
     json.merge! PrismeUtilities.fetch_vuid_config
     json.merge!({'epoch_time_seconds' => Time.now.to_i})
     json.merge!({'epoch_time_seconds' => Time.now.to_i})
-    json.merge!({'log_events_url' =>  PrismeUtilities::RouteHelper.route(:log_event_url, security_token: CipherSupport.instance.generate_security_token)})
+    json.merge!({'log_events_url' =>  PrismeUtilities::RouteHelper.route(:log_event_url, security_token: TokenSupport.instance.generate_security_token)})
     begin
       json_to_yaml_file(json, VUID_DB_FILE)
     rescue => ex
