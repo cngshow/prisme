@@ -3,7 +3,7 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers where provided, and the git commit history.
 
 * 2017/06/?? - 4.4 - PENDING
-   *
+   * Making user role tokens, log event tokens, service request as json token all environment specific.
 
 * 2017/05/25 - 4.3
    * Making backend vuid controller reject vuids ranges greater than 1000000.
