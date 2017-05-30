@@ -19,6 +19,7 @@ rails_prisme.war
 /target/
 /.settings/
 /lib/rails_common/
+.gitmodules
 /lib/jars/
 /.project
 /.idea
@@ -30,3 +31,5 @@ db/schema.rb
 /version.txt
 /config/oracle_database.yml
 test/reports/*
+config/oracle_database.yml.bak
+/startup.bash

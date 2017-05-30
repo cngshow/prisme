@@ -84,7 +84,7 @@ class ServicesController < ApplicationController
   #http://localhost:3000/services/all_services_as_json.json?security_token=%5B%22u%5Cf%5Cx92%5CxBC%5Cx17%7D%5CxD1%5CxE4%5CxFB%5CxE5%5Cx99%5CxA3%5C%22%5CxE8%5C%5CK%22%2C+%22%3E%5Cx16%5CxDE%5CxA8v%5Cx14%5CxFF%5CxD2%5CxC6%5CxDD%5CxAD%5Cx9F%5Cx1D%5CxD1cF%22%5D
   def all_services_as_json
     security_token = params['security_token']
-    if (CipherSupport.instance.valid_security_token?(token: security_token))
+    if (TokenSupport.instance.valid_security_token?(token: security_token))
       render json: Service.get_all_services_props
     else
       render json: {token_valid?: false}

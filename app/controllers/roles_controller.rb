@@ -9,6 +9,7 @@ class RolesController < ApplicationController
 
   skip_after_action :verify_authorized
   skip_before_action :verify_authenticity_token
+  skip_after_action :log_user_activity #urls with tokens are too long to record in oracle
   force_ssl if: :ssl_configured_delegator? # port: 8443
 
   def sso_logout
@@ -170,10 +171,10 @@ Append .json the end of the url to change the format away from html.
     token_error = nil
     hash = nil
     if @token
-      json = CipherSupport.instance.jsonize_token @token
+      json = TokenSupport.instance.jsonize_token @token
       $log.debug("token is #{@token}")
       begin
-        json = CipherSupport.instance.decrypt(encrypted_string: json)
+        json = TokenSupport.instance.decrypt(encrypted_string: json)
         hash = JSON.parse json
       rescue Exception => ex
         token_valid = false
@@ -202,13 +203,13 @@ Append .json the end of the url to change the format away from html.
     @token_hash[:issue_time] = Time.now.to_i
     @token_hash[:user] = @user_id
     @token_hash[:denomination] = ['1 dollar', '5 dollars', '10 dollars', '20 dollars', '50 dollars', '100 dollars'].sample
-    token_string = CipherSupport.instance.stringify_token CipherSupport.instance.encrypt(unencrypted_string: @token_hash.to_json.to_s)
+    token_string = TokenSupport.instance.stringify_token TokenSupport.instance.encrypt(unencrypted_string: @token_hash.to_json.to_s)
     respond_to do |format|
       format.text {render :text => token_string} if token_valid
       format.text {render :text => token_error} unless token_valid
     end
     $log.debug(token_string)
-    $log.debug(CipherSupport.instance.decrypt(encrypted_string: CipherSupport.instance.jsonize_token(token_string)))
+    $log.debug(TokenSupport.instance.decrypt(encrypted_string: TokenSupport.instance.jsonize_token(token_string)))
   end
 
   private
@@ -223,16 +224,16 @@ Append .json the end of the url to change the format away from html.
     token_hash[:id] = id
     token_hash[:type] = type
     token_hash[:name] = name
-    CGI::escape CipherSupport.instance.encrypt(unencrypted_string: token_hash.to_json.to_s)
+    CGI::escape TokenSupport.instance.encrypt(unencrypted_string: token_hash.to_json.to_s)
     #to decrypt:
-    # JSON.parse CipherSupport.instance.decrypt(encrypted_string: CipherSupport.instance.jsonize_token( the_result))
+    # JSON.parse TokenSupport.instance.decrypt(encrypted_string: TokenSupport.instance.jsonize_token( the_result))
   end
 
   def deconstruct_user_token(token)
     @parsed = true
     $log.debug("token is #{token}")
     begin
-      result = CipherSupport.instance.decrypt(encrypted_string: (CGI::unescape token))
+      result = TokenSupport.instance.decrypt(encrypted_string: (CGI::unescape token))
       $log.debug(result)
       hash = JSON.parse result
       @user_id = hash[:id.to_s].to_i

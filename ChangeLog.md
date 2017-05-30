@@ -6,6 +6,7 @@ This changelog summarizes changes and fixes which are a part of each revision.  
    * Defect 527076 - added custom loading data message overlay when the table is bing loaded via the AJAX call
    * fixed a jruby warning in discovery diff loading the mocck data (line 116)
    * 
+   * Making user role tokens, log event tokens, service request as json token all environment specific.
 
 * 2017/05/25 - 4.3
    * Making backend vuid controller reject vuids ranges greater than 1000000.
