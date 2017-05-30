@@ -31,3 +31,5 @@ db/schema.rb
 /version.txt
 /config/oracle_database.yml
 test/reports/*
+config/oracle_database.yml.bak
+/startup.bash
