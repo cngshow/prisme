@@ -5,7 +5,7 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 * 2017/06/?? - 4.4 - PENDING
    * Defect 527076 - added custom loading data message overlay when the table is bing loaded via the AJAX call
    * fixed a jruby warning in discovery diff loading the mocck data (line 116)
-   * 
+   * Fixed IE bug with jquery validation not catching that the reason was not entered. This is being caught on the front end and the form is no longer being submitted without a reason.
    * Making user role tokens, log event tokens, service request as json token all environment specific.
 
 * 2017/05/25 - 4.3
