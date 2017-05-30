@@ -113,7 +113,7 @@ module HL7Messaging
     def mock_new_elems()
       random_elem = Array.new discovery_data.sample
       r_string = '_' + [*('a'..'z'), *('0'..'9')].shuffle[0, 8].join
-      random_elem[0] = (random_elem[0].to_s + r_string +'_m').to_sym
+      random_elem[0] = "#{random_elem[0]}#{r_string}_m".to_sym
       random_elem
     end
 
