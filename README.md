@@ -32,20 +32,32 @@ bundle install
 ```
 
 <hr>
-<h1>RAILS_COMMON - git submodule</h1>
-We have moved the prop loader and logging code into a git repository at https://github.com/VA-CTT/rails_common.git so that the code can be shared with komet_tooling and the PRISME project
+<br>
+<h3>RAILS_COMMON - git submodule</h3>
+We have moved the prop loader and logging code into a git repository at https://github.com/VA-CTT/rails_common.git so that the code can
+be shared with rails_komet and the PRISME project
 
-To pull the latest code do the following:
-1) VCS -> Update Project - from within RubyMine
-2) open a terminal and navigate to rails_prisme/lib
-3) git submodule add https://vadev.mantech.com:4848/git/r/rails_common.git
-4) run 'git reset' so the rails_common directory isn't new source.
+
+To pull the latest code do the following (replace my username with yours where appropriate.):
+* VCS -> Update Project - from within RubyMine (https://www.jetbrains.com/help/ruby/2016.1/installing-and-launching.html)
+* open .gitignore and comment out /lib/rails__common with a #
+* open a terminal and navigate to rails_prisme/lib
+* git submodule add https://cshupp@vadev.mantech.com:4848/git/r/rails_common.git
+* open .gitignore and uncomment /lib/rails__common
+* run git reset from within the lib/rails_common directory
+* run git  rm -f --cached rails_common from within the lib/rails_common directory if the line above fails
+
+
+```
+git reset .
+```
 
 You should now see an rails_common directory under the lib directory.
 
-In RubyMine you may see a message concerning rails_common being under source control. If/when you do, click the add root button. This will allow you to make changes within the rails_prisme project to the code in rails_common and commit those changes as well.
-<br>
+In RubyMine you may see a message concerning rails_common being under source control. If/when you do, click the add root button. This will allow you to make changes within the rails_komet project to the code in rails_common and commit those changes as well.
 
+
+<hr>
 Now you need to run (after installing maven)
 ```
 jars.bat

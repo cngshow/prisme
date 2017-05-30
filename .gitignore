@@ -19,6 +19,7 @@ rails_prisme.war
 /target/
 /.settings/
 /lib/rails_common/
+.gitmodules
 /lib/jars/
 /.project
 /.idea
