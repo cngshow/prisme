@@ -66,13 +66,23 @@
         }
 
         var $myForm = $('#myForm');
-        if ($myForm.valid()) {
+        var $reason = $('#reason');
+        var hasRealReason = $reason.val().trim().length > 0 && $reason.val().trim() !== $reason.attr('placeholder');
+
+        if ($myForm.valid() && hasRealReason) {
             $btnSubmit.html('<span><i class="fa fa-cog fa-spin fa-fw" aria-hidden="true"></i>Processing Request...Please Wait</span>');
             $myForm.submit();
         } else {
             console.log("validation errors so re-enabling button...");
             $btnSubmit.attr('disabled', false);
             $btnSubmit.removeClass('processing');
+
+            // if the form thinks it is valid then the user has not entered a valid reason or this is an IE bug so invalidate the form
+            if ($myForm.valid()) {
+                var $validator = $myForm.validate();
+                var errors = { reason: "Please enter the reason for this VUID request." };
+                $validator.showErrors(errors);
+            }
         }
     }
 
@@ -114,7 +124,7 @@
             }, // Specify validation error messages
             messages: {
                 range: "Please enter the number of VUIDs you need (up to 1,000,000).",
-                reason: "Please enter your reason requesting these VUIDs."
+                reason: "Please enter your reason for requesting these VUIDs."
             }
         });
         vuid_requests_poll();

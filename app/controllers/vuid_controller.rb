@@ -15,7 +15,7 @@ class VuidController < ApplicationController
     too_big = range > 1000000
     bad_reason = reason.eql?(REASON_PROMPT) || reason.to_s.empty?
     bad_range = range  <= 0
-    if (bad_reason || bad_range || too_big)
+    if bad_reason || bad_range || too_big
       error = ''
       error << 'Invalid VUID reason!<br>' if bad_reason
       error << 'VUID range cannot exceed 1 million!<br>' if too_big
@@ -24,7 +24,7 @@ class VuidController < ApplicationController
     else
       vuid = VUID.request_vuid(range: range, reason: reason, username: prisme_user.user_name)
     end
-    if(vuid.error)
+    if vuid.error
       $log.error("The user #{prisme_user.user_name} requested a VUID that failed to be created. Reason: #{vuid.error}")
       flash_alert(message: vuid.error)
     end

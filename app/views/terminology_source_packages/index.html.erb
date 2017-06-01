@@ -73,7 +73,7 @@
             </div>
             <br>
             <div title="Enter Your Version Number" class="input_div">
-              <%= label_tag 'version', 'Version' %><br>
+              <%= label_tag 'version', 'Version' %>&nbsp;&nbsp;<span id="version_addl_info" style="font-size: smaller"></span><br>
               <%= text_field_tag 'version', nil, data: {required: true}, placeholder: 'Enter Your Version Number', maxlength: 75, size: 75, class: 'form-control' %>
             </div>
             <br>
@@ -185,13 +185,22 @@
               }
           });
 
+          var $version = $('#version');
+          var regex_validator = new RegExp($version.data('regex'), 'i');
+
+          //validate that the version is in the correct format
+          var version_val = $version.val();
+          if (version_val.length > 0 && !regex_validator.test(version_val)) {
+              req_msg += '<li>Version format error.</li>';
+              submit_form = false;
+          }
+
           if (req_msg !== '') {
               bootbox.alert({
                   size: 'normal',
                   title: 'Validation Error(s)',
                   message: 'The following validation error(s) were detected:<br><br><ol>' + req_msg + '</ol><br><br>Please enter all of the required data before submitting the form.'
               });
-
           }
 
           if (submit_form) {
@@ -348,9 +357,20 @@
                           $.each(data['upload_file_info'], function () {
                               add_upload(this);
                           });
+
+                          // update the version validation regex based on the converter type
+                          var version_validation = data['version_validation'];
+
+                          $('#version').data('regex', version_validation['regex'])
+
+                          //add the desription text to the page
+                          $('#version_addl_info').text('(' + version_validation['description'] + ')');
+
                           $('#uploads').fadeIn();
                       }
                   });
+              } else {
+                  $('#version_addl_info').text('');
               }
 
               var placeholder = converter == 'SCT_EXTENSION' ? 'Enter the Extension Name (e.g. US)' : 'Enter the Extension Name (optional)';

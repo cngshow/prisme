@@ -11,8 +11,8 @@ class LogEventsController < ApplicationController
   skip_after_action :log_user_activity
   skip_before_action :verify_authenticity_token, only: [:log_event]
 
-  #http://localhost:3000/log_event?application_name=isaac&level=1&tag=SOME_TAG&message=broken&security_token=%5B%22u%5Cf%5Cx92%5CxBC%5Cx17%7D%5CxD1%5CxE4%5CxFB%5CxE5%5Cx99%5CxA3%5C%22%5CxE8%5C%5CK%22%2C+%22%3E%5Cx16%5CxDE%5CxA8v%5Cx14%5CxFF%5CxD2%5CxC6%5CxDD%5CxAD%5Cx9F%5Cx1D%5CxD1cF%22%5D
-  api :GET, PrismeUtilities::RouteHelper.route(:log_event_path), 'Submit a log event to Prisme\'s log event database'
+  # http://localhost:3000/log_event?application_name=isaac&level=1&tag=SOME_TAG&message=broken&security_token=%5B%225-t6%5Cx9D%3D%5Cf7%40z%5CxB5%5CxA1%5CxD1%2A%5CxDAT%22%2C+%22w67%5C%22%5CxFCT%5C%22%5Cx01%7DB%5Cx80%5Cx98%5CxE5%5Cx14%5CxE3Y%22%5D
+  #  api :GET, PrismeUtilities::RouteHelper.route(:log_event_path), 'Submit a log event to Prisme\'s log event database'
   api :PUT, PrismeUtilities::RouteHelper.route(:log_event_path), 'Submit a log event to Prisme\'s log event database'
   api :POST, PrismeUtilities::RouteHelper.route(:log_event_path), 'Submit a log event to Prisme\'s log event database'
   param :application_name, String, desc: 'The name of the submitting application', required: true
@@ -32,13 +32,16 @@ On token error returns:<br>
 {"event_logged":false,"validation_errors":{},"token_error":"Invalid security token!"}
   }
   def log_event
-
     log_event = LogEvent.new(log_event_create_params)
     log_event.hostname = true_address
 
-    if log_event.save & valid_security_token? # do not short circuit
-      $log.info('saved a log event to the database')
-      render json: {event_logged: true}
+    if valid_security_token?
+      if log_event.save
+        $log.info('saved a log event to the database')
+        render json: {event_logged: true}
+      else
+        render json: {event_logged: false, validation_errors: log_event.errors}
+      end
     else
       failed_hash = {event_logged: false, validation_errors: log_event.errors}
       failed_hash[:token_error] = @token_error unless @token_error.nil?
@@ -97,7 +100,7 @@ On token error returns:<br>
 
   def valid_security_token?
     token = params[:security_token]
-    valid = CipherSupport.instance.valid_security_token?(token: token)
+    valid = TokenSupport.instance.valid_security_token?(token: token)
     @token_error = 'Invalid security token!' unless valid
     valid
   end

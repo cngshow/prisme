@@ -90,12 +90,12 @@ module JIsaacLibrary
   class TaskObserver
     include javafx.beans.value.ChangeListener
     include ActiveSupport::Rescuable #doesn't work, why?
-    rescue_from Exception, java.lang.Throwable, :with => :observing_error#doesn't work, why?
+    rescue_from Exception, java.lang.Throwable, :with => :observing_error #doesn't work, why?
 
     attr_reader :old_value, :new_value
 
     def changed(observable_task, oldValue, newValue)
-      $log.debug { "#{observable_task}:: oldValue = #{oldValue}, newValue = #{newValue}" }
+      $log.debug {"#{observable_task}:: oldValue = #{oldValue}, newValue = #{newValue}"}
       @old_value = oldValue
       @new_value = newValue
     end
@@ -195,7 +195,9 @@ module IsaacUploader
       hash[:expected_name_regex] = uf.getExpectedNamingPatternRegExpPattern.to_s
       hash[:sample_name] = uf.getSampleName.to_s
       hash[:file_required] = uf.fileIsRequired
+
       CONVERTER_TYPE_GUI_HASH[converter][:upload_file_info] << hash
+      CONVERTER_TYPE_GUI_HASH[converter][:version_validation] = { regex: converter.getSourceVersionRegExpValidator, description: converter.getSourceVersionDescription}
     end
   end
   CONVERTER_TYPE_GUI_HASH.freeze
@@ -453,7 +455,7 @@ module IsaacConverter
 end
 
 =begin
-load('./lib/isaac_git_utilities.rb')
+load('./lib/isaac_utilities.rb')
 source_term = "gov.vha.isaac.terminology.source.rf2"
 s_artifact = "rf2-src-data-us-extension"
 s_version = "20150301"
