@@ -3,6 +3,9 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers where provided, and the git 
 commit history.
 
+* 2017/06/?? - 4.5 - PENDING
+   *
+
 * 2017/06/01 - 4.4
    * Defect 527076 - added custom loading data message overlay when the table is being loaded via the AJAX call
    * fixed a jruby warning in discovery diff loading the mock data (line 116)
