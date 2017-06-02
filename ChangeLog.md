@@ -1,9 +1,18 @@
 PRISME Changelog 
 
-This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers where provided, and the git commit history.
+This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers where provided, and the git 
+commit history.
 
-* 2017/06/?? - 4.4 - PENDING
+* 2017/06/?? - 4.5 - PENDING
+   * Updated VUIDS table next_vuid, start_vuid, and end_vuid columns to be number(19,0) to coincide with VistA
+
+* 2017/06/01 - 4.4
+   * Defect 527076 - added custom loading data message overlay when the table is being loaded via the AJAX call
+   * fixed a jruby warning in discovery diff loading the mock data (line 116)
+   * Fixed IE bug with jquery validation not catching that the reason was not entered. This is being caught on the front end and the form is no longer being submitted 
+       without a reason.
    * Making user role tokens, log event tokens, service request as json token all environment specific.
+   * 515342 - added version regex validation and suggested description to the GUI for source upload version.
 
 * 2017/05/25 - 4.3
    * Making backend vuid controller reject vuids ranges greater than 1000000.

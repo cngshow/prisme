@@ -4,9 +4,9 @@ class VuidTables < ActiveRecord::Migration
 
   def up
     r_val = create_table(:vuids, id: false) do |t|
-      t.integer :next_vuid, null: false
-      t.integer :start_vuid, null: false
-      t.integer :end_vuid, null: false
+      t.integer :next_vuid, null: false, :limit => 19
+      t.integer :start_vuid, null: false, :limit => 19
+      t.integer :end_vuid, null: false, :limit => 19
       t.datetime :request_datetime, null: false
       t.text :request_reason
       t.string :username

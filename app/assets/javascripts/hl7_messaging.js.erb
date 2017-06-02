@@ -40,9 +40,15 @@ function discoveryDiffs(btn) {
     var vistaOnly = GridHelper.singletonBuild('ag-grid_vista_only');
     var isaacOnly = GridHelper.singletonBuild('ag-grid_isaac_only');
     var diffs = GridHelper.singletonBuild('ag-grid_diffs');
+
     vistaOnly.refreshGrid([], []);
     isaacOnly.refreshGrid([], []);
     diffs.refreshGrid([], []);
+
+    // show the loading message
+    vistaOnly.grid_options.api.showLoadingOverlay();
+    isaacOnly.grid_options.api.showLoadingOverlay();
+    diffs.grid_options.api.showLoadingOverlay();
 
 //    todo  you need to turn off polling while this is open? yes?!
     $.get(gon.routes.discovery_diffs_path, {discovery_detail_id: detail_id, status_filter: status_filter}, function (data) {
@@ -150,14 +156,17 @@ var GridHelper = (function () {
                 if (this.grid_options.api !== undefined) {
                     this.grid_options.api.destroy();
                 }
+
                 var gridOptions = {
                     columnDefs: [],
-                    rowData: [],
+                    rowData: null,
                     enableColResize: true,
                     pagination: true,
                     paginationAutoPageSize: true,
                     onCellDoubleClicked: instanceMap[div_id].cellDoubleClicked,
-                    suppressMovableColumns: true
+                    suppressMovableColumns: true,
+                    overlayLoadingTemplate: '<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>',
+                    overlayNoRowsTemplate: '<span class="ag-overlay-loading-center">No discovery differences were found</span>',
 //        onPaginationChanged: resizeColumnsOnPaginationChanged
                 };
                 // lookup the container we want the Grid to use
