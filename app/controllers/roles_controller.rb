@@ -233,8 +233,7 @@ Append .json the end of the url to change the format away from html.
     @parsed = true
     $log.debug("token is #{token}")
     begin
-      result = TokenSupport.instance.decrypt(encrypted_string: (CGI::unescape token))
-      $log.debug(result)
+      result = TokenSupport.instance.decrypt(encrypted_string: token)
       hash = JSON.parse result
       @user_id = hash[:id.to_s].to_i
       @user_type = hash[:type.to_s]
