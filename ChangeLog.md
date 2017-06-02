@@ -4,7 +4,7 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 commit history.
 
 * 2017/06/?? - 4.5 - PENDING
-   *
+   * Updated VUIDS table next_vuid, start_vuid, and end_vuid columns to be number(19,0) to coincide with VistA
 
 * 2017/06/01 - 4.4
    * Defect 527076 - added custom loading data message overlay when the table is being loaded via the AJAX call
