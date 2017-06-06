@@ -10,7 +10,7 @@
             role_text = ''
             Roles::ALL_ROLES.each do |role|
               user_roles << role if user.has_role?(role)
-              role_text = role_text + "#{role.to_s.split('_').map(&:capitalize).join(' ')}, " if user.has_role?(role)
+              role_text = role_text + "#{role.gui_string}, " if user.has_role?(role)
             end
             role_text = role_text.chop.chop
             unless user.admin_role_check
