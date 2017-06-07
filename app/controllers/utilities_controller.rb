@@ -24,6 +24,10 @@ This route is executed by an admin after the initial deployment to warm up Apach
     end
   end
 
+  api :GET, PrismeUtilities::RouteHelper.route(:utilities_time_stats_path), 'This route checks how much time is spent in Apache for a given HTTP request.'
+  description %q{
+This route reports the time spent in Apache for an HTTP request.<br>
+ }
   #https://vaauscttweb81.aac.va.gov/rails_prisme/utilities/time_stats
   def time_stats
     stats = request.headers['HTTP_APACHE_TIME']
