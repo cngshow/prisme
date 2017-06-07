@@ -4,9 +4,16 @@ class VuidTables < ActiveRecord::Migration
 
   def up
     r_val = create_table(:vuids, id: false) do |t|
-      t.integer :next_vuid, null: false, :limit => 19
-      t.integer :start_vuid, null: false, :limit => 19
-      t.integer :end_vuid, null: false, :limit => 19
+      if $database.eql?(RailsPrisme::ORACLE)
+        t.integer :next_vuid, null: false, :limit => 19
+        t.integer :start_vuid, null: false, :limit => 19
+        t.integer :end_vuid, null: false, :limit => 19
+      else
+        #H2
+        t.integer :next_vuid, null: false
+        t.integer :start_vuid, null: false
+        t.integer :end_vuid, null: false
+      end
       t.datetime :request_datetime, null: false
       t.text :request_reason
       t.string :username
