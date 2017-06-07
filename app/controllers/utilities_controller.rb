@@ -1,7 +1,16 @@
 class UtilitiesController < ApplicationController
+  resource_description do
+    short 'Utilities Controller APIs'
+    formats ['json', 'html']
+  end
+
   skip_after_action :verify_authorized
   skip_before_action :verify_authenticity_token
 
+  api :GET, PrismeUtilities::RouteHelper.route(:utilities_warmup_path), 'Warm up Apache after initial deployment.'
+  description %q{
+This route is executed by an admin after the initial deployment to warm up Apache.<br>
+ }
   #warm up apache
   def warmup
     @headers = {}
@@ -31,6 +40,10 @@ class UtilitiesController < ApplicationController
     end
   end
 
+  api :GET, PrismeUtilities::RouteHelper.route(:utilities_log_level_path), 'This route changes the log level on the fly for a given deployment.'
+  description %q{
+This route is executed by an admin to change the log level on a running system without having to restart the application.<br>
+ }
   def log_level
     level = params[:level].to_sym if Logging::RAILS_COMMON_LEVELS.include? params[:level].to_sym
     if level.nil?
@@ -67,6 +80,10 @@ class UtilitiesController < ApplicationController
     render :json => prisme_config
   end
 
+  api :GET, PrismeUtilities::RouteHelper.route(:utilities_seed_services_path), 'This route allows an admin to seed the service and service properties table after an initial deployment.'
+  description %q{
+This route is executed by an admin to seed data in the services and service_properties tables which determine the routes to git, jenkins, and tomcat.<br>
+ }
   # http://localhost:3000/utilities/seed_database?db=localhost
   def seed_services
     ret = nil
