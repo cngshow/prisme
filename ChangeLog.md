@@ -3,8 +3,12 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers where provided, and the git 
 commit history.
 
-* 2017/06/?? - 4.5 - PENDING
+* 2017/06/?? - 4.6 - PENDING
+   *
+
+* 2017/06/08 - 4.5
    * Updated VUIDS table next_vuid, start_vuid, and end_vuid columns to be number(19,0) to coincide with VistA
+   * Fix migrations to work with H2
 
 * 2017/06/01 - 4.4
    * Defect 527076 - added custom loading data message overlay when the table is being loaded via the AJAX call
