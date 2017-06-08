@@ -4,10 +4,9 @@ module AdminUserEditHelper
   ROLE_REVIEW = 'admin_role_review'
 
   def role_checkbox(role)
-    role = role.to_s if role.is_a? Symbol
     ret = %{
 <input type="checkbox" name="cbx_#{role}" id="cbx_#{role}" value="true" class="cbx"/>
-&nbsp;&nbsp;<label for="cbx_#{role}">#{role.split('_').map(&:capitalize).join(' ')}</label>
+&nbsp;&nbsp;<label for="cbx_#{role}">#{role.gui_string}</label>
     }
     ret.html_safe
   end

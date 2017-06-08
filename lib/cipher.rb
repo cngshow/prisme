@@ -57,7 +57,7 @@ class CipherSupport
     date = nil
     $log.debug("token is #{token}")
     begin
-      result = decrypt(encrypted_string: (CGI::unescape token))
+      result = decrypt(encrypted_string: token)
       $log.debug(result)
       hash = JSON.parse  result
       date = hash['time']

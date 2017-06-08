@@ -1,7 +1,21 @@
 class UtilitiesController < ApplicationController
+  resource_description do
+    short 'Utilities Controller APIs - Special Routes'
+    formats ['json', 'html']
+  end
+
   skip_after_action :verify_authorized
   skip_before_action :verify_authenticity_token
 
+  api :GET, PrismeUtilities::RouteHelper.route(:utilities_warmup_path), 'Warm up Apache after initial deployment.'
+  description %q{
+This route is executed by an admin after the initial deployment to warm up Apache.<br><br>
+You would call this whenever you restart the Apache SSOI server (not Prisme).
+This will open a page that will, via ajax, motivate 500 http(s) requests to get Apache's workers warm and toasty.
+Obviously, this will not work if you hit prisme locally.  Prisme must be hit through SSOI.
+This page has another nice feature.  The page it reloads 500 times show all the header information
+prisme gets from SSOI (including any others).  If you want to snoop on SSOI this is the place to go.
+}
   #warm up apache
   def warmup
     @headers = {}
@@ -15,6 +29,15 @@ class UtilitiesController < ApplicationController
     end
   end
 
+  api :GET, PrismeUtilities::RouteHelper.route(:utilities_time_stats_path), 'This route checks how much time is spent in Apache for a given HTTP request.'
+  description %q{
+This route reports the time spent in Apache for an HTTP request. This page will show you two statistics:<br><br>
+<ol>
+    <li>Request Time in Apache -- How much time elapsed between apache getting the request from your browser to apache placing the headers on the wire.
+    If this time is large, SSOI may be to blame.</li>
+    <li>Time from Apache to Rails -- The time Apache received the request to the time rails received it.  It does not include the time Rails spent rendering the page. If the other statistic is small suspect network latency.</li>
+</ol>
+ }
   #https://vaauscttweb81.aac.va.gov/rails_prisme/utilities/time_stats
   def time_stats
     stats = request.headers['HTTP_APACHE_TIME']
@@ -31,6 +54,11 @@ class UtilitiesController < ApplicationController
     end
   end
 
+  api :GET, PrismeUtilities::RouteHelper.route(:utilities_log_level_path), 'This route changes the log level on the fly for a given deployment.'
+  description %q{
+This route is executed by an admin to change the log level on a running system without having to restart the application.<br><br>
+To see a list of current levels try changing 'debug' to 'showlevels'.
+ }
   def log_level
     level = params[:level].to_sym if Logging::RAILS_COMMON_LEVELS.include? params[:level].to_sym
     if level.nil?
@@ -40,7 +68,7 @@ class UtilitiesController < ApplicationController
     ALL_LOGGERS.each do |logger|
       logger.level= level
     end
-    render text: "New level set"
+    render text: 'New level set'
   end
 
   def git_not_available
@@ -67,6 +95,10 @@ class UtilitiesController < ApplicationController
     render :json => prisme_config
   end
 
+  api :GET, PrismeUtilities::RouteHelper.route(:utilities_seed_services_path), 'This route allows an admin to seed the service and service properties table after an initial deployment.'
+  description %q{
+This route is executed by an admin to seed data in the services and service_properties tables which determine the routes to git, jenkins, and tomcat.<br>
+ }
   # http://localhost:3000/utilities/seed_database?db=localhost
   def seed_services
     ret = nil
