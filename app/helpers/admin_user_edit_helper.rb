@@ -6,7 +6,7 @@ module AdminUserEditHelper
   def role_checkbox(role)
     ret = %{
 <input type="checkbox" name="cbx_#{role}" id="cbx_#{role}" value="true" class="cbx"/>
-&nbsp;&nbsp;<label for="cbx_#{role}">#{role.gui_string}</label>
+&nbsp;&nbsp;<label for="cbx_#{role}">#{Roles.gui_string(role)}</label>
     }
     ret.html_safe
   end
