@@ -3,591 +3,583 @@
   name: Cheyenne, WY
   site_type: Production
   message_type: P
-- va_site_id: '443'
+- va_site_id: '613'
   name: Martinsburg, WV
   site_type: Production
   message_type: P
-- va_site_id: '444'
+- va_site_id: '657'
   name: St. Louis (Heartland-East HCS)
   site_type: Production
   message_type: P
-- va_site_id: '445'
+- va_site_id: '358'
   name: Manila OC, PI
   site_type: Production
   message_type: P
-- va_site_id: '446'
+- va_site_id: '402'
   name: Togus, ME
   site_type: Production
   message_type: P
-- va_site_id: '447'
+- va_site_id: '405'
   name: White River Junction, VT
   site_type: Production
   message_type: P
-- va_site_id: '448'
+- va_site_id: '436'
   name: Fort Harrison, MT
   site_type: Production
   message_type: P
-- va_site_id: '449'
+- va_site_id: '437'
   name: Fargo, ND
   site_type: Production
   message_type: P
-- va_site_id: '450'
+- va_site_id: '438'
   name: Sioux Falls, SD
   site_type: Production
   message_type: P
-- va_site_id: '451'
+- va_site_id: '459'
   name: Honolulu, HI
   site_type: Production
   message_type: P
-- va_site_id: '452'
+- va_site_id: '460'
   name: Wilmington, DE
   site_type: Production
   message_type: P
-- va_site_id: '453'
+- va_site_id: '463'
   name: Anchorage, AK (OPC)
   site_type: Production
   message_type: P
-- va_site_id: '454'
+- va_site_id: '501'
   name: Albuquerque, NM
   site_type: Production
   message_type: P
-- va_site_id: '455'
+- va_site_id: '502'
   name: Alexandria, LA
   site_type: Production
   message_type: P
-- va_site_id: '456'
+- va_site_id: '503'
   name: Altoona, PA
   site_type: Production
   message_type: P
-- va_site_id: '457'
+- va_site_id: '504'
   name: Amarillo, TX
   site_type: Production
   message_type: P
-- va_site_id: '458'
+- va_site_id: '506'
   name: Ann Arbor, MI
   site_type: Production
   message_type: P
-- va_site_id: '459'
+- va_site_id: '508'
   name: Atlanta, GA
   site_type: Production
   message_type: P
-- va_site_id: '460'
+- va_site_id: '509'
   name: Augusta, GA (C)
   site_type: Production
   message_type: P
-- va_site_id: '461'
+- va_site_id: '512'
   name: Baltimore, MD (HCS)
   site_type: Production
   message_type: P
-- va_site_id: '462'
+- va_site_id: '515'
   name: Battle Creek, MI
   site_type: Production
   message_type: P
-- va_site_id: '463'
+- va_site_id: '516'
   name: Bay Pines, FL
   site_type: Production
   message_type: P
-- va_site_id: '464'
+- va_site_id: '517'
   name: Beckley, WV
   site_type: Production
   message_type: P
-- va_site_id: '465'
+- va_site_id: '518'
   name: Bedford, MA
   site_type: Production
   message_type: P
-- va_site_id: '466'
+- va_site_id: '519'
   name: Big Spring, TX
   site_type: Production
   message_type: P
-- va_site_id: '467'
+- va_site_id: '520'
   name: Biloxi, MS (C)
   site_type: Production
   message_type: P
-- va_site_id: '468'
+- va_site_id: '521'
   name: Birmingham, AL
   site_type: Production
   message_type: P
-- va_site_id: '469'
+- va_site_id: '523'
   name: Boston-Jamaica Plain, MA (HCS)
   site_type: Production
   message_type: P
-- va_site_id: '470'
+- va_site_id: '526'
   name: Bronx, NY
   site_type: Production
   message_type: P
-- va_site_id: '471'
+- va_site_id: '528'
   name: Buffalo, NY (HCS)
   site_type: Production
   message_type: P
-- va_site_id: '472'
+- va_site_id: '529'
   name: Butler, PA
   site_type: Production
   message_type: P
-- va_site_id: '473'
+- va_site_id: '531'
   name: Boise, ID
   site_type: Production
   message_type: P
-- va_site_id: '474'
+- va_site_id: '534'
   name: Charleston, SC
   site_type: Production
   message_type: P
-- va_site_id: '475'
+- va_site_id: '537'
   name: Chicago Westside, IL
   site_type: Production
   message_type: P
-- va_site_id: '476'
+- va_site_id: '538'
   name: Chillicothe, OH
   site_type: Production
   message_type: P
-- va_site_id: '477'
+- va_site_id: '539'
   name: Cincinnati, OH
   site_type: Production
   message_type: P
-- va_site_id: '478'
+- va_site_id: '540'
   name: Clarksburg, WV
   site_type: Production
   message_type: P
-- va_site_id: '479'
+- va_site_id: '541'
   name: Cleveland, OH
   site_type: Production
   message_type: P
-- va_site_id: '480'
+- va_site_id: '542'
   name: Coatesville, PA
   site_type: Production
   message_type: P
-- va_site_id: '481'
+- va_site_id: '544'
   name: Columbia, SC
   site_type: Production
   message_type: P
-- va_site_id: '482'
+- va_site_id: '546'
   name: Miami, FL
   site_type: Production
   message_type: P
-- va_site_id: '483'
+- va_site_id: '548'
   name: West Palm Beach, FL
   site_type: Production
   message_type: P
-- va_site_id: '484'
+- va_site_id: '549'
   name: Dallas, TX (HCS)
   site_type: Production
   message_type: P
-- va_site_id: '485'
+- va_site_id: '550'
   name: Danville (Illiana HCS)
   site_type: Production
   message_type: P
-- va_site_id: '486'
+- va_site_id: '552'
   name: Dayton, OH
   site_type: Production
   message_type: P
-- va_site_id: '487'
+- va_site_id: '553'
   name: Detroit, MI
   site_type: Production
   message_type: P
-- va_site_id: '488'
+- va_site_id: '554'
   name: Denver, CO (HCS)
   site_type: Production
   message_type: P
-- va_site_id: '489'
+- va_site_id: '556'
   name: North Chicago, IL
   site_type: Production
   message_type: P
-- va_site_id: '490'
+- va_site_id: '557'
   name: Dublin, GA
   site_type: Production
   message_type: P
-- va_site_id: '491'
+- va_site_id: '558'
   name: Durham, NC
   site_type: Production
   message_type: P
-- va_site_id: '492'
+- va_site_id: '561'
   name: East Orange, NJ (HCS)
   site_type: Production
   message_type: P
-- va_site_id: '493'
+- va_site_id: '562'
   name: Erie, PA
   site_type: Production
   message_type: P
-- va_site_id: '494'
+- va_site_id: '564'
   name: Fayetteville, AR
   site_type: Production
   message_type: P
-- va_site_id: '495'
+- va_site_id: '565'
   name: Fayetteville, NC
   site_type: Production
   message_type: P
-- va_site_id: '496'
+- va_site_id: '568'
   name: Fort Meade, SD
   site_type: Production
   message_type: P
-- va_site_id: '497'
+- va_site_id: '570'
   name: Fresno, CA
   site_type: Production
   message_type: P
-- va_site_id: '498'
+- va_site_id: '573'
   name: Gainesville, FL
   site_type: Production
   message_type: P
-- va_site_id: '499'
+- va_site_id: '575'
   name: Grand Junction, CO
   site_type: Production
   message_type: P
-- va_site_id: '500'
+- va_site_id: '578'
   name: Hines, IL
   site_type: Production
   message_type: P
-- va_site_id: '501'
+- va_site_id: '580'
   name: Houston, TX
   site_type: Production
   message_type: P
-- va_site_id: '502'
+- va_site_id: '581'
   name: Huntington, WV
   site_type: Production
   message_type: P
-- va_site_id: '503'
+- va_site_id: '583'
   name: Indianapolis, IN (C)
   site_type: Production
   message_type: P
-- va_site_id: '504'
+- va_site_id: '585'
   name: Iron Mountain, MI
   site_type: Production
   message_type: P
-- va_site_id: '505'
+- va_site_id: '586'
   name: Jackson, MS
   site_type: Production
   message_type: P
-- va_site_id: '506'
+- va_site_id: '589'
   name: Kansas City (Heartland-West HCS)
   site_type: Production
   message_type: P
-- va_site_id: '507'
+- va_site_id: '590'
   name: Hampton, VA
   site_type: Production
   message_type: P
-- va_site_id: '508'
+- va_site_id: '593'
   name: Las Vegas, NV
   site_type: Production
   message_type: P
-- va_site_id: '509'
+- va_site_id: '595'
   name: Lebanon, PA
   site_type: Production
   message_type: P
-- va_site_id: '510'
+- va_site_id: '596'
   name: Lexington, KY
   site_type: Production
   message_type: P
-- va_site_id: '511'
+- va_site_id: '598'
   name: Little Rock, AR (C)
   site_type: Production
   message_type: P
-- va_site_id: '512'
+- va_site_id: '600'
   name: Long Beach, CA
   site_type: Production
   message_type: P
-- va_site_id: '513'
+- va_site_id: '603'
   name: Louisville, KY
   site_type: Production
   message_type: P
-- va_site_id: '514'
+- va_site_id: '605'
   name: Loma Linda, CA
   site_type: Production
   message_type: P
-- va_site_id: '515'
+- va_site_id: '607'
   name: Madison, WI
   site_type: Production
   message_type: P
-- va_site_id: '516'
+- va_site_id: '608'
   name: Manchester, NH
   site_type: Production
   message_type: P
-- va_site_id: '517'
+- va_site_id: '610'
   name: Marion, IN (HCS)
   site_type: Production
   message_type: P
-- va_site_id: '518'
+- va_site_id: '612'
   name: Martinez, CA (HCS)
   site_type: Production
   message_type: P
-- va_site_id: '519'
+- va_site_id: '614'
   name: Memphis, TN
   site_type: Production
   message_type: P
-- va_site_id: '520'
+- va_site_id: '618'
   name: Minneapolis, MN
   site_type: Production
   message_type: P
-- va_site_id: '521'
+- va_site_id: '619'
   name: Montgomery, AL (HCS)
   site_type: Production
   message_type: P
-- va_site_id: '522'
+- va_site_id: '620'
   name: Montrose, NY
   site_type: Production
   message_type: P
-- va_site_id: '523'
+- va_site_id: '621'
   name: Mountain Home, TN
   site_type: Production
   message_type: P
-- va_site_id: '524'
+- va_site_id: '623'
   name: Muskogee, OK
   site_type: Production
   message_type: P
-- va_site_id: '525'
+- va_site_id: '626'
   name: Nashville, TN
   site_type: Production
   message_type: P
-- va_site_id: '526'
+- va_site_id: '629'
   name: New Orleans, LA
   site_type: Production
   message_type: P
-- va_site_id: '527'
+- va_site_id: '630'
   name: New York Harbor (HCS)
   site_type: Production
   message_type: P
-- va_site_id: '528'
+- va_site_id: '631'
   name: Northampton, MA
   site_type: Production
   message_type: P
-- va_site_id: '529'
+- va_site_id: '632'
   name: Northport, NY
   site_type: Production
   message_type: P
-- va_site_id: '530'
+- va_site_id: '635'
   name: Oklahoma City, OK
   site_type: Production
   message_type: P
-- va_site_id: '531'
+- va_site_id: '636'
   name: Omaha, NE (Central Plains HCS)
   site_type: Production
   message_type: P
-- va_site_id: '532'
+- va_site_id: '637'
   name: Asheville, NC
   site_type: Production
   message_type: P
-- va_site_id: '533'
+- va_site_id: '640'
   name: Palo Alto HCS
   site_type: Production
   message_type: P
-- va_site_id: '534'
+- va_site_id: '642'
   name: Philadelphia, PA
   site_type: Production
   message_type: P
-- va_site_id: '535'
+- va_site_id: '644'
   name: Phoenix, AZ
   site_type: Production
   message_type: P
-- va_site_id: '536'
+- va_site_id: '646'
   name: Pittsburgh HCS
   site_type: Production
   message_type: P
-- va_site_id: '537'
+- va_site_id: '648'
   name: Portland, OR (C)
   site_type: Production
   message_type: P
-- va_site_id: '538'
+- va_site_id: '649'
   name: Prescott, AZ
   site_type: Production
   message_type: P
-- va_site_id: '539'
+- va_site_id: '650'
   name: Providence, RI
   site_type: Production
   message_type: P
-- va_site_id: '540'
+- va_site_id: '652'
   name: Richmond, VA
   site_type: Production
   message_type: P
-- va_site_id: '541'
+- va_site_id: '653'
   name: Roseburg, OR
   site_type: Production
   message_type: P
-- va_site_id: '542'
+- va_site_id: '654'
   name: Reno, NV
   site_type: Production
   message_type: P
-- va_site_id: '543'
+- va_site_id: '655'
   name: Saginaw, MI
   site_type: Production
   message_type: P
-- va_site_id: '544'
+- va_site_id: '656'
   name: St Cloud, MN
   site_type: Production
   message_type: P
-- va_site_id: '545'
+- va_site_id: '658'
   name: Salem, VA
   site_type: Production
   message_type: P
-- va_site_id: '546'
+- va_site_id: '659'
   name: Salisbury, NC
   site_type: Production
   message_type: P
-- va_site_id: '547'
+- va_site_id: '660'
   name: Salt Lake City, UT
   site_type: Production
   message_type: P
-- va_site_id: '548'
+- va_site_id: '662'
   name: San Francisco, CA
   site_type: Production
   message_type: P
-- va_site_id: '549'
+- va_site_id: '663'
   name: Seattle, WA
   site_type: Production
   message_type: P
-- va_site_id: '550'
+- va_site_id: '664'
   name: San Diego, CA
   site_type: Production
   message_type: P
-- va_site_id: '551'
+- va_site_id: '666'
   name: Sheridan, WY
   site_type: Production
   message_type: P
-- va_site_id: '552'
+- va_site_id: '667'
   name: Shreveport, LA
   site_type: Production
   message_type: P
-- va_site_id: '553'
+- va_site_id: '668'
   name: Spokane, WA
   site_type: Production
   message_type: P
-- va_site_id: '554'
+- va_site_id: '671'
   name: San Antonio, TX
   site_type: Production
   message_type: P
-- va_site_id: '555'
+- va_site_id: '672'
   name: San Juan, PR
   site_type: Production
   message_type: P
-- va_site_id: '556'
+- va_site_id: '673'
   name: Tampa, FL
   site_type: Production
   message_type: P
-- va_site_id: '557'
+- va_site_id: '674'
   name: Temple, TX (Central Texas HCS)
   site_type: Production
   message_type: P
-- va_site_id: '558'
+- va_site_id: '676'
   name: Tomah, WI
   site_type: Production
   message_type: P
-- va_site_id: '559'
+- va_site_id: '678'
   name: Tucson, AZ
   site_type: Production
   message_type: P
-- va_site_id: '560'
+- va_site_id: '679'
   name: Tuscaloosa, AL
   site_type: Production
   message_type: P
-- va_site_id: '561'
+- va_site_id: '687'
   name: Walla Walla, WA
   site_type: Production
   message_type: P
-- va_site_id: '562'
+- va_site_id: '688'
   name: Washington, DC
   site_type: Production
   message_type: P
-- va_site_id: '563'
+- va_site_id: '689'
   name: West Haven, CT (HCS)
   site_type: Production
   message_type: P
-- va_site_id: '564'
+- va_site_id: '691'
   name: Los Angeles, CA (HCS)
   site_type: Production
   message_type: P
-- va_site_id: '565'
+- va_site_id: '692'
   name: White City, OR (DOM)
   site_type: Production
   message_type: P
-- va_site_id: '566'
+- va_site_id: '693'
   name: Wilkes Barre, PA
   site_type: Production
   message_type: P
-- va_site_id: '567'
+- va_site_id: '695'
   name: Milwaukee, WI
   site_type: Production
   message_type: P
-- va_site_id: '568'
+- va_site_id: '756'
   name: El Paso, TX
   site_type: Production
   message_type: P
-- va_site_id: '569'
+- va_site_id: '757'
   name: Columbus, OH (OPC)
   site_type: Production
   message_type: P
-- va_site_id: '570'
+- va_site_id: '518ACG'
   name: Albany ACG
   site_type: Production
   message_type: T
-- va_site_id: '571'
+- va_site_id: '518ACT'
   name: Albany ACT
   site_type: Production
   message_type: T
-- va_site_id: '572'
+- va_site_id: '518ACR'
   name: Albany ACR
   site_type: Production
   message_type: T
-- va_site_id: '573'
+- va_site_id: '500SCG'
   name: Salt Lake SCG
   site_type: Production
   message_type: T
-- va_site_id: '574'
+- va_site_id: '500SCT'
   name: Salt Lake SCT
   site_type: Production
   message_type: T
-- va_site_id: '575'
+- va_site_id: '500SCR'
   name: Salt Lake SCR
   site_type: Production
   message_type: T
-- va_site_id: '576'
+- va_site_id: '999PLT'
   name: Platinum
   site_type: Production
   message_type: P
-- va_site_id: '577'
+- va_site_id: '519CMP'
   name: CampMaster
   site_type: Production
   message_type: T
-- va_site_id: '578'
+- va_site_id: '519IMG'
   name: ImageMaster
   site_type: Production
   message_type: T
-- va_site_id: '579'
+- va_site_id: '675'
   name: Orlando, FL
   site_type: Production
   message_type: P
-- va_site_id: '580'
+- va_site_id: '740'
   name: Valley Coastal Bend, TX
   site_type: Production
   message_type: P
-- va_site_id: '581'
+- va_site_id: '741'
   name: CHAMPVA
   site_type: Production
   message_type: P
-- va_site_id: '582'
-  name: STLVETSDEV
-  site_type: Internal
-  message_type: T
-- va_site_id: '583'
-  name: LEXPLT
-  site_type: Internal
-  message_type: T
-- va_site_id: '584'
-  name: MARTVETSDEV
-  site_type: SQA
-  message_type: T
-- va_site_id: '585'
-  name: BAYP11
-  site_type: SQA
-  message_type: T
-- va_site_id: '586'
-  name: CHEY59
-  site_type: Production
-  message_type: T
-- va_site_id: '587'
-  name: MIL2
-  site_type: Production
-  message_type: T
 - va_site_id: '950'
   name: STLVETSDEV
-  site_type: SQA
+  site_type: Internal
+  message_type: T
+- va_site_id: '442PLT'
+  name: LEXPLT
+  site_type: Internal
   message_type: T
 - va_site_id: '951'
   name: MARTVETSDEV
   site_type: SQA
+  message_type: T
+- va_site_id: '961'
+  name: BAYP11
+  site_type: SQA
+  message_type: T
+- va_site_id: '960'
+  name: CHEY59
+  site_type: Production
+  message_type: T
+- va_site_id: '962'
+  name: MIL2
+  site_type: Production
   message_type: T
