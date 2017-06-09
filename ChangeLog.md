@@ -4,7 +4,7 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 commit history.
 
 * 2017/06/?? - 4.6 - PENDING
-   *
+   * site_data.yml completely changed.  Please update /app/prismeData.
 
 * 2017/06/08 - 4.5
    * Updated VUIDS table next_vuid, start_vuid, and end_vuid columns to be number(19,0) to coincide with VistA
