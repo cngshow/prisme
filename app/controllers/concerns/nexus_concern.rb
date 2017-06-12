@@ -139,9 +139,10 @@ class NexusArtifactSelectOption
   end
 
   def select_value
-    ret = "#{artifactId}-#{version}-#{classifier}.#{package}"
+    artifact_name = artifactId =~ /komet/ ? 'Term Editor' : artifactId
+    ret = "#{artifact_name}-#{version}-#{classifier}.#{package}"
 
-    if (classifier.nil? || classifier.length == 0)
+    if classifier.to_s.empty?
       ret = "#{artifactId}-#{version}.#{package}"
     end
     ret
