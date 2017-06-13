@@ -4,7 +4,10 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 commit history.
 
 * 2017/06/?? - 4.6 - PENDING
-   *
+   * Modified the labels for komet changing from rails_komet_a to Term Editor A on app deployer and on the home page
+   * Fixed an IE bug in App Deployer regarding the description textarea placeholder which was not disappearing on focus of the field
+   * Added application context validation message to App Deployer notifying the user if a given instance of KOMET is already deployed on a given Tomcat instance
+   
 
 * 2017/06/08 - 4.5
    * Updated VUIDS table next_vuid, start_vuid, and end_vuid columns to be number(19,0) to coincide with VistA

@@ -31,7 +31,7 @@ module TomcatConcern
       $log.warn("Tomcat is unreachable! #{ex.message}")
       return {failed: ex.message}
     rescue => ex
-      [$log, $alog].each { |l| l.warn("Unexpected Exception: #{ex.message}")}
+      [$log, $alog].each {|l| l.warn("Unexpected Exception: #{ex.message}")}
       @change_state_succeded = false
       return {failed: ex.message}
     end
@@ -68,6 +68,31 @@ module TomcatConcern
       raise StandardError.new('Invalid tomcat service passed to TomcatConcern.get_deployments!')
     end
     conn
+  end
+
+  # this method is called from app deployer to see if a given application context is already deployed on this server
+  def is_context_deployed?
+    ret = {status: 'failed', text_color: 'red', message: 'Failed to retrieve application deployment information in order to validate deployed context.<br>Is the Tomcat server instance up and running?'}
+    app_label = params['app_label']
+    app_context = params['app_context']
+    tomcat_id = params['tomcat_id']
+    tomcat_service = Service.find(tomcat_id) rescue nil
+
+    if tomcat_service
+      tomcat_label = tomcat_service.name
+      deployments = get_deployments(tomcat_service: tomcat_id)
+
+      unless deployments.has_key? :failed
+        if deployments.has_key? app_context
+          ret = {status: 'warn', text_color: 'red', message: %Q{<i class="fa fa-warning" aria-hidden="true"></i>&nbsp;The application #{app_label} has already been deployed on #{tomcat_label}<br>&nbsp;and will be overwritten.}}
+        else
+          ret = {status: 'success', text_color: 'green', message: %Q{<i class="fa fa-check" aria-hidden="true"></i>&nbsp;OK - The application #{app_label} is valid<br>&nbsp;and is not currently deployed on #{tomcat_label}.}}
+        end
+      end
+    else
+      ret = {status: 'failed', text_color: 'red', message: 'Invalid Tomcat server key passed. The application deployment information could not be validated.'}
+    end
+    ret
   end
 
   def get_deployments(tomcat_service:)
@@ -116,6 +141,8 @@ module TomcatConcern
       #      {"ROOT"=>{:context=>"/", :state=>"running", :session_count=>"0"}, "isaac-rest"=>{:context=>"/isaac-rest", :state=>"running
       # ", :session_count=>"0"}, "rails_komet_a"=>{:context=>"/rails_komet_a", :state=>"running", :session_count=>"0"}, "/usr/share/tomcat7-admin/host-manager"=>{:context=>"/host-manager", :state=>"running", :session_count=>"0"}, "rail
       # s_prisme"=>{:context=>"/rails_prisme", :state=>"running", :session_count=>"0"}, "/usr/share/tomcat7-admin/manager"=>{:context=>"/manager", :state=>"running", :session_count=>"0"}}
+      # {"isaac-rest-billy_goat-local"=>{:context=>"/isaac-rest-billy_goat-local", :state=>"running", :session_count=>"0", :version=>"1.32", :isaac=>{:database=>{"@class"=>"gov.vha.isaac.rest.api1.data.systeminfo.RestDependencyInfo", "groupId"=>"gov.vha.isaac.db", "artifactId"=>"solor", "version"=>"1.3", "classifier"=>"all", "type"=>"cradle.zip"}, :database_dependencies=>[{"@class"=>"gov.vha.isaac.rest.api1.data.systeminfo.RestDependencyInfo", "groupId"=>"gov.vha.isaac.ochre.modules", "artifactId"=>"ochre-metadata", "version"=>"3.28", "classifier"=>"all", "type"=>"ibdf.zip"}, {"@class"=>"gov.vha.isaac.rest.api1.data.systeminfo.RestDependencyInfo", "groupId"=>"gov.vha.isaac.terminology.converted", "artifactId"=>"rf2-ibdf-sct", "version"=>"${snomed.version}", "classifier"=>"${snomed.classifier}", "type"=>"ibdf.zip"}, {"@class"=>"gov.vha.isaac.rest.api1.data.systeminfo.RestDependencyInfo", "groupId"=>"gov.vha.isaac.terminology.converted", "artifactId"=>"rf2-ibdf-us-extension", "version"=>"${usextension.version}", "classifier"=>"Full", "type"=>"ibdf.zip"}, {"@class"=>"gov.vha.isaac.rest.api1.data.systeminfo.RestDependencyInfo", "groupId"=>"gov.vha.isaac.terminology.converted", "artifactId"=>"loinc-ibdf-tech-preview", "version"=>"${loinc.version}", "type"=>"ibdf.zip"}, {"@class"=>"gov.vha.isaac.rest.api1.data.systeminfo.RestDependencyInfo", "groupId"=>"gov.vha.isaac.terminology.converted", "artifactId"=>"rxnorm-ibdf", "version"=>"${rxnorm.version}", "type"=>"ibdf.zip"}]}, :war_id=>nil}, "rails_komet_b"=>{:context=>"/rails_komet_b", :state=>"running", :session_count=>"0", :version=>"INVALID_JSON", :isaac=>{:isaac_version=>"unknown isaac version", :war_id=>nil, :database=>nil, :database_dependencies=>nil}, :komets_isaac_version=>"unknown isaac version", :war_id=>nil}, "rails_komet_a"=>{:context=>"/rails_komet_a", :state=>"running", :session_count=>"0", :version=>"INVALID_JSON", :isaac=>{:isaac_version=>"unknown isaac version", :war_id=>nil, :database=>nil, :database_dependencies=>nil}, :komets_isaac_version=>"unknown isaac version", :war_id=>nil}}
+
       return ret_hash
     else
       return {failed: response.body}

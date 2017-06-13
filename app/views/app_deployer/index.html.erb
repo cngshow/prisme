@@ -1,5 +1,5 @@
 <!-- Trigger the modal with a button -->
-</br>
+<br>
 <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#app_deploy_modal" onclick="reset_form();">New Application Deployment</button>
 <div class="page-header">
   <h1>Application Deployer</h1>
@@ -38,7 +38,7 @@
             <h3>Select the Application Type</h3>
             <%= field_set_tag 'Select the Application Type' do %>
                 <%= label_tag 'application_KOMET', class: 'radio-inline' do %>
-                    <%= radio_button_tag 'application', 'KOMET', true %><%=KOMET_NAME%> Tooling Deployment
+                    <%= radio_button_tag 'application', 'KOMET', true %><%= KOMET_NAME %> Tooling Deployment
                 <% end %>
                 <br/>
                 <%= label_tag 'application_ISAAC', class: 'radio-inline' do %>
@@ -54,7 +54,7 @@
                   <br>
                   <br>
                   <%= label_tag 'tomcat_isaac_rest', 'ISAAC Rest Version to Use' %><br>
-                  <%= select_tag 'tomcat_isaac_rest', options_for_select(@tomcat_isaac_rest.collect { |ir| [ir[:select_value], ir[:select_key]] }), {:prompt => '-- Select an ISAAC Rest Instance --'} %>
+                  <%= select_tag 'tomcat_isaac_rest', options_for_select(@tomcat_isaac_rest.collect {|ir| [ir[:select_value], ir[:select_key]]}), {:prompt => '-- Select an ISAAC Rest Instance --'} %>
                 </div>
                 <div id="isaac_wars">
                   <%= label_tag 'isaac_war', 'ISAAC Rest Version to Use' %><br>
@@ -83,6 +83,7 @@
 
             <h3>Submit Deployment Request</h3>
             <%= field_set_tag 'Application Deployment Summary' do %>
+                <span style="float: right; font-weight: bold; font-size: medium" id="appContextValidation"></span>
                 <p>Please review the information below before submitting the deployment request.</p>
                 <section>
                   <h4 class="text-italic text-underline">Application to Deploy</h4>
@@ -96,7 +97,7 @@
                     <%= text_field_tag 'application_name', nil, placeholder: 'Enter an Application Name', maxlength: 45, size: 45, class: 'form-control', required: true %>
                     <br>
                     <%= label_tag 'application_description', 'Application Description:' %><br>
-                    <%= text_area_tag 'application_description', nil, placeholder: 'Please describe this application deployment', size: '500x5', class: 'form-control' %>
+                    <textarea id="application_description" name="application_description" aria-labelledby="application_description" placeholder="Please describe this application deployment." cols="500" rows="3" class="form-control"></textarea>
                   </div>
                 </section>
             <% end %>
@@ -107,6 +108,7 @@
 </div>
 <script>
     var selected_app_type = null;
+    var finish_btn_selector = '#app_deployer_form > div.actions.clearfix > ul > li:nth-child(3) > a';
 
     function reset_form() {
         $("#app_deployer_form").steps("destroy");
@@ -116,6 +118,7 @@
     $(document).ready(function () {
         init_wizard();
         $('#app_deployer_form').find('select').addClass('form-control').css('width', '500px');
+        $('#application_description').val('');//IE Blows!!! - placeholder fix!
     });
 
     function init_wizard() {
@@ -125,11 +128,23 @@
             headerTag: "h3",
             bodyTag: "fieldset",
             transitionEffect: "fade",
+            saveState: true,
             onStepChanging: function (event, currentIndex, newIndex) {
+                var appName = $('#application_name');
+
+                if (newIndex !== 3) {
+                    if (appName.val().trim().length === 0) {
+                        appName.val('...'); //KEEP THIS!! IE blows and we need to do this to fix validations if the user clicks previous after not entering the app name
+                    }
+                }
                 // Always allow previous action even if the current form is not valid!
                 if (currentIndex > newIndex) {
                     return true;
                 }
+
+                //check if the current form entries are valid
+                var valid = form.valid();
+
                 if (newIndex === 1) {
                     //get the selected radio button for the application to deploy
                     selected_app_type = $("input[name=application]:checked").val();
@@ -163,7 +178,52 @@
                     document.getElementById("isaac_war").value = '';
                     document.getElementById("isaac_db").value = '';
                 }
-                return form.valid();
+                if (newIndex === 3) {
+                    if (valid) {
+                        if (appName.val() === '...') {
+                            appName.val('');
+                        }
+                        $('#application_description').val('');
+                        var tomcat, app_context, req_params;
+
+                        if (selected_app_type === 'KOMET') {
+                            //check to see if there is a komet with the same context deployed to this server
+                            var komet = $("#komet_war").find("option:selected");
+                            var komet_key = komet.val().split('|');
+                            app_context = komet_key[1] + '_' + komet_key[4];
+                            var app_label = komet.text();
+                            tomcat = $("#tomcat_komet_app_server").find("option:selected");
+                            req_params = {app_context: app_context, app_label: app_label, tomcat_id: tomcat.val()}
+                        } else {
+                            //check to see if there is an ISAAC with the same context deployed to this server
+                            tomcat = $("#tomcat_isaac_app_server").find("option:selected");
+                            app_context = tomcat.val().split('|')[1];
+                            req_params = {app_context: app_context, app_label: app_context, tomcat_id: tomcat.val().split('|')[0]}
+                        }
+
+                        //hide the action bar until the ajax call to validate the application context is complete
+                        var $actionBar = $('#app_deployer_form').find('div.actions.clearfix');
+                        $actionBar.hide();
+
+                        //update the validator message text
+                        var appContextMsg = '<i class="fa fa-cog fa-spin fa-fw" aria-hidden="true"></i>&nbsp;Validating application context deployment...Please wait';
+                        $('#appContextValidation').html(appContextMsg).css('color', 'navy');
+
+                        //make an ajax call to validate the application deployment
+                        $.ajax({
+                            url: '/app_context_warning',
+                            type: 'GET',
+                            data: req_params,
+                            success: function (data) {
+                                $actionBar.fadeIn(500);
+                                $('#appContextValidation')
+                                    .css('color', data.text_color)
+                                    .html(data.message);
+                            }
+                        });
+                    }
+                }
+                return valid;
             },
             onStepChanged: function (event, currentIndex, priorIndex) {
                 var step_ul = $('<ul>');
@@ -206,7 +266,8 @@
             }
             ,
             onFinished: function (event, currentIndex) {
-                var btnFinish = $("li > a[href$='#finish']");
+                // prevent double submits
+                var btnFinish = $(finish_btn_selector);
                 if (btnFinish.hasClass('valid-submit')) {
                     return false;
                 } else {
@@ -216,7 +277,6 @@
 
                 form.attr('action', '<%= app_deployer_deploy_app_path %>');
                 form.attr('method', 'post');
-                var action = form.attr('action');
                 form.submit();
                 setTimeout(function () {
                     $('#app_deploy_modal').modal('toggle');
