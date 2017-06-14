@@ -128,7 +128,7 @@ class WelcomeController < ApplicationController
         if is_admin_user || war =~ /komet/
           war_name = war =~ /komet/ ? "Term Editor #{war.last.upcase}" : war
           link = ssoi? ? URI(d[:link]).proxify.to_s : d[:link]
-          hash.merge!({war_name: war_name, state: d[:state], version: d[:version], session_count: d[:session_count].to_s, link: link})
+          hash.merge!({war_label: war_name, war_name: war, state: d[:state], version: d[:version], session_count: d[:session_count].to_s, link: link})
           hash[:isaac] = d[:isaac] if d[:isaac]
           hash[:komets_isaac_version] = d[:komets_isaac_version] if d[:komets_isaac_version]
           current_row[:rows] << HashWithIndifferentAccess.new(hash)
