@@ -3,6 +3,9 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers where provided, and the git 
 commit history.
 
+* 2017/06/?? - 4.7 - PENDING
+   *
+
 * 2017/06/16 - 4.6
    * site_data.yml completely changed.  Please update /app/prismeData.
    * Modified the labels for komet changing from rails_komet_a to Term Editor A on app deployer and on the home page
