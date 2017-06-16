@@ -144,6 +144,11 @@ class AppDeployerController < ApplicationController
     render json: {poll: prisme_job_has_running_jobs}
   end
 
+
+  def ajax_app_context_warning
+    render json: is_context_deployed?
+  end
+
   private
 
   def name_war(uuid, name, description)
@@ -153,7 +158,7 @@ class AppDeployerController < ApplicationController
     rescue => ex
       $log.warn("The name war failed for uuid #{uuid}")
       $log.warn("The name would have been #{name}")
-      $log.warn("The deploy will continue, the user will have to name from the home screen...")
+      $log.warn('The deploy will continue, the user will have to name from the home screen...')
       $log.warn(ex.message)
       $log.warn(ex.backtrace.join("\n"))
     end
@@ -249,5 +254,4 @@ class AppDeployerController < ApplicationController
     end
     ret
   end
-
 end

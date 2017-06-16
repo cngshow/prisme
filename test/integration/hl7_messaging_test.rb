@@ -19,7 +19,7 @@ class Hl7MessagingTest < ActionDispatch::IntegrationTest
     @record.domain = 'Allergy'
     subset = 'Reactants'
     site_ids = []
-    ['443', '442'].each do |site_id|
+    ['613', '442'].each do |site_id|
       site_ids << {va_site_id: site_id}
     end
     cd_array = @record.details.build site_ids
@@ -125,7 +125,7 @@ class Hl7MessagingTest < ActionDispatch::IntegrationTest
 
   test 'message_id' do
     h = {'Allergy' => ['Reaction', 'Reactants'], 'Immunizations' => ['Immunization Procedure']}
-    sites =["443", "444"]
+    sites =["613", "657"]
     checksum_request = HL7Messaging.build_checksum_discovery_ar(nav_type: 'checksum', user: 'Cris', subset_hash: h, site_ids_array: sites)
     checksum_request.first.checksum_details.first.to_java.getMessageId
     assert(checksum_request.first.checksum_details.first.to_java.getMessageId.to_java.is_a?(java.lang.Long), "The message id is not a long")

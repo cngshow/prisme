@@ -114,7 +114,7 @@ class WelcomeController < ApplicationController
 
       # get all of the applications deployed at this app server location
       tomcat_deployments[appserver].each_pair do |war, d|
-        current_row[:available] = true #this line toggles between the no apps on tomcat vs tomcat is unavailable or misconfigured message.  It must be first
+        current_row[:available] = true #this line toggles between the no apps on tomcat vs tomcat is unavailable or mis-configured message.  It must be first
         next if [:available, :failed].include?(war) #This line ensures we skip over Tomcats that have no applications installed or that aren't responding properly.  It must be second!
         war_uuid = tomcat_deployments[appserver][war][:war_id]
         hash = {war_uuid: war_uuid}.merge(uuid_hash(uuid: war_uuid))
@@ -126,8 +126,9 @@ class WelcomeController < ApplicationController
         end
 
         if is_admin_user || war =~ /komet/
+          war_name = war =~ /komet/ ? "Term Editor #{war.last.upcase}" : war
           link = ssoi? ? URI(d[:link]).proxify.to_s : d[:link]
-          hash.merge!({war_name: war, state: d[:state], version: d[:version], session_count: d[:session_count].to_s, link: link})
+          hash.merge!({war_label: war_name, war_name: war, state: d[:state], version: d[:version], session_count: d[:session_count].to_s, link: link})
           hash[:isaac] = d[:isaac] if d[:isaac]
           hash[:komets_isaac_version] = d[:komets_isaac_version] if d[:komets_isaac_version]
           current_row[:rows] << HashWithIndifferentAccess.new(hash)
