@@ -4,7 +4,7 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 commit history.
 
 * 2017/06/?? - 4.7 - PENDING
-   *
+   * Updated 20170602145748_update_vuid_num_length migration to include a call to recompile the VUID stored procedure
 
 * 2017/06/16 - 4.6
    * site_data.yml completely changed.  Please update /app/prismeData.
