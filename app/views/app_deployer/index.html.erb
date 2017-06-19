@@ -211,7 +211,7 @@
 
                         //make an ajax call to validate the application deployment
                         $.ajax({
-                            url: '/app_context_warning',
+                            url: gon.routes.app_context_warning_path,
                             type: 'GET',
                             data: req_params,
                             success: function (data) {
