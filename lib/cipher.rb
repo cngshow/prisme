@@ -10,6 +10,7 @@ class CipherSupport
   end
 
   def encrypt(unencrypted_string:)
+    #consider a refactor one day... Move CGI::escape code to this level, out of role controller.
     r_val = []
     chunks = chunk(unencrypted_string, 15)
     chunks.each do |chunk|
@@ -23,6 +24,16 @@ class CipherSupport
   def decrypt(encrypted_string:)
     result = ""
     begin
+      if (!(encrypted_string.first.eql?('[') && encrypted_string.last.eql?(']')))
+        #If t is a token and I compare
+        # CGI::unescape t
+        #with
+        # java.net.URLDecoder.decode(t, java.nio.charset.StandardCharsets::UTF_8.name)
+        #they always agree.  Same for the equivalent encoders.  Something strange is going on in our java framework where both the encoders/decoders are gorking
+        #the encode/decode up.  The java side takes great pains to ensure the token is never 'molested'.  We will check to see if our
+        #string was unencoded or not now...
+        encrypted_string = CGI::unescape encrypted_string
+      end
       encrypted_string_array = eval encrypted_string
       encrypted_string_array.each do |encrypted|
         init
