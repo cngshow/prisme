@@ -4,7 +4,7 @@ module SeedData
          service: {name: 'Tomcat Application Server 1', description: 'Tomcat Application Server', service_type: PrismeService::TOMCAT},
          props: [
              {key: PrismeService::CARGO_REMOTE_USERNAME, value: 'devtest'},
-             {key: PrismeService::CARGO_REMOTE_PASSWORD, value: '["jK\x90\xA1\x1Fk\x87\xB6\xAB\xA3\xC5\xE7~\xBA\x1AK", "k]\x95\xD8w\x15\xFE\xD3\xC7\xDC\xAC\x9E\x1C\xD0bG"]'},
+             {key: PrismeService::CARGO_REMOTE_PASSWORD, value: '-Uh51xyctsi5Z4YmeUKk-hYRKrT0_9ORlneeymUdipE=$$$SK-5E3LaJmdL914tkTje6Al0DzMcIss5nBhUc3RrdKRRsEmqviGRdYiBgVc4T9jp10Mj4PkXpmY1JFrrUOO1sw=='},
              {key: PrismeService::CARGO_REMOTE_URL, value: 'https://vaauscttweb84.aac.va.gov:8080/manager'}
          ]
      },
@@ -12,7 +12,7 @@ module SeedData
          service: {name: 'Tomcat Application Server 2', description: 'Tomcat Application Server', service_type: PrismeService::TOMCAT},
          props: [
              {key: PrismeService::CARGO_REMOTE_USERNAME, value: 'devtest'},
-             {key: PrismeService::CARGO_REMOTE_PASSWORD, value: '["jK\x90\xA1\x1Fk\x87\xB6\xAB\xA3\xC5\xE7~\xBA\x1AK", "k]\x95\xD8w\x15\xFE\xD3\xC7\xDC\xAC\x9E\x1C\xD0bG"]'},
+             {key: PrismeService::CARGO_REMOTE_PASSWORD, value: '-Uh51xyctsi5Z4YmeUKk-hYRKrT0_9ORlneeymUdipE=$$$SK-5E3LaJmdL914tkTje6Al0DzMcIss5nBhUc3RrdKRRsEmqviGRdYiBgVc4T9jp10Mj4PkXpmY1JFrrUOO1sw=='},
              {key: PrismeService::CARGO_REMOTE_URL, value: 'https://vaauscttweb85.aac.va.gov:8080/manager'}
          ]
      },
@@ -22,7 +22,7 @@ module SeedData
              {key: PrismeService::NEXUS_REPOSITORY_URL, value: 'https://vaauscttweb83.aac.va.gov:8443/nexus/content/groups/public'},
              {key: PrismeService::NEXUS_PUBLICATION_URL, value: 'https://vaauscttweb83.aac.va.gov:8443/nexus/content/repositories/termdata/'},
              {key: PrismeService::NEXUS_USER, value: 'devtest'},
-             {key: PrismeService::NEXUS_PWD, value: '["jK\x90\xA1\x1Fk\x87\xB6\xAB\xA3\xC5\xE7~\xBA\x1AK", "k]\x95\xD8w\x15\xFE\xD3\xC7\xDC\xAC\x9E\x1C\xD0bG"]'}
+             {key: PrismeService::NEXUS_PWD, value: '-Uh51xyctsi5Z4YmeUKk-hYRKrT0_9ORlneeymUdipE=$$$SK-5E3LaJmdL914tkTje6Al0DzMcIss5nBhUc3RrdKRRsEmqviGRdYiBgVc4T9jp10Mj4PkXpmY1JFrrUOO1sw=='}
          ]
      },
      {
@@ -30,7 +30,7 @@ module SeedData
          props: [
              {key: PrismeService::GIT_ROOT, value: 'https://vaauscttdbs82.aac.va.gov:8080/git/'},
              {key: PrismeService::GIT_USER, value: 'devtest'},
-             {key: PrismeService::GIT_PWD, value: '["jK\x90\xA1\x1Fk\x87\xB6\xAB\xA3\xC5\xE7~\xBA\x1AK", "k]\x95\xD8w\x15\xFE\xD3\xC7\xDC\xAC\x9E\x1C\xD0bG"]'}
+             {key: PrismeService::GIT_PWD, value: '-Uh51xyctsi5Z4YmeUKk-hYRKrT0_9ORlneeymUdipE=$$$SK-5E3LaJmdL914tkTje6Al0DzMcIss5nBhUc3RrdKRRsEmqviGRdYiBgVc4T9jp10Mj4PkXpmY1JFrrUOO1sw=='}
          ]
      },
      {
@@ -38,9 +38,17 @@ module SeedData
          props: [
              {key: PrismeService::JENKINS_ROOT, value: 'https://vaauscttweb83.aac.va.gov:8080/jenkins'},
              {key: PrismeService::JENKINS_USER, value: 'devtest'},
-             {key: PrismeService::JENKINS_PWD, value: '["jK\x90\xA1\x1Fk\x87\xB6\xAB\xA3\xC5\xE7~\xBA\x1AK", "k]\x95\xD8w\x15\xFE\xD3\xC7\xDC\xAC\x9E\x1C\xD0bG"]'}
+             {key: PrismeService::JENKINS_PWD, value: '-Uh51xyctsi5Z4YmeUKk-hYRKrT0_9ORlneeymUdipE=$$$SK-5E3LaJmdL914tkTje6Al0DzMcIss5nBhUc3RrdKRRsEmqviGRdYiBgVc4T9jp10Mj4PkXpmY1JFrrUOO1sw=='}
          ]
      }
  ]
 
 end
+
+=begin
+irb(main):158:0> CipherSupport.instance.encrypt(unencrypted_string: 'devtesthardtoguess')
+2017-06-20 12:33:16,472 main ERROR Attempted to append to non-started appender RailsAppender
+=> "-Uh51xyctsi5Z4YmeUKk-hYRKrT0_9ORlneeymUdipE=$$$SK-5E3LaJmdL914tkTje6Al0DzMcIss5nBhUc3RrdKRRsEmqviGRdYiBgVc4T9jp10Mj4PkXpmY1JFrrUOO1sw=="
+irb(main):159:0> CipherSupport.instance.encrypt(unencrypted_string: 'devtest')
+=> "Un_x4n2VBVYEoOcvxx4jphcc3w8NDfi3nrOJVXm-Cs0=$$$tuBdx5HPa_1YpjAuKsp2B0yYvqT7PFQfk6GwIC3JO9Feww5YBGPJr2STreydB9lC"
+=end
