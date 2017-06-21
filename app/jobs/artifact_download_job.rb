@@ -34,20 +34,26 @@ class ArtifactDownloadJob < PrismeBaseJob
     end
   end
 
-  def cookie_war_true_zip(war_path, cookie_file, hash)
+  def cookie_war_true_zip(war_path, cookie_file, hash_or_string)
     $log.always("Adding cookie info to war file #{war_path} into file #{cookie_file}")
-    $log.always("Cookie data is #{hash.inspect}")
+    $log.debug("Cookie data is #{hash_or_string.inspect}")
     writer = nil
     path = war_path + '/' + cookie_file
     begin
       entry = JTFile.new(path)
       writer = JTFileWriter.new(entry)
-      props = ''
-      hash.each_pair do |k,v|
-        props << "#{k}=#{v}\n"
+      if hash_or_string.is_a? Hash
+        props = ''
+        hash_or_string.each_pair do |k,v|
+          props << "#{k}=#{v}\n"
+        end
+        writer.write(props)
+        $log.always("Properties written to war file!")
+      else
+        s = hash_or_string.to_s
+        writer.write(s)
       end
-      writer.write(props)
-      $log.always("Properties written to war file!")
+
     rescue => ex
         $log.error("Error during the cookie add!  #{ex}")
         $log.error(ex.backtrace.join("\n"))
@@ -168,6 +174,8 @@ class ArtifactDownloadJob < PrismeBaseJob
         hash.merge!(nexus_props)
         hash.merge!(git_props)
         cookie_war_true_zip(file_name, 'WEB-INF/classes/prisme.properties', hash)
+        cookie_war_true_zip(file_name, 'WEB-INF/classes/prisme_files/TerminologyConfig.xml', File.open(TerminologyConfig.term_xml_file,'rb').read)
+        cookie_war_true_zip(file_name, 'WEB-INF/classes/prisme_files/TerminologyConfig.xsd', File.open(TerminologyConfig.term_xsd_file,'rb').read)
         context = '/isaac-rest' if context.nil? #to_do pull this from the database someday.
       else
         #we are Komet!

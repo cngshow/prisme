@@ -3,16 +3,18 @@ module TerminologyConfig
   class << self
     attr_accessor :terminology_config #TerminologyConfig.xml (Validated against TerminologyConfig.xsd)
     attr_accessor :terminology_config_errors #TerminologyConfig.xml (Validated against TerminologyConfig.xsd).  Nil if all is good
+    attr_accessor :term_xml_file
+    attr_accessor :term_xsd_file
   end
 
   def self.parse_terminology_config
     return TerminologyConfig.terminology_config unless TerminologyConfig.terminology_config.nil?
     persistent_terminology_file_root = "#{$PROPS['PRISME.data_directory']}/TerminologyConfig"
     term_file_root = './config/tds/TerminologyConfig'
-    term_xml = File.exists?(persistent_terminology_file_root+'.xml') ? persistent_terminology_file_root + '.xml' : term_file_root + '.xml'
-    term_xsd = File.exists?(persistent_terminology_file_root+'.xsd') ? persistent_terminology_file_root + '.xsd' : term_file_root + '.xsd'
-    xsd = Nokogiri::XML::Schema(File.read(term_xsd))
-    doc = Nokogiri::XML(File.read(term_xml))
+    TerminologyConfig.term_xml_file = File.exists?(persistent_terminology_file_root+'.xml') ? persistent_terminology_file_root + '.xml' : term_file_root + '.xml'
+    TerminologyConfig.term_xsd_file = File.exists?(persistent_terminology_file_root+'.xsd') ? persistent_terminology_file_root + '.xsd' : term_file_root + '.xsd'
+    xsd = Nokogiri::XML::Schema(File.read(TerminologyConfig.term_xsd_file))
+    doc = Nokogiri::XML(File.read(TerminologyConfig.term_xml_file))
     errors = []
     xsd.validate(doc).each do |error|
       $log.error("TerminologyConfig error  #{error.message}")
