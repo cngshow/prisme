@@ -22,12 +22,14 @@ class CipherSupport
   end
 
   def decrypt(encrypted_string:, preamble: nil)
+    encrypted_clone = encrypted_string.clone
     begin
-      encrypted_string = encrypted_string.slice(0, preamble.to_s.length) if preamble
-     return (java.lang.String.new(JCipher.decrypt(my_secret,encrypted_string))).to_s
+      encrypted_clone.slice!(0, preamble.to_s.length) if preamble
+     return (java.lang.String.new(JCipher.decrypt(my_secret,encrypted_clone))).to_s
     rescue => ex
       $log.warn("I was unable to decrypt: ")
-      $log.warn("#{encrypted_string}")
+      $log.warn("#{encrypted_clone}")
+      #$log.warn("with salt: #{my_secret}")
       $log.warn("Caller:")
       $log.warn(caller[0][/`.*'/][1..-2])
       raise ex
@@ -72,6 +74,28 @@ class TokenSupport < CipherSupport
     Rails.application.secrets.secret_key_cipher_support[PRISME_ENVIRONMENT]
   end
 end
+
+class TokenDev < CipherSupport
+  protected
+  def my_secret
+    Rails.application.secrets.secret_key_cipher_support['DEV']
+  end
+end
+
+class TokenTEST < CipherSupport
+  protected
+  def my_secret
+    Rails.application.secrets.secret_key_cipher_support['TEST']
+  end
+end
+
+class TokenDevBox < CipherSupport
+  protected
+  def my_secret
+    Rails.application.secrets.secret_key_cipher_support['DEV_BOX']
+  end
+end
+
 
 # load './lib/cipher.rb'
 # v = CipherSupport.instance.encrypt(unencrypted_string: 'devtest@devtest.com')
