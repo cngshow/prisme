@@ -7,29 +7,43 @@ class AppDeployerController < ApplicationController
 
   #change
   def index
-    @komet_wars = get_nexus_wars(app: 'KOMET')
-    @isaac_wars = get_nexus_wars(app: 'ISAAC')
-    @isaac_dbs = get_isaac_cradle_zips
-    @tomcat_isaac_rest = []
+    refresh = params[:refresh]
+
+    if refresh
+      greg
+    end
+
+    @komet_wars = @@komet_wars
+    @isaac_wars = @@isaac_wars
+    @isaac_dbs = @@isaac_dbs
+    @tomcat_isaac_rest = @@tomcat_isaac_rest
+    @tomcat_servers = @@tomcat_servers
+  end
+
+  def greg # todo refactor to be async call so the page will load faster!!!
+    @@komet_wars = get_nexus_wars(app: 'KOMET')
+    @@isaac_wars = get_nexus_wars(app: 'ISAAC')
+    @@isaac_dbs = get_isaac_cradle_zips
+    @@tomcat_isaac_rest = []
 
     tomcat_server_deployments.each do |tsd|
       service_name = tsd.first[:service_name]
 
       tsd.last.each do |d|
-        if (d.first =~ /isaac-rest/i)
+        if d.first =~ /isaac-rest/i
           select_key = d.last[:link]
           select_value = "#{service_name}::#{d.first}"
-          @tomcat_isaac_rest << {select_key: select_key, select_value: select_value}
+          @@tomcat_isaac_rest << {select_key: select_key, select_value: select_value}
         end
       end
     end
 
-    if @komet_wars.nil? || @isaac_wars.nil?
+    if @@komet_wars.nil? || @@isaac_wars.nil?
       render :file => 'public/nexus_not_available.html'
       return
     end
 
-    @tomcat_servers = []
+    @@tomcat_servers = []
     Service.where(service_type: PrismeService::TOMCAT).each do |active_record|
       PrismeUtilities.get_proxy_contexts(tomcat_ar: active_record, application_type: PrismeUtilities::ISAAC_APPLICATION).each do |context|
         hash = {}
@@ -47,10 +61,10 @@ class AppDeployerController < ApplicationController
         active_record.define_singleton_method(:select_key) do
           active_record.id.to_s
         end
-        @tomcat_servers << hash unless context.nil?
+        @@tomcat_servers << hash unless context.nil?
       end
     end
-    $log.debug(@tomcat_servers.inspect)
+    $log.always(@@tomcat_servers.inspect)
   end
 
   def deploy_app
@@ -117,6 +131,7 @@ class AppDeployerController < ApplicationController
     PrismeBaseJob.update_json_data(job_id: job.job_id, json_data: {message: "Deploying #{war_name}...Please wait"})
     PrismeBaseJob.save_user(job_id: job.job_id, user: prisme_user.user_name)
     redirect_to app_deployer_path
+    # render json: {status: 'done'}
   end
 
   def reload_deployments
