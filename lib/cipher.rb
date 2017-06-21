@@ -11,9 +11,12 @@ class CipherSupport
 
   def encrypt(unencrypted_string:, preamble: nil)
     begin
-      return preamble.to_s +  JCipher.encrypt(my_secret, unencrypted_string)
+      s = java.lang.String.new my_secret
+      b = s.getBytes
+      data = java.lang.String.new(unencrypted_string).getBytes
+      return preamble.to_s +  JCipher.encrypt(s, b, data)
     rescue => ex
-      $log.warn("I was unable to encrypt: ")
+      $log.warn("#{self.class} was unable to encrypt: ")
       $log.warn("#{unencrypted_string}")
       $log.warn("Caller:")
       $log.warn(caller[0][/`.*'/][1..-2])
@@ -25,11 +28,13 @@ class CipherSupport
     encrypted_clone = encrypted_string.clone
     begin
       encrypted_clone.slice!(0, preamble.to_s.length) if preamble
-     return (java.lang.String.new(JCipher.decrypt(my_secret,encrypted_clone))).to_s
+      s = java.lang.String.new my_secret
+      b = s.getBytes
+     return (java.lang.String.new(JCipher.decrypt(s, b, encrypted_clone))).to_s
     rescue => ex
-      $log.warn("I was unable to decrypt: ")
+      $log.warn("#{self.class} was unable to decrypt: ")
       $log.warn("#{encrypted_clone}")
-      #$log.warn("with salt: #{my_secret}")
+      $log.warn("with salt: #{my_secret}")
       $log.warn("Caller:")
       $log.warn(caller[0][/`.*'/][1..-2])
       raise ex
