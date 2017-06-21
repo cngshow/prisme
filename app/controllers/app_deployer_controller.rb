@@ -5,6 +5,7 @@ class AppDeployerController < ApplicationController
   before_action :read_only
   before_action :ensure_services_configured
 
+  #change
   def index
     @komet_wars = get_nexus_wars(app: 'KOMET')
     @isaac_wars = get_nexus_wars(app: 'ISAAC')
