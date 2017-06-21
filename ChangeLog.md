@@ -7,7 +7,7 @@ commit history.
    * Updated 20170602145748_update_vuid_num_length migration to include a call to recompile the VUID stored procedure
    * Using new token architecture (log event and role tokens)
    * updated all seed files for the new tokens.  Tested all the seed files to ensure they decrypt, but Claudio should review them.
-   
+   * TerminologyConfig.xml given to isaac rest in the 'prisme_files' directory under classes.
 * 2017/06/16 - 4.6
    * site_data.yml completely changed.  Please update /app/prismeData.
    * Modified the labels for komet changing from rails_komet_a to Term Editor A on app deployer and on the home page
