@@ -5,7 +5,6 @@ class AppDeployerController < ApplicationController
   before_action :read_only
   before_action :ensure_services_configured
 
-  #change
   def index
     refresh = params[:refresh]
 
