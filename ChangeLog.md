@@ -3,6 +3,9 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers where provided, and the git 
 commit history.
 
+* 2017/06/?? - 4.8 - PENDING
+   *
+
 * 2017/06/22 - 4.7
    * Updated 20170602145748_update_vuid_num_length migration to include a call to recompile the VUID stored procedure
    * Using new token architecture (log event and role tokens)
