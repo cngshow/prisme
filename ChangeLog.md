@@ -3,12 +3,13 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers where provided, and the git 
 commit history.
 
-* 2017/06/?? - 4.7 - PENDING
+* 2017/06/22 - 4.7
    * Updated 20170602145748_update_vuid_num_length migration to include a call to recompile the VUID stored procedure
    * Using new token architecture (log event and role tokens)
    * updated all seed files for the new tokens.  Tested all the seed files to ensure they decrypt, but Claudio should review them.
    * You will need to re-run all seed files.  Prisme's home page will say "Sorry, something went wrong" until you do.  Easiest way to do this is add /apipie to the end of your url.  Click seeds link at the bottom.  Seed links will be generated.
    * TerminologyConfig.xml given to isaac rest in the 'prisme_files' directory under classes.
+   
 * 2017/06/16 - 4.6
    * site_data.yml completely changed.  Please update /app/prismeData.
    * Modified the labels for komet changing from rails_komet_a to Term Editor A on app deployer and on the home page
