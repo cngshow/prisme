@@ -5,59 +5,53 @@ require 'cgi'
 class CipherSupport
   include Singleton
 
-  def chunk(string, size)
-    string.scan(/.{1,#{size}}/)
+  java_import 'gov.vha.isaac.ochre.api.util.PasswordHasher' do |p, c|
+    'JCipher'
   end
 
-  def encrypt(unencrypted_string:)
-    r_val = []
-    chunks = chunk(unencrypted_string, 15)
-    chunks.each do |chunk|
-      init
-      @encrypt.update(chunk)
-      r_val << @encrypt.final#.bytes.to_s
-    end
-    r_val.inspect
-  end
-
-  def decrypt(encrypted_string:)
-    result = ""
+  def encrypt(unencrypted_string:, preamble: nil)
     begin
-      encrypted_string_array = eval encrypted_string
-      encrypted_string_array.each do |encrypted|
-        init
-        @decrypt.update(encrypted.to_s)
-        result << @decrypt.final
-      end
-    rescue OpenSSL::Cipher::CipherError => ex
-      $log.warn("I was unable to decrypt: ")
-      $log.warn("#{encrypted_string}")
+      s = java.lang.String.new my_secret
+      b = s.getBytes
+      data = java.lang.String.new(unencrypted_string).getBytes
+      return preamble.to_s +  JCipher.encrypt(s, b, data)
+    rescue => ex
+      $log.warn("#{self.class} was unable to encrypt: ")
+      $log.warn("#{unencrypted_string}")
       $log.warn("Caller:")
       $log.warn(caller[0][/`.*'/][1..-2])
       raise ex
     end
-    result
   end
 
-  def stringify_token(s)
-    s.gsub(', ','#!#')
+  def decrypt(encrypted_string:, preamble: nil)
+    encrypted_clone = encrypted_string.clone
+    begin
+      encrypted_clone.slice!(0, preamble.to_s.length) if preamble
+      s = java.lang.String.new my_secret
+      b = s.getBytes
+     return (java.lang.String.new(JCipher.decrypt(s, b, encrypted_clone))).to_s
+    rescue => ex
+      $log.warn("#{self.class} was unable to decrypt: ")
+      $log.warn("#{encrypted_clone}")
+      $log.warn("with salt: #{my_secret}")
+      $log.warn("Caller:")
+      $log.warn(caller[0][/`.*'/][1..-2])
+      raise ex
+    end
   end
 
-  def jsonize_token(s)
-    s.gsub('#!#',', ')
-  end
-
-  def generate_security_token
+  def generate_security_token(preamble: nil)
     token_hash = {'time' => Time.now.to_i}
-    CGI::escape encrypt(unencrypted_string: token_hash.to_json.to_s)
+    encrypt(unencrypted_string: token_hash.to_json.to_s, preamble: preamble)
   end
 
-  def valid_security_token?(token:)
+  def valid_security_token?(token:, preamble: nil)
     parsed = true
     date = nil
     $log.debug("token is #{token}")
     begin
-      result = decrypt(encrypted_string: token)
+      result = decrypt(encrypted_string: token, preamble: preamble)
       $log.debug(result)
       hash = JSON.parse  result
       date = hash['time']
@@ -75,16 +69,6 @@ class CipherSupport
 
   private
   def init
-    #128 bit AES Cipher Feedback (CFB)
-    @encrypt = OpenSSL::Cipher::AES.new(128, :CFB)
-    @decrypt = OpenSSL::Cipher::AES.new(128, :CFB)
-   # @encrypt.padding=256
-   # @decrypt.padding=256
-    secret = my_secret
-    @encrypt.key = secret
-    @decrypt.key = secret
-    @encrypt.encrypt
-    @decrypt.decrypt
   end
 end
 
@@ -96,8 +80,36 @@ class TokenSupport < CipherSupport
   end
 end
 
+class TokenDev < CipherSupport
+  protected
+  def my_secret
+    Rails.application.secrets.secret_key_cipher_support['DEV']
+  end
+end
+
+class TokenTEST < CipherSupport
+  protected
+  def my_secret
+    Rails.application.secrets.secret_key_cipher_support['TEST']
+  end
+end
+
+class TokenDevBox < CipherSupport
+  protected
+  def my_secret
+    Rails.application.secrets.secret_key_cipher_support['DEV_BOX']
+  end
+end
+
+
 # load './lib/cipher.rb'
 # v = CipherSupport.instance.encrypt(unencrypted_string: 'devtest@devtest.com')
 # v = CipherSupport.instance.decrypt(encrypted_string: v)
 # v = CipherSupport.instance.encrypt(unencrypted_string: 'devtest')
 # "[\"jK\\x90\\xA1\\x1Fk\\x87\\xD7\\xC3\\xD8\\xA8\\x9A\\x18\\xD4fC\"]"
+=begin
+irb(main):125:0> a = TokenSupport.instance.encrypt(unencrypted_string: 'devtesthardtoguess')
+Rlfae-0S34Lzw57WlN-GpXZX_1LLe-6NSx1lGXFPyEc=$$$fbLsBt2CURzc4B2M48ps3S-lcEy3FG97PJgRaL-4uwzQTwcoJCi_nKZqHUN9K7GZWxtsR0dXe_T-GIlEUy3Haw==
+irb(main):126:0> a = TokenSupport.instance.encrypt(unencrypted_string: 'devtest')
+OcWsweYoUJJ1BukriEonMH24Im8o1SPqZ9d7mjuNLro=$$$KS-H95Q2s7NfEWD_KHJ5KQLgGIV4R8aQAX4hy72_ybHxiViHdRFBhd7UD4AJ1rHv
+=end

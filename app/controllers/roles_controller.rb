@@ -2,6 +2,8 @@ require 'uri'
 require 'cgi'
 class RolesController < ApplicationController
 
+  USER_PREAMBLE = :user_
+
   resource_description do
     short 'Role APIs'
     formats ['json', 'html']
@@ -132,11 +134,11 @@ Append .json the end of the url to change the format away from html.
   }
 
   def get_roles_by_token
-    token = params[:token]
+    @token = params[:token]
     roles = []
     @roles_hash = {}
     @roles_hash[:roles] = roles
-    deconstruct_user_token token
+    deconstruct_user_token @token
     @roles_hash[:token_parsed?] = @parsed
     if (@parsed)
       user = User.find_by(email: @user_name) if @user_type.eql? PrismeUserConcern::DEVISE_USER.to_s
@@ -159,59 +161,6 @@ Append .json the end of the url to change the format away from html.
     end
   end
 
-  #sample invocation
-  # http://localhost:3000/roles/get_roles_token?id=cshupp@gmail.com&password=cshupp@gmail.com
-  #not currently in routes.rb.  Unused as of now.
-  def get_roles_token
-    @user_id = params[:id]
-    @password = params[:password]
-    @token = params[:token]
-    @token = nil if @token.eql?('')
-    token_valid = true
-    token_error = nil
-    hash = nil
-    if @token
-      json = TokenSupport.instance.jsonize_token @token
-      $log.debug("token is #{@token}")
-      begin
-        json = TokenSupport.instance.decrypt(encrypted_string: json)
-        hash = JSON.parse json
-      rescue Exception => ex
-        token_valid = false
-        $log.warn("An invalid token was recieved. The error is #{ex.message}")
-        token_error = 'Invalid Token!'
-        $log.error("Token parse failed! #{token_error}")
-      end
-      @user_id = hash['user'] if token_valid
-      $log.debug("TOKEN hash is #{hash.inspect}")
-      $log.debug("User from token is #{@user_id}")
-    end
-    $log.debug("About to fetch the roles for ID #{@user_id}")
-    @token_hash = {}
-    @roles_array = []
-    user = User.find_by(email: @user_id)
-    @authenticated = false
-    @authenticated = user.valid_password?(@password) unless (user.nil?)
-    @authenticated = true if token_valid #we assume validity with a parseable_token
-    $log.info("The user #{@user_id} tried to get roles but was not authenticated.") unless @authenticated
-    unless user.nil? || !@authenticated
-      user.roles.each do |role|
-        @roles_array << role[:name]
-      end
-    end
-    @token_hash[:roles] = @roles_array
-    @token_hash[:issue_time] = Time.now.to_i
-    @token_hash[:user] = @user_id
-    @token_hash[:denomination] = ['1 dollar', '5 dollars', '10 dollars', '20 dollars', '50 dollars', '100 dollars'].sample
-    token_string = TokenSupport.instance.stringify_token TokenSupport.instance.encrypt(unencrypted_string: @token_hash.to_json.to_s)
-    respond_to do |format|
-      format.text {render :text => token_string} if token_valid
-      format.text {render :text => token_error} unless token_valid
-    end
-    $log.debug(token_string)
-    $log.debug(TokenSupport.instance.decrypt(encrypted_string: TokenSupport.instance.jsonize_token(token_string)))
-  end
-
   private
 
   def build_user_token(user)
@@ -224,7 +173,7 @@ Append .json the end of the url to change the format away from html.
     token_hash[:id] = id
     token_hash[:type] = type
     token_hash[:name] = name
-    CGI::escape TokenSupport.instance.encrypt(unencrypted_string: token_hash.to_json.to_s)
+    TokenSupport.instance.encrypt(unencrypted_string: token_hash.to_json.to_s, preamble: USER_PREAMBLE)
     #to decrypt:
     # JSON.parse TokenSupport.instance.decrypt(encrypted_string: TokenSupport.instance.jsonize_token( the_result))
   end
@@ -233,7 +182,7 @@ Append .json the end of the url to change the format away from html.
     @parsed = true
     $log.debug("token is #{token}")
     begin
-      result = TokenSupport.instance.decrypt(encrypted_string: token)
+      result = TokenSupport.instance.decrypt(encrypted_string: token, preamble: USER_PREAMBLE)
       hash = JSON.parse result
       @user_id = hash[:id.to_s].to_i
       @user_type = hash[:type.to_s]

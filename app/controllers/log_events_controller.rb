@@ -5,6 +5,8 @@ class LogEventsController < ApplicationController
     formats ['json']
   end
 
+  LOG_EVENT_PREAMBLE = :log_event_
+
   before_action :any_administrator, except: [:log_event]
   before_action :set_log_event, only: [:destroy, :acknowledge_log_event]
   skip_after_action :verify_authorized, only: [:log_event]
@@ -100,7 +102,7 @@ On token error returns:<br>
 
   def valid_security_token?
     token = params[:security_token]
-    valid = TokenSupport.instance.valid_security_token?(token: token)
+    valid = TokenSupport.instance.valid_security_token?(token: token, preamble: LOG_EVENT_PREAMBLE)
     @token_error = 'Invalid security token!' unless valid
     valid
   end
