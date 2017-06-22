@@ -51,7 +51,7 @@ module NexusUtility
       if json && json.has_key?('data')
         json['data'].each do |data|
           opt = {g: data['groupId'], a: data['artifactId'], v: data['version']}
-          hits = data['artifactHits'].first['artifactLinks'].select { |d| d['extension'].eql?('ibdf.zip') }
+          hits = data['artifactHits'].first['artifactLinks'].select {|d| d['extension'].eql?('ibdf.zip')}
           hits.each do |hit|
             option = opt.clone
             option[:c] = hit['classifier'] ||= ''
@@ -88,19 +88,51 @@ module NexusUtility
   end
 
   class DeployerSupport
-    attr_reader :komet_wars, :isaac_wars, :isaac_dbs
+    include Singleton
+
+    def get_komet_wars
+      ActivityWorker.instance.work_lock.synchronize do
+        return @komet_wars
+      end
+    end
+
+    def get_isaac_wars
+      ActivityWorker.instance.work_lock.synchronize do
+        return @isaac_wars
+      end
+    end
+
+    def get_isaac_dbs
+      ActivityWorker.instance.work_lock.synchronize do
+        return @isaac_dbs
+      end
+    end
+
+    def do_work
+      ActivityWorker.instance.work_lock.synchronize do
+        $log.fatal("I am doing my work!")
+        @komet_wars = get_nexus_wars(app: :komet_wars)
+        @isaac_wars = get_nexus_wars(app: :isaac_wars)
+        @isaac_dbs = get_isaac_cradle_zips
+        $log.fatal("I am done!")
+      end
+    end
+
+    def register
+      duration = $PROPS['PRISME.app_deployer_cache'].to_i.minutes
+      ActivityWorker.instance.register_work('DeployerSupport', duration) do
+        do_work
+      end #todo move to prop file
+    end
 
     private
     def initialize
-      @komet_wars = get_nexus_wars(app: :komet_wars)
-      @isaac_wars = get_nexus_wars(app: :isaac_wars)
-      @isaac_dbs = get_isaac_cradle_zips
     end
 
     def get_nexus_wars(app:)
       params_hash = {:komet_wars => {g: 'gov.vha.isaac.gui.rails', a: 'rails_komet', repositoryId: 'releases', p: 'war'},
-                     :isaac_wars => {g: 'gov.vha.isaac.rest', a: 'isaac-rest', repositoryId: 'releases', p: 'war'},}
-          # :isaac_dbs => {g: 'gov.vha.isaac.db', r: 'All', e: 'lucene.zip'}
+                     :isaac_wars => {g: 'gov.vha.isaac.rest', a: 'isaac-rest', repositoryId: 'releases', p: 'war'}, }
+      # :isaac_dbs => {g: 'gov.vha.isaac.db', r: 'All', e: 'lucene.zip'}
       params = params_hash[app]
       json = NexusUtility.nexus_response_body(params: params)
       return nil unless json #why nil and not []?
@@ -117,7 +149,7 @@ module NexusUtility
           links = hits['artifactLinks']
 
           # only include war files
-          links.keep_if { |h| h['extension'] == 'war' }.each do |h|
+          links.keep_if {|h| h['extension'] == 'war'}.each do |h|
             include_war = true
             if a =~ /komet/i && h['classifier'].eql?('c')
               include_envs = ($PROPS['PRISME.komet_c_include_env']).split(',').map(&:strip) rescue []
@@ -141,7 +173,7 @@ module NexusUtility
       ret = []
 
       if json['totalCount'].to_i > 0
-        releases = json['data'].select { |ih| ih['version'] !~ /SNAPSHOT/ }
+        releases = json['data'].select {|ih| ih['version'] !~ /SNAPSHOT/}
         nexus_url = Service.get_artifactory_props[PrismeService::NEXUS_PUBLICATION_URL]
         nexus_url << '/' unless nexus_url.last.eql? '/'
 
@@ -153,7 +185,7 @@ module NexusUtility
             repo = artifact['latestReleaseRepositoryId']
             c = nil
             begin
-              c = artifact['artifactHits'].first['artifactLinks'].select { |al| al['extension'].eql?('lucene.zip') }.first['classifier']
+              c = artifact['artifactHits'].first['artifactLinks'].select {|al| al['extension'].eql?('lucene.zip')}.first['classifier']
             rescue => ex
               $log.warn('The nexus repository might have something naughty in it. The troublesome artifact is:')
               $log.warn(artifact.inspect)
@@ -181,7 +213,7 @@ module NexusUtility
       else
         $log.info('no ISAAC cradle zips found!!!')
       end
-      ret.sort_by!(&:option_key).reverse!# the reverse will make the most recent versions on top
+      ret.sort_by!(&:option_key).reverse! # the reverse will make the most recent versions on top
       ret
     end
   end
@@ -194,6 +226,7 @@ module NexusUtility
     alias_method :repo, :r
     alias_method :classifier, :c
     alias_method :package, :p
+    #alias_method :select_value, :option_value
 
     def initialize(**data)
       # group, artifact, and version are required

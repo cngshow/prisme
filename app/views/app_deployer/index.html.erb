@@ -50,7 +50,7 @@
             <%= field_set_tag 'Select the Application Components for Deployment to Tomcat' do %>
                 <div id="komet_wars">
                   <%= label_tag 'komet_war', "#{KOMET_NAME} Tooling Version to Use" %><br>
-                  <%= select_tag 'komet_war', options_from_collection_for_select(@komet_wars, 'select_key', 'select_value'), {:prompt => '-- Select a war to deploy --'} %>
+                  <%= select_tag 'komet_war', options_from_collection_for_select(@komet_wars, 'option_key', 'option_value'), {:prompt => '-- Select a war to deploy --'} %>
                   <br>
                   <br>
                   <%= label_tag 'tomcat_isaac_rest', 'ISAAC Rest Version to Use' %><br>
@@ -58,11 +58,11 @@
                 </div>
                 <div id="isaac_wars">
                   <%= label_tag 'isaac_war', 'ISAAC Rest Version to Use' %><br>
-                  <%= select_tag 'isaac_war', options_from_collection_for_select(@isaac_wars, 'select_key', 'select_value'), {:prompt => '-- Select a war to deploy --'} %>
+                  <%= select_tag 'isaac_war', options_from_collection_for_select(@isaac_wars, 'option_key', 'option_value'), {:prompt => '-- Select a war to deploy --'} %>
                   <br>
                   <br>
                   <%= label_tag 'isaac_db', 'ISAAC Database Version to Use' %><br>
-                  <%= select_tag 'isaac_db', options_from_collection_for_select(@isaac_dbs, 'select_key', 'select_value'), {:prompt => '-- Select a terminology database --'} %>
+                  <%= select_tag 'isaac_db', options_from_collection_for_select(@isaac_dbs, 'option_key', 'option_value'), {:prompt => '-- Select a terminology database --'} %>
                 </div>
                 <br>
             <% end %>

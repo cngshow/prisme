@@ -110,6 +110,15 @@ module ApplicationHelper
     is_a? ::UtilitiesController
   end
 
+  def update_activity
+    ActivityWorker.instance.build_work_thread!
+    ActivityWorker.instance.work_lock.synchronize do
+      $last_activity_time = Time.now
+      $log.fatal("About to wake up thread")
+      ActivityWorker.instance.wake_up.broadcast
+    end
+  end
+
   def log_user_activity
     if prisme_user && ! request.xhr?
       user_name = prisme_user.user_name

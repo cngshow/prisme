@@ -113,7 +113,6 @@ $log.always {PrismeLogEvent.notify(PrismeLogEvent::LIFECYCLE_TAG, "#{Rails.appli
 PRISME_NAME = $PROPS['PRISME.application_name']
 KOMET_NAME = $PROPS['PRISME.komet_name']
 HL7Messaging::init_messaging_engine unless (STFU_MODE || $testing)
-
 # ensure super_user and admin for cboden for demo
 =begin
 cboden = SsoiUser.find_by_ssoi_user_name('cboden')

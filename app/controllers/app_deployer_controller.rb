@@ -1,6 +1,7 @@
 class AppDeployerController < ApplicationController
   include TomcatConcern
-  include NexusConcern
+  include NexusConcern #todo should we remove this?
+  include NexusUtility
 
   before_action :read_only
   before_action :ensure_services_configured
@@ -20,9 +21,9 @@ class AppDeployerController < ApplicationController
   end
 
   def greg # todo refactor to be async call so the page will load faster!!!
-    @@komet_wars = get_nexus_wars(app: 'KOMET')
-    @@isaac_wars = get_nexus_wars(app: 'ISAAC')
-    @@isaac_dbs = get_isaac_cradle_zips
+    @@komet_wars = DeployerSupport.instance.get_komet_wars
+    @@isaac_wars = DeployerSupport.instance.get_isaac_wars
+    @@isaac_dbs = DeployerSupport.instance.get_isaac_dbs
     @@tomcat_isaac_rest = []
 
     tomcat_server_deployments.each do |tsd|
