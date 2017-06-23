@@ -110,11 +110,11 @@ module NexusUtility
 
     def do_work
       ActivityWorker.instance.work_lock.synchronize do
-        $log.fatal("I am doing my work!")
+        $log.debug("I am doing my work!")
         @komet_wars = get_nexus_wars(app: :komet_wars)
         @isaac_wars = get_nexus_wars(app: :isaac_wars)
         @isaac_dbs = get_isaac_cradle_zips
-        $log.fatal("I am done!")
+        $log.debug("I am done!")
       end
     end
 
@@ -122,7 +122,7 @@ module NexusUtility
       duration = $PROPS['PRISME.app_deployer_cache'].to_i.minutes
       ActivityWorker.instance.register_work('DeployerSupport', duration) do
         do_work
-      end #todo move to prop file
+      end
     end
 
     private

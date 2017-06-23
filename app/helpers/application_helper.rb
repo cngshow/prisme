@@ -111,10 +111,10 @@ module ApplicationHelper
   end
 
   def update_activity
-    ActivityWorker.instance.build_work_thread!
+    $log.info("Rebuilt ActivityWorker thread.") if ActivityWorker.instance.build_work_thread!
     ActivityWorker.instance.work_lock.synchronize do
       $last_activity_time = Time.now
-      $log.fatal("About to wake up thread")
+      $log.debug("About to wake up thread")
       ActivityWorker.instance.wake_up.broadcast
     end
   end

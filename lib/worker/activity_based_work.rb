@@ -4,14 +4,14 @@ class ActivityWorker
   attr_reader :wake_up
 
   def register_work(work_tag, duration, &block)
-    $log.fatal("Registering #{work_tag} for a duration of #{duration.inspect}")
+    $log.info("Registering #{work_tag} for a duration of #{duration.inspect}")
     @work_lock.synchronize do
       @registered_work << [work_tag, duration, block, 20.years.ago]
     end
   end
 
   def build_work_thread!
-    return if @work_thread&.alive?
+    return false if @work_thread&.alive?
     @work_thread = Thread.new do
       @work_lock.synchronize do
         while (true) do
@@ -24,12 +24,12 @@ class ActivityWorker
                 block = work[2]
                 last_run = work[3]
                 if (($last_activity_time - last_run ) >= duration)
-                  $log.fatal("About to do work #{work_tag}")
+                  $log.debug("About to do work #{work_tag}")
                   block.call
                   work[3] = Time.now
-                  $log.fatal("Work #{work_tag} is complete!")
+                  $log.debug("Work #{work_tag} is complete!")
                 else
-                  $log.fatal("Skipping work #{work_tag}")
+                  $log.debug("Skipping work #{work_tag}")
                 end
               rescue => ex
                 $log.error("#{work_tag} failed to execute! #{ex}")
@@ -43,6 +43,7 @@ class ActivityWorker
         end
       end
     end
+    true
   end
 
   private
@@ -53,15 +54,16 @@ class ActivityWorker
   end
 end
 
-ActivityWorker.instance.build_work_thread!
-
+built = ActivityWorker.instance.build_work_thread!
+$log.info("ActivityWorker thread built? #{built}")
+$log.error("The Activity worker thread failed to build!") unless built
 =begin
 load('./lib/worker/activity_based_work.rb')
 
 ActivityWorker.instance.register_work('play_work', 5.seconds) do puts "####################################Work #{Time.now}" end
 
 ActivityWorker.instance.work_lock.synchronize do
-  ActivityWorker.instance.wake_up.signal
+  ActivityWorker.instance.wake_up.signal #or broadcast
 end
 
 $last_activity_time = 10.seconds.from_now
