@@ -280,8 +280,7 @@
                 form.submit();
                 setTimeout(function () {
                     $('#app_deploy_modal').modal('toggle');
-                    flash_notify({message: 'The deployment request was received successfully!'}, {type: 'success'})
-                    refresh_it();
+                    flash_notify({message: 'The deployment request was received successfully!'}, {type: 'success'});
                 }, 4000);
             }
         }).validate({
@@ -293,9 +292,5 @@
                 error.insertAfter(lbl);
             }
         });
-    }
-    function refresh_it() {
-        console.log("refreshing the page!!!!");
-        $.get(gon.routes.app_deployer, {refresh: true});
     }
 </script>

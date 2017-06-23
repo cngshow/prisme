@@ -1,31 +1,16 @@
 class AppDeployerController < ApplicationController
   include TomcatConcern
-  include NexusConcern #todo should we remove this?
   include NexusUtility
 
   before_action :read_only
   before_action :ensure_services_configured
 
   def index
-    refresh = params[:refresh]
-
-    if refresh
-      greg
-    end
-
-    @komet_wars = @@komet_wars
-    @isaac_wars = @@isaac_wars
-    @isaac_dbs = @@isaac_dbs
-    @tomcat_isaac_rest = @@tomcat_isaac_rest
-    @tomcat_servers = @@tomcat_servers
-  end
-
-  def greg # todo refactor to be async call so the page will load faster!!!
     hash = DeployerSupport.instance.atomic_fetch(:get_komet_wars,:get_isaac_wars,:get_isaac_dbs)
-    @@komet_wars = hash[:get_komet_wars]
-    @@isaac_wars = hash[:get_isaac_wars]
-    @@isaac_dbs = hash[:get_isaac_dbs]
-    @@tomcat_isaac_rest = []
+    @komet_wars = hash[:get_komet_wars]
+    @isaac_wars = hash[:get_isaac_wars]
+    @isaac_dbs = hash[:get_isaac_dbs]
+    @tomcat_isaac_rest = []
 
     tomcat_server_deployments.each do |tsd|
       service_name = tsd.first[:service_name]
@@ -34,17 +19,17 @@ class AppDeployerController < ApplicationController
         if d.first =~ /isaac-rest/i
           select_key = d.last[:link]
           select_value = "#{service_name}::#{d.first}"
-          @@tomcat_isaac_rest << {select_key: select_key, select_value: select_value}
+          @tomcat_isaac_rest << {select_key: select_key, select_value: select_value}
         end
       end
     end
 
-    if @@komet_wars.nil? || @@isaac_wars.nil?
-      render :file => 'public/nexus_not_available.html'
+    if @komet_wars.nil? || @isaac_wars.nil?
+      render nexus_not_available_path
       return
     end
 
-    @@tomcat_servers = []
+    @tomcat_servers = []
     Service.where(service_type: PrismeService::TOMCAT).each do |active_record|
       PrismeUtilities.get_proxy_contexts(tomcat_ar: active_record, application_type: PrismeUtilities::ISAAC_APPLICATION).each do |context|
         hash = {}
@@ -62,10 +47,9 @@ class AppDeployerController < ApplicationController
         active_record.define_singleton_method(:select_key) do
           active_record.id.to_s
         end
-        @@tomcat_servers << hash unless context.nil?
+        @tomcat_servers << hash unless context.nil?
       end
     end
-    $log.always(@@tomcat_servers.inspect)
   end
 
   def deploy_app
@@ -73,7 +57,7 @@ class AppDeployerController < ApplicationController
     # g a v r c war_cookie_params
     tomcat_id, context = nil, nil
     params.each do |k, v|
-      if ((k =~ /^#{PrismeService::TOMCAT}.*app_server$/) && !v.empty?)
+      if (k =~ /^#{PrismeService::TOMCAT}.*app_server$/) && !v.empty?
         tomcat_id, context = v.split('|')
         break
       end
@@ -83,8 +67,8 @@ class AppDeployerController < ApplicationController
     application_name = params[:application_name]
     application_description = params[:application_description]
     war_param = application_type.eql?('KOMET') ? params['komet_war'] : params['isaac_war']
-    war_file = NexusArtifactSelectOption.init_from_select_key(war_param)
-    war_name = war_file.select_value
+    war_file = NexusArtifact.init_from_select_key(war_param)
+    war_name = war_file.option_value
     war_cookie_params = {}
     nexus_query_params = {}
 
@@ -119,7 +103,7 @@ class AppDeployerController < ApplicationController
       #we are komet!!
       war_cookie_params[:isaac_root] = params['tomcat_isaac_rest']
     else
-      zip_file = NexusArtifactSelectOption.init_from_select_key(isaac_db)
+      zip_file = NexusArtifact.init_from_select_key(isaac_db)
       war_cookie_params[:db_group_id] = zip_file.groupId
       war_cookie_params[:db_artifact_id] = zip_file.artifactId
       war_cookie_params[:db_version] = zip_file.version
@@ -132,7 +116,6 @@ class AppDeployerController < ApplicationController
     PrismeBaseJob.update_json_data(job_id: job.job_id, json_data: {message: "Deploying #{war_name}...Please wait"})
     PrismeBaseJob.save_user(job_id: job.job_id, user: prisme_user.user_name)
     redirect_to app_deployer_path
-    # render json: {status: 'done'}
   end
 
   def reload_deployments
@@ -221,54 +204,5 @@ class AppDeployerController < ApplicationController
     end
 
     ret_data
-  end
-
-  def get_nexus_wars(app:)
-    url_string = $PROPS['ENDPOINT.nexus_lucene_search']
-    params_hash = {'KOMET' => {g: 'gov.vha.isaac.gui.rails', a: 'rails_komet', repositoryId: 'releases', p: 'war'},
-                   'ISAAC' => {g: 'gov.vha.isaac.rest', a: 'isaac-rest', repositoryId: 'releases', p: 'war'}}
-    params = params_hash[app]
-    conn = get_nexus_connection
-    response = conn.get(url_string, params)
-    json = nil
-
-    begin
-      json = JSON.parse response.body
-    rescue JSON::ParserError => ex
-      if (response.status.eql?(200))
-        return response.body
-      end
-    end
-
-    return nil if json.nil?
-    ret = []
-
-    if (json['totalCount'].to_i > 0)
-      json['data'].each do |artifact|
-        g = artifact['groupId']
-        a = artifact['artifactId']
-        v = artifact['version']
-        lr = artifact['latestRelease'] # use this for styling??
-        hits = artifact['artifactHits'].first
-        repo = hits['repositoryId']
-        links = hits['artifactLinks']
-
-        # only include war files
-        links.keep_if { |h| h['extension'] == 'war' }.each do |h|
-          include_war = true
-          if a =~ /komet/i && h['classifier'].eql?('c')
-            include_envs = ($PROPS['PRISME.komet_c_include_env']).split(',').map(&:strip) rescue []
-            include_war = include_envs.include? PRISME_ENVIRONMENT
-          end
-
-          if include_war
-            ret << NexusArtifactSelectOption.new(groupId: g, artifactId: a, version: v, repo: repo, classifier: h['classifier'], package: h['extension'])
-          end
-        end
-      end
-    else
-      $log.info('no war files found!!!')
-    end
-    ret
   end
 end

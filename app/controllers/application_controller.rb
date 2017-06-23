@@ -11,7 +11,6 @@ class ApplicationController < ActionController::Base
   include SSOI
   include ServletSupport
   include UserSession
-  # use_growlyflash
 
   append_view_path 'lib/rails_common/views'
   prepend_before_action :setup_time, :only => :time_stats #found in utility_controller
