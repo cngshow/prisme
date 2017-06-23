@@ -89,7 +89,7 @@ module NexusUtility
 
   class ActivitySupport
     def atomic_fetch(*fetches)
-      ActivityWorker.instance.work_lock.synchronize do
+      @work_lock.synchronize do
         hash = {}
         fetches.each do |fetch|
           fetch = fetch.to_s.to_sym
@@ -99,8 +99,8 @@ module NexusUtility
       end
     end
 
-    def initialize
-      raise "Abstract Class!"
+    def initialize(lock)
+      @work_lock = lock
     end
   end
 
@@ -108,25 +108,25 @@ module NexusUtility
     include Singleton
 
     def get_komet_wars
-      ActivityWorker.instance.work_lock.synchronize do
+      @work_lock.synchronize do
         return @komet_wars
       end
     end
 
     def get_isaac_wars
-      ActivityWorker.instance.work_lock.synchronize do
+      @work_lock.synchronize do
         return @isaac_wars
       end
     end
 
     def get_isaac_dbs
-      ActivityWorker.instance.work_lock.synchronize do
+      @work_lock.synchronize do
         return @isaac_dbs
       end
     end
 
     def do_work
-      ActivityWorker.instance.work_lock.synchronize do
+      @work_lock.synchronize do
         $log.debug("I am doing my work!")
         @komet_wars = get_nexus_wars(app: :komet_wars)
         @isaac_wars = get_nexus_wars(app: :isaac_wars)
@@ -137,13 +137,16 @@ module NexusUtility
 
     def register
       duration = $PROPS['PRISME.app_deployer_cache'].to_i.minutes
-      ActivityWorker.instance.register_work('DeployerSupport', duration) do
+      @worker.register_work('DeployerSupport', duration) do
         do_work
       end
     end
 
     private
     def initialize
+      @worker = PrismeActivity::ActivityWorkManager.instance.fetch(PrismeActivity::APP_DEPLOYER)
+      @work_lock = @worker.work_lock
+      super(@work_lock)
     end
 
     def get_nexus_wars(app:)

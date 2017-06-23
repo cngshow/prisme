@@ -111,11 +111,12 @@ module ApplicationHelper
   end
 
   def update_activity
-    $log.info("Rebuilt ActivityWorker thread.") if ActivityWorker.instance.build_work_thread!
-    ActivityWorker.instance.work_lock.synchronize do
+    $log.info("Rebuilt AppDeployerWorker thread.") if PrismeActivity::ActivityWorkManager.instance.fetch(PrismeActivity::APP_DEPLOYER).build_work_thread!
+    PrismeActivity::ActivityWorkManager.instance.fetch(PrismeActivity::APP_DEPLOYER).work_lock.synchronize do
       $last_activity_time = Time.now
-      $log.debug("About to wake up thread")
-      ActivityWorker.instance.wake_up.broadcast
+      $log.debug("About to wake up app deployer activity thread")
+      PrismeActivity::ActivityWorkManager.instance.fetch(PrismeActivity::APP_DEPLOYER).wake_up.broadcast if can_deploy?
+      #PrismeActivity::ActivityWorkManager.instance.fetch(PrismeActivity::APP_DEPLOYER).build_work_thread!
     end
   end
 
