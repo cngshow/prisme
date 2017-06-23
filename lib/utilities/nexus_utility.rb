@@ -87,10 +87,7 @@ module NexusUtility
 
   end
 
-  class DeployerSupport
-    include Singleton
-
-    #todo move atomic fetch to base class before duplication
+  class ActivitySupport
     def atomic_fetch(*fetches)
       ActivityWorker.instance.work_lock.synchronize do
         hash = {}
@@ -101,6 +98,14 @@ module NexusUtility
         hash
       end
     end
+
+    def initialize
+      raise "Abstract Class!"
+    end
+  end
+
+  class DeployerSupport < ActivitySupport
+    include Singleton
 
     def get_komet_wars
       ActivityWorker.instance.work_lock.synchronize do
