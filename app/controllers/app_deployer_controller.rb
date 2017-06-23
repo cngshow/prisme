@@ -21,9 +21,10 @@ class AppDeployerController < ApplicationController
   end
 
   def greg # todo refactor to be async call so the page will load faster!!!
-    @@komet_wars = DeployerSupport.instance.get_komet_wars
-    @@isaac_wars = DeployerSupport.instance.get_isaac_wars
-    @@isaac_dbs = DeployerSupport.instance.get_isaac_dbs
+    hash = DeployerSupport.instance.atomic_fetch(:get_komet_wars,:get_isaac_wars,:get_isaac_dbs)
+    @@komet_wars = hash[:get_komet_wars]
+    @@isaac_wars = hash[:get_isaac_wars]
+    @@isaac_dbs = hash[:get_isaac_dbs]
     @@tomcat_isaac_rest = []
 
     tomcat_server_deployments.each do |tsd|

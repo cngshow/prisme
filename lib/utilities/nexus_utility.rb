@@ -90,6 +90,18 @@ module NexusUtility
   class DeployerSupport
     include Singleton
 
+    #todo move atomic fetch to base class before duplication
+    def atomic_fetch(*fetches)
+      ActivityWorker.instance.work_lock.synchronize do
+        hash = {}
+        fetches.each do |fetch|
+          fetch = fetch.to_s.to_sym
+          hash[fetch] = self.send(fetch) if self.respond_to? fetch
+        end
+        hash
+      end
+    end
+
     def get_komet_wars
       ActivityWorker.instance.work_lock.synchronize do
         return @komet_wars
