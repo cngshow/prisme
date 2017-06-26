@@ -110,18 +110,20 @@ module ApplicationHelper
     is_a? ::UtilitiesController
   end
 
-  def update_activity
-    $log.info("Rebuilt AppDeployerWorker thread.") if PrismeActivity::ActivityWorkManager.instance.fetch(PrismeActivity::APP_DEPLOYER).build_work_thread!
-    PrismeActivity::ActivityWorkManager.instance.fetch(PrismeActivity::APP_DEPLOYER).work_lock.synchronize do
-      $last_activity_time = Time.now
-      $log.debug("About to wake up app deployer activity thread")
-      PrismeActivity::ActivityWorkManager.instance.fetch(PrismeActivity::APP_DEPLOYER).wake_up.broadcast if can_deploy?
-      #PrismeActivity::ActivityWorkManager.instance.fetch(PrismeActivity::APP_DEPLOYER).build_work_thread!
+  def update_caches
+    $last_activity_time = Time.now
+
+    CACHE_ACTIVITIES.each_pair do |app, options|
+      $log.info("Rebuilt #{app} thread.") if PrismeCacheManager::CacheWorkerManager.instance.fetch(app).build_work_thread!
+      PrismeCacheManager::CacheWorkerManager.instance.fetch(app).work_lock.synchronize do
+        $log.debug("About to wake up #{app} activity thread")
+        PrismeCacheManager::CacheWorkerManager.instance.fetch(app).wake_up.broadcast if self.send options.last
+      end
     end
   end
 
   def log_user_activity
-    if prisme_user && ! request.xhr?
+    if prisme_user && !request.xhr?
       user_name = prisme_user.user_name
       UserActivity.new({username: user_name, last_activity_at: Time.now, request_url: request.original_url}).save
       count = UserActivity.where('username = ?', user_name).count

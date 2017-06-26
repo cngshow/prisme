@@ -49,7 +49,11 @@ site_restriction_ignored=PRE_PROD,PROD
 disallow_local_signups_on=PRE_PROD,PROD
 
 #Allow self signed certificates? Set to false and they will work.
-ssl_verification = true
+ssl_verification = false
 
 #time in minutes between fetches from nexus for the app deployer
 app_deployer_cache = 1
+
+#time in minutes between fetches from nexus for the app deployer
+db_builder_cache = 1
+

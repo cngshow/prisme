@@ -1,15 +1,16 @@
-module PrismeActivity
+module PrismeCacheManager
 
   APP_DEPLOYER = :app_deployer
+  DB_BUILDER = :db_builder
 
-  class ActivityWorkManager
+  class CacheWorkerManager
     include Singleton
 
     def fetch(symbol)
-      raise ArgumentError("Argument must be a symbol!") unless symbol.is_a? Symbol
+      raise ArgumentError('Argument must be a symbol!') unless symbol.is_a? Symbol
       @build_lock.synchronize do
         return @work_map[symbol] if @work_map[symbol]
-        w = PrismeActivity::ActivityWorker.new
+        w = PrismeCacheManager::CacheWorker.new
         @work_map[symbol] = w
         w
       end
@@ -21,7 +22,7 @@ module PrismeActivity
     end
   end
 
-  class ActivityWorker
+  class CacheWorker
     attr_reader :work_lock
     attr_reader :wake_up
 
@@ -39,12 +40,14 @@ module PrismeActivity
           while (true) do
             begin
               @wake_up.wait
+              $log.always("I am awake. ready to work on #{@registered_work.inspect}")
               @registered_work.each do |work|
                 begin
                   work_tag = work[0]
                   duration = work[1]
                   block = work[2]
                   last_run = work[3]
+                  $log.debug("Maybe do work #{work_tag}")
                   if (($last_activity_time - last_run) >= duration)
                     $log.debug("About to do work #{work_tag}")
                     block.call
@@ -76,10 +79,6 @@ module PrismeActivity
   end
 end
 
-
-app_built = PrismeActivity::ActivityWorkManager.instance.fetch(PrismeActivity::APP_DEPLOYER).build_work_thread!
-$log.info("AppDeployer thread built? #{app_built}")
-$log.error("The Activity worker thread failed to build!") unless app_built
 =begin
 load('./lib/worker/activity_based_work.rb')
 
