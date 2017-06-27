@@ -4,10 +4,6 @@ module NexusUtility
   private
   def self.nexus_response_body(params:)
     url_string = $PROPS['ENDPOINT.nexus_lucene_search']
-    # params_hash = {:komet_wars => {g: 'gov.vha.isaac.gui.rails', a: 'rails_komet', repositoryId: 'releases', p: 'war'},
-    #                :isaac_wars => {g: 'gov.vha.isaac.rest', a: 'isaac-rest', repositoryId: 'releases', p: 'war'},
-    #                :isaac_dbs => {g: 'gov.vha.isaac.db', r: 'All', e: 'lucene.zip'}}
-    # params = params_hash[app]
     conn = nexus_connection
     response = conn.get(url_string, params)
     json = nil
@@ -34,13 +30,62 @@ module NexusUtility
     end
   end
 
-  class DbBuilderSupport
-    attr_reader :ibdf_files, :metadata
+  class ActivitySupport
+    def atomic_fetch(*fetches)
+      @work_lock.synchronize do
+        hash = {}
+        fetches.each do |fetch|
+          fetch = fetch.to_s.to_sym
+          hash[fetch] = self.send(fetch) if self.respond_to? fetch
+        end
+        hash
+      end
+    end
+
+    def initialize(lock)
+      @work_lock = lock
+    end
+  end
+
+class DbBuilderSupport < ActivitySupport
+    include Singleton
+
+    def get_ibdf_files
+      @work_lock.synchronize do
+        return @ibdf_files
+      end
+    end
+
+    def get_ochre_metadatas
+      @work_lock.synchronize do
+        return @ochre_metadatas
+      end
+    end
+
+    def do_work
+      @work_lock.synchronize do
+        $log.debug('I am doing my work!')
+        @ochre_metadatas = load_ochre_metadatas
+        @ibdf_files = load_ibdf_files
+        $log.always("DBBuilder ochre #{@ochre_metadatas.inspect}")
+        $log.always("DBBuilder ibdf #{@ibdf_files.inspect}")
+
+        $log.debug('I am done!')
+      end
+    end
+
+    def register
+      duration = $PROPS['PRISME.db_builder_cache'].to_i.minutes
+      @worker.register_work('DbBuilderSupport', duration) do
+        do_work
+      end
+    end
 
     private
     def initialize
-      @ibdf_files = load_ibdf_files
-      @metadata = load_metadata_drop_down
+      @worker = PrismeCacheManager::CacheWorkerManager.instance.fetch(PrismeCacheManager::DB_BUILDER)
+      @work_lock = @worker.work_lock
+      super(@work_lock)
     end
 
     def load_ibdf_files
@@ -61,16 +106,17 @@ module NexusUtility
 
         options.sort_by!(&:option_key).reverse!
       else
-        $log.debug("EMPTY nexus repository search for #{nexus_params}")
+        $log.debug("EMPTY nexus repository search for #{params}")
       end
 
       options
     end
 
-    def load_metadata_drop_down
+    def load_ochre_metadatas
       options = []
       params = {g: 'gov.vha.isaac.ochre.modules', a: 'ochre-metadata', repositoryId: 'releases'}
       json = NexusUtility.nexus_response_body(params: params)
+      $log.always("json data #{json}")
 
       if json && json.has_key?('data')
         json['data'].each do |d|
@@ -85,23 +131,6 @@ module NexusUtility
       options
     end
 
-  end
-
-  class ActivitySupport
-    def atomic_fetch(*fetches)
-      @work_lock.synchronize do
-        hash = {}
-        fetches.each do |fetch|
-          fetch = fetch.to_s.to_sym
-          hash[fetch] = self.send(fetch) if self.respond_to? fetch
-        end
-        hash
-      end
-    end
-
-    def initialize(lock)
-      @work_lock = lock
-    end
   end
 
   class DeployerSupport < ActivitySupport
@@ -127,11 +156,11 @@ module NexusUtility
 
     def do_work
       @work_lock.synchronize do
-        $log.debug("I am doing my work!")
+        $log.debug('I am doing my work!')
         @komet_wars = get_nexus_wars(app: :komet_wars)
         @isaac_wars = get_nexus_wars(app: :isaac_wars)
         @isaac_dbs = get_isaac_cradle_zips
-        $log.debug("I am done!")
+        $log.debug('I am done!')
       end
     end
 
@@ -144,7 +173,7 @@ module NexusUtility
 
     private
     def initialize
-      @worker = PrismeActivity::ActivityWorkManager.instance.fetch(PrismeActivity::APP_DEPLOYER)
+      @worker = PrismeCacheManager::CacheWorkerManager.instance.fetch(PrismeCacheManager::APP_DEPLOYER)
       @work_lock = @worker.work_lock
       super(@work_lock)
     end
@@ -246,7 +275,6 @@ module NexusUtility
     alias_method :repo, :r
     alias_method :classifier, :c
     alias_method :package, :p
-    #alias_method :select_value, :option_value
 
     def initialize(**data)
       # group, artifact, and version are required
@@ -290,4 +318,7 @@ module NexusUtility
       {key: option_key, value: option_value}
     end
   end
+
+  # alias_method :select_value, :option_value
+  # alias_method :select_key, :option_key
 end

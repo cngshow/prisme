@@ -1,4 +1,5 @@
-require './app/controllers/concerns/nexus_concern'
+# require './app/controllers/concerns/nexus_concern'
+require './lib/utilities/nexus_utility'
 
 class TerminologyDatabaseBuilder < PrismeBaseJob
   def perform(*args)
@@ -9,7 +10,7 @@ class TerminologyDatabaseBuilder < PrismeBaseJob
     classify = args.shift
     ibdf_files = args.shift
     metadata_version = args.shift
-    metadata_version = NexusOption.init_from_select_key(metadata_version).v
+    metadata_version = NexusArtifact.init_from_select_key(metadata_version).v
 
     # pull out the git authentication information
     git_props = Service.get_git_props

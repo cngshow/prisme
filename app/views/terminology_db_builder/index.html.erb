@@ -82,7 +82,7 @@
                 <span style="float: left" id="lbl_ibdf_files"><h4>IBDF Files</h4></span></div>
               <input type="hidden" name="ibdf_selections" id="ibdf_selections">
               <%= select_tag 'ibdf_files',
-                             options_from_collection_for_select(@idbf_files, :option_key, :option_value),
+                             options_from_collection_for_select(@ibdf_files, :option_key, :option_value),
                              :class => 'select2-prisme form-control',
                              :data => {ph: 'Select IBDF Files to Include in the Database',
                                        w: '525px',
