@@ -11,7 +11,7 @@ class AppDeployerController < ApplicationController
     @isaac_wars = hash[:get_isaac_wars]
     @isaac_dbs = hash[:get_isaac_dbs]
     if(@komet_wars.nil? || @isaac_wars.nil? || @isaac_dbs.nil?)
-      $log.warning("The cache DeployerSupport did not have my data.  Forcing a fetch...")
+      $log.warn('The cache DeployerSupport did not have my data.  Forcing a fetch...')
       DeployerSupport.instance.do_work
       hash = DeployerSupport.instance.atomic_fetch(:get_komet_wars,:get_isaac_wars,:get_isaac_dbs)
       @komet_wars = hash[:get_komet_wars]
