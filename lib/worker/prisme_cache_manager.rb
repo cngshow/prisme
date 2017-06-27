@@ -2,6 +2,7 @@ module PrismeCacheManager
 
   APP_DEPLOYER = :app_deployer
   DB_BUILDER = :db_builder
+  TOMCAT_DEPLOY = :tomcat_deploy
 
   class CacheWorkerManager
     include Singleton
@@ -38,7 +39,7 @@ module PrismeCacheManager
         duration = work[1]
         block = work[2]
         last_run = work[3]
-        $log.debug("Maybe do work #{work_tag}")
+        $log.trace("Maybe do work #{work_tag}")
         if (($last_activity_time - last_run) >= duration)
           @pool.post do
             @work_lock.synchronize do
@@ -54,7 +55,7 @@ module PrismeCacheManager
             end
           end
         else
-          $log.debug("Skipping work #{work_tag}")
+          $log.trace("Skipping work #{work_tag}")
         end
       end
     end
@@ -65,6 +66,24 @@ module PrismeCacheManager
       @pool = Concurrent::FixedThreadPool.new(1)
     end
   end
+
+  class ActivitySupport
+    def atomic_fetch(*fetches)
+      @work_lock.synchronize do
+        hash = {}
+        fetches.each do |fetch|
+          fetch = fetch.to_s.to_sym
+          hash[fetch] = self.send(fetch) if self.respond_to? fetch
+        end
+        hash
+      end
+    end
+
+    def initialize(lock)
+      @work_lock = lock
+    end
+  end
+
 end
 
 =begin

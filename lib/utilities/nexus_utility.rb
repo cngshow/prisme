@@ -30,24 +30,8 @@ module NexusUtility
     end
   end
 
-  class ActivitySupport
-    def atomic_fetch(*fetches)
-      @work_lock.synchronize do
-        hash = {}
-        fetches.each do |fetch|
-          fetch = fetch.to_s.to_sym
-          hash[fetch] = self.send(fetch) if self.respond_to? fetch
-        end
-        hash
-      end
-    end
 
-    def initialize(lock)
-      @work_lock = lock
-    end
-  end
-
-class DbBuilderSupport < ActivitySupport
+class DbBuilderSupport < PrismeCacheManager::ActivitySupport
     include Singleton
 
     def get_ibdf_files
@@ -133,7 +117,7 @@ class DbBuilderSupport < ActivitySupport
 
   end
 
-  class DeployerSupport < ActivitySupport
+  class DeployerSupport < PrismeCacheManager::ActivitySupport
     include Singleton
 
     def get_komet_wars

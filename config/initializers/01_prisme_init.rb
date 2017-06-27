@@ -23,6 +23,7 @@ require './lib/jenkin_client'
 require './lib/utilities/prisme_utilities'
 require './lib/worker/prisme_cache_manager'
 require './lib/utilities/nexus_utility'
+require './lib/utilities/tomcat_utility'
 
 #System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
 props = java.lang.System.getProperties
