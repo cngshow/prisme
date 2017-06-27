@@ -52,8 +52,10 @@ disallow_local_signups_on=PRE_PROD,PROD
 ssl_verification = false
 
 #time in minutes between fetches from nexus for the app deployer
-app_deployer_cache = 1
+app_deployer_cache = 5
 
-#time in minutes between fetches from nexus for the app deployer
-db_builder_cache = 1
+#time in minutes between fetches from nexus for the db_builder_cache
+db_builder_cache = 5
 
+#time in minutes between fetches from nexus for the tomcat_deployment_cache
+tomcat_deployment_cache = 1

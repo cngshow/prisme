@@ -112,10 +112,11 @@ module ApplicationHelper
 
   def update_caches
     $last_activity_time = Time.now
-
     CACHE_ACTIVITIES.each_pair do |app, options|
-        $log.debug("About to wake up #{app} activity thread")
-        PrismeCacheManager::CacheWorkerManager.instance.fetch(app).do_work if self.send options.last
+      if (options.last.nil? || (self.send options.last))
+        $log.trace("About to wake up #{app} activity thread")
+        PrismeCacheManager::CacheWorkerManager.instance.fetch(app).do_work
+      end
     end
   end
 
