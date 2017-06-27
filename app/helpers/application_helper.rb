@@ -114,11 +114,8 @@ module ApplicationHelper
     $last_activity_time = Time.now
 
     CACHE_ACTIVITIES.each_pair do |app, options|
-      $log.info("Rebuilt #{app} thread.") if PrismeCacheManager::CacheWorkerManager.instance.fetch(app).build_work_thread!
-      PrismeCacheManager::CacheWorkerManager.instance.fetch(app).work_lock.synchronize do
         $log.debug("About to wake up #{app} activity thread")
-        PrismeCacheManager::CacheWorkerManager.instance.fetch(app).wake_up.broadcast if self.send options.last
-      end
+        PrismeCacheManager::CacheWorkerManager.instance.fetch(app).do_work if self.send options.last
     end
   end
 

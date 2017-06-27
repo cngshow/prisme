@@ -12,6 +12,13 @@ class TerminologyDbBuilderController < ApplicationController
     hash = DbBuilderSupport.instance.atomic_fetch(:get_ibdf_files, :get_ochre_metadatas)
     @metadata_versions = hash[:get_ochre_metadatas]
     @ibdf_files = hash[:get_ibdf_files]
+    if(@metadata_versions.nil? || @ibdf_files.nil?)
+      $log.warning("The cache DbBuilderSupport did not have my data.  Forcing a fetch...")
+      DbBuilderSupport.instance.do_work
+      hash = DbBuilderSupport.instance.atomic_fetch(:get_ibdf_files, :get_ochre_metadatas)
+      @metadata_versions = hash[:get_ochre_metadatas]
+      @ibdf_files = hash[:get_ibdf_files]
+    end
   end
 
   def request_build

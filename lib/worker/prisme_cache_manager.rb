@@ -24,7 +24,6 @@ module PrismeCacheManager
 
   class CacheWorker
     attr_reader :work_lock
-    attr_reader :wake_up
 
     def register_work(work_tag, duration, &block)
       $log.info("Registering #{work_tag} for a duration of #{duration.inspect}")
@@ -33,48 +32,37 @@ module PrismeCacheManager
       end
     end
 
-    def build_work_thread!
-      return false if @work_thread&.alive?
-      @work_thread = Thread.new do
-        @work_lock.synchronize do
-          while (true) do
-            begin
-              @wake_up.wait
-              $log.always("I am awake. ready to work on #{@registered_work.inspect}")
-              @registered_work.each do |work|
-                begin
-                  work_tag = work[0]
-                  duration = work[1]
-                  block = work[2]
-                  last_run = work[3]
-                  $log.debug("Maybe do work #{work_tag}")
-                  if (($last_activity_time - last_run) >= duration)
-                    $log.debug("About to do work #{work_tag}")
-                    block.call
-                    work[3] = Time.now
-                    $log.debug("Work #{work_tag} is complete!")
-                  else
-                    $log.debug("Skipping work #{work_tag}")
-                  end
-                rescue => ex
-                  $log.error("#{work_tag} failed to execute! #{ex}")
-                  $log.error(ex.backtrace.join("\n"))
-                end
+    def do_work
+      @registered_work.each do |work|
+        work_tag = work[0]
+        duration = work[1]
+        block = work[2]
+        last_run = work[3]
+        $log.debug("Maybe do work #{work_tag}")
+        if (($last_activity_time - last_run) >= duration)
+          @pool.post do
+            @work_lock.synchronize do
+              $log.debug("Thread pool about to do work #{work_tag}")
+              begin
+                block.call
+              rescue => ex
+                $log.error("#{work_tag} failed to execute! #{ex}")
+                $log.error(ex.backtrace.join("\n"))
               end
-            rescue => ex
-              $log.error("Work thread error! #{ex}")
-              $log.error(ex.backtrace.join("\n"))
+              work[3] = Time.now
+              $log.debug("Work #{work_tag} is complete!")
             end
           end
+        else
+          $log.debug("Skipping work #{work_tag}")
         end
       end
-      true
     end
 
     def initialize
       @work_lock = Monitor.new
-      @wake_up = Monitor::ConditionVariable.new(@work_lock)
       @registered_work = []
+      @pool = Concurrent::FixedThreadPool.new(1)
     end
   end
 end
@@ -89,5 +77,9 @@ ActivityWorker.instance.work_lock.synchronize do
 end
 
 $last_activity_time = 10.seconds.from_now
+
+include NexusUtility
+DbBuilderSupport.instance
+DeployerSupport.instance
 
 =end
