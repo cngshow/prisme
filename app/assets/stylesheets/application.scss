@@ -282,6 +282,9 @@ body.wait, body.wait *{
 .prisme-table {
   font-family: calibri, arial, sans-serif;
   width: 100%;
+  caption {
+    color: #5c5959;
+  }
 }
 
 .prisme-table thead th {

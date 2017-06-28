@@ -1,8 +1,9 @@
 <div id="<%= deployment[:service_id] %>">
   <% colspan = policy(:navigation).any_administrator? ? 6 : 5 %>
   <table class="prisme-table table-striped table-hover">
-    <caption title='<%= deployment[:service_desc] %>'>Service
-      Name:&nbsp;&nbsp;<%= deployment[:service_name] %></caption>
+    <caption title='<%= deployment[:service_desc] %>'>
+      Service Name:&nbsp;&nbsp;<%= deployment[:service_name] %>
+    </caption>
     <thead>
     <tr>
       <th scope="col" width="15%">Application</th>

@@ -46,9 +46,17 @@
         <button type="button" class="btn btn-primary btn-sm" onclick="site_selections();">Select Site(s)</button>
       </div>
       <div class="modal-body">
-        <%= radio_button_tag 'site_type', VaSite::PRODUCTION_SITE_TYPE, true %>&nbsp;<%= VaSite::PRODUCTION_SITE_TYPE %>&nbsp;&nbsp;
-        <%= radio_button_tag 'site_type', VaSite::INTERNAL_SITE_TYPE %>&nbsp;<%= VaSite::INTERNAL_SITE_TYPE %>&nbsp;&nbsp;
-        <%= radio_button_tag 'site_type', VaSite::SQA_SITE_TYPE %>&nbsp;<%= VaSite::SQA_SITE_TYPE %><br><br>
+        <label>
+            <%= radio_button_tag 'site_type', VaSite::PRODUCTION_SITE_TYPE, true %>&nbsp;<%= VaSite::PRODUCTION_SITE_TYPE %>&nbsp;&nbsp;
+        </label>
+        <label>
+            <%= radio_button_tag 'site_type', VaSite::INTERNAL_SITE_TYPE %>&nbsp;<%= VaSite::INTERNAL_SITE_TYPE %>&nbsp;&nbsp;
+        </label>
+        <label>
+            <%= radio_button_tag 'site_type', VaSite::SQA_SITE_TYPE %>&nbsp;<%= VaSite::SQA_SITE_TYPE %>
+        </label>
+        <br>
+        <br>
         <div class="scrollable_div tree_border">
           <div id="site_tree">
           </div>
