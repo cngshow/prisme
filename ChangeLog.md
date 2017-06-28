@@ -4,7 +4,8 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 commit history.
 
 * 2017/06/?? - 4.8 - PENDING
-   *
+   * added logic to include the VUID Requestor role if the Editor role is selected
+   * refactored nexus_concern to lib\nexus_utility to allow us to use caching to load the various dropdowns loaded via Jenkins and Tomcat in order to improve perfomance on the app_deployer, db_builder, etc. pages. The refresh of the caches is controlled via prisme.properties
 
 * 2017/06/22 - 4.7
    * Updated 20170602145748_update_vuid_num_length migration to include a call to recompile the VUID stored procedure
