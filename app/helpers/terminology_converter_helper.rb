@@ -1,49 +1,29 @@
 module TerminologyConverterHelper
-  include NexusConcern
+  include NexusUtility
   CONVERTER_OPTION_PREFIX = 'converter_option_param_'
 
   def load_drop_down(nexus_params:)
-    url_string = '/nexus/service/local/lucene/search'
     options = []
-    response = get_nexus_connection.get(url_string, nexus_params)
-    json = nil
+    json = NexusUtility.nexus_response_body(params: nexus_params)
 
-    begin
-      json = JSON.parse(response.body)
-    rescue JSON::ParserError => ex
-      if (response.status.eql?(200))
-        return response.body
-      end
-    end
-
-    if (json && json.has_key?('data'))
+    if json && json.has_key?('data')
       json['data'].each do |a|
-        options << TermConvertOption.new(a['groupId'], a['artifactId'], a['version']) # todo CLASSIFIER for IBDFs? ask Dan
+        options << NexusArtifact.new({g: a['groupId'], a: a['artifactId'], v: a['version']}) # todo CLASSIFIER for IBDFs? ask Dan
       end
 
       options.sort_by!(&:option_key).reverse!# the reverse will make the most recent versions on top
     else
-      $log.debug("EMPTY nexus repository search for #{url_string}&#{nexus_params}")
+      $log.debug("EMPTY nexus repository search for #{nexus_params}")
     end
 
     options
   end
 
   def load_ibdf_classifiers(nexus_params:)
-    url_string = '/nexus/service/local/lucene/search'
     options = []
-    response = get_nexus_connection.get(url_string, nexus_params)
-    json = nil
+    json = NexusUtility.nexus_response_body(params: nexus_params)
 
-    begin
-      json = JSON.parse(response.body)
-    rescue JSON::ParserError => ex
-      if (response.status.eql?(200))
-        return response.body
-      end
-    end
-
-    if (json && json.has_key?('data'))
+    if json && json.has_key?('data')
       artifactHit = json['data'].first['artifactHits'].first
       artifactHit['artifactLinks'].each do |link|
         if link.has_key?('classifier')
@@ -51,7 +31,7 @@ module TerminologyConverterHelper
         end
       end
     else
-      $log.debug("EMPTY nexus repository classifier search for #{url_string}&#{nexus_params}")
+      $log.debug("EMPTY nexus repository classifier search for #{nexus_params}")
     end
     options
   end

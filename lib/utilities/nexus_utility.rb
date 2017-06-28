@@ -277,7 +277,7 @@ class DbBuilderSupport < PrismeCacheManager::ActivitySupport
     # @param option_key [String] the key value being parsed
     # @return [String] the argument as d Ruby Hash
     def self.arg_as_json(option_key)
-      init_from_select_key(option_key).as_json
+      HashWithIndifferentAccess.new(init_from_select_key(option_key).as_json)
     end
 
     def self.init_from_select_key(key)
@@ -303,6 +303,6 @@ class DbBuilderSupport < PrismeCacheManager::ActivitySupport
     end
   end
 
-  # alias_method :select_value, :option_value
-  # alias_method :select_key, :option_key
+    # alias_method :select_value, :option_value
+    # alias_method :select_key, :option_key
 end

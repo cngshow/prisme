@@ -6,6 +6,7 @@ class TerminologyConverterController < ApplicationController
   before_action :ensure_services_configured
   include TerminologyConverterHelper
   include JenkinsJobConcern
+  include NexusUtility
 
   def index
     @sources = load_drop_down(nexus_params: {g: 'gov.vha.isaac.terminology.source.*'}).reverse!
@@ -14,14 +15,14 @@ class TerminologyConverterController < ApplicationController
   def request_build
     # strip out the individual arguments for term source
     term_source = params[:terminology_source]
-    s_hash = TermConvertOption.arg_as_json(term_source)
+    s_hash = NexusArtifact.arg_as_json(term_source)
     s_group_id = s_hash[:g]
     s_artifact_id = s_hash[:a]
     s_version = s_hash[:v]
     converter_options = fetch_converter_options
     # strip out the version argument for converter_version
     converter_version = params[:converter_version]
-    cv_hash = TermConvertOption.arg_as_json(converter_version)
+    cv_hash = NexusArtifact.arg_as_json(converter_version)
     converter_version = cv_hash[:v]
 
     # initialize the SDOSourceContent based on the selected source
@@ -43,7 +44,7 @@ class TerminologyConverterController < ApplicationController
 
     if addl_ibdf_dependency
       # strip out the individual arguments for addl_ibdf_dependency
-      ibdf_hash = TermConvertOption.arg_as_json(addl_ibdf_dependency)
+      ibdf_hash = NexusArtifact.arg_as_json(addl_ibdf_dependency)
       ibdf_group_id = ibdf_hash[:g]
       ibdf_artifact_id = ibdf_hash[:a]
       ibdf_version = ibdf_hash[:v]
@@ -57,7 +58,7 @@ class TerminologyConverterController < ApplicationController
 
     if addl_source_dependency
       # strip out the individual arguments for addl_source_dependency
-      src_hash = TermConvertOption.arg_as_json(addl_source_dependency)
+      src_hash = NexusArtifact.arg_as_json(addl_source_dependency)
       src_group_id = src_hash[:g]
       src_artifact_id = src_hash[:a]
       src_version = src_hash[:v]
@@ -116,7 +117,7 @@ class TerminologyConverterController < ApplicationController
   def ajax_term_source_change
     source = params[:term_source]
     locals = {terminology_source: source}
-    source_hash = TermConvertOption.arg_as_json(source)
+    source_hash = NexusArtifact.arg_as_json(source)
 
     # get converters based on the selected term source
     source_artifact_id = source_hash[:a]

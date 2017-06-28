@@ -55,7 +55,6 @@
   }
 
   function tomcat_app(elem, tomcat_service_id, action, app) {
-      console.log("wtf - " + JSON.stringify(elem));
     var btn = '#' + elem.id + ' > i';
     if ($(btn).hasClass('processing')) {
       console.log('stop clicking on the ' + action + ' button!!!!');
