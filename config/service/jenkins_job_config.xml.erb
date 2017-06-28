@@ -15,7 +15,7 @@
     <org.jenkinsci.plugins.mavenrepocleaner.MavenRepoCleanerProperty plugin="maven-repo-cleaner@1.2">
       <notOnThisProject>false</notOnThisProject>
     </org.jenkinsci.plugins.mavenrepocleaner.MavenRepoCleanerProperty>
-    <% if development %>
+    <% if boolean($PROPS['PRISME.slack_job_notify']) %>
       <jenkins.plugins.slack.SlackNotifier_-SlackJobProperty plugin="slack@1.8.1">
         <teamDomain></teamDomain>
         <token></token>
