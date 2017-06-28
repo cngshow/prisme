@@ -16,3 +16,25 @@
 .page_title_bar .actions {
   float: right;
 }
+
+.btn-for-508 {
+  color: #ffffff;
+  background: #1496BB;
+  border: 2px solid #1496BB;
+  &:hover {
+    background: #1187a8;
+    border: 2px solid #1187a8;
+  }
+}
+
+.btn-for-508-dark {
+  background: #107896;
+  color: #ffffff;
+}
+
+.sm.btn-for-508 {
+  &:hover {
+    color: #ffffff;
+    border: 1px solid #1187a8;
+  }
+}

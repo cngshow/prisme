@@ -1,7 +1,7 @@
 <div id="checksum_selection_div">
   <%= render 'layouts/page_title_bar', locals: {title: "Terminology #{@nav_type.titlecase}",
-                                                actions: ["<button type='button' class='btn btn-info btn-sm btn-req-hl7_messaging'>Request #{@nav_type.titlecase}</button>",
-                                                          "<button type='button' class='btn btn-info btn-sm btn-req-hl7_messaging history'>#{@nav_type.titlecase} History</button>"]} %>
+                                                actions: ["<button type='button' class='btn-for-508 btn-sm btn-req-hl7_messaging'>Request #{@nav_type.titlecase}</button>",
+                                                          "<button type='button' class='btn-for-508 btn-sm btn-req-hl7_messaging history'>#{@nav_type.titlecase} History</button>"]} %>
   <div style="width: 34%;" class="selection_div">
     <div style='background-color: transparent; height: 50px; padding: 5px;'>
       <div class='section_label'>Subset Selection(s)</div>
@@ -14,7 +14,7 @@
     <div style='background-color: transparent;padding: 5px;'>
       <div class="section_label">Site Selection(s)</div>
       <div style='float: right'>
-        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#siteSelectionModal">Select Site(s)</button>
+        <button type="button" class="btn btn-for-508-dark btn-sm" data-toggle="modal" data-target="#siteSelectionModal">Select Site(s)</button>
       </div>
       <br>
       <br>
@@ -174,15 +174,15 @@
             var site = sites[i];
             site_selections.push({id: $(site).data('va_site_id'), text: $(site).data('site_text')})
         }
-
-        wait_cursor(true);
+        wait_cursor(true);      
         $.post(gon.routes.hl7_messaging_results_table_path,
             {nav_type: '<%= @nav_type %>',
                 subset_selections: JSON.stringify(tables),
                 site_selections: JSON.stringify(site_selections),
                 history: history
             },
-            function (data) {
+            function (data) {              
+                 _discovery_results(data);
             <% if @nav_type.eql? 'checksum' %>
               _checksum_results(data);
             <% else %>
