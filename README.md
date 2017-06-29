@@ -191,7 +191,7 @@ http://localhost:3000
 <h2>Load Service and Service Properties for your environment</h2>
 There is seed data for the following environments:
 <ol>
-    <li>LOCALHOST - http://localhost:port/rails_prisme/utilities/seed_services?db=localhost</li>
+    <li>LOCALHOST - http://localhost:port/rails_prisme/utilities/seed_services?db=localhost or http://localhost:port/utilities/seed_services?db=localhost</li>
     <li>VA_DEV_DB - http://path_to_prisme:port/rails_prisme/utilities/seed_services?db=va_dev_db</li>
     <li>AITC_DEV_DB - http://path_to_prisme:port/rails_prisme/utilities/seed_services?db=aitc_dev_db</li>
     <li>AITC_SQA_DB - http://path_to_prisme:port/rails_prisme/utilities/seed_services?db=aitc_sqa_db</li>

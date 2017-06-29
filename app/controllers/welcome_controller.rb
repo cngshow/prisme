@@ -25,7 +25,6 @@ class WelcomeController < ApplicationController
 
     # call TomcatConcern to perform the specified action
     flash_state = change_state(tomcat_service_id: tomcat_service_id, context: tomcat_app, action: tomcat_action)
-    flash_state = flash_state.strip
     flash_state << " on #{service_name}"
     flash_notify(message: flash_state)
     if (@change_state_succeded)
@@ -114,6 +113,9 @@ class WelcomeController < ApplicationController
 
       # get all of the applications deployed at this app server location
       tomcat_deployments[appserver].each_pair do |war, d|
+        $log.always("APPSERVER is #{appserver.inspect}")
+        $log.always("war is #{war.inspect}")
+        $log.always("D is #{d.inspect}")
         current_row[:available] = true #this line toggles between the no apps on tomcat vs tomcat is unavailable or mis-configured message.  It must be first
         next if [:available, :failed].include?(war) #This line ensures we skip over Tomcats that have no applications installed or that aren't responding properly.  It must be second!
         war_uuid = tomcat_deployments[appserver][war][:war_id]

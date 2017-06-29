@@ -43,8 +43,7 @@ class AdminUserEditController < ApplicationController
 
   def update_user_roles
     uid, ssoi_user = parse_user_id(params[:user_id_to_edit])
-    user = User.find(uid) unless ssoi_user
-    user = SsoiUser.find(uid) if ssoi_user
+    user = ssoi_user ? SsoiUser.find(uid) : User.find(uid)
     user.admin_role_check = true
     user.roles = []
 
@@ -55,6 +54,12 @@ class AdminUserEditController < ApplicationController
       end
     end
 
+    # if the user has the editor role then they must also have the VUID requestor role as well
+    if user.has_role?(Roles::EDITOR)
+      user.add_role(Roles::VUID_REQUESTOR)
+    end
+
+    # save the user, flash and redirect
     user.save
     flash_info(message: 'Successfully updated the user roles!  These changes may take up to five minutes to propagate through the system.')
     redirect_to list_users_path

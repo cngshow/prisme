@@ -27,3 +27,6 @@ module PrismeUserConcern
     self.add_role(Roles::READ_ONLY)
   end
 end
+
+# 10001 editor  {deployments: [serverA], terminologies: [vhat]}
+# 10001 readonly  {deployments: [serverA], terminologies: [loinc, snomed, vhat]}

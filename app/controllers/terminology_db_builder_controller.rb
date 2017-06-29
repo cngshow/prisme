@@ -1,19 +1,28 @@
+require './lib/utilities/nexus_utility'
+
 class TerminologyDbBuilderController < ApplicationController
   before_action :read_only
   before_action :ensure_services_configured
-  include NexusConcern
+  # include NexusConcern
+  include NexusUtility
   include JenkinsJobConcern
 
   def index
     # retrieve the metadata versions dropdown
-    @metadata_versions = load_metadata_drop_down(nexus_params: {g: 'gov.vha.isaac.ochre.modules', a: 'ochre-metadata', repositoryId: 'releases'})
-
-    # retrieve the list of ibdf options for the multi-select drop down
-    @idbf_files = load_ibdf_drop_down(nexus_params: {g: 'gov.vha.isaac.terminology.converted', repositoryId: 'termdata'})
+    hash = DbBuilderSupport.instance.atomic_fetch(:get_ibdf_files, :get_ochre_metadatas)
+    @metadata_versions = hash[:get_ochre_metadatas]
+    @ibdf_files = hash[:get_ibdf_files]
+    if(@metadata_versions.nil? || @ibdf_files.nil?)
+      $log.warn('The cache DbBuilderSupport did not have my data.  Forcing a fetch...')
+      DbBuilderSupport.instance.do_work
+      hash = DbBuilderSupport.instance.atomic_fetch(:get_ibdf_files, :get_ochre_metadatas)
+      @metadata_versions = hash[:get_ochre_metadatas]
+      @ibdf_files = hash[:get_ibdf_files]
+    end
   end
 
   def request_build
-    ibdf_files = params[:ibdf_selections].split(',').map { |f| NexusOption.arg_as_json(f) }
+    ibdf_files = params[:ibdf_selections].split(',').map { |f| NexusArtifact.arg_as_json(f) }
     db_name = params['db_name']
     db_version = params['db_version']
     db_description = params['db_description']
@@ -27,14 +36,14 @@ class TerminologyDbBuilderController < ApplicationController
     redirect_to terminology_db_builder_url
   end
 
-  def ajax_check_cradle_conflict
+  def ajax_check_cradle_conflict # todo move this check to nexus_utility
     ret = {nexus_conflict: false}
     db_name = params['db_name']
     version = params['version']
     classifier = params['classifier']
 
     begin
-      zips = get_isaac_cradle_zips
+      zips = DeployerSupport.instance.atomic_fetch(:get_isaac_dbs)
 
       if zips
         zips.each do |zip|
@@ -96,6 +105,7 @@ class TerminologyDbBuilderController < ApplicationController
   end
 
   private
+=begin
   def load_metadata_drop_down(nexus_params: nexus_params)
     url_string = '/nexus/service/local/lucene/search'
     options = []
@@ -122,7 +132,9 @@ class TerminologyDbBuilderController < ApplicationController
 
     options
   end
+=end
 
+=begin
   def load_ibdf_drop_down(nexus_params: nexus_params)
     url_string = '/nexus/service/local/lucene/search'
     options = []
@@ -156,5 +168,6 @@ class TerminologyDbBuilderController < ApplicationController
 
     options
   end
+=end
 
 end
