@@ -1,4 +1,4 @@
-#test 2
+#test 3
 class AdminUserEditController < ApplicationController
   before_action :any_administrator
 
