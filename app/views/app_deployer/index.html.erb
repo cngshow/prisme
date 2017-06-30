@@ -34,7 +34,7 @@
         <h3 class="modal-title">Application Deployer</h3>
       </div>
       <div class="modal-body">
-        <%= form_tag(app_deployer_deploy_app_path, :id => 'app_deployer_form', remote: true ) do |f| %>
+        <%= form_tag(app_deployer_deploy_app_path, :id => 'app_deployer_form') do |f| %>
             <h3>Select the Application Type</h3>
             <%= field_set_tag 'Select the Application Type' do %>
                 <%= label_tag 'application_KOMET', class: 'radio-inline' do %>

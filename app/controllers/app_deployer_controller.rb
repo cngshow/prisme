@@ -4,16 +4,6 @@ class AppDeployerController < ApplicationController
 
   before_action :read_only
   before_action :ensure_services_configured
-  skip_before_filter :verify_authenticity_token, only: [:deploy_app] #todo remove at a random  point in the future and see if anyone complains.
-=begin
-$.ajaxSetup({
-  headers: {
-    'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
-  }
-});
-
-https://stackoverflow.com/questions/7203304/warning-cant-verify-csrf-token-authenticity-rails
-=end
 
   def index
     hash = DeployerSupport.instance.atomic_fetch(:get_komet_wars,:get_isaac_wars,:get_isaac_dbs)
