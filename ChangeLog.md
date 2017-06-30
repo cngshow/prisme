@@ -3,6 +3,9 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers where provided, and the git 
 commit history.
 
+* 2017/06/30 - 4.9
+   *  Fix for bug in app deployer. CSRF token was not being submitted.
+
 * 2017/06/29 - 4.8
    * Added logic to include the VUID Requestor role if the Editor role is selected.
    * Refactored nexus_concern to lib\nexus_utility to allow us to use caching to load the various dropdowns loaded via Jenkins and Tomcat in order to improve perfomance on the app_deployer, db_builder, etc. pages. The refresh of the caches is controlled via prisme.properties.
