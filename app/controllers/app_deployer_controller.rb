@@ -4,7 +4,7 @@ class AppDeployerController < ApplicationController
 
   before_action :read_only
   before_action :ensure_services_configured
-  skip_before_filter :verify_authenticity_token, only: [:deploy_app]
+  skip_before_filter :verify_authenticity_token, only: [:deploy_app] #todo remove at a random  point in the future and see if anyone complains.
 
 
   def index
