@@ -80,7 +80,8 @@
               </tr>
               <tr>
                 <td width="30%">
-                  <%= role_checkbox(Roles::EDITOR) %>
+                  <%= role_checkbox(Roles::EDITOR) %><br>
+                  * Adding this role will automatically include the VUID Requestor role as well.
                 </td>
                 <td width="70%">
                   <p>The <strong>Editor</strong> role provides additional functionality to the Read Only role including:<br>
@@ -140,7 +141,8 @@
               </tr>
               <tr>
                 <td width="30%">
-                  <%= role_checkbox(Roles::VUID_REQUESTOR) %>
+                  <%= role_checkbox(Roles::VUID_REQUESTOR) %><br>
+                  * This role can only be removed if the user does not have the Editor role.
                 </td>
                 <td width="70%">
                   <p>The <strong>VUID Requestor</strong> role provides additional functionality to the Read Only role including:<br>

@@ -110,8 +110,18 @@ module ApplicationHelper
     is_a? ::UtilitiesController
   end
 
+  def update_caches
+    $last_activity_time = Time.now
+    CACHE_ACTIVITIES.each_pair do |app, options|
+      if (options.last.nil? || (self.send options.last))
+        $log.trace("About to wake up #{app} activity thread")
+        PrismeCacheManager::CacheWorkerManager.instance.fetch(app).do_work
+      end
+    end
+  end
+
   def log_user_activity
-    if prisme_user && ! request.xhr?
+    if prisme_user && !request.xhr?
       user_name = prisme_user.user_name
       UserActivity.new({username: user_name, last_activity_at: Time.now, request_url: request.original_url}).save
       count = UserActivity.where('username = ?', user_name).count

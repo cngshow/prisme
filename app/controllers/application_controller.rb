@@ -11,11 +11,11 @@ class ApplicationController < ActionController::Base
   include SSOI
   include ServletSupport
   include UserSession
-  # use_growlyflash
 
   append_view_path 'lib/rails_common/views'
   prepend_before_action :setup_time, :only => :time_stats #found in utility_controller
   prepend_before_action :add_pundit_methods
+  before_action :update_caches
   after_action :verify_authorized, unless: :devise_controller?
   after_action :log_user_activity, unless: :devise_controller?
   before_action :verify_local_login, if: :devise_controller?
@@ -92,6 +92,7 @@ class ApplicationController < ActionController::Base
   def add_pundit_methods
     NavigationPolicy.add_action_methods self
   end
+
 
   def verify_local_login
      u = request.url

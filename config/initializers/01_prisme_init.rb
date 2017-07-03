@@ -21,6 +21,9 @@ require './lib/prisme_constants'
 require './lib/cipher'
 require './lib/jenkin_client'
 require './lib/utilities/prisme_utilities'
+require './lib/worker/prisme_cache_manager'
+require './lib/utilities/nexus_utility'
+require './lib/utilities/tomcat_utility'
 
 #System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
 props = java.lang.System.getProperties
@@ -113,7 +116,6 @@ $log.always {PrismeLogEvent.notify(PrismeLogEvent::LIFECYCLE_TAG, "#{Rails.appli
 PRISME_NAME = $PROPS['PRISME.application_name']
 KOMET_NAME = $PROPS['PRISME.komet_name']
 HL7Messaging::init_messaging_engine unless (STFU_MODE || $testing)
-
 # ensure super_user and admin for cboden for demo
 =begin
 cboden = SsoiUser.find_by_ssoi_user_name('cboden')

@@ -1,6 +1,5 @@
- require 'zip'
+require 'zip'
 require 'digest'
-require './app/controllers/concerns/nexus_concern'
 
 java_import 'de.schlichtherle.truezip.file.TFile' do |p,c|
   'JTFile'
@@ -16,7 +15,7 @@ end
 
 
 class ArtifactDownloadJob < PrismeBaseJob
-  include NexusConcern
+  include NexusUtility
 
   # rescue_from(ActiveRecord::RecordNotFound) do |exception|
   #   # do something with the exception
@@ -119,7 +118,7 @@ class ArtifactDownloadJob < PrismeBaseJob
       # update the job json data for polling display purposes
       PrismeBaseJob.update_json_data(job_id: self.job_id, json_data: {message: result.gsub("\n", '<br>')})
 
-      response = get_nexus_connection('*/*').get(warurl, {})
+      response = NexusUtility.nexus_connection('*/*').get(warurl, {})
       file_name = "#{Rails.root}/tmp/#{war_name}"
       File.open(file_name, 'wb') { |fp| fp.write(response.body) }
       $log.debug("The file #{war_name} has completed the download!")
@@ -127,11 +126,11 @@ class ArtifactDownloadJob < PrismeBaseJob
       p_clone = nexus_query_params.clone
       p_clone[:p] = nexus_query_params[:p] + '.sha1'
       sha1url = "#{baseurl}?#{p_clone.to_query}"
-      sha1 = get_nexus_connection('*/*').get("#{sha1url}", {}).body
+      sha1 = NexusUtility.nexus_connection('*/*').get("#{sha1url}", {}).body
 
       p_clone[:p] = nexus_query_params[:p] + '.md5'
       md5url = "#{baseurl}?#{p_clone.to_query}"
-      md5 = get_nexus_connection('*/*').get("#{md5url}", {}).body
+      md5 = NexusUtility.nexus_connection('*/*').get("#{md5url}", {}).body
       $log.debug('SHA1 for ' + war_name + ' is supposed to be: ' + sha1)
       $log.debug('MD5 for ' + war_name + ' is supposed to be: ' + md5)
       #file_name = 'c:/temp/dan.yml'
@@ -141,7 +140,8 @@ class ArtifactDownloadJob < PrismeBaseJob
       $log.debug("Actual MD5 for #{war_name} is #{actual_md5}.")
       sha1_match = actual_sha1.eql? sha1
       md5_match = actual_md5.eql? md5
-      if (!(sha1_match && md5_match))
+
+      unless sha1_match && md5_match
         #come here if the file is not a match
         error_msg = ''
         error_msg << 'SHA1 mismatch ' unless sha1_match

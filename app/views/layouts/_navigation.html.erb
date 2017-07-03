@@ -32,8 +32,9 @@
 
     <% if policy(:navigation).any_administrator? %>
         <div>
-          <a href="<%= app_deployer_path %>" class="prisme-link-button" onclick="polling.checkPolling(polling.pollEnum.DEPLOYER);" title="Deploy Applications">Application
-            Deployer</a>
+          <a href="<%= app_deployer_path %>" class="prisme-link-button" onclick="polling.checkPolling(polling.pollEnum.DEPLOYER);" title="Deploy Applications">
+            Application Deployer
+          </a>
         </div>
     <% end %>
 
