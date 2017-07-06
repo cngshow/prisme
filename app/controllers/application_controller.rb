@@ -14,7 +14,7 @@ class ApplicationController < ActionController::Base
 
   append_view_path 'lib/rails_common/views'
   prepend_before_action :setup_time, :only => :time_stats #found in utility_controller
-  prepend_before_action :add_pundit_methods
+  prepend_before_action :read_ssoi_headers, :add_pundit_methods #make sure user is in session before any actions are run, then add pundit methods (order should not matter here).
   before_action :update_caches
   after_action :verify_authorized, unless: :devise_controller?
   after_action :log_user_activity, unless: :devise_controller?
@@ -23,7 +23,7 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
-  before_action :validate_terminology_config, :setup_gon, :read_ssoi_headers
+  before_action :validate_terminology_config, :setup_gon
   rescue_from Exception, java.lang.Throwable, :with => :internal_error
   rescue_from Pundit::NotAuthorizedError, Pundit::AuthorizationNotPerformedError, :with => :pundit_error
 
