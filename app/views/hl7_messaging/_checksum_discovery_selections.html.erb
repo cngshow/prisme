@@ -43,17 +43,17 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <button type="button" class="btn btn-primary btn-sm" onclick="site_selections();">Select Site(s)</button>
+        <button type="button" id="select-site-in-modal" class="btn btn-primary btn-sm" onclick="site_selections();" autofocus>Select Site(s)</button>
       </div>
       <div class="modal-body">
         <label>
             <%= radio_button_tag 'site_type', VaSite::PRODUCTION_SITE_TYPE, true %>&nbsp;<%= VaSite::PRODUCTION_SITE_TYPE %>&nbsp;&nbsp;
         </label>
         <label>
-            <%= radio_button_tag 'site_type', VaSite::INTERNAL_SITE_TYPE %>&nbsp;<%= VaSite::INTERNAL_SITE_TYPE %>&nbsp;&nbsp;
+            <%= radio_button_tag 'site_type', VaSite::INTERNAL_SITE_TYPE, false %>&nbsp;<%= VaSite::INTERNAL_SITE_TYPE %>&nbsp;&nbsp;
         </label>
         <label>
-            <%= radio_button_tag 'site_type', VaSite::SQA_SITE_TYPE %>&nbsp;<%= VaSite::SQA_SITE_TYPE %>
+            <%= radio_button_tag 'site_type', VaSite::SQA_SITE_TYPE, false %>&nbsp;<%= VaSite::SQA_SITE_TYPE %>
         </label>
         <br>
         <br>
@@ -65,8 +65,37 @@
     </div>
   </div>
 </div>
+
+
 <script type="text/javascript" charset="utf-8">
+    $(function(){
+        
+    //     $('body').on('keydown', function (e) {
+    // console.log(e.keyCode);
+    // });
+
+        $('#siteSelectionModal').on('show.bs.modal', function() {
+            $('a, button, #subsets').each(function(){
+                var $this = $(this);
+                if($this.closest('#siteSelectionModal').length == 0){
+                    $this.attr('tabIndex', '-1');
+                }
+            });
+        });
+        $('#siteSelectionModal').on('hide.bs.modal', function() {
+            $('a, button, #subsets').each(function(){
+                var $this = $(this);
+                if($this.closest('#siteSelectionModal').length == 0){
+                    $this.removeAttr('tabIndex');
+                }
+            });
+        })
+        
+    });
+
+
     function site_selections() {
+        console.log('hi')
         var checked = $('#site_tree').jstree('get_checked');
         if (checked.length == 0) {
             bootbox.alert("Please select sites before requesting the <%= @nav_type %>.");
@@ -88,11 +117,14 @@
             }
         }
 
+
+
         // make the ajax call to get all of the selected sites to load the selection table with
         $.getJSON(gon.routes.hl7_messaging_retrieve_sites_path, {
             groups: groups.toString(),
             sites: sites.toString()
         }, function (data) {
+
             loadSiteSelectionTable(data);
             $("#siteSelectionModal").find(".close").click()
         });
@@ -104,10 +136,12 @@
         tbody.empty();
 
         $.each(data, function (index, item) {
+
             // create the row adding a data-job_id attribute
             var row = $('<tr>').addClass('text-top').attr('data-va_site_id', item['va_site_id']).attr('data-site_text', item['name']).attr('data-site_type', item['site_type']).attr('data-msg_type', item['message_type']);
 
             $.each(fields, function (index, field) {
+
                 var item_value = item[field + ''];
 
                 if (field === 'site_name') {
@@ -237,6 +271,7 @@
         // deselect all sites
         if (reset_cbxs == true) {
             var sites_tree = $('#site_tree');
+            sites_tree.attr('aria-activedescendant', 'group_root');
             sites_tree.jstree(true).check_node('#site_root');
             sites_tree.jstree(true).uncheck_node('#site_root');
         }
@@ -300,5 +335,5 @@
             // load the results table
             load_hl7_messaging_results($(this).hasClass('history'));
         });
-    });
+    }); 
 </script>
