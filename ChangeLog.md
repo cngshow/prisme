@@ -3,8 +3,13 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers where provided, and the git 
 commit history.
 
-* 2017/07/?? - 4.10 - PENDING
-   *556064 fixed.
+* 2017/07/?? - 4.11 - PENDING
+   *   *556064 fixed.
+
+
+* 2017/07/06 - 4.10
+   * Prisme was writing a bad log event token for vuid rest.
+   * Minor SSOi bug found and fixed.
 
 * 2017/06/30 - 4.9
    *  Fix for bug in app deployer. CSRF token was not being submitted.
