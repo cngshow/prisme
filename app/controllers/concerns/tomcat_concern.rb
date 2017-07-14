@@ -112,7 +112,7 @@ module TomcatConcern
     # iterate and make faraday call to get the text/list
     tomcats.each do |tomcat|
       data_hash = TomcatUtility::TomcatDeploymentsCache.instance.get_cached_deployments[tomcat.id]
-      if data_hash&.empty?
+      if (data_hash.nil? || data_hash&.empty?)
         $log.warn('Tomcat Deployments cache is nil, refetching...')
         TomcatUtility::TomcatDeploymentsCache.instance.do_work
         data_hash = TomcatUtility::TomcatDeploymentsCache.instance.get_cached_deployments[tomcat.id]
