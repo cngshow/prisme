@@ -11,31 +11,21 @@
   </div>
   <div class="prisme-navbar-navigation" role="navigation">
 
-    <% if policy(:navigation).any_administrator? || policy(:navigation).can_deploy? %>
+    <% if policy(:navigation).can_deploy? %>
         <div class="dropdown" role="presentation">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="Deployment Tools">Deployment Tools<span class="caret"></span></a>
-          <ul class="dropdown-menu" aria-hidden="true" aria-label="DeploymentTools">
 
-            <% if policy(:navigation).any_administrator? %>
-                <li role="menuitem">
-                  <a href="<%= app_deployer_path %>" onclick="polling.checkPolling(polling.pollEnum.DEPLOYER);" title="Deploy Applications">
-                    Application Deployer
-                  </a>
-                </li>
-            <% end %>
-
-            <% if policy(:navigation).can_deploy? %>
-                <li role="menuitem">
-                  <a href="<%= checksum_path %>" onclick="polling.checkPolling(polling.pollEnum.CHECKSUM);" title="Terminology Checksum">
-                    Checksum
-                  </a>
-                </li>
-                <li role="menuitem">
-                  <a href="<%= discovery_path %>" onclick="polling.checkPolling(polling.pollEnum.DISCOVERY);" title="Terminology Discovery">
-                    Discovery
-                  </a>
-                </li>
-            <% end %>
+          <ul class="dropdown-menu" aria-hidden="true" aria-label="Checksum">
+            <li role="menuitem">
+              <a href="<%= checksum_path %>" onclick="polling.checkPolling(polling.pollEnum.CHECKSUM);" title="Terminology Checksum">
+                Checksum
+              </a>
+            </li>
+            <li role="menuitem">
+              <a href="<%= discovery_path %>" onclick="polling.checkPolling(polling.pollEnum.DISCOVERY);" title="Terminology Discovery">
+                Discovery
+              </a>
+            </li>
           </ul>
         </div>
     <% end %>
@@ -61,7 +51,9 @@
             <% if policy(:navigation).can_get_vuids? %>
                 <li role="menuitem">
                   <a href="<%= vuid_requests_path %>" onclick="polling.checkPolling(polling.pollEnum.VUID_REQUESTS);" title="VUID Server">
-                    VUID Server</a></li>
+                    VUID Server
+                  </a>
+                </li>
             <% end %>
           </ul>
         </div>
@@ -69,16 +61,26 @@
 
     <% if policy(:navigation).any_administrator? %>
         <div class="dropdown" role="presentation">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="Administration">Administration
-            <span class="caret"></span></a>
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="Administration">
+            Administration<span class="caret"></span>
+          </a>
 
           <ul class="dropdown-menu" aria-hidden="true" aria-label="Administration Submenu">
             <li role="menuitem">
+              <a href="<%= app_deployer_path %>" onclick="polling.checkPolling(polling.pollEnum.DEPLOYER);" title="Deploy Applications">
+                Application Deployer
+              </a>
+            </li>
+            <li role="menuitem">
               <a href="<%= list_users_path %>" onclick="polling.checkPolling(polling.pollEnum.ADMIN_USER_EDIT);" title="Edit User Permissions">
-                Edit User Permissions</a></li>
+                Edit User Permissions
+              </a>
+            </li>
             <li role="menuitem">
               <a href="<%= services_path %>" onclick="polling.checkPolling(polling.pollEnum.SERVICES);" title="Service Provisioning">
-                Service Provisioning</a></li>
+                Service Provisioning
+              </a>
+            </li>
           </ul>
         </div>
     <% end %>
