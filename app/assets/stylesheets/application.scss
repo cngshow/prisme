@@ -43,7 +43,7 @@
   height: 60px;
   align-items: stretch;
   background-color: rgb(228, 228, 228);
-  font-size: 18px;
+  font-size: 14px;
   font-weight: bold;
   color: black;
   border-radius: 1em 1em 0 0;
@@ -68,7 +68,7 @@
 }
 
 .prisme-navbar-header {
-  font-size: 24px;
+  font-size: 18px;
   flex: 0 0 auto;
   align-items: center;
   padding: 0px 10px;
@@ -110,7 +110,7 @@
 }
 
 .prisme-navbar-navigation > div.dropdown.open > ul {
-  font-size: 18px;
+  font-size: 14px;
 }
 
 .prisme-navbar-navigation > div:hover, .prisme-navbar-navigation > div:focus {

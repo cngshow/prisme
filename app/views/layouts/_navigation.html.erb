@@ -11,30 +11,32 @@
   </div>
   <div class="prisme-navbar-navigation" role="navigation">
 
-    <% if policy(:navigation).can_deploy? %>
+    <% if policy(:navigation).any_administrator? || policy(:navigation).can_deploy? %>
         <div class="dropdown" role="presentation">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="Deployment Tools">Deployment Tools<span class="caret"></span></a>
+          <ul class="dropdown-menu" aria-hidden="true" aria-label="DeploymentTools">
 
-          <ul class="dropdown-menu" aria-hidden="true" aria-label="Checksum">
-            <li role="menuitem">
-              <a href="<%= checksum_path %>" onclick="polling.checkPolling(polling.pollEnum.CHECKSUM);" title="Terminology Checksum">
-                Checksum
-              </a>
-            </li>
-            <li role="menuitem">
-              <a href="<%= discovery_path %>" onclick="polling.checkPolling(polling.pollEnum.DISCOVERY);" title="Terminology Discovery">
-                Discovery
-              </a>
-            </li>
+            <% if policy(:navigation).any_administrator? %>
+                <li role="menuitem">
+                  <a href="<%= app_deployer_path %>" onclick="polling.checkPolling(polling.pollEnum.DEPLOYER);" title="Deploy Applications">
+                    Application Deployer
+                  </a>
+                </li>
+            <% end %>
+
+            <% if policy(:navigation).can_deploy? %>
+                <li role="menuitem">
+                  <a href="<%= checksum_path %>" onclick="polling.checkPolling(polling.pollEnum.CHECKSUM);" title="Terminology Checksum">
+                    Checksum
+                  </a>
+                </li>
+                <li role="menuitem">
+                  <a href="<%= discovery_path %>" onclick="polling.checkPolling(polling.pollEnum.DISCOVERY);" title="Terminology Discovery">
+                    Discovery
+                  </a>
+                </li>
+            <% end %>
           </ul>
-        </div>
-    <% end %>
-
-    <% if policy(:navigation).any_administrator? %>
-        <div>
-          <a href="<%= app_deployer_path %>" class="prisme-link-button" onclick="polling.checkPolling(polling.pollEnum.DEPLOYER);" title="Deploy Applications">
-            Application Deployer
-          </a>
         </div>
     <% end %>
 
