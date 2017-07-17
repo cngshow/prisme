@@ -4,7 +4,7 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 commit history.
 
 * 2017/07/?? - 4.12 - PENDING
-   * ??? - moved the application deployer menu item under the Administration menu
+   * 558054 fixed - moved the application deployer menu item under the Administration menu
 
 * 2017/07/13 - 4.11
    * 556064 fixed.
