@@ -11,6 +11,16 @@ module AdminUserEditHelper
     ret.html_safe
   end
 
+  def isaac_uuid_checkbox(role, uuid)
+    cbx_name = "cbx_#{role}|#{uuid[:uuid]}"
+
+    ret = %{
+<input title="#{uuid[:title]}" type="checkbox" name="#{cbx_name}" id="#{cbx_name}" value="true" class="cbx" #{uuid[:checked] ? 'checked' : ''}/>
+&nbsp;&nbsp;<label for="#{cbx_name}" title="#{uuid[:title]}">#{uuid[:display_name]}</label><br>
+    }
+    ret.html_safe
+  end
+
   def no_match_row
     '<tr valign="top"><td colspan="4" align="center">No Users found that match the filter criteria</td></tr>'.html_safe
   end

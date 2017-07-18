@@ -34,7 +34,7 @@ class AdminUserEditController < ApplicationController
       end
     end
     @user_list = devise_users.to_a + ssoi_users.to_a
-    @user_list.sort_by! { |user| user.user_name }
+    @user_list.sort_by! {|user| user.user_name}
 
     session[AdminUserEditHelper::FILTER_GROUP][AdminUserEditHelper::QUICK_SEARCH] = user_quick_search
     session[AdminUserEditHelper::FILTER_GROUP][AdminUserEditHelper::ROLE_REVIEW] = admin_role_review
@@ -104,11 +104,56 @@ class AdminUserEditController < ApplicationController
     render json: ret
   end
 
+  def ajax_check_modeling_roles
+    user_id, ssoi = parse_user_id(params['user_id_to_edit'])
+    user_to_edit = ssoi ? SsoiUser.find(user_id) : User.find(user_id)
+    isaacs = TomcatUtility::TomcatDeploymentsCache.instance.get_isaac_deployments
+
+    isaac_uuids = []
+    isaacs.each do |isaac|
+      tomcat = isaac.tomcat.name
+      db_uuid = isaac.get_db_uuid
+      isaac_name = isaac.get_name
+      title = "Komets:\n\t#{isaac.komets.map {|k| k.get_name || "Not Named:  #{k.war_uuid}"}.join("\n\t")}"
+      isaac_uuids << {uuid: db_uuid, server: tomcat, display_name: (isaac_name || "Not Named:  #{db_uuid}") << " on #{tomcat}", title: title, checked: false}
+    end
+
+    ret = []
+    Roles::MODELING_ROLES.each do |role|
+      isaac_uuids.each do |uuid|
+        checked = false
+        if user_to_edit.has_role? role
+          user_role = user_to_edit.user_role_assocs.select {|ura| ura.role.name.eql?(role)}
+
+          unless user_role.empty?
+            role_metadata = user_role.first.role_metadata
+
+            if role_metadata
+              role_metadata = JSON.parse(role_metadata)
+
+              if role_metadata.has_key?(RoleMetadataConcern::ISAAC_DB_UUIDS)
+                checked = role_metadata[RoleMetadataConcern::ISAAC_DB_UUIDS].include? uuid[:uuid]
+              end
+            end
+          end
+        end
+
+        uuid[:checked] = checked
+      end
+
+      uuid_selections = render_to_string(:partial => 'admin_user_edit/modeling_edit', :locals => {:user => user_to_edit, :modeling_role => role, :uuids => isaac_uuids})
+      ret << [role, uuid_selections]
+    end
+
+    render json: ret.to_json
+  end
+
   private
-  # the user id is submitted as a string in the format id|boolean where the boolean is true for ssoi and false for devise users
+# the user id is submitted as a string in the format id|boolean where the boolean is true for ssoi and false for devise users
   def parse_user_id(user_row_id)
     uid = user_row_id.split('_').first
     ssoi_user = user_row_id.split('_').last.eql?('true')
     [uid, ssoi_user]
   end
+
 end
