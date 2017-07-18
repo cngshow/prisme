@@ -114,7 +114,7 @@ class AdminUserEditController < ApplicationController
       tomcat = isaac.tomcat.name
       db_uuid = isaac.get_db_uuid
       isaac_name = isaac.get_name
-      title = "Komets:\n\t#{isaac.komets.map {|k| k.get_name || "Not Named:  #{k.war_uuid}"}.join("\n\t")}"
+      title = "Komets:\n#{isaac.komets.map {|k| "&#8226;"<<(k.get_name || "Not Named:  #{k.war_uuid}")}.join("\n")}"
       isaac_uuids << {uuid: db_uuid, server: tomcat, display_name: (isaac_name || "Not Named:  #{db_uuid}") << " on #{tomcat}", title: title, checked: false}
     end
 
