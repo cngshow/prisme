@@ -4,6 +4,7 @@ class UuidProp < ActiveRecord::Base
   self.primary_key = 'uuid'
 
   ISAAC_WAR_ID = 'warId'
+  ISAAC_DB_ID = 'isaacDbId'
   KOMET_WAR_ID = 'war_uuid'
 
   module Keys
@@ -13,6 +14,7 @@ class UuidProp < ActiveRecord::Base
     DEPENDENT_UUID = :uuid_dependent
     STATE = :uuid_state
     TIME = :uuid_time
+    ISAAC_DB_ID = :isaac_db_id
   end
 
   class << self
@@ -30,7 +32,7 @@ class UuidProp < ActiveRecord::Base
       cnt
     end
 
-    def uuid(uuid:, dependent_uuid: nil, state: nil)
+    def uuid(uuid:, dependent_uuid: nil, state: nil, isaac_db_id: nil)
       if uuid
         prop = UuidProp.find_or_create_by(uuid: uuid)
         last_certain_update = prop.get(key: Keys::TIME).to_i #converts nil to zero
@@ -39,6 +41,7 @@ class UuidProp < ActiveRecord::Base
         hash[Keys::TIME] = now if ((now - last_certain_update) > 1.day.seconds.to_i)
         hash[Keys::DEPENDENT_UUID] = dependent_uuid if dependent_uuid
         hash[Keys::STATE] = state if state
+        hash[Keys::ISAAC_DB_ID] = isaac_db_id if isaac_db_id
         prop.save_json_hash!(hash)
         prop
       end

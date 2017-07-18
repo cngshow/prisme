@@ -7,6 +7,7 @@ module RoleMetadataConcern
       self.eql?(UserRoleAssoc) ? 'user_id' : 'ssoi_user_id'
     end
   end
+  extend ClassMethods
 
   def fetch_metadata
     role_metadata ? JSON.parse(role_metadata) : nil
@@ -23,7 +24,6 @@ module RoleMetadataConcern
     else
       data = {ISAAC_DB_UUIDS => [uuid]}
     end
-    puts data.class.to_s
     write_metadata! data
   end
 
@@ -37,8 +37,6 @@ module RoleMetadataConcern
     uuids.include? uuid
   end
 
-  extend ClassMethods
-
   private
   def write_metadata(hash)
     update_attributes(role_metadata: hash.to_json)
@@ -48,3 +46,8 @@ module RoleMetadataConcern
     update_attributes!(role_metadata: hash.to_json)
   end
 end
+
+=begin
+u = User.first
+ura = u.user_role_assocs
+=end

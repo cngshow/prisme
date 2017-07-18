@@ -1,12 +1,101 @@
 #require './app/controllers/concerns/tomcat_concern'
 module TomcatUtility
+
+  class TomcatNameBase
+    attr_reader :tomcat, :war_uuid
+
+    def initialize(tomcat, war_uuid)
+      @tomcat=tomcat
+      @war_uuid = war_uuid
+      @uuid_prop = UuidProp.find(@war_uuid)
+    end
+
+    def get_name
+      @uuid_prop&.get(key: UuidProp::Keys::NAME)
+    end
+
+  end
+
+  class KometName < TomcatNameBase
+    def get_isaac_war_id
+      @uuid_prop&.get(key: UuidProp::Keys::DEPENDENT_UUID)
+    end
+
+    def get_isaac_prop
+      UuidProp.find(get_isaac_war_id) rescue nil
+    end
+
+    def get_isaac_name
+      get_isaac_prop&.get(key: UuidProp::Keys::NAME)
+    end
+
+    def get_isaac_db_uuid
+      get_isaac_prop&.get(key: UuidProp::Keys::ISAAC_DB_ID)
+    end
+
+  end
+
+  class IsaacName < TomcatNameBase
+    attr_accessor :komets
+
+    def initialize(tomcat, war_uuid)
+      super tomcat, war_uuid
+      @komets = []
+    end
+
+    def get_db_uuid
+      @uuid_prop&.get(key: UuidProp::Keys::ISAAC_DB_ID)
+    end
+  end
+
   class TomcatDeploymentsCache < PrismeCacheManager::ActivitySupport
     include Singleton
     include TomcatConcern
 
+    MATCHER_ISAAC_OR_KOMET_WAR = /^(isaac|rails_k).*/
+    MATCHER_ISAAC = /^isaac.*/
+    MATCHER_KOMET = /^rails_k.*/
+
+    def get_isaac_deployments
+      deployments = get_indifferent_cached_deployments
+      komet_uuids = []
+      isaac_uuids = []
+      deployments.each_pair do |service_id, deployment_hash|
+        tomcat_service = Service.find(service_id)
+        deployment_hash.keys.each do |key|
+          if key =~ MATCHER_KOMET
+            komet_uuids << KometName.new(tomcat_service, deployment_hash[key][:war_id]) if deployment_hash[key][:war_id]
+          elsif key =~ MATCHER_ISAAC
+            isaac_uuids << IsaacName.new(tomcat_service, deployment_hash[key][:war_id]) if deployment_hash[key][:war_id]
+          end
+        end
+      end
+      isaac_uuids.each do |i|
+        komet_uuids.each do |k|
+          if k.get_isaac_war_id.eql?(i.war_uuid)
+            i.komets << k
+          end
+        end
+      end
+      isaac_uuids
+    end
+
+=begin
+isaacs = TomcatUtility::TomcatDeploymentsCache.instance.get_isaac_deployments
+isaacs.first.tomcat.name
+isaacs.first.get_db_uuid
+isaacs.first.get_name
+isaacs.first.komets.first.get_name
+isaacs.first.komets.first.get_isaac_db_uuid #will match with isaacs.first.get_db_uuid
+=end
+    #same as get_cached_deployments, but hash is indifferent
+    def get_indifferent_cached_deployments
+      HashWithIndifferentAccess.new get_cached_deployments
+    end
+
     def get_cached_deployments
       @work_lock.synchronize do
-        return @deployments
+        return @deployments.deep_dup
       end
     end
 
@@ -63,7 +152,7 @@ module TomcatUtility
           vars = line.strip.split(':')
           war = vars[3] #war is 'isaac_rest' or rails_komet_b or similar with version
           # filter to only display isaac and rails war files
-          next unless war =~ /^(isaac|rails_k).*/
+          next unless war =~ MATCHER_ISAAC_OR_KOMET_WAR
           ret_hash[war] = {}
           ret_hash[war][:context] = vars[0]
           ret_hash[war][:state] = vars[1]
@@ -120,9 +209,10 @@ module TomcatUtility
       if war =~ /^isaac/
         version_hash[:version] = json['apiImplementationVersion'].to_s unless json['apiImplementationVersion'].to_s.empty?
         version_hash[:war_id] = json[UuidProp::ISAAC_WAR_ID].to_s unless json[UuidProp::ISAAC_WAR_ID].to_s.empty?
+        isaac_db_id = json[UuidProp::ISAAC_DB_ID].to_s unless json[UuidProp::ISAAC_DB_ID].to_s.empty?
         version_hash[:isaac][:database] = json['isaacDbDependency']
         version_hash[:isaac][:database_dependencies] = json['dbDependencies']
-        UuidProp.uuid(uuid: version_hash[:war_id], state: state)
+        UuidProp.uuid(uuid: version_hash[:war_id], state: state, isaac_db_id: isaac_db_id)
       else
         version_hash[:version] = json['version'].to_s
         version_hash[:war_id] = json[UuidProp::KOMET_WAR_ID].to_s unless json[UuidProp::KOMET_WAR_ID].to_s.empty?
@@ -139,5 +229,5 @@ module TomcatUtility
 end
 
 =begin
-load(''./lib/utilities/tomcat_utility.rb')
+load('./lib/utilities/tomcat_utility.rb')
 =end
