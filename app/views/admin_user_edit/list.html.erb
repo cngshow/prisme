@@ -318,8 +318,13 @@
     var editModal = $('#editModal');
     editModal.on('show.bs.modal', function () {
         var user_id_to_edit = $('#user_id_to_edit').val();
+
+        //iterate the modeling roles in order to add a loading message to be removed when the ajax call below completes
+        <%= raw loading_uuids_message(div_classname: 'loading_message')%>
+
         $.get(gon.routes.check_modeling_roles_path, {user_id_to_edit: user_id_to_edit}, function(data) {
             $.each(data, function (index, value) {
+                $('.loading_message').remove();
                 var selector = "#tr_" + value[0].toString() + " > td:nth-child(2) > ul";
                 $(selector).after(value[1]);
             });
