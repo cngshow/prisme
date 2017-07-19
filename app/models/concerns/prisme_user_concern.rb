@@ -38,9 +38,19 @@ module PrismeUserConcern
     end
   end
 
+  def get_all_isaac_db
+    roles = {}
+    Roles::MODELING_ROLES.each do |role|
+      roles[role] = get_isaac_db_uuids(role_string: role)
+    end
+    roles
+  end
+
   def get_isaac_db_uuids(role_string:)
     modeling_role!(role_string)
-    user_role_assocs.select do |a| a.role.name.to_sym.eql? role_string.to_sym end&.first&.get(key: UserRoleAssoc::Keys::ISAAC_DBS)
+    dbs = user_role_assocs.select do |a| a.role.name.to_sym.eql? role_string.to_sym end&.first&.get(key: UserRoleAssoc::Keys::ISAAC_DBS)
+    dbs = [] if dbs.nil?
+    dbs
   end
 
   private
