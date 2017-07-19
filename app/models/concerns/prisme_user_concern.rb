@@ -30,9 +30,18 @@ module PrismeUserConcern
     end
   end
 
+  def get_isaac_db_uuids(role_string:)
+    modeling_role!(role_string)
+    user_role_assocs.select do |a| a.role.name.to_sym.eql? role_string.to_sym end&.first&.get(key: UserRoleAssoc::Keys::ISAAC_DBS)
+  end
+
   private
   def ensure_read_only
     self.add_role(Roles::READ_ONLY)
+  end
+
+  def modeling_role!(role)
+    raise ArgumentError.new("#{role} is not a valid modeling role.  Valid roles are #{Roles::MODELING_ROLES}") unless Roles::MODELING_ROLES.include? role.to_s
   end
 end
 
