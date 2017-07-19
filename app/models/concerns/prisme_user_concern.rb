@@ -30,6 +30,14 @@ module PrismeUserConcern
     end
   end
 
+  def remove_uuid_from_role(role_string:, isaac_db_uuid:)
+    raise "The passed in role is not a modeling role.  Valid modeling roles are #{Roles::MODELING_ROLES}" unless Roles::MODELING_ROLES.include?(role_string)
+    ura = user_role_assocs.select {|ura| ura.role.name.eql?(role_string)}
+    unless ura.empty?
+      ura.first.remove_isaac_db_uuid(isaac_db_uuid)
+    end
+  end
+
   def get_isaac_db_uuids(role_string:)
     modeling_role!(role_string)
     user_role_assocs.select do |a| a.role.name.to_sym.eql? role_string.to_sym end&.first&.get(key: UserRoleAssoc::Keys::ISAAC_DBS)

@@ -39,6 +39,14 @@ module RoleMetadataConcern
     write_metadata! data
   end
 
+  def remove_isaac_db_uuid(uuid)
+    if has_isaac_uuid?(uuid)
+      data = fetch_metadata
+      data[ISAAC_DB_UUIDS].delete(uuid)
+      write_metadata! data
+    end
+  end
+
   def has_isaac_uuid?(uuid)
     data = fetch_metadata
     uuids = []
