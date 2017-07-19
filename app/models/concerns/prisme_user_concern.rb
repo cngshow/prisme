@@ -22,6 +22,14 @@ module PrismeUserConcern
     "#{id}_#{self.is_a?(SsoiUser)}"
   end
 
+  def add_uuid_to_role(role_string:, isaac_db_uuid:)
+    raise "The passed in role is not a modeling role.  Valid modeling roles are #{Roles::MODELING_ROLES}" unless Roles::MODELING_ROLES.include?(role_string)
+    ura = user_role_assocs.select {|ura| ura.role.name.eql?(role_string)}
+    unless ura.empty?
+      ura.first.add_isaac_db_uuid(isaac_db_uuid)
+    end
+  end
+
   private
   def ensure_read_only
     self.add_role(Roles::READ_ONLY)

@@ -42,8 +42,7 @@ class AdminUserEditController < ApplicationController
   end
 
   def update_user_roles
-    uid, ssoi_user = parse_user_id(params[:user_id_to_edit])
-    user = ssoi_user ? SsoiUser.find(uid) : User.find(uid)
+    user = load_user_from_params(param_key: :user_id_to_edit)
     user.admin_role_check = true
     user.roles = []
 
@@ -51,6 +50,8 @@ class AdminUserEditController < ApplicationController
     Roles::ALL_ROLES.each do |role|
       unless params["cbx_#{role.to_s}"].nil?
         user.add_role(role)
+      # else
+      #   user.remove_role(role)
       end
     end
 
@@ -61,14 +62,22 @@ class AdminUserEditController < ApplicationController
 
     # save the user, flash and redirect
     user.save
+
+    # check modeling roles for metadata uuids
+    isaac_db_uuids = params.keys.select {|p| p =~ /cbx\_.*\|.*/}
+    isaac_db_uuids.each do |rolePipeUuid|
+      role, uuid = rolePipeUuid.split('|')
+      user.add_uuid_to_role(role_string: role.gsub('cbx_',''), isaac_db_uuid: uuid)
+    end
+
+    # flash and redirect
     flash_info(message: 'Successfully updated the user roles!  These changes may take up to five minutes to propagate through the system.')
     redirect_to list_users_path
   end
 
   def delete_user
     ret = {remove_row: true}
-    uid, ssoi_user = parse_user_id(params[:user_row_id])
-    user = ssoi_user ? SsoiUser.find(uid) : User.find(uid)
+    user = load_user_from_params(param_key: :user_row_id)
 
     # if user is not looked up then another user has deleted them already
     if user
@@ -105,8 +114,7 @@ class AdminUserEditController < ApplicationController
   end
 
   def ajax_check_modeling_roles
-    user_id, ssoi = parse_user_id(params['user_id_to_edit'])
-    user_to_edit = ssoi ? SsoiUser.find(user_id) : User.find(user_id)
+    user_to_edit = load_user_from_params(param_key: :user_id_to_edit)
     isaacs = TomcatUtility::TomcatDeploymentsCache.instance.get_isaac_deployments
 
     isaac_uuids = []
@@ -156,4 +164,8 @@ class AdminUserEditController < ApplicationController
     [uid, ssoi_user]
   end
 
+  def load_user_from_params(param_key:)
+    uid, ssoi_user = parse_user_id(params[param_key])
+    ssoi_user ? SsoiUser.find(uid) : User.find(uid)
+  end
 end
