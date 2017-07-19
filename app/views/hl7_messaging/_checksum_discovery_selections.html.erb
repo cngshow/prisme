@@ -42,8 +42,8 @@
     <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <button type="button" id="select-site-in-modal" class="btn btn-primary btn-sm" onclick="site_selections();" autofocus>Select Site(s)</button>
+        <button type="button" class="close" data-dismiss="modal" tabindex="1">&times;</button>
+        <button type="button" id="select-site-in-modal" class="btn btn-primary btn-sm" onclick="site_selections();" tabindex="2">Select Site(s)</button>
       </div>
       <div class="modal-body">
         <label>
@@ -68,23 +68,56 @@
 
 
 <script type="text/javascript" charset="utf-8">
-    $(function(){
-        $('#siteSelectionModal').on('show.bs.modal', function() {
+    $(function(){   
+        //508 on modal
+        $('#siteSelectionModal').on('shown.bs.modal', function() {
+            $('[tabindex=2]').focus();
+
             $('a, button, #subsets').each(function(){
                 var $this = $(this);
                 if($this.closest('#siteSelectionModal').length == 0){
                     $this.attr('tabIndex', '-1');
                 }
             });
+
+            window.addEventListener('keydown', siteSelectionModalTabOrder, false);
         });
-        $('#siteSelectionModal').on('hide.bs.modal', function() {
-            $('a, button, #subsets').each(function(){
+
+        $('#siteSelectionModal').on('hidden.bs.modal', function() {
+            $('a, button, #subsets, #siteSelectionModal').each(function(){
                 var $this = $(this);
                 if($this.closest('#siteSelectionModal').length == 0){
                     $this.removeAttr('tabIndex');
                 }
             });
+            window.removeEventListener('keydown', siteSelectionModalTabOrder, false);
         })
+
+
+        function siteSelectionModalTabOrder(e){
+            //tab order
+            var e = e || window.event;
+            var keyCode = e.keyCode ? e.keyCode : e.which;
+            var previousElement = document.activeElement;
+
+            if (keyCode == 9  && previousElement) {
+                if (previousElement.className.split(' ')[0] == 'jstree-anchor') {
+                    e.preventDefault();
+                    $('.close').focus();
+                };
+
+                if (e.shiftKey && (previousElement.className.split(' ')[0] == 'jstree-anchor')) {
+                    $('input:checked').focus();
+                };
+
+                if (e.shiftKey && previousElement.className == 'close') {
+                    e.preventDefault();
+                    $('a#group_root_anchor').focus();
+                };
+            };
+        };
+       
+        
     });
 
 
