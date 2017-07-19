@@ -9,6 +9,18 @@ module RoleMetadataConcern
   end
   extend ClassMethods
 
+  module Keys
+    ISAAC_DBS = :isaac_db_uuids
+  end
+  VALID_KEYS = Keys.constants.map do |e| Keys.const_get(e) end
+
+  #try
+  #User.first.user_role_assocs.select do |ra| !ra.role_metadata.nil? end.first.get(key: UserRoleAssoc::Keys::ISAAC_DBS)
+  def get(key:)
+    valid(key)
+    role_metadata_hash[key]
+  end
+
   def fetch_metadata
     role_metadata ? JSON.parse(role_metadata) : nil
   end
@@ -45,6 +57,7 @@ module RoleMetadataConcern
     uuids.include? uuid
   end
 
+
   private
   def write_metadata(hash)
     update_attributes(role_metadata: hash.to_json)
@@ -53,6 +66,16 @@ module RoleMetadataConcern
   def write_metadata!(hash)
     update_attributes!(role_metadata: hash.to_json)
   end
+
+  def valid(key)
+    raise ArgumentError.new("Please provide a valid UUID key. Valid keys are #{VALID_KEYS}.") unless VALID_KEYS.include?(key.to_sym)
+  end
+
+  def role_metadata_hash
+    HashWithIndifferentAccess.new(JSON.parse(role_metadata)) rescue HashWithIndifferentAccess.new
+  end
+
+
 end
 
 =begin
