@@ -44,14 +44,13 @@ class AdminUserEditController < ApplicationController
   def update_user_roles
     user = load_user_from_params(param_key: :user_id_to_edit)
     user.admin_role_check = true
-    user.roles = []
 
     # assign selected roles
     Roles::ALL_ROLES.each do |role|
-      unless params["cbx_#{role.to_s}"].nil?
-        user.add_role(role)
-      # else
-      #   user.remove_role(role)
+      if params["cbx_#{role.to_s}"]
+        user.add_role(role) unless user.has_role? role
+      else
+        user.remove_role(role) if user.has_role? role
       end
     end
 
