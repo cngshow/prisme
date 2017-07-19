@@ -69,6 +69,23 @@ class AdminUserEditController < ApplicationController
       user.add_uuid_to_role(role_string: role.gsub('cbx_',''), isaac_db_uuid: uuid)
     end
 
+    # get all isaac deployments and modeling roles intersection
+    isaacs = TomcatUtility::TomcatDeploymentsCache.instance.get_isaac_deployments
+    isaacs = isaacs.map {|prop| prop.get_db_uuid}
+
+    Roles::MODELING_ROLES.each do |role|
+      if user.has_role? role
+        # create an intersection and remove any that were passed in the params as checked uuids
+        role_uuids = isaacs.map {|uuid| "cbx_#{role}|#{uuid}"}.reject {|cbx| isaac_db_uuids.include? cbx}
+
+        # remove all role uuid pairs in the listing. These were checkboxes that were not checked
+        role_uuids.each do |remove_uuid|
+          uuid = remove_uuid.split('|')[1]
+          user.remove_uuid_from_role(role_string: role, isaac_db_uuid: uuid)
+        end
+      end
+    end
+
     # flash and redirect
     flash_info(message: 'Successfully updated the user roles!  These changes may take up to five minutes to propagate through the system.')
     redirect_to list_users_path

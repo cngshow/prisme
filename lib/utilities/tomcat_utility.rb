@@ -1,4 +1,3 @@
-#require './app/controllers/concerns/tomcat_concern'
 module TomcatUtility
 
   class TomcatNameBase
@@ -228,6 +227,6 @@ isaacs.first.komets.first.get_isaac_db_uuid #will match with isaacs.first.get_db
   end
 end
 
-=begin
+=begin caution - using this all tomcat data disappears
 load('./lib/utilities/tomcat_utility.rb')
 =end
