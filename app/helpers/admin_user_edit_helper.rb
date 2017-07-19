@@ -21,6 +21,16 @@ module AdminUserEditHelper
     ret.html_safe
   end
 
+  def loading_uuids_message(div_classname:)
+    ret = []
+    Roles::MODELING_ROLES.each do |role|
+      loading_div = "<div class=\"isaac_uuid_cbxs #{div_classname}\"><i class=\"fa fa-cog fa-spin\" aria-hidden=\"true\"></i>&nbsp;Loading ISAAC UUIDs. Please Wait...</div>"
+      js_output = "$('#tr_#{role} > td:nth-child(2) > ul').after('#{loading_div}')"
+      ret << js_output
+    end
+    ret.join(";\n")
+  end
+
   def no_match_row
     '<tr valign="top"><td colspan="4" align="center">No Users found that match the filter criteria</td></tr>'.html_safe
   end
