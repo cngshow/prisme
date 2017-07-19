@@ -5,7 +5,7 @@ module AdminUserEditHelper
 
   def role_checkbox(role)
     ret = %{
-<input type="checkbox" name="cbx_#{role}" id="cbx_#{role}" value="true" class="cbx"/>
+<input type="checkbox" name="cbx_#{role}" id="cbx_#{role}" value="true" class="cbx" onclick="modeling_role_clicked(this);"/>
 &nbsp;&nbsp;<label for="cbx_#{role}">#{Roles.gui_string(role)}</label>
     }
     ret.html_safe
@@ -15,7 +15,7 @@ module AdminUserEditHelper
     cbx_name = "cbx_#{role}|#{uuid[:uuid]}"
 
     ret = %{
-<input title="#{uuid[:title]}" type="checkbox" name="#{cbx_name}" id="#{cbx_name}" value="true" class="cbx" #{uuid[:checked] ? 'checked' : ''}/>
+<input title="#{uuid[:title]}" type="checkbox" name="#{cbx_name}" id="#{cbx_name}" value="true" class="cbx" #{uuid[:checked] ? 'checked' : ''} onclick="isaac_uuid_clicked(this);"/>
 &nbsp;&nbsp;<label for="#{cbx_name}" title="#{uuid[:title]}">#{uuid[:display_name]}</label><br>
     }
     ret.html_safe
