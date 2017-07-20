@@ -88,16 +88,16 @@
     <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">
-        <button tabindex="4" type="button" class="close" data-dismiss="modal">&times;</button>
-        <button tabindex="1" type="button" class="btn btn-primary" id="btn_submit_form"      autofocus onclick="submitRenameDeployment();">Rename Application</button>
+        <button tabindex="1" type="button" class="close" data-dismiss="modal">&times;</button>
+        <button tabindex="2" type="button" class="btn btn-primary" id="btn_submit_form" autofocus onclick="submitRenameDeployment();">Rename Application</button>
       </div>
       <div class="modal-body scrollable_div">
         <div id="application_name_desc" style="width: 500px">
           <%= label_tag 'application_name', 'Application Name:' %><br>
-          <%= text_field_tag 'war_name', nil, id: 'war_name', placeholder: 'Enter an Application Name', maxlength: 45, size: 45, class: 'form-control', required: true, tabindex: 2 %>
+          <%= text_field_tag 'war_name', nil, id: 'war_name', placeholder: 'Enter an Application Name', maxlength: 45, size: 45, class: 'form-control', required: true, tabindex: 3 %>
           <br>
           <%= label_tag 'war_description', 'Application Description:' %><br>
-          <%= text_area_tag 'war_description', nil, id: 'war_description',placeholder: 'Please describe this application deployment', size: '500x5', class: 'form-control', tabindex: 3 %>
+          <%= text_area_tag 'war_description', nil, id: 'war_description',placeholder: 'Please describe this application deployment', size: '500x5', class: 'form-control', tabindex: 4 %>
         </div>
       </div>
     </div>
@@ -107,21 +107,29 @@
 <script type="text/javascript" charset="utf-8">
     //508 containing tabs for modal
     $(function() {
-        var maxTabIndex = 4;
-        $('#warNameModal [tabindex=' + maxTabIndex + ']').on('keydown', function(e) {
-          if (e.keyCode == 9 && e.shiftKey == false) {
-            e.preventDefault();
-            $('#warNameModal [tabindex=1]').focus();
-          };
-        });
 
-        $('#warNameModal [tabindex=1]').on('keydown', function(e) {
-          console.log('index one')
-          if (e.keyCode == 9 && e.shiftKey == true) {
-            e.preventDefault();
-            $('#warNameModal [tabindex=' + maxTabIndex + ']').focus();
-          };
-        });
+      $('#warNameModal').on('shown.bs.modal', function(e) {
+        e.preventDefault();
+        setModalTabs();
+        $('[autofocus]').focus();
+      });
+       
+       function setModalTabs() { 
+          var maxTabIndex = 4;
+          $('#warNameModal [tabindex=' + maxTabIndex + ']').on('keydown', function(e) {
+            if (e.keyCode == 9 && e.shiftKey == false) {
+              e.preventDefault();
+              $('#warNameModal [tabindex=1]').focus();
+            };
+          });
+
+          $('#warNameModal [tabindex=1]').on('keydown', function(e) {
+            if (e.keyCode == 9 && e.shiftKey == true) {
+              e.preventDefault();
+              $('#warNameModal [tabindex=' + maxTabIndex + ']').focus();
+            };
+          });
+       };
     });
 
     function check_awaiting_poll_results() {
