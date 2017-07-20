@@ -29,7 +29,7 @@ Try it!
     end
     respond_to do |format|
       format.html # list_headers.html.erb
-      format.json { render :json => params['counter'] }
+      format.json { render :json =>  @headers }
     end
   end
 

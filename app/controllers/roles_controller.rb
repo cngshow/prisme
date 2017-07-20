@@ -58,6 +58,7 @@ JSON keys are user => user_string, roles => roles_array, token => user_token.<br
       @roles_hash[:roles] = user.roles.map(&:name)
       @roles_hash[:token] = build_user_token(user)
       @roles_hash[:user] = ssoi_user
+      add_issac_dbs(@roles_hash, user)
     end
 
     respond_to do |format|
@@ -114,6 +115,7 @@ JSON keys are user => user_string, roles => roles_array, token => user_token.<br
       @roles_hash[:roles] = user.roles.map(&:name)
       @roles_hash[:token] = build_user_token(user)
       @roles_hash[:user] = user_id
+      add_issac_dbs(@roles_hash, user)
     end
 
     respond_to do |format|
@@ -148,6 +150,7 @@ Append .json the end of the url to change the format away from html.
         @roles_hash[:user] = @user_name
         @roles_hash[:type] = @user_type
         @roles_hash[:id] = @user_id
+        add_issac_dbs(@roles_hash, user)
         user.roles.each do |role|
           roles << role
         end
@@ -162,6 +165,11 @@ Append .json the end of the url to change the format away from html.
   end
 
   private
+
+  def add_issac_dbs(role_hash,user)
+    return if user.nil?
+    role_hash[:with_isaac_db_id] = user.get_all_isaac_db
+  end
 
   def build_user_token(user)
     return 'INVALID USER' if user.nil?
