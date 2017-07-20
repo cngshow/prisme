@@ -52,7 +52,7 @@ JSON keys are user => user_string, roles => roles_array, token => user_token.<br
   def get_ssoi_roles
     ssoi_user = params[:id]
     user = SsoiUser.fetch_user(ssoi_user)
-    @roles_hash = {roles: [], token: 'Not Authenticated'}
+    @roles_hash = {roles: [], token: 'Not Authenticated', type: 'ssoi'}
 
     if user
       @roles_hash[:roles] = user.roles.map(&:name)
@@ -62,8 +62,8 @@ JSON keys are user => user_string, roles => roles_array, token => user_token.<br
     end
 
     respond_to do |format|
-      format.html # get_ssoi_roles.html.erb
-      format.json {render :json => @roles_hash}
+      format.html {render file: 'roles/user_roles'}
+      format.json {render json: @roles_hash}
     end
   end
 
@@ -109,7 +109,7 @@ JSON keys are user => user_string, roles => roles_array, token => user_token.<br
     user = User.find_by(email: user_id)
     authenticated = (!user.nil? && user.valid_password?(password))
     $log.info("The user #{user_id} tried to get roles but was not authenticated.") unless authenticated
-    @roles_hash = {user: user_id, roles: [], token: 'Not Authenticated'}
+    @roles_hash = {user: user_id, roles: [], token: 'Not Authenticated', type: 'devise'}
 
     if authenticated
       @roles_hash[:roles] = user.roles.map(&:name)
@@ -119,8 +119,8 @@ JSON keys are user => user_string, roles => roles_array, token => user_token.<br
     end
 
     respond_to do |format|
-      format.html # get_all_roles.html.erb
-      format.json {render :json => @roles_hash}
+      format.html {render file: 'roles/user_roles'}
+      format.json {render json: @roles_hash}
     end
   end
 
