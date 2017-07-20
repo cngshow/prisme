@@ -321,6 +321,7 @@
 
         //iterate the modeling roles in order to add a loading message to be removed when the ajax call below completes
         <%= raw loading_uuids_message(div_classname: 'loading_message')%>
+        $("[id^=cbx_]").prop('disabled', true);
 
         $.get(gon.routes.check_modeling_roles_path, {user_id_to_edit: user_id_to_edit}, function(data) {
             $.each(data, function (index, value) {
@@ -328,6 +329,8 @@
                 var selector = "#tr_" + value[0].toString() + " > td:nth-child(2) > ul";
                 $(selector).after(value[1]);
             });
+
+            $("[id^=cbx_]").prop('disabled', false);
         });
     });
     editModal.on('shown.bs.modal', function () {
