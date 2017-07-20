@@ -46,6 +46,11 @@ module PrismeUserConcern
     roles
   end
 
+  def isaac_role?(role_string:, isaac_db_id:)
+    modeling_role!(role_string)
+    get_isaac_db_uuids(role_string: role_string).include? isaac_db_id
+  end
+
   def get_isaac_db_uuids(role_string:)
     modeling_role!(role_string)
     dbs = user_role_assocs.select do |a| a.role.name.to_sym.eql? role_string.to_sym end&.first&.get(key: UserRoleAssoc::Keys::ISAAC_DBS)

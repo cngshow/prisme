@@ -47,7 +47,10 @@ Returns all the roles defined on the system.<br>
 Returns all the roles for an SSOi user.
 <br>Append .json to the end of the url to change the format away from html.<br>
 JSON keys are user => user_string, roles => roles_array, token => user_token.<br>
-  }
+
+Not currently used in production, but helpful for debugging.
+Does not support the isaac_db_uuid parameter, so being a modeler in for any isaac db will show that role.
+}
 
   def get_ssoi_roles
     ssoi_user = params[:id]
@@ -101,6 +104,9 @@ END_DESC
 Gets the roles for a given locally signed on user.<br>
 Append .json the end of the url to change the format away from html.<br>
 JSON keys are user => user_string, roles => roles_array, token => user_token.<br>
+
+Not currently used in production, but helpful for debugging.
+Does not support the isaac_db_uuid parameter, so being a modeler in for any isaac db will show that role.
   }
 
   def get_user_roles
@@ -128,8 +134,13 @@ JSON keys are user => user_string, roles => roles_array, token => user_token.<br
   # http://localhost:3000/roles/get_roles_by_token.json?token=%5B%22u%5Cf%5Cx8F%5CxB1X%5C%22%5CxC2%5CxEE%5CxFA%5CxE1%5Cx91%5CxBF3%5CxA9%5Cx16K%22%2C+%22~K%5CxC4%5CxEFXk%5Cx80%5CxB1%5CxA3%5CxF3%5Cx8D%5CxB1%5Cx7F%5CxBC%5Cx02K%22%2C+%22k%5Cf%5CxDC%5CxF7%5Cx19z%5Cx9C%5CxBA%5CxAF%5CxBF%5Cx83%5CxEE%5Cx15%5CxD9kN%22%5D
   api :GET, PrismeUtilities::RouteHelper.route(:roles_get_roles_by_token_path), 'Request the roles for the given token as JSON, HTML.'
   param :token, String, desc: 'The token for the given user.', required: true
+  param :isaac_db_uuid, String, desc: 'An optional isaac database uuid.  Modeling roles are apropriately filtered.', required: false
   description %q{
-Gets the roles for a given token.  There will be a key called 'roles' pointing to an array of hashes containing role data.<br>
+Gets the roles for a given token.<br>
+There will be a key called 'roles' pointing to an array of hashes containing role data.<br>
+There will be a key called 'with_isaac_db_id' pointing to modeling roles by isaac db.<br>
+There will be a key called 'token_parsed?' with the string 'true' or 'false'.<br>
+There will be a key called 'type' with the value 'devise' or 'ssoi'.  Devise implies a local user.<br>
 Each hash in the role array contains metadata about the role.  The most important key is the 'name' key which points<br>
 to the name of the role.
 Append .json the end of the url to change the format away from html.
@@ -137,6 +148,7 @@ Append .json the end of the url to change the format away from html.
 
   def get_roles_by_token
     @token = params[:token]
+    @isaac_db_uuid = params[:isaac_db_uuid]
     roles = []
     @roles_hash = {}
     @roles_hash[:roles] = roles
@@ -152,7 +164,12 @@ Append .json the end of the url to change the format away from html.
         @roles_hash[:id] = @user_id
         add_issac_dbs(@roles_hash, user)
         user.roles.each do |role|
-          roles << role
+          role_string = role.name
+          if (!@isaac_db_uuid.nil? && Roles::MODELING_ROLES.include?(role_string))
+            roles << role if user.isaac_role?(role_string: role_string, isaac_db_id: @isaac_db_uuid)
+          else
+            roles << role
+          end
         end
       else
         $log.warn("The ids in the token do not match the id found in the database! No roles!")
