@@ -2,7 +2,7 @@ class AppDeployerController < ApplicationController
   include TomcatConcern
   include NexusUtility
 
-  before_action :read_only
+  before_action :any_administrator
   before_action :ensure_services_configured
 
   def index

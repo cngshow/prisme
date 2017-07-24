@@ -43,26 +43,33 @@ Returns all the roles defined on the system.<br>
   #http://localhost:3000/roles/get_ssoi_roles.json?id=cboden
   api :GET, PrismeUtilities::RouteHelper.route(:roles_get_ssoi_roles_path), 'Request all roles for a VA Single Sign on User user as HTML or JSON.'
   param :id, String, desc: 'The SSO user id as defined by the header HTTP_ADSAMACCOUNTNAME', required: true
+  param :isaac_db_uuid, String, desc: 'An optional isaac database uuid.  Modeling roles are appropriately filtered.', required: false
   description %q{
 Returns all the roles for an SSOi user.
 <br>Append .json to the end of the url to change the format away from html.<br>
 JSON keys are user => user_string, roles => roles_array, token => user_token.<br>
-  }
+}
 
   def get_ssoi_roles
     ssoi_user = params[:id]
+    @isaac_db_uuid = params[:isaac_db_uuid]
     user = SsoiUser.fetch_user(ssoi_user)
-    @roles_hash = {roles: [], token: 'Not Authenticated'}
+    @roles_hash = {roles: [], token: 'Not Authenticated', type: 'ssoi'}
 
     if user
-      @roles_hash[:roles] = user.roles.map(&:name)
+      if @isaac_db_uuid
+        @roles_hash[:roles] = roles_by_isaac_db(user, @isaac_db_uuid).map(&:name)
+      else
+        @roles_hash[:roles] = user.roles.map(&:name)
+      end
       @roles_hash[:token] = build_user_token(user)
       @roles_hash[:user] = ssoi_user
+      add_issac_dbs(@roles_hash, user)
     end
 
     respond_to do |format|
-      format.html # get_ssoi_roles.html.erb
-      format.json {render :json => @roles_hash}
+      format.html {render file: 'roles/user_roles'}
+      format.json {render json: @roles_hash}
     end
   end
 
@@ -96,29 +103,37 @@ END_DESC
   api :GET, PrismeUtilities::RouteHelper.route(:roles_get_user_roles_path), 'Request the roles for the given locally signed on user as JSON, HTML.'
   param :id, String, desc: 'The email address of the local user.', required: true
   param :password, String, desc: 'The password of the local user.', required: true
+  param :isaac_db_uuid, String, desc: 'An optional isaac database uuid.  Modeling roles are appropriately filtered.', required: false
   description %q{
 Gets the roles for a given locally signed on user.<br>
 Append .json the end of the url to change the format away from html.<br>
 JSON keys are user => user_string, roles => roles_array, token => user_token.<br>
-  }
+ }
 
   def get_user_roles
     user_id = params[:id]
     password = params[:password]
+    @isaac_db_uuid = params[:isaac_db_uuid]
     user = User.find_by(email: user_id)
     authenticated = (!user.nil? && user.valid_password?(password))
     $log.info("The user #{user_id} tried to get roles but was not authenticated.") unless authenticated
-    @roles_hash = {user: user_id, roles: [], token: 'Not Authenticated'}
+    @roles_hash = {user: user_id, roles: [], token: 'Not Authenticated', type: 'devise'}
 
     if authenticated
-      @roles_hash[:roles] = user.roles.map(&:name)
+      if @isaac_db_uuid
+        @roles_hash[:roles] = roles_by_isaac_db(user, @isaac_db_uuid).map(&:name)
+      else
+        @roles_hash[:roles] = user.roles.map(&:name)
+      end
+
       @roles_hash[:token] = build_user_token(user)
       @roles_hash[:user] = user_id
+      add_issac_dbs(@roles_hash, user)
     end
 
     respond_to do |format|
-      format.html # get_all_roles.html.erb
-      format.json {render :json => @roles_hash}
+      format.html {render file: 'roles/user_roles'}
+      format.json {render json: @roles_hash}
     end
   end
 
@@ -126,8 +141,13 @@ JSON keys are user => user_string, roles => roles_array, token => user_token.<br
   # http://localhost:3000/roles/get_roles_by_token.json?token=%5B%22u%5Cf%5Cx8F%5CxB1X%5C%22%5CxC2%5CxEE%5CxFA%5CxE1%5Cx91%5CxBF3%5CxA9%5Cx16K%22%2C+%22~K%5CxC4%5CxEFXk%5Cx80%5CxB1%5CxA3%5CxF3%5Cx8D%5CxB1%5Cx7F%5CxBC%5Cx02K%22%2C+%22k%5Cf%5CxDC%5CxF7%5Cx19z%5Cx9C%5CxBA%5CxAF%5CxBF%5Cx83%5CxEE%5Cx15%5CxD9kN%22%5D
   api :GET, PrismeUtilities::RouteHelper.route(:roles_get_roles_by_token_path), 'Request the roles for the given token as JSON, HTML.'
   param :token, String, desc: 'The token for the given user.', required: true
+  param :isaac_db_uuid, String, desc: 'An optional isaac database uuid.  Modeling roles are appropriately filtered.', required: false
   description %q{
-Gets the roles for a given token.  There will be a key called 'roles' pointing to an array of hashes containing role data.<br>
+Gets the roles for a given token.<br>
+There will be a key called 'roles' pointing to an array of hashes containing role data.<br>
+There will be a key called 'with_isaac_db_id' pointing to modeling roles by isaac db.<br>
+There will be a key called 'token_parsed?' with the string 'true' or 'false'.<br>
+There will be a key called 'type' with the value 'devise' or 'ssoi'.  Devise implies a local user.<br>
 Each hash in the role array contains metadata about the role.  The most important key is the 'name' key which points<br>
 to the name of the role.
 Append .json the end of the url to change the format away from html.
@@ -135,6 +155,7 @@ Append .json the end of the url to change the format away from html.
 
   def get_roles_by_token
     @token = params[:token]
+    @isaac_db_uuid = params[:isaac_db_uuid]
     roles = []
     @roles_hash = {}
     @roles_hash[:roles] = roles
@@ -148,9 +169,8 @@ Append .json the end of the url to change the format away from html.
         @roles_hash[:user] = @user_name
         @roles_hash[:type] = @user_type
         @roles_hash[:id] = @user_id
-        user.roles.each do |role|
-          roles << role
-        end
+        add_issac_dbs(@roles_hash, user)
+        roles = roles_by_isaac_db(user, @isaac_db_uuid)
       else
         $log.warn("The ids in the token do not match the id found in the database! No roles!")
       end
@@ -162,6 +182,27 @@ Append .json the end of the url to change the format away from html.
   end
 
   private
+
+  #passes the role through if it is not a modeling role.  If it is, filters it if the role is allowed for the given isaac db.
+  def roles_by_isaac_db(user, isaac_db_uuid)
+    $log.debug("Gathering roles for user #{user.user_name} relative to isaac_db #{isaac_db_uuid}")
+    roles = []
+    user.roles.each do |role|
+      role_string = role.name
+      if (!@isaac_db_uuid.nil? && Roles::MODELING_ROLES.include?(role_string))
+        roles << role if user.isaac_role?(role_string: role_string, isaac_db_id: isaac_db_uuid)
+      else
+        roles << role
+      end
+    end
+    $log.debug("returning #{roles} for #{user.user_name} relative to isaac_db #{isaac_db_uuid}")
+    roles
+  end
+
+  def add_issac_dbs(role_hash,user)
+    return if user.nil?
+    role_hash[:with_isaac_db_id] = user.get_all_isaac_db
+  end
 
   def build_user_token(user)
     return 'INVALID USER' if user.nil?

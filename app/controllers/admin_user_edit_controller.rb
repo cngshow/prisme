@@ -34,7 +34,7 @@ class AdminUserEditController < ApplicationController
       end
     end
     @user_list = devise_users.to_a + ssoi_users.to_a
-    @user_list.sort_by! { |user| user.user_name }
+    @user_list.sort_by! {|user| user.user_name}
 
     session[AdminUserEditHelper::FILTER_GROUP][AdminUserEditHelper::QUICK_SEARCH] = user_quick_search
     session[AdminUserEditHelper::FILTER_GROUP][AdminUserEditHelper::ROLE_REVIEW] = admin_role_review
@@ -42,15 +42,15 @@ class AdminUserEditController < ApplicationController
   end
 
   def update_user_roles
-    uid, ssoi_user = parse_user_id(params[:user_id_to_edit])
-    user = ssoi_user ? SsoiUser.find(uid) : User.find(uid)
+    user = load_user_from_params(param_key: :user_id_to_edit)
     user.admin_role_check = true
-    user.roles = []
 
     # assign selected roles
     Roles::ALL_ROLES.each do |role|
-      unless params["cbx_#{role.to_s}"].nil?
-        user.add_role(role)
+      if params["cbx_#{role.to_s}"]
+        user.add_role(role) unless user.has_role? role
+      else
+        user.remove_role(role) if user.has_role? role
       end
     end
 
@@ -61,14 +61,39 @@ class AdminUserEditController < ApplicationController
 
     # save the user, flash and redirect
     user.save
+
+    # check modeling roles for metadata uuids
+    isaac_db_uuids = params.keys.select {|p| p =~ /cbx\_.*\|.*/}
+    isaac_db_uuids.each do |rolePipeUuid|
+      role, uuid = rolePipeUuid.split('|')
+      user.add_uuid_to_role(role_string: role.gsub('cbx_',''), isaac_db_uuid: uuid)
+    end
+
+    # get all isaac deployments and modeling roles intersection
+    isaacs = TomcatUtility::TomcatDeploymentsCache.instance.get_isaac_deployments
+    isaacs = isaacs.map {|prop| prop.get_db_uuid}
+
+    Roles::MODELING_ROLES.each do |role|
+      if user.has_role? role
+        # create an intersection and remove any that were passed in the params as checked uuids
+        role_uuids = isaacs.map {|uuid| "cbx_#{role}|#{uuid}"}.reject {|cbx| isaac_db_uuids.include? cbx}
+
+        # remove all role uuid pairs in the listing. These were checkboxes that were not checked
+        role_uuids.each do |remove_uuid|
+          uuid = remove_uuid.split('|')[1]
+          user.remove_uuid_from_role(role_string: role, isaac_db_uuid: uuid)
+        end
+      end
+    end
+
+    # flash and redirect
     flash_info(message: 'Successfully updated the user roles!  These changes may take up to five minutes to propagate through the system.')
     redirect_to list_users_path
   end
 
   def delete_user
     ret = {remove_row: true}
-    uid, ssoi_user = parse_user_id(params[:user_row_id])
-    user = ssoi_user ? SsoiUser.find(uid) : User.find(uid)
+    user = load_user_from_params(param_key: :user_row_id)
 
     # if user is not looked up then another user has deleted them already
     if user
@@ -104,11 +129,59 @@ class AdminUserEditController < ApplicationController
     render json: ret
   end
 
+  def ajax_check_modeling_roles
+    user_to_edit = load_user_from_params(param_key: :user_id_to_edit)
+    isaacs = TomcatUtility::TomcatDeploymentsCache.instance.get_isaac_deployments
+
+    isaac_uuids = []
+    isaacs.each do |isaac|
+      tomcat = isaac.tomcat.name
+      db_uuid = isaac.get_db_uuid
+      isaac_name = isaac.get_name
+      title = "Komets:\n#{isaac.komets.map {|k| "&#8226;"<<(k.get_name || "Not Named:  #{k.war_uuid}")}.join("\n")}"
+      isaac_uuids << {uuid: db_uuid, server: tomcat, display_name: (isaac_name || "Not Named:  #{db_uuid}") << " on #{tomcat}", title: title, checked: false}
+    end
+
+    ret = []
+    Roles::MODELING_ROLES.each do |role|
+      isaac_uuids.each do |uuid|
+        checked = false
+        if user_to_edit.has_role? role
+          user_role = user_to_edit.user_role_assocs.select {|ura| ura.role.name.eql?(role)}
+
+          unless user_role.empty?
+            role_metadata = user_role.first.role_metadata
+
+            if role_metadata
+              role_metadata = JSON.parse(role_metadata)
+
+              if role_metadata.has_key?(RoleMetadataConcern::ISAAC_DB_UUIDS)
+                checked = role_metadata[RoleMetadataConcern::ISAAC_DB_UUIDS].include? uuid[:uuid]
+              end
+            end
+          end
+        end
+
+        uuid[:checked] = checked
+      end
+
+      uuid_selections = render_to_string(:partial => 'admin_user_edit/modeling_edit', :locals => {:user => user_to_edit, :modeling_role => role, :uuids => isaac_uuids})
+      ret << [role, uuid_selections]
+    end
+
+    render json: ret.to_json
+  end
+
   private
-  # the user id is submitted as a string in the format id|boolean where the boolean is true for ssoi and false for devise users
+# the user id is submitted as a string in the format id|boolean where the boolean is true for ssoi and false for devise users
   def parse_user_id(user_row_id)
     uid = user_row_id.split('_').first
     ssoi_user = user_row_id.split('_').last.eql?('true')
     [uid, ssoi_user]
+  end
+
+  def load_user_from_params(param_key:)
+    uid, ssoi_user = parse_user_id(params[param_key])
+    ssoi_user ? SsoiUser.find(uid) : User.find(uid)
   end
 end

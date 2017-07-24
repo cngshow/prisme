@@ -3,7 +3,7 @@ require './lib/rails_common/util/controller_helpers'
 require './lib/rails_common/roles/ssoi'
 require './lib/rails_common/roles/user_session'
 require './lib/rails_common/util/servlet_support'
-
+#roles branch
 class ApplicationController < ActionController::Base
   include ApplicationHelper
   include Pundit

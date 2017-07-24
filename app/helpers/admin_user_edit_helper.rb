@@ -5,10 +5,30 @@ module AdminUserEditHelper
 
   def role_checkbox(role)
     ret = %{
-<input type="checkbox" name="cbx_#{role}" id="cbx_#{role}" value="true" class="cbx"/>
+<input type="checkbox" name="cbx_#{role}" id="cbx_#{role}" value="true" class="cbx" onclick="modeling_role_clicked(this);"/>
 &nbsp;&nbsp;<label for="cbx_#{role}">#{Roles.gui_string(role)}</label>
     }
     ret.html_safe
+  end
+
+  def isaac_uuid_checkbox(role, uuid)
+    cbx_name = "cbx_#{role}|#{uuid[:uuid]}"
+
+    ret = %{
+<input title="#{uuid[:title]}" type="checkbox" name="#{cbx_name}" id="#{cbx_name}" value="true" class="cbx" #{uuid[:checked] ? 'checked' : ''} onclick="isaac_uuid_clicked(this);"/>
+&nbsp;&nbsp;<label for="#{cbx_name}" title="#{uuid[:title]}">#{uuid[:display_name]}</label><br>
+    }
+    ret.html_safe
+  end
+
+  def loading_uuids_message(div_classname:)
+    ret = []
+    Roles::MODELING_ROLES.each do |role|
+      loading_div = "<div class=\"isaac_uuid_cbxs #{div_classname}\"><i class=\"fa fa-cog fa-spin\" aria-hidden=\"true\"></i>&nbsp;Loading ISAAC UUIDs. Please Wait...</div>"
+      js_output = "$('#tr_#{role} > td:nth-child(2) > ul').after('#{loading_div}')"
+      ret << js_output
+    end
+    ret.join(";\n")
   end
 
   def no_match_row
