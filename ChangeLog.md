@@ -3,6 +3,10 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers where provided, and the git 
 commit history.
 
+* 2017/??/?? - 4.13
+   * Created a migration to allow for ISAAC uuids to be stored for the modeling roles (editor, reviewer, and approver).
+   * Updated the admin_user_edit controller and views to display and updated the ISAAC uuids for the modeling roles and to keep the role in sync with the selected uuids (If you check the role then all uuids are selected by default. If all uuids are unchecked then the role is unchecked. Lastly, checking the uuid will check the role by default.).
+
 * 2017/07/21 - 4.12
    * 558054 fixed - moved the application deployer menu item under the Administration menu
 
