@@ -1,17 +1,11 @@
 $testing = true
 require 'test_helper'
 require './config/initializers/01_prisme_init'
-
+require './test/integration/test_user'
 
 class Hl7MessagingTest < ActionDispatch::IntegrationTest
+  include TestUser
 
-  def setup_test_user
-    @user = User.new
-    @user.email = 'test@tester.com'
-    @user.password = @user.email
-    @user.add_role(Roles::SUPER_USER)
-    @user.save
-  end
 
   def request(klass, observing = false, hl7_method, keyword)
     @record = klass.send(:new)

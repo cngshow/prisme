@@ -5,7 +5,7 @@ CACHE_ACTIVITIES = {
     #PrismeCacheManager::Some_Cache_Constant => [[work for registration 1, work for registration 2, ...], :roles_symbol?] (or nil if no roles are required)
     PrismeCacheManager::APP_DEPLOYER => [[
                                              NexusUtility::DeployerSupport.instance,
-                                         ], :can_deploy?],
+                                         ], :any_administrator?],
     PrismeCacheManager::DB_BUILDER => [[
                                            NexusUtility::DbBuilderSupport.instance,
                                        ], :any_administrator?],

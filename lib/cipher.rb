@@ -101,6 +101,14 @@ class TokenDevBox < CipherSupport
   end
 end
 
+class TokenSQABox < CipherSupport
+  protected
+  def my_secret
+    Rails.application.secrets.secret_key_cipher_support['INTEGRATION']
+  end
+end
+
+
 
 # load './lib/cipher.rb'
 # v = CipherSupport.instance.encrypt(unencrypted_string: 'devtest@devtest.com')
@@ -112,4 +120,6 @@ irb(main):125:0> a = TokenSupport.instance.encrypt(unencrypted_string: 'devtesth
 Rlfae-0S34Lzw57WlN-GpXZX_1LLe-6NSx1lGXFPyEc=$$$fbLsBt2CURzc4B2M48ps3S-lcEy3FG97PJgRaL-4uwzQTwcoJCi_nKZqHUN9K7GZWxtsR0dXe_T-GIlEUy3Haw==
 irb(main):126:0> a = TokenSupport.instance.encrypt(unencrypted_string: 'devtest')
 OcWsweYoUJJ1BukriEonMH24Im8o1SPqZ9d7mjuNLro=$$$KS-H95Q2s7NfEWD_KHJ5KQLgGIV4R8aQAX4hy72_ybHxiViHdRFBhd7UD4AJ1rHv
+
+TokenSQABox.instance.decrypt(encrypted_string: t2, preamble: 'user_')
 =end

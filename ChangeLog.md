@@ -3,8 +3,26 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers where provided, and the git 
 commit history.
 
-* 2017/06/?? - 4.8 - PENDING
-   *
+* 2017/??/?? - 4.13
+   * Created a migration to allow for ISAAC uuids to be stored for the modeling roles (editor, reviewer, and approver).
+   * Updated the admin_user_edit controller and views to display and updated the ISAAC uuids for the modeling roles and to keep the role in sync with the selected uuids (If you check the role then all uuids are selected by default. If all uuids are unchecked then the role is unchecked. Lastly, checking the uuid will check the role by default.).
+
+* 2017/07/21 - 4.12
+   * 558054 fixed - moved the application deployer menu item under the Administration menu
+
+* 2017/07/13 - 4.11
+   * 556064 fixed.
+
+* 2017/07/06 - 4.10
+   * Prisme was writing a bad log event token for vuid rest.
+   * Minor SSOi bug found and fixed.
+
+* 2017/06/30 - 4.9
+   *  Fix for bug in app deployer. CSRF token was not being submitted.
+
+* 2017/06/29 - 4.8
+   * Added logic to include the VUID Requestor role if the Editor role is selected.
+   * Refactored nexus_concern to lib\nexus_utility to allow us to use caching to load the various dropdowns loaded via Jenkins and Tomcat in order to improve perfomance on the app_deployer, db_builder, etc. pages. The refresh of the caches is controlled via prisme.properties.
 
 * 2017/06/22 - 4.7
    * Updated 20170602145748_update_vuid_num_length migration to include a call to recompile the VUID stored procedure

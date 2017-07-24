@@ -109,7 +109,8 @@
             document.getElementById("myForm").reset();
         });
         $myModal.on('shown.bs.modal', function () {
-            $('#range').focus()
+            $('#range').focus();
+            $('#reason').val('');
         });
         // initialize the jquery validation plugin
         $('#myForm').validate({

@@ -1,7 +1,15 @@
 <h1>Roles by token</h1>
-<p>The roles for user <%=@ssoi_user%>:</p>
+<p>The roles for <%= @roles_hash[:type] %> user:</p>
 <%@roles_hash[:roles].each do |role|%>
-    <li><%=role.name%></li>
+    <li><%=role.name%>
+    <% if @roles_hash.has_key?(:with_isaac_db_id) && @roles_hash[:with_isaac_db_id].has_key?(role.name) && ! @roles_hash[:with_isaac_db_id][role.name].empty? %>
+        <ol>
+          <% @roles_hash[:with_isaac_db_id][role.name].each do |uuid| %>
+              <li>ISAAC UUID:&nbsp;&nbsp;<%= uuid %></li>
+          <% end %>
+        </ol>
+    <% end %>
+    </li>
 <%end%>
 <br><p>The token is -- </p>
 <%=@token %>
