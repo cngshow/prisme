@@ -98,7 +98,7 @@ class AdminUserEditController < ApplicationController
     # if user is not looked up then another user has deleted them already
     if user
       # do not allow user to delete the last user, themselves, or the last super user
-      if !ssoi_user && User.count == 1
+      if user.is_a?(User) && User.count == 1
         ret = {remove_row: false}
         flash_alert(message: 'You cannot delete the last user!')
       elsif prisme_user == user
