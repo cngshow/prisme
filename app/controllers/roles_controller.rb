@@ -57,7 +57,7 @@ JSON keys are user => user_string, roles => roles_array, token => user_token.<br
     @roles_hash = {roles: [], token: 'Not Authenticated', type: 'ssoi'}
 
     if user
-      @roles_hash[:roles] = roles_by_isaac_db(user, @isaac_db_uuid).map(&:name) #roles is passed in if the db is nil (backward compatibility)
+      @roles_hash[:roles] = roles_by_isaac_db(user, @isaac_db_uuid).map(&:name) #roles are passed in if the db is nil (backward compatibility)
       @roles_hash[:token] = build_user_token(user)
       @roles_hash[:user] = ssoi_user
       add_issac_dbs(@roles_hash, user)
@@ -116,7 +116,7 @@ JSON keys are user => user_string, roles => roles_array, token => user_token.<br
     @roles_hash = {user: user_id, roles: [], token: 'Not Authenticated', type: 'devise'}
 
     if authenticated
-      @roles_hash[:roles] = roles_by_isaac_db(user, @isaac_db_uuid).map(&:name) #roles is passed in if the db is nil (backward compatibility)
+      @roles_hash[:roles] = roles_by_isaac_db(user, @isaac_db_uuid).map(&:name) #roles are passed in if the db is nil (backward compatibility)
       @roles_hash[:token] = build_user_token(user)
       @roles_hash[:user] = user_id
       add_issac_dbs(@roles_hash, user)
@@ -176,7 +176,7 @@ Append .json the end of the url to change the format away from html.
   private
 
   #passes the role through if it is not a modeling role.  If it is, filters it if the role is allowed for the given isaac db.
-  #if the isaac_db_uuid is nil it adds the role
+  #if the isaac_db_uuid is nil it adds the role (backward compatibility)
   def roles_by_isaac_db(user, isaac_db_uuid)
     $log.debug("Gathering roles for user #{user.user_name} relative to isaac_db #{isaac_db_uuid.inspect}")
     roles = []
