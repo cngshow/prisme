@@ -34,7 +34,7 @@
     <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close Button" tabindex="1">&times;</button>
         <h3 class="modal-title">Log Event Acknowledgement</h3>
       </div>
       <div class="modal-body">
@@ -66,17 +66,29 @@
         <input type="hidden" id="ack_log_event_id" name="id">
 
         <div title="Enter a comment for how/why this log event was acknowledged.">
-          <div style="display:inline-block"><span style="float: left" id="lbl_comment"><h4>Comment</h4></span></div>
-          <%= text_area_tag 'ack_comment', nil, 'aria-labelledby': 'lbl_comment', placeholder: 'Enter an OPTIONAL acknowledgement comment', rows: '3', cols: 76, class: 'form-control' %>
+          <div style="display:inline-block"><span style="float: left" id="lbl_comment"></span></div>
+          <label for="ack_comment">
+              <h4>Comment</h4>
+          </label>
+          <%= text_area_tag 'ack_comment', nil, 'aria-labelledby': 'lbl_comment', placeholder: 'Enter an OPTIONAL acknowledgement comment', rows: '3', cols: 76, class: 'form-control', :'aria-label' => "Enter an OPTIONAL acknowledgement comment", tabindex: 2, :autofocus => true %>
         </div>
         <br>
-        <button class="btn btn-primary btn-lg" type="button" onclick="submit_acknowledgement();">Save Acknowledgement</button>
+        <button class="btn btn-primary btn-lg" type="button" onclick="submit_acknowledgement();" tabindex="3">Save Acknowledgement</button>
       </div>
     </div>
   </div>
 </div>
 
 <script>
+//508
+    $(function(){
+        $('#ackModal').on('shown.bs.modal', function(e) {
+            e.preventDefault();
+            setModalTabs('#ackModal', 3);
+            $('[autofocus]').focus();
+        });
+    });
+
     function loadLogEventsTable(data) {
         var unack_error = false;
         var fields = ['hostname', 'application_name', 'level', 'tag', 'created_at', 'message', 'acknowledgement'];
