@@ -1,8 +1,9 @@
 <div id="<%= deployment[:service_id] %>">
   <% colspan = policy(:navigation).any_administrator? ? 6 : 5 %>
   <table class="prisme-table table-striped table-hover">
-    <caption title='<%= deployment[:service_desc] %>'>Service
-      Name:&nbsp;&nbsp;<%= deployment[:service_name] %></caption>
+    <caption title='<%= deployment[:service_desc] %>'>
+      Service Name:&nbsp;&nbsp;<%= deployment[:service_name] %>
+    </caption>
     <thead>
     <tr>
       <th scope="col" width="15%">Application</th>
@@ -87,16 +88,16 @@
     <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <button type="button" class="btn btn-primary" id="btn_submit_form" onclick="submitRenameDeployment();">Rename Application</button>
+        <button tabindex="1" type="button" class="close" data-dismiss="modal" aria-label="Close button">&times;</button>
+        <button tabindex="2" type="button" class="btn btn-primary" id="btn_submit_form" autofocus onclick="submitRenameDeployment();" aria-label="Rename Application Button">Rename Application</button>
       </div>
       <div class="modal-body scrollable_div">
         <div id="application_name_desc" style="width: 500px">
           <%= label_tag 'application_name', 'Application Name:' %><br>
-          <%= text_field_tag 'war_name', nil, id: 'war_name', placeholder: 'Enter an Application Name', maxlength: 45, size: 45, class: 'form-control', required: true %>
+          <%= text_field_tag 'war_name', nil, id: 'war_name', placeholder: 'Enter an Application Name', maxlength: 45, size: 45, class: 'form-control', required: true, tabindex: 3, :'aria-label' => "Enter Application Name" %>
           <br>
           <%= label_tag 'war_description', 'Application Description:' %><br>
-          <%= text_area_tag 'war_description', nil, id: 'war_description',placeholder: 'Please describe this application deployment', size: '500x5', class: 'form-control' %>
+          <%= text_area_tag 'war_description', nil, id: 'war_description',placeholder: 'Please describe this application deployment', size: '500x5', class: 'form-control', tabindex: 4, :'aria-label' => "Enter Application Description" %>
         </div>
       </div>
     </div>
@@ -104,6 +105,17 @@
 </div>
 
 <script type="text/javascript" charset="utf-8">
+    //508 containing tabs for modal
+    $(function() {
+
+      $('#warNameModal').on('shown.bs.modal', function(e) {
+        e.preventDefault();
+        setModalTabs('#warNameModal', 4);
+        $('[autofocus]').focus();
+      });
+       
+    });
+
     function check_awaiting_poll_results() {
         return awaiting_poll_results;
     }

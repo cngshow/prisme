@@ -69,6 +69,7 @@ Rails.application.routes.draw do
 
   get 'list_users' => 'admin_user_edit#list'
   get 'load_user_list' => 'admin_user_edit#ajax_load_user_list', :constraints => OnlyAjaxRequest.new
+  get 'check_modeling_roles' => 'admin_user_edit#ajax_check_modeling_roles', :constraints => OnlyAjaxRequest.new
   post 'admin_user_edit/update_user_roles'
   match 'delete_user' => 'admin_user_edit#delete_user', as: 'delete_user', via: [:get]
 

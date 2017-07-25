@@ -282,6 +282,9 @@ body.wait, body.wait *{
 .prisme-table {
   font-family: calibri, arial, sans-serif;
   width: 100%;
+  caption {
+    color: #5c5959;
+  }
 }
 
 .prisme-table thead th {
@@ -368,3 +371,26 @@ h1,
   color: #FFFFDD;
   background-color: #C02F1D;
 }
+
+/* 508 */
+
+*:focus{ border:4px solid black; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
