@@ -119,6 +119,71 @@
         init_wizard();
         $('#app_deployer_form').find('select').addClass('form-control').css('width', '500px');
         $('#application_description').val('');//IE Blows!!! - placeholder fix!
+
+        //508 tab on Modal
+        $(document).on('shown.bs.modal', '#app_deploy_modal', function(e) {
+            e.preventDefault();
+            var previousElement;
+
+            //elements outside of modal is untabbable
+             $('a, button, select').each(function(){
+                 var $this = $(this);
+                 if(!$this.closest('#app_deploy_modal').length){
+                     $this.attr('tabIndex', '-1');
+                 };
+             });
+
+             //box label
+            $('ul[role="tablist"] li:first-child a').attr('tabIndex', 2);
+            // radio button
+            var activeRadio = $('input[type="radio"]');
+            activeRadio.attr('tabIndex', 3)
+
+            //previous & next button
+            var nextTabIndex = activeRadio.attr('tabIndex');
+            $("#app_deployer_form ul[role='menu'] a").each(function(i){
+                $(this).attr('tabIndex', ++nextTabIndex)
+            });
+
+
+            $('a[href="#next"]').on('keydown', function(e){
+                e.preventDefault();
+
+                var e = e || window.event;
+                var keyCode = e.keyCode ? e.keyCode : e.which;
+                if (keyCode == 9 && !e.shiftKey) {
+                    $('[tabindex=1]').focus();
+                };
+
+                if (keyCode == 9 && e.shiftKey) {
+                    $('input[type="radio"]:checked').focus();
+                };
+            });
+
+            $('[tabindex=1]').on('keydown', function(e){
+                e.preventDefault();
+                var e = e || window.event;
+                var keyCode = e.keyCode ? e.keyCode : e.which;
+
+                if (keyCode == 9 && !e.shiftKey) {
+                    $('[tabindex=2]').focus();
+                };
+                if (keyCode == 9 && e.shiftKey) {
+                    $('a[href="#next"]').focus();
+                };
+            });
+
+            $('[tabindex=2]').focus();
+        });
+        //508 making rest of page tabbable again
+        $(document).on('hidden.bs.modal', '#app_deploy_modal', function(){
+            $('a, button, select').each(function(){
+                var $this = $(this);
+                if (!$this.closest('#siteSelectionModal').length) {
+                    $this.removeAttr('tabIndex');
+                }
+            });
+        });
     });
 
     function init_wizard() {
