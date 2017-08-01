@@ -209,6 +209,7 @@ isaacs.first.komets.first.get_isaac_db_uuid #will match with isaacs.first.get_db
         version_hash[:version] = json['apiImplementationVersion'].to_s unless json['apiImplementationVersion'].to_s.empty?
         version_hash[:war_id] = json[UuidProp::ISAAC_WAR_ID].to_s unless json[UuidProp::ISAAC_WAR_ID].to_s.empty?
         isaac_db_id = json[UuidProp::ISAAC_DB_ID].to_s unless json[UuidProp::ISAAC_DB_ID].to_s.empty?
+        version_hash[:isaac][:db_id] = isaac_db_id.to_s
         version_hash[:isaac][:database] = json['isaacDbDependency']
         version_hash[:isaac][:database_dependencies] = json['dbDependencies']
         UuidProp.uuid(uuid: version_hash[:war_id], state: state, isaac_db_id: isaac_db_id)
