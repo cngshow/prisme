@@ -4,7 +4,8 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 commit history.
 
 * 2017/08/?? - 4.16 - PENDING
-   *
+   * added new NTRT roles.
+   * added isaac db id to homepage.
 
 * 2017/07/27 - 4.15
    * 508 defect fixes.
