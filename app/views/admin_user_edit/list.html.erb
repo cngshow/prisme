@@ -156,9 +156,31 @@
                   <%= role_checkbox(Roles::NTRT_USER) %>
                 </td>
                 <td width="70%">
-                  <p>The <strong>NTRT</strong> role provides additional functionality to the Read Only role including:<br>
+                  <p>The <strong>NTRT User</strong> role provides additional functionality to the Read Only role including:<br>
                   <ul>
-                    <li>Allows the user to request the modeling of new concepts</li>
+                    <li>Allows the user to submit NTRT tickets</li>
+                  </ul>
+                </td>
+              </tr>
+              <tr id="tr_<%= Roles::NTRT_STAFF %>">
+                <td width="30%">
+                  <%= role_checkbox(Roles::NTRT_STAFF) %>
+                </td>
+                <td width="70%">
+                  <p>The <strong>NTRT Staff</strong> role provides additional functionality to the Read Only role including:<br>
+                  <ul>
+                    <li>Allows the user to fulfill NTRT request tickets</li>
+                  </ul>
+                </td>
+              </tr>
+              <tr id="tr_<%= Roles::NTRT_ADMIN %>">
+                <td width="30%">
+                  <%= role_checkbox(Roles::NTRT_ADMIN) %>
+                </td>
+                <td width="70%">
+                  <p>The <strong>NTRT Admin</strong> role provides additional functionality to the Read Only role including:<br>
+                  <ul>
+                    <li>Assigns the user Project Admin rights in the JIRA Service Desk</li>
                   </ul>
                 </td>
               </tr>
