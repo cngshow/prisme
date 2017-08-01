@@ -131,3 +131,11 @@ function init_select2() {
         });
     });
 }
+
+function getEvent(e){
+    return (e || window.event);
+};
+function getKeyCode(e) {
+    return (e.keyCode ? e.keyCode : e.which);
+}; 
+
