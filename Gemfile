@@ -70,3 +70,6 @@ group :development do
 end
 
 # gem 'growlyflash'
+
+gem 'mini_racer', platforms: :ruby
+gem 'webpacker_lite'

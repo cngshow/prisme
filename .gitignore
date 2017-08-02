@@ -34,3 +34,10 @@ test/reports/*
 config/oracle_database.yml.bak
 /startup.bash
 .yardoc
+# React on Rails
+npm-debug.log*
+node_modules
+
+# Generated js bundles
+/public/webpack/*
+
