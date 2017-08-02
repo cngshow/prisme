@@ -61,6 +61,9 @@ gem 'activerecord-jdbch2-adapter'
 gem 'activerecord-oracle_enhanced-adapter'
 gem 'ruby-plsql'
 gem 'apipie-rails', '~> 0.5.1' #https://github.com/Apipie/apipie-rails/issues/539
+
+gem 'react_on_rails'
+
 group :development do
   gem 'awesome_print', require:'ap'
   gem 'yard'
