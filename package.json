@@ -1,0 +1,8 @@
+{
+  "name": "rails_prisme",
+  "private": true,
+  "dependencies": {},
+  "scripts": {
+    "postinstall": "cd client && yarn install"
+  }
+}
