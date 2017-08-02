@@ -326,6 +326,11 @@ body.wait, body.wait *{
 .prismetooltip {
   position: relative;
   display: inline-block;
+  &:hover, &:focus {
+    .tooltiptext {
+      visibility: visible;
+    }
+  }
 }
 
 .prismetooltip .tooltiptext {
@@ -342,9 +347,7 @@ body.wait, body.wait *{
   z-index: 1;
 }
 
-.prismetooltip:hover .tooltiptext {
-  visibility: visible;
-}
+
 
 #prisme_navbar_navigation .nav a:hover, #prisme_navbar_navigation .nav a:focus {
   border-bottom: 1px solid black;
