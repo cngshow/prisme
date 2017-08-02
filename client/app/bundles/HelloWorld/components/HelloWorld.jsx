@@ -11,7 +11,7 @@ export default class HelloWorld extends React.Component {
    */
   constructor(props) {
     super(props);
-
+console.log("I am built!!")
     // How to set initial state in ES6 class syntax
     // https://facebook.github.io/react/docs/reusable-components.html#es6-classes
     this.state = { name: this.props.name };
@@ -22,8 +22,10 @@ export default class HelloWorld extends React.Component {
   };
 
   render() {
-    return (
+      console.log("I am here react!")
+      return (
       <div>
+        <h1>CRIS!!</h1>
         <h3>
           Hello, {this.state.name}!
         </h3>
