@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  get 'hello_world', to: 'hello_world#index'
+  get 'log_events', to: 'log_events#index'
   apipie
   class OnlyAjaxRequest
     def matches?(request)

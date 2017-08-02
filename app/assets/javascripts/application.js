@@ -27,7 +27,7 @@
 // require ag-grid/ag-grid.js
 // this is for ajax_flash notifications
 //= require bootstrap-notify
-// = require_tree .
+//= require_tree .
 
 // JS method for bootstrap notification flashes
 function flash_notify(options, settings) {

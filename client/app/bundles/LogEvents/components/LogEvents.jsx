@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-export default class HelloWorld extends React.Component {
+export default class LogEvents extends React.Component {
   static propTypes = {
     name: PropTypes.string.isRequired, // this is passed from the Rails view
   };
@@ -25,7 +25,6 @@ console.log("I am built!!")
       console.log("I am here react!")
       return (
       <div>
-        <h1>CRIS!!</h1>
         <h3>
           Hello, {this.state.name}!
         </h3>
