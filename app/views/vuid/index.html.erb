@@ -31,7 +31,7 @@
     <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" tabindex="1">&times;</button>
         <h2 class="modal-title">Request VUIDs</h2>
       </div>
       <div class="modal-body">
@@ -39,22 +39,52 @@
             <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
             <div title="Number of VUIDs" class="input_div">
               <%= label_tag 'range', 'Number of VUIDs' %><br>
-              <%= number_field_tag 'range', nil, min: 1, max: 1000000, data: {required: true}, placeholder: 'Enter the Number of VUIDs Needed', class: 'form-control' %>
+              <%= number_field_tag 'range', nil, min: 1, max: 1000000, data: {required: true}, placeholder: 'Enter the Number of VUIDs Needed', class: 'form-control', tabindex: 2%>
             </div>
             <br>
             <div title="Reason for VUID Request" class="input_div">
               <%= label_tag 'reason', 'Request Reason' %><br>
-              <%= text_area_tag 'reason', nil, data: {required: true}, placeholder: VuidController::REASON_PROMPT, rows: '3', cols: 76, class: 'form-control' %>
+              <%= text_area_tag 'reason', nil, data: {required: true}, placeholder: VuidController::REASON_PROMPT, rows: '3', cols: 76, class: 'form-control', tabindex: 3 %>
             </div>
             <br>
         <% end %>
-        <button class="btn btn-primary btn-lg" onclick="submitRequest()" id="btn_submit">Submit VUID Request</button>
+        <button class="btn btn-primary btn-lg" onclick="submitRequest()" id="btn_submit" tabindex="4">Submit VUID Request</button>
       </div>
     </div>
   </div>
 </div>
 
 <script type="text/javascript" charset="utf-8">
+    $(function(){
+        //508 tabs
+       $('#myModal').on('shown.bs.modal', function(){
+            $('[tabindex="1"]').on('keydown', function(e){
+                var e = getEvent(e);
+                var keyCode = getKeyCode(e);
+
+                if (e.shiftKey && keyCode == 9) {
+                    e.preventDefault();
+                    $('#myModal').find('[tabindex]').last().focus();
+                };
+            });
+            $(this).find('[tabindex]').last().on('keydown', function(e){
+                var e = getEvent(e);
+                var keyCode = getKeyCode(e);
+                if (keyCode == 9 && !e.shiftKey) {
+                    e.preventDefault();
+                    $('[tabindex="1"]').focus();
+                };
+            })
+            $('#btn_submit').on('click', function(){                
+                $('#myModal label.error:not([style*="display: none;"])')
+                    .first()
+                    .siblings('input, textarea')
+                    .first()
+                    .focus();
+            });
+       }); 
+    }());
+
     function submitRequest() { //todo make this a partial and include this in the application.js file -- search for submitRequest
         var $btnSubmit = $("#btn_submit");
         $btnSubmit.attr('disabled', true);
