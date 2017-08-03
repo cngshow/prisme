@@ -3,7 +3,10 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers where provided, and the git 
 commit history.
 
-* 2017/08/?? - 4.16 - PENDING
+* 2017/08/?? - 4.17 - PENDING
+   *
+
+* 2017/08/03 - 4.16
    * added new NTRT roles.
    * added isaac db id to homepage.
 
