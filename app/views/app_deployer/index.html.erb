@@ -50,19 +50,19 @@
             <%= field_set_tag 'Select the Application Components for Deployment to Tomcat' do %>
                 <div id="komet_wars">
                   <%= label_tag 'komet_war', "#{KOMET_NAME} Tooling Version to Use" %><br>
-                  <%= select_tag 'komet_war', options_from_collection_for_select(@komet_wars, 'option_key', 'option_value'), {:prompt => '-- Select a war to deploy --'} %>
+                  <%= select_tag 'komet_war', options_from_collection_for_select(@komet_wars, 'option_key', 'option_value'), {:prompt => '-- Select a war to deploy --', tabindex: 3} %>
                   <br>
                   <br>
                   <%= label_tag 'tomcat_isaac_rest', 'ISAAC Rest Version to Use' %><br>
-                  <%= select_tag 'tomcat_isaac_rest', options_for_select(@tomcat_isaac_rest.collect {|ir| [ir[:select_value], ir[:select_key]]}), {:prompt => '-- Select an ISAAC Rest Instance --'} %>
+                  <%= select_tag 'tomcat_isaac_rest', options_for_select(@tomcat_isaac_rest.collect {|ir| [ir[:select_value], ir[:select_key]]}), {:prompt => '-- Select an ISAAC Rest Instance --', tabindex: 3} %>
                 </div>
                 <div id="isaac_wars">
                   <%= label_tag 'isaac_war', 'ISAAC Rest Version to Use' %><br>
-                  <%= select_tag 'isaac_war', options_from_collection_for_select(@isaac_wars, 'option_key', 'option_value'), {:prompt => '-- Select a war to deploy --'} %>
+                  <%= select_tag 'isaac_war', options_from_collection_for_select(@isaac_wars, 'option_key', 'option_value'), {:prompt => '-- Select a war to deploy --', tabindex: 3} %>
                   <br>
                   <br>
                   <%= label_tag 'isaac_db', 'ISAAC Database Version to Use' %><br>
-                  <%= select_tag 'isaac_db', options_from_collection_for_select(@isaac_dbs, 'option_key', 'option_value'), {:prompt => '-- Select a terminology database --'} %>
+                  <%= select_tag 'isaac_db', options_from_collection_for_select(@isaac_dbs, 'option_key', 'option_value'), {:prompt => '-- Select a terminology database --', tabindex: 3} %>
                 </div>
                 <br>
             <% end %>
@@ -73,11 +73,11 @@
                   <%= label_tag 'tomcat_komet_app_server', 'Tomcat Server to Deploy to:' %><br>
                   <%= select_tag 'tomcat_komet_app_server', options_from_collection_for_select(@tomcat_servers.map do |e|
                     e[:tomcat_ar]
-                  end.uniq, 'select_key', 'select_value'), {:prompt => '--- Select the Tomcat Server  ---', required: true} %>
+                  end.uniq, 'select_key', 'select_value'), {:prompt => '--- Select the Tomcat Server  ---', required: true, tabindex: 3 } %>
                 </div>
                 <div id="isaac_app_server">
                   <%= label_tag 'tomcat_isaac_app_server', 'Tomcat Server / Context to Deploy to:' %><br>
-                  <%= select_tag 'tomcat_isaac_app_server', options_from_collection_for_select(@tomcat_servers, 'select_key', 'select_value'), {:prompt => '---  Select the Tomcat Server / ISAAC Context  ---', required: true} %>
+                  <%= select_tag 'tomcat_isaac_app_server', options_from_collection_for_select(@tomcat_servers, 'select_key', 'select_value'), {:prompt => '---  Select the Tomcat Server / ISAAC Context  ---', required: true, tabindex: 3} %>
                 </div>
             <% end %>
 
@@ -94,10 +94,10 @@
                   <div id="summary_tomcat" class="app_deployer"></div>
                   <div id="application_name_desc" style="width: 500px">
                     <%= label_tag 'application_name', 'Application Name:' %><br>
-                    <%= text_field_tag 'application_name', nil, placeholder: 'Enter an Application Name', maxlength: 45, size: 45, class: 'form-control', required: true %>
+                    <%= text_field_tag 'application_name', nil, placeholder: 'Enter an Application Name', maxlength: 45, size: 45, class: 'form-control', required: true, tabindex: 3 %>
                     <br>
                     <%= label_tag 'application_description', 'Application Description:' %><br>
-                    <textarea id="application_description" name="application_description" aria-labelledby="application_description" placeholder="Please describe this application deployment." cols="500" rows="3" class="form-control"></textarea>
+                    <textarea id="application_description" name="application_description" aria-labelledby="application_description" placeholder="Please describe this application deployment." cols="500" rows="3" class="form-control" tabindex="3"></textarea>
                   </div>
                 </section>
             <% end %>
@@ -124,57 +124,9 @@
         $(document).on('shown.bs.modal', '#app_deploy_modal', function(e) {
             e.preventDefault();
             var previousElement;
-
-            //elements outside of modal is untabbable
-             $('a, button, select').each(function(){
-                 var $this = $(this);
-                 if(!$this.closest('#app_deploy_modal').length){
-                     $this.attr('tabIndex', '-1');
-                 };
-             });
-
-             //box label
-            $('ul[role="tablist"] li:first-child a').attr('tabIndex', 2);
-            // radio button
-            var activeRadio = $('input[type="radio"]');
-            activeRadio.attr('tabIndex', 3)
-
-            //previous & next button
-            var nextTabIndex = activeRadio.attr('tabIndex');
-            $("#app_deployer_form ul[role='menu'] a").each(function(i){
-                $(this).attr('tabIndex', ++nextTabIndex)
-            });
-
-
-            $('a[href="#next"]').on('keydown', function(e){
-                e.preventDefault();
-
-                var e = e || window.event;
-                var keyCode = e.keyCode ? e.keyCode : e.which;
-                if (keyCode == 9 && !e.shiftKey) {
-                    $('[tabindex=1]').focus();
-                };
-
-                if (keyCode == 9 && e.shiftKey) {
-                    $('input[type="radio"]:checked').focus();
-                };
-            });
-
-            $('[tabindex=1]').on('keydown', function(e){
-                e.preventDefault();
-                var e = e || window.event;
-                var keyCode = e.keyCode ? e.keyCode : e.which;
-
-                if (keyCode == 9 && !e.shiftKey) {
-                    $('[tabindex=2]').focus();
-                };
-                if (keyCode == 9 && e.shiftKey) {
-                    $('a[href="#next"]').focus();
-                };
-            });
-
-            $('[tabindex=2]').focus();
+            setTabOrderForAppDeployModal(e);
         });
+
         //508 making rest of page tabbable again
         $(document).on('hidden.bs.modal', '#app_deploy_modal', function(){
             $('a, button, select').each(function(){
