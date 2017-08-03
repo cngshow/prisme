@@ -4,7 +4,7 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 commit history.
 
 * 2017/08/?? - 4.17 - PENDING
-   *
+   * 564558 Partial fixes for 508; adding captions where missing as analyzed and reported by VA FireEyes 508 standards
 
 * 2017/08/03 - 4.16
    * added new NTRT roles.

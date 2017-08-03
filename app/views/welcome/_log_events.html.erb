@@ -1,7 +1,12 @@
-<h4>Log Events</h4>
 <%= render 'layouts/filter_table_poll_results', filter_id: 'le_filter_rows', filter_label: 'Filter Results', include_all_rows: false, poll: 'reload_log_events' %>
-
-<table id="table-log-event-data" class="prisme-table table-striped table-hover">
+<style>
+  .log_caption {
+    color: #000000;
+    font-size: large;
+  }
+</style>
+<table id="table-log-event-data" class="prisme-table table-striped table-hover" aria-labelledby="caption">
+  <caption id="logcaption" class="log_caption">Log Events</caption>
   <thead>
   <tr>
     <th scope="col" width="15%">Host Name</th>
