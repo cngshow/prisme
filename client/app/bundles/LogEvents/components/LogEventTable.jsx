@@ -24,18 +24,20 @@ export default class LogEventTable extends React.Component {
      */
     constructor(props) {
         super(props);
-        this.state = { my_module: this.props.my_module, row_data: [], num_rows: this.props.num_rows };
-        this.loadData.bind(this);
+        this.state = { my_module: this.props.my_module, row_data: [], num_rows: 0, filter_rows: 0  };
+        // this.loadData.bind(this);
     }
 
     componentWillMount() {
         this.state.my_module.setTable(this);
     }
 
+/*
     loadData() {
         console.log('num rows is KMA ');
         // this.setState({row_data: ajax_result});
     }
+*/
 
     render() {
         return (
@@ -54,7 +56,7 @@ export default class LogEventTable extends React.Component {
                     </thead>
                     <tbody>
                     <tr>
-                        <td colSpan="8">nothing yet {this.state.num_rows}</td>
+                        <td colSpan="8">nothing yet {this.state.num_rows} and filter_rows is {this.state.filter_rows}</td>
                     </tr>
                     </tbody>
                 </table>
