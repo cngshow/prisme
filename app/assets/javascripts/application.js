@@ -30,6 +30,7 @@
 //= require_tree .
 
 // JS method for bootstrap notification flashes
+
 function flash_notify(options, settings) {
     $.notify(options, settings);
 }
