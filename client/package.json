@@ -2,7 +2,7 @@
   "name": "rails_prisme",
   "private": true,
   "scripts": {
-    "build:test": "webpack --config webpack.config.js",
+    "build:test": "webpack -p --config webpack.config.js",
     "build:production": "webpack -p --config webpack.config.js",
     "build:development": "webpack -w --config webpack.config.js"
   },
