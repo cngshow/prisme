@@ -50,19 +50,19 @@
               <td>
                 <%= row[:version] %>
                 <% if row[:isaac] && !row[:version].eql?('UNKNOWN') %>
-                    <div class="prismetooltip" style="float: left">
+                    <div class="prismetooltip" style="float: left" tabindex="0">
                       <span class="fa fa-info-circle">&nbsp;&nbsp;</span>
                       <span class="tooltiptext">
-                        <span style="font-weight: bold; color: navy">Isaac Database <%= fetch_komets_isaac(row: row) %></span>
+                        <span tabindex="0" style="font-weight: bold; color: navy">Isaac Database <%= fetch_komets_isaac(row: row) %></span>
                         <ul>
-                          <li><%= "Isaac DB UUID is #{row[:isaac][:db_id]}"%></li>
-                          <li><%= row[:isaac][:database]['artifactId'].to_s rescue 'Unknown' %>&nbsp;version:&nbsp;<%= row[:isaac][:database]['version'].to_s rescue 'Unknown' %>&nbsp;<%= raw "Classifier: #{row[:isaac][:database]['classifier'].to_s}" unless (row[:isaac][:database].nil? || row[:isaac][:database]['classifier'].to_s.empty?) %></li>
+                          <li tabindex="0"><%= "Isaac DB UUID is #{row[:isaac][:db_id]}"%></li>
+                          <li tabindex="0"><%= row[:isaac][:database]['artifactId'].to_s rescue 'Unknown' %>&nbsp;version:&nbsp;<%= row[:isaac][:database]['version'].to_s rescue 'Unknown' %>&nbsp;<%= raw "Classifier: #{row[:isaac][:database]['classifier'].to_s}" unless (row[:isaac][:database].nil? || row[:isaac][:database]['classifier'].to_s.empty?) %></li>
                         </ul>
                         <% unless row[:isaac][:database_dependencies].nil? %>
-                            <span style="font-weight: bold; color: navy">Database Dependencies</span>
+                            <span tabindex="0" style="font-weight: bold; color: navy">Database Dependencies</span>
                             <ol>
                             <% row[:isaac][:database_dependencies].each do |d| %>
-                              <li>Artifact:&nbsp;<%= d['artifactId'].to_s %>&nbsp;&nbsp;Version: <%= d['version'].to_s %>&nbsp;&nbsp;<%= raw "Classifier: #{d['classifier'].to_s}" unless d['classifier'].to_s.empty? %></li>
+                              <li tabindex="0">Artifact:&nbsp;<%= d['artifactId'].to_s %>&nbsp;&nbsp;Version: <%= d['version'].to_s %>&nbsp;&nbsp;<%= raw "Classifier: #{d['classifier'].to_s}" unless d['classifier'].to_s.empty? %></li>
                             <% end %>
                             </ol>
                         <% end %>

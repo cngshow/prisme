@@ -1,3 +1,14 @@
+  //tooltip on main page
+  $(document).on('keyup', '.prismetooltip', function(e){
+    var toolTipText = $(this).find(".tooltiptext").first();
+    toolTipText.first().css('visibility', 'visible');
+
+    $(this).find('[tabindex="0"]').last().on('blur', function(){ 
+        toolTipText.css('visibility', 'hidden');
+    });
+  });
+
+
   function setModalTabs(modalSelector, maxTabIndex) { 
     var maxTabIndex = maxTabIndex;
     var maxSelector = modalSelector + ' [tabindex=' + maxTabIndex + ']';
