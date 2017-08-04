@@ -3,18 +3,15 @@
 // https://github.com/shakacode/react-webpack-rails-tutorial/tree/master/client
 
 const webpack = require('webpack');
-const { resolve } = require('path');
+const pathLib = require('path');
 
 const ManifestPlugin = require('webpack-manifest-plugin');
 const webpackConfigLoader = require('react-on-rails/webpackConfigLoader');
 
-const configPath = resolve('..', 'config');
-const { devBuild, manifest, webpackOutputPath, webpackPublicOutputDir } =
-  webpackConfigLoader(configPath);
+const devBuild = process.env.NODE_ENV !== 'production';
+
 
 const config = {
-
-  context: resolve(__dirname),
 
   entry: {
     'webpack-bundle': [
@@ -30,8 +27,7 @@ const config = {
     filename: '[name]-[hash].js',
 
     // Leading slash is necessary
-    publicPath: `/${webpackPublicOutputDir}`,
-    path: webpackOutputPath,
+    path: pathLib.resolve(__dirname, '../app/assets/webpack'),
   },
 
   resolve: {
@@ -43,7 +39,6 @@ const config = {
       NODE_ENV: 'development', // use 'development' unless process.env.NODE_ENV is defined
       DEBUG: false,
     }),
-    new ManifestPlugin({ fileName: manifest, writeToFileEmit: true }),
   ],
 
   module: {
