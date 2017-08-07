@@ -62,7 +62,7 @@ gem 'activerecord-oracle_enhanced-adapter'
 gem 'ruby-plsql'
 gem 'apipie-rails', '~> 0.5.1' #https://github.com/Apipie/apipie-rails/issues/539
 
-gem 'react_on_rails'
+gem 'react_on_rails', '~> 7'
 
 group :development do
   gem 'awesome_print', require:'ap'
