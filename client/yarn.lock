@@ -2177,7 +2177,7 @@ react-dom@^15.5.4:
 
 react-on-rails@7.0.4:
   version "7.0.4"
-  resolved "https://registry.yarnpkg.com/react-on-rails/-/react-on-rails-7.0.4.tgz#fea46416d138b56472f1ea753c58ecfe5ebaab41"
+  resolved "https://registry.yarnpkg.com/react-on-rails/-/react-on-rails-7.0.4.tgz#1bbd7d41f50051c19b5d14df152270accabe0e8f"
 
 react@^15.5.4:
   version "15.6.1"

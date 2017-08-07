@@ -25,7 +25,7 @@
     "promise-polyfill": "^6.0.2",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
-    "react-on-rails": "6.10.1",
+    "react-on-rails": "7.0.4",
     "webpack": "^2.3.3",
     "whatwg-fetch": "^2.0.3"
   },
