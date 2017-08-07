@@ -40,6 +40,7 @@ export default class LogEventTable extends React.Component {
 */
 
     render() {
+        //flash_notify({message: 'I rendered!'}, {type: 'success', delay: 2500, z_index: 9999999});
         return (
             <div>
                 <table id="table-log-event-data" className="prisme-table table-striped table-hover">
