@@ -29,7 +29,7 @@
         <% deployment[:rows].each do |row| %>
             <tr>
               <td <%= raw(row[:state].eql?('running') ? " data-href='#{row[:link]}'" : '') %>>
-                <button <%= raw row[:state].eql?('running') ? 'class="btn btn-primary" tabindex="0"' : 'class="btn btn-link" tabindex="-1"' %>"><%= row[:war_label] %></button>
+                <button aria-label="This button will open new window" <%= raw row[:state].eql?('running') ? 'class="btn btn-primary" tabindex="0"' : 'class="btn btn-link" tabindex="-1"' %>"><%= row[:war_label] %></button>
               </td>
               <td title="<%=row[UuidProp::Keys::DESCRIPTION].to_s%>">
                 <% unless row[:war_uuid].to_s.empty? %>
