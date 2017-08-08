@@ -74,6 +74,7 @@ if (component.state.internal_name === 'filter1') {
     filter1(new_val) {
         console.log("filter 1 new val is " + new_val.num_rows);
         new_val.my_module.getTable().setState({num_rows: new_val.num_rows});
+        new_val.my_module.getTable().fetch_rows(new_val.num_rows)
     }
 
     filter2(new_val) {
@@ -83,6 +84,7 @@ if (component.state.internal_name === 'filter1') {
 
 
     render() {
+        console.log("Main module rendered!!!")
         return (
             <div>
                 <h3>

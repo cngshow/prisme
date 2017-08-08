@@ -82,9 +82,26 @@ On token error returns:<br>
     end
   end
 
-  def index
-    @hello_world_props = { name: "Stranger" }
+  def react_log_events
+    row_limit = (params['row_limit'] ||= 15).to_i
+    results_fatal = []
+    results_error = []
+    results_low_level = []
+    LogEvent.all.order(created_at: :desc).each do |record|
+      if record.level.eql?(PrismeLogEvent::LEVELS[:FATAL]) && record.acknowledged_by.nil?
+        results_fatal << record
+      elsif record.level.eql?(PrismeLogEvent::LEVELS[:ERROR]) && record.acknowledged_by.nil?
+        results_error << record
+      else
+        results_low_level << record
+      end
+    end
+    results = results_fatal + results_error + results_low_level
+    results = results[0...row_limit] unless results.length < row_limit
+    render json: results.to_json
   end
+
+
 
   private
     # Use callbacks to share common setup or constraints between actions.

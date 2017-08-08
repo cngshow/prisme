@@ -1,18 +1,19 @@
 // import PropTypes from 'prop-types';
 import React from 'react';
+import LogEventRow from './LogEventRow.jsx';
 
 /*
-class LogEventRow extends React.Component {
-    render() {
-        return (
-            <tr>
-                <td>{this.props.name}</td>
-                <td>{this.props.product.price}</td>
-            </tr>
-        );
-    }
-}
-*/
+ class LogEventRow extends React.Component {
+ render() {
+ return (
+ <tr>
+ <td>{this.props.name}</td>
+ <td>{this.props.product.price}</td>
+ </tr>
+ );
+ }
+ }
+ */
 
 export default class LogEventTable extends React.Component {
     static propTypes = {
@@ -24,22 +25,36 @@ export default class LogEventTable extends React.Component {
      */
     constructor(props) {
         super(props);
-        this.state = { my_module: this.props.my_module, row_data: [], num_rows: 0, filter_rows: 0  };
-        // this.loadData.bind(this);
+        this.state = {my_module: this.props.my_module, row_data: [], num_rows: 0, filter_rows: 0};
+        this.row_data_to_html.bind(this);
     }
 
     componentWillMount() {
         this.state.my_module.setTable(this);
     }
 
-/*
-    loadData() {
-        console.log('num rows is KMA ');
-        // this.setState({row_data: ajax_result});
+    fetch_rows(num_rows) {
+        let outer = this;
+        console.log("I will fetch " + num_rows + " of data")
+        $.get('react_log_events', {row_limit: num_rows}, function (data) {
+            console.log("I got back ", data)
+            outer.setState({row_data: data})
+        })
     }
-*/
+
+    row_data_to_html(data) {
+        let result = [];
+        for (let row of data) {
+            result.push(<LogEventRow row={row} key={row.id}/>)
+        }
+        if (result.length == 0) {
+            result.push(<tr key="useless"><td colSpan="8">nothing yet</td></tr>)
+        }
+        return result
+    }
 
     render() {
+        console.log("I am rendering the data")
         //flash_notify({message: 'I rendered!'}, {type: 'success', delay: 2500, z_index: 9999999});
         return (
             <div>
@@ -56,11 +71,10 @@ export default class LogEventTable extends React.Component {
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td colSpan="8">nothing yet {this.state.num_rows} and filter_rows is {this.state.filter_rows}</td>
-                    </tr>
+                        {this.row_data_to_html(this.state.row_data)}
                     </tbody>
                 </table>
+                <br/>
             </div>
         );
     }
