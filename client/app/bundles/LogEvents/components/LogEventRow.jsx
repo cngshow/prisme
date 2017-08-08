@@ -1,26 +1,42 @@
 import React from 'react';
-import AckButton from './AckButton.jsx';
 
 export default class LogEventRow extends React.Component {
     constructor(props) {
         super(props);
         console.log("My row props are ", props)
         this.paint_ack.bind(this)
+        this.handleAck = this.handleAck.bind(this)
+    }
+
+    handleAck() {
+        console.log("this is ", this);
+        console.log("clicked...", this.props.row.id)
     }
 
     paint_ack(row) {
-        let ack = row.acknowledged_by
-        return (ack == null ? <AckButton id={row.id}/> : <td>{row.acknowledged_by}</td> )
+        let rval = [];
+        let outer = this;
+        if (row.acknowledged_by === null) {
+            rval.push(<td className="btn btn-primary btn-ack" colSpan="2" onClick={outer.handleAck}>Acknowledge Event</td>)
+        } else {
+            let style = {
+                textAlign: 'right',
+                width: '150px'
+            }
+            rval.push(<td style={style}>Acknowledged By:<br/>Acknowledged On:<br/>Comment:</td>)
+            rval.push(<td>{row.acknowledged_by}<br/>{moment(row.acknowledged_on).format('YYYY-MM-DD [at] HH:mm:ss')}<br/></td>)
+        }
+        return rval;
     }
 
     render() {
         return (
-        <tr>
+        <tr className="text-top" key={this.props.row.id}>
             <td>{this.props.row.hostname}</td>
             <td>{this.props.row.application_name}</td>
             <td>{this.props.row.level}</td>
             <td>{this.props.row.tag}</td>
-            <td>{this.props.row.created_at}</td>
+            <td>{moment(this.props.row.created_at).format('YYYY-MM-DD [at] HH:mm:ss')}</td>
             <td>{this.props.row.message}</td>
             {this.paint_ack(this.props.row)}
         </tr>
