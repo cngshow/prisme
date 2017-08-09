@@ -113,12 +113,23 @@ On token error returns:<br>
     end
     results = results_fatal + results_error + results_low_level
     results = results[0...num_rows] unless results.length < num_rows
-    render json: results.to_json
+    hash = {}
+    hash[:rows] = results
+    add_log_event_filter_data(hash)
+    #hash[:hostname] << "billy_computer"
+    render json: hash.to_json
   end
 
-
-
   private
+
+  def add_log_event_filter_data(hash)
+    LogEvent::UNIQUEABLE_COLUMS.each do |col|
+      hash[col] = LogEvent.unique_fetch(column: col)
+    end
+    #add in log levels
+    hash[:log_levels] = PrismeLogEvent::LEVELS
+  end
+
     # Use callbacks to share common setup or constraints between actions.
     def set_log_event
       @log_event = LogEvent.find(params[:id])

@@ -46,7 +46,14 @@ console.log("filter state is ", fs);
 
         $.get('react_log_events', fs, function (data) {
             console.log("I got back ", data)
-            outer.setState({row_data: data})
+            outer.setState({row_data: data.rows})
+            //can this be erbed?
+            console.log('hosts are ', data.hostname)
+            console.log('tags are ', data.tag)
+            console.log('applications are ', data.application_name)
+            console.log('log levels are ', data.log_levels)
+            console.log('the filter from the table is ', outer.props.my_module.getFilter())
+            outer.props.my_module.getFilter().setState({hostname_values: data.hostname})
         })
     }
 
