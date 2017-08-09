@@ -28,13 +28,16 @@ export default class LogEventFilter extends React.Component {
             acknowledgement: this.props.acknowledgement,
             my_module: this.props.my_module,
             hostname_values: [],
+            tag_values: [],
+            application_name_values: [],
+            log_level_values: {},
         };
-        this.fetchHostnames = this.fetchHostnames.bind(this)
-        this.isChanged = this.isChanged.bind(this)
+        this.fetchDropdown = this.fetchDropdown.bind(this)
+        this.shouldTableUpdate = this.shouldTableUpdate.bind(this)
 
     }
 
-    isChanged(prevState) {
+    shouldTableUpdate(prevState) {
         let changed = false
         changed = changed || (prevState.num_rows != this.state.num_rows)
         changed = changed || (prevState.hostname != this.state.hostname)
@@ -48,6 +51,7 @@ export default class LogEventFilter extends React.Component {
     componentWillMount() {
         this.props.my_module.setFilter(this);
     }
+
     componentDidMount() {
 
         // getTable().loadData();
@@ -55,7 +59,7 @@ export default class LogEventFilter extends React.Component {
 
     componentDidUpdate(prevProps, prevState) {
         //do not update if state was added
-        if (this.isChanged(prevState)) {
+        if (this.shouldTableUpdate(prevState)) {
             console.log("updating the table")
             this.props.my_update(this.state);
         } else {
@@ -64,36 +68,48 @@ export default class LogEventFilter extends React.Component {
     }
 
     updateNumRows = (num_rows) => {
-        this.setState({ num_rows: num_rows });
+        this.setState({num_rows: num_rows});
     };
 
     updateHostname = (hostname) => {
-        this.setState({ hostname: hostname });
+        this.setState({hostname: hostname});
     };
 
     updateApplicationName = (application_name) => {
-        this.setState({ application_name: application_name });
+        this.setState({application_name: application_name});
     };
 
     updateLogLevel = (level) => {
-        this.setState({ level: level });
+        this.setState({level: level});
     };
 
     updateTag = (tag) => {
-        this.setState({ tag: tag });
+        this.setState({tag: tag});
     };
 
     updateAckFilter = (acknowledgement) => {
-        this.setState({ acknowledgement: acknowledgement });
+        this.setState({acknowledgement: acknowledgement});
     };
 
-    fetchHostnames() {
-        console.log('in fetch host names')
+    fetchDropdown(val) {
+        let the_data = this.state[val]
+        console.log('in fetch host names - ' + val, the_data)
         let rval = []
         rval.push(<option value={'none'}>No Filter</option>)
-        for (let hostname of this.state.hostname_values) {
-            rval.push(<option value={hostname}>{hostname}</option>)
+        if (the_data.constructor == Array) {
+            console.log("array for ", val);
+            for (let opt of the_data) {
+                rval.push(<option value={opt}>{opt}</option>)
+            }
+
+        } else {//Object (hash)
+            console.log("hash for ", val);
+            for (let key in the_data) {
+                let value = the_data[key]
+                rval.push(<option value={value}>{key}</option>)
+            }
         }
+
         console.log('in fetch host names, returning', rval)
         return rval
     }
@@ -115,38 +131,42 @@ export default class LogEventFilter extends React.Component {
                     </tr>
                     <tr>
                         <td>
-                        <select value={this.state.num_rows} onChange={(e) => this.updateNumRows(e.target.value)} className="form-control">
-                            <option value={15}>15 Rows</option>
-                            <option value={30}>30 Rows</option>
-                            <option value={45}>45 Rows</option>
-                            <option value={60}>60 Rows</option>
-                        </select>
-                        </td>
-                        <td>
-                        <select value={this.state.hostname} onChange={(e) => this.updateHostname(e.target.value)} className="form-control">
-                            {console.log("before fetchhostname")}
-                            {this.fetchHostnames()}
-                            {console.log("after fetchhostname")}
-                        </select>
-                        </td>
-                        <td>
-                        <select value={this.state.application_name} onChange={(e) => this.updateApplicationName(e.target.value)} className="form-control">
-                            <option value={'none'}>No Filter</option>
-                        </select>
-                        </td>
-                        <td>
-                        <select value={this.state.level} onChange={(e) => this.updateLogLevel(e.target.value)} className="form-control">
-                            <option value={0}>No Filter</option>
-                        </select>
-                        </td>
-                        <td>
-                            <select value={this.state.tag} onChange={(e) => this.updateTag(e.target.value)} className="form-control">
-                                <option value={'none'}>No Filter</option>
-                                <option value={'LIFE_CYCLE'}>LIFE_CYCLE</option>
+                            <select value={this.state.num_rows} onChange={(e) => this.updateNumRows(e.target.value)}
+                                    className="form-control">
+                                <option value={15}>15 Rows</option>
+                                <option value={30}>30 Rows</option>
+                                <option value={45}>45 Rows</option>
+                                <option value={60}>60 Rows</option>
                             </select>
                         </td>
                         <td>
-                            <select value={this.state.acknowledgement} onChange={(e) => this.updateAckFilter(e.target.value)} className="form-control">
+                            <select value={this.state.hostname} onChange={(e) => this.updateHostname(e.target.value)}
+                                    className="form-control">
+                                {this.fetchDropdown('hostname_values')}
+                            </select>
+                        </td>
+                        <td>
+                            <select value={this.state.application_name}
+                                    onChange={(e) => this.updateApplicationName(e.target.value)}
+                                    className="form-control">
+                                {this.fetchDropdown('application_name_values')}
+                            </select>
+                        </td>
+                        <td>
+                            <select value={this.state.level} onChange={(e) => this.updateLogLevel(e.target.value)}
+                                    className="form-control">
+                                {this.fetchDropdown('log_level_values')}
+                            </select>
+                        </td>
+                        <td>
+                            <select value={this.state.tag} onChange={(e) => this.updateTag(e.target.value)}
+                                    className="form-control">
+                                {this.fetchDropdown('tag_values')}
+                            </select>
+                        </td>
+                        <td>
+                            <select value={this.state.acknowledgement}
+                                    onChange={(e) => this.updateAckFilter(e.target.value)} className="form-control">
                                 <option value={'none'}>No Filter</option>
                                 <option value={'ack_only'}>Only Acknowledged Events</option>
                                 <option value={'not_ack_only'}>Only Non-Acknowledged Events</option>

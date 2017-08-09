@@ -53,7 +53,7 @@ console.log("filter state is ", fs);
             console.log('applications are ', data.application_name)
             console.log('log levels are ', data.log_levels)
             console.log('the filter from the table is ', outer.props.my_module.getFilter())
-            outer.props.my_module.getFilter().setState({hostname_values: data.hostname})
+            outer.props.my_module.getFilter().setState({log_level_values: data.log_levels, hostname_values: data.hostname, tag_values: data.tag, application_name_values: data.application_name })
         })
     }
 
