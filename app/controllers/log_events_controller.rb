@@ -83,11 +83,19 @@ On token error returns:<br>
   end
 
   def react_log_events
-    row_limit = (params['row_limit'] ||= 15).to_i
+    num_rows = (params['num_rows'] ||= 15).to_i
+    log_level = (params['level'] ||= 0).to_i
     results_fatal = []
     results_error = []
     results_low_level = []
-    LogEvent.all.order(created_at: :desc).each do |record|
+    w = {}
+    w['level'] = log_level if log_level != 0
+    w['hostname'] = params['hostname'] unless params['hostname'].eql?('none')
+    w['application_name'] = params['application_name'] unless params['application_name'].eql?('none')
+    w['tag'] = params['tag'] unless params['tag'].eql?('none')
+    records = (w.empty? ? LogEvent.all : LogEvent.where(w)).order(created_at: :desc)
+
+    records.each do |record|
       if record.level.eql?(PrismeLogEvent::LEVELS[:FATAL]) && record.acknowledged_by.nil?
         results_fatal << record
       elsif record.level.eql?(PrismeLogEvent::LEVELS[:ERROR]) && record.acknowledged_by.nil?
@@ -97,7 +105,7 @@ On token error returns:<br>
       end
     end
     results = results_fatal + results_error + results_low_level
-    results = results[0...row_limit] unless results.length < row_limit
+    results = results[0...num_rows] unless results.length < num_rows
     render json: results.to_json
   end
 

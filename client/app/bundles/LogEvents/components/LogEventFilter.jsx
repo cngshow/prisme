@@ -4,6 +4,10 @@ import React from 'react';
 export default class LogEventFilter extends React.Component {
     static propTypes = {
         num_rows: PropTypes.number.isRequired, // this is passed from the Rails view
+        level: PropTypes.number.isRequired,
+        hostname: PropTypes.string.isRequired,
+        application_name: PropTypes.string.isRequired,
+        tag: PropTypes.string.isRequired,
     };
 
     /**
@@ -14,8 +18,14 @@ export default class LogEventFilter extends React.Component {
         // How to set initial state in ES6 class syntax
         // https://facebook.github.io/react/docs/reusable-components.html#es6-classes
         // console.log("props in filter " + JSON.stringify(props));
-        this.state = { num_rows: this.props.num_rows, my_module: this.props.my_module, internal_name: this.props.internal_name };
-        // this.props.my_module.registerComponent({greg: this});
+        this.state = {
+            num_rows: this.props.num_rows,
+            hostname: this.props.hostname,
+            application_name: this.props.application_name,
+            level: this.props.level,
+            tag: this.props.tag,
+            my_module: this.props.my_module
+        };
     }
 
     componentWillMount() {
@@ -27,12 +37,29 @@ export default class LogEventFilter extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        this.props.my_update({num_rows: this.state.num_rows, my_module: this.state.my_module});
+        this.props.my_update(this.state);
     }
 
     updateNumRows = (num_rows) => {
-        this.setState({ num_rows });
+        this.setState({ num_rows: num_rows });
     };
+
+    updateHostname = (hostname) => {
+        this.setState({ hostname: hostname });
+    };
+
+    updateApplicationName = (application_name) => {
+        this.setState({ application_name: application_name });
+    };
+
+    updateLogLevel = (level) => {
+        this.setState({ level: level });
+    };
+
+    updateTag = (tag) => {
+        this.setState({ tag: tag });
+    };
+
 
     render() {
         // console.log("I am rendering log event filter!");
@@ -40,21 +67,47 @@ export default class LogEventFilter extends React.Component {
         // console.log("render logEventFilter! " + this.state.my_module.props.children);
         return (
             <div>
-                {/*<form >*/}
-                    <label htmlFor={this.props.internal_name}>
-                        Filter Rows {this.props.internal_name}:
-                    </label>
-                    <select
-                        name={this.props.internal_name}
-                        value={this.state.num_rows}
-                        onChange={(e) => this.updateNumRows(e.target.value)}
-                    >
-                        <option value={15}>15 Rows</option>
-                        <option value={30}>30 Rows</option>
-                        <option value={45}>45 Rows</option>
-                        <option value={60}>60 Rows</option>
-                    </select>
-                {/*</form>*/}
+                <table width="50%" cellPadding="20">
+                    <tr><th>Filter Row Count</th><th>Host Name</th><th>Application</th><th>Log Level</th><th>Log Tag</th><th>Acknowledgement</th></tr>
+                    <tr>
+                        <td>
+                        <select value={this.state.num_rows} onChange={(e) => this.updateNumRows(e.target.value)} className="form-control">
+                            <option value={15}>15 Rows</option>
+                            <option value={30}>30 Rows</option>
+                            <option value={45}>45 Rows</option>
+                            <option value={60}>60 Rows</option>
+                        </select>
+                        </td>
+                        <td>
+                        <select value={this.state.hostname} onChange={(e) => this.updateHostname(e.target.value)}>
+                            <option value={'none'}>No Filter</option>
+                            <option value={'MSI'}>MSI</option>
+                        </select>
+                        </td>
+                        <td>
+                        <select value={this.state.application_name} onChange={(e) => this.updateApplicationName(e.target.value)}>
+                            <option value={'none'}>No Filter</option>
+                            <option value={'RailsPrisme'}>RailsPrisme</option>
+                            <option value={'KometTooling'}>Komet Tooling</option>
+                        </select>
+                        </td>
+                        <td>
+                        <select value={this.state.level} onChange={(e) => this.updateLogLevel(e.target.value)}>
+                            <option value={0}>No Filter</option>
+                            <option value={1}>Always</option>
+                            <option value={2}>Warn</option>
+                            <option value={3}>Error</option>
+                            <option value={4}>Fatal</option>
+                        </select>
+                        </td>
+                        <td>
+                            <select value={this.state.tag} onChange={(e) => this.updateTag(e.target.value)}>
+                                <option value={'none'}>No Filter</option>
+                                <option value={'LIFE_CYCLE'}>LIFE_CYCLE</option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
             </div>
         );
     }

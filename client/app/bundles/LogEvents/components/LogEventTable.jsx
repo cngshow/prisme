@@ -25,7 +25,7 @@ export default class LogEventTable extends React.Component {
      */
     constructor(props) {
         super(props);
-        this.state = {my_module: this.props.my_module, row_data: [], num_rows: 0, filter_rows: 0};
+        this.state = {my_module: this.props.my_module, row_data: []};
         this.row_data_to_html.bind(this);
     }
 
@@ -33,10 +33,17 @@ export default class LogEventTable extends React.Component {
         this.state.my_module.setTable(this);
     }
 
-    fetch_rows(num_rows) {
+    fetch_rows(filter_state) {
         let outer = this;
-        console.log("I will fetch " + num_rows + " of data")
-        $.get('react_log_events', {row_limit: num_rows}, function (data) {
+        let fs = {}
+        fs['num_rows'] = filter_state.num_rows
+        fs['hostname'] = filter_state.hostname
+        fs['application_name'] = filter_state.application_name
+        fs['tag'] = filter_state.tag
+        fs['level'] = filter_state.level
+console.log("filter state is ", fs);
+
+        $.get('react_log_events', fs, function (data) {
             console.log("I got back ", data)
             outer.setState({row_data: data})
         })

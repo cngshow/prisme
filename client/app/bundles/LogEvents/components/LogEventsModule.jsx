@@ -16,9 +16,8 @@ export default class LogEventsModule extends React.Component {
     constructor(props) {
         super(props);
         this.state = {title: this.props.title, child_components: {}};
-        this.getTable.bind(this);
-        this.filter1.bind(this);
-        this.filter2.bind(this);
+        this.getTable = this.getTable.bind(this);
+        this.load_table = this.load_table.bind(this);
     }
 
     registerComponent(component) {
@@ -62,7 +61,9 @@ if (component.state.internal_name === 'filter1') {
 
     getTable() {
         console.log("calling getTable...returning " + this.state.table);
-        return this.state.table;
+        let table = this.state.table;
+        console.log("table is ", table);
+        return table;
     };
 
     componentDidMount() {
@@ -71,29 +72,27 @@ if (component.state.internal_name === 'filter1') {
         // this.getTable().loadData();
     }
 
-    filter1(new_val) {
-        console.log("filter 1 new val is " + new_val.num_rows);
-        new_val.my_module.getTable().setState({num_rows: new_val.num_rows});
-        new_val.my_module.getTable().fetch_rows(new_val.num_rows)
-    }
-
-    filter2(new_val) {
-        console.log("filter 2 new val is " + new_val);
-        new_val.my_module.getTable().setState({filter_rows: new_val.num_rows});
-    }
-
+    load_table(filter_state) {
+        console.log("loading table with props...", filter_state);
+        filter_state.my_module.getTable().fetch_rows(filter_state)
+}
 
     render() {
-        console.log("Main module rendered!!!")
+        console.log("log event module rendered....");
         return (
             <div>
                 <h3>
                     {this.state.title}
                 </h3>
-                <LogEventFilter my_module={this} num_rows={15} internal_name="filter1" my_update={this.filter1} />
-                <LogEventFilter my_module={this} num_rows={30} internal_name="filter2" my_update={this.filter2} />
+                <LogEventFilter
+                    my_module={this}
+                    num_rows={15}
+                    level={0}
+                    hostname='none'
+                    application_name='none'
+                    tag='none'
+                    my_update={this.load_table} />
                 <hr/>
-                {/*<LogEventTable my_module={this} num_rows={15}/>*/}
                 <LogEventTable my_module={this}/>
             </div>
         );
