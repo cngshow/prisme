@@ -93,7 +93,14 @@ On token error returns:<br>
     w['hostname'] = params['hostname'] unless params['hostname'].eql?('none')
     w['application_name'] = params['application_name'] unless params['application_name'].eql?('none')
     w['tag'] = params['tag'] unless params['tag'].eql?('none')
-    records = (w.empty? ? LogEvent.all : LogEvent.where(w)).order(created_at: :desc)
+
+    ack_where = ''
+    unless params['acknowledgement'].eql?('none')
+      ack_where = "acknowledged_by IS #{ params['acknowledgement'].eql?('ack_only') ? 'NOT' : ''} NULL"
+    end
+
+    # get 'em
+    records = (w.empty? ? LogEvent.all : LogEvent.where(w)).where(ack_where).order(created_at: :desc)
 
     records.each do |record|
       if record.level.eql?(PrismeLogEvent::LEVELS[:FATAL]) && record.acknowledged_by.nil?

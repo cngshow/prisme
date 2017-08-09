@@ -8,6 +8,7 @@ export default class LogEventFilter extends React.Component {
         hostname: PropTypes.string.isRequired,
         application_name: PropTypes.string.isRequired,
         tag: PropTypes.string.isRequired,
+        acknowledgement: PropTypes.string.isRequired,
     };
 
     /**
@@ -24,6 +25,7 @@ export default class LogEventFilter extends React.Component {
             application_name: this.props.application_name,
             level: this.props.level,
             tag: this.props.tag,
+            acknowledgement: this.props.acknowledgement,
             my_module: this.props.my_module
         };
     }
@@ -60,6 +62,10 @@ export default class LogEventFilter extends React.Component {
         this.setState({ tag: tag });
     };
 
+    updateAckFilter = (acknowledgement) => {
+        this.setState({ acknowledgement: acknowledgement });
+    };
+
 
     render() {
         // console.log("I am rendering log event filter!");
@@ -67,8 +73,15 @@ export default class LogEventFilter extends React.Component {
         // console.log("render logEventFilter! " + this.state.my_module.props.children);
         return (
             <div>
-                <table width="50%" cellPadding="20">
-                    <tr><th>Filter Row Count</th><th>Host Name</th><th>Application</th><th>Log Level</th><th>Log Tag</th><th>Acknowledgement</th></tr>
+                <table width="50%">
+                    <tr>
+                        <th className="text-center">Filter Row Count</th>
+                        <th className="text-center">Host Name</th>
+                        <th className="text-center">Application</th>
+                        <th className="text-center">Log Level</th>
+                        <th className="text-center">Log Tag</th>
+                        <th className="text-center">Acknowledgement</th>
+                    </tr>
                     <tr>
                         <td>
                         <select value={this.state.num_rows} onChange={(e) => this.updateNumRows(e.target.value)} className="form-control">
@@ -79,20 +92,20 @@ export default class LogEventFilter extends React.Component {
                         </select>
                         </td>
                         <td>
-                        <select value={this.state.hostname} onChange={(e) => this.updateHostname(e.target.value)}>
+                        <select value={this.state.hostname} onChange={(e) => this.updateHostname(e.target.value)} className="form-control">
                             <option value={'none'}>No Filter</option>
                             <option value={'MSI'}>MSI</option>
                         </select>
                         </td>
                         <td>
-                        <select value={this.state.application_name} onChange={(e) => this.updateApplicationName(e.target.value)}>
+                        <select value={this.state.application_name} onChange={(e) => this.updateApplicationName(e.target.value)} className="form-control">
                             <option value={'none'}>No Filter</option>
                             <option value={'RailsPrisme'}>RailsPrisme</option>
                             <option value={'KometTooling'}>Komet Tooling</option>
                         </select>
                         </td>
                         <td>
-                        <select value={this.state.level} onChange={(e) => this.updateLogLevel(e.target.value)}>
+                        <select value={this.state.level} onChange={(e) => this.updateLogLevel(e.target.value)} className="form-control">
                             <option value={0}>No Filter</option>
                             <option value={1}>Always</option>
                             <option value={2}>Warn</option>
@@ -101,9 +114,16 @@ export default class LogEventFilter extends React.Component {
                         </select>
                         </td>
                         <td>
-                            <select value={this.state.tag} onChange={(e) => this.updateTag(e.target.value)}>
+                            <select value={this.state.tag} onChange={(e) => this.updateTag(e.target.value)} className="form-control">
                                 <option value={'none'}>No Filter</option>
                                 <option value={'LIFE_CYCLE'}>LIFE_CYCLE</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select value={this.state.acknowledgement} onChange={(e) => this.updateAckFilter(e.target.value)} className="form-control">
+                                <option value={'none'}>No Filter</option>
+                                <option value={'ack_only'}>Only Acknowledged Events</option>
+                                <option value={'not_ack_only'}>Only Non-Acknowledged Events</option>
                             </select>
                         </td>
                     </tr>

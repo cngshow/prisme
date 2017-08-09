@@ -91,6 +91,7 @@ if (component.state.internal_name === 'filter1') {
                     hostname='none'
                     application_name='none'
                     tag='none'
+                    acknowledgement='none'
                     my_update={this.load_table} />
                 <hr/>
                 <LogEventTable my_module={this}/>

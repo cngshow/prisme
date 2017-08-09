@@ -41,6 +41,7 @@ export default class LogEventTable extends React.Component {
         fs['application_name'] = filter_state.application_name
         fs['tag'] = filter_state.tag
         fs['level'] = filter_state.level
+        fs['acknowledgement'] = filter_state.acknowledgement
 console.log("filter state is ", fs);
 
         $.get('react_log_events', fs, function (data) {
