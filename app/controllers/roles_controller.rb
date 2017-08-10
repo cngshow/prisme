@@ -57,7 +57,7 @@ JSON keys are user => user_string, roles => roles_array, token => user_token.<br
     @roles_hash = {roles: [], token: 'Not Authenticated', type: 'ssoi'}
 
     if user
-      @roles_hash[:roles] = roles_by_isaac_db(user, @isaac_db_uuid).map(&:name) #roles are passed in if the db is nil (backward compatibility)
+      @roles_hash[:roles] = roles_by_isaac_db(user, @isaac_db_uuid).map(&:name)
       @roles_hash[:token] = build_user_token(user)
       @roles_hash[:user] = ssoi_user
       add_issac_dbs(@roles_hash, user)
@@ -116,7 +116,7 @@ JSON keys are user => user_string, roles => roles_array, token => user_token.<br
     @roles_hash = {user: user_id, roles: [], token: 'Not Authenticated', type: 'devise'}
 
     if authenticated
-      @roles_hash[:roles] = roles_by_isaac_db(user, @isaac_db_uuid).map(&:name) #roles are passed in if the db is nil (backward compatibility)
+      @roles_hash[:roles] = roles_by_isaac_db(user, @isaac_db_uuid).map(&:name)
       @roles_hash[:token] = build_user_token(user)
       @roles_hash[:user] = user_id
       add_issac_dbs(@roles_hash, user)
@@ -161,7 +161,7 @@ Append .json the end of the url to change the format away from html.
         @roles_hash[:type] = @user_type
         @roles_hash[:id] = @user_id
         add_issac_dbs(@roles_hash, user)
-        roles = roles_by_isaac_db(user, @isaac_db_uuid) #roles is passed in if the db is nil (backward compatibility)
+        roles = roles_by_isaac_db(user, @isaac_db_uuid)
         @roles_hash[:roles] = roles
       else
         $log.warn("The ids in the token do not match the id found in the database! No roles!")
@@ -176,7 +176,7 @@ Append .json the end of the url to change the format away from html.
   private
 
   #passes the role through if it is not a modeling role.  If it is, filters it if the role is allowed for the given isaac db.
-  #if the isaac_db_uuid is nil it adds the role (backward compatibility)
+  #if the isaac_db_uuid is nil it will not add the role
   def roles_by_isaac_db(user, isaac_db_uuid)
     $log.debug("Gathering roles for user #{user.user_name} relative to isaac_db #{isaac_db_uuid.inspect}")
     roles = []
@@ -185,7 +185,7 @@ Append .json the end of the url to change the format away from html.
       if (!@isaac_db_uuid.nil? && Roles::MODELING_ROLES.include?(role_string))
         roles << role if user.isaac_role?(role_string: role_string, isaac_db_id: isaac_db_uuid)
       else
-        roles << role
+        roles << role unless Roles::MODELING_ROLES.include?(role_string)
       end
     end
     $log.debug("returning #{roles} for #{user.user_name} relative to isaac_db #{isaac_db_uuid}")
