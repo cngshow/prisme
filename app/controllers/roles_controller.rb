@@ -43,7 +43,7 @@ Returns all the roles defined on the system.<br>
   #http://localhost:3000/roles/get_ssoi_roles.json?id=cboden
   api :GET, PrismeUtilities::RouteHelper.route(:roles_get_ssoi_roles_path), 'Request all roles for a VA Single Sign on User user as HTML or JSON.'
   param :id, String, desc: 'The SSO user id as defined by the header HTTP_ADSAMACCOUNTNAME', required: true
-  param :isaac_db_uuid, String, desc: 'An optional isaac database uuid.  Modeling roles are appropriately filtered.', required: true
+  param :isaac_db_uuid, String, desc: 'An optional isaac database uuid.  Modeling roles are appropriately filtered.', required: false
   description %q{
 Returns all the roles for an SSOi user.
 <br>Append .json to the end of the url to change the format away from html.<br>
