@@ -40,3 +40,9 @@ node_modules
 # Generated js bundles
 /app/assets/webpack/*
 
+Procfile.dev
+app/assets/webpack/
+db/data/
+log/
+test/reports/
+yarn.lock
