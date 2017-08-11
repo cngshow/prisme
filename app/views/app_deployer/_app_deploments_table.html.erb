@@ -1,6 +1,13 @@
 <%= render('layouts/filter_table_poll_results', filter_id: 'deploy_filter_rows', filter_label: 'Filter Results', include_all_rows: false, poll: locals['poll_function_name']) if locals['poll_function_name'] %>
+<style>
+  .appDeployer_caption {
+    color: #000000;
+    font-size: large;
+  }
+</style>
 
-<table id="data-table" class="prisme-table table-striped table-hover">
+<table id="data-table" class="prisme-table table-striped table-hover" aria-labelledby="caption">
+  <caption id="appdepcaption" class="appDeployer_caption">Application Deployments</caption>
   <thead>
   <tr>
     <% locals['fields'].keys.each do |col| %>

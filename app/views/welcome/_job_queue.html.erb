@@ -1,7 +1,14 @@
 <h4><%=PRISME_NAME%> Job Queue</h4>
 <%= render 'layouts/filter_table_poll_results', filter_id: 'pjq_filter_rows', filter_label: 'Filter Results', include_all_rows: false, poll: 'reload' %>
+<style>
+  .jobqueue_caption {
+    color: #000000;
+    font-size: large;
+  }
+</style>
+<table id="table-data" class="prisme-table table-striped table-hover" aria-labelledby="caption">
+  <caption id="jobcaption" class="jobqueue_caption_caption">Job Queue</caption>
 
-<table id="table-data" class="prisme-table table-striped table-hover">
   <thead>
   <tr>
     <th scope="col" >Job Name</th>
@@ -9,20 +16,19 @@
     <th colspan="2" width="20%" scope="col" >Job Execution Times</th>
     <th scope="col" >Elapsed Time</th>
     <th scope="col" >User</th>
-    <th scope="col" >Last Error</th>
     <th scope="col" >Result</th>
   </tr>
   </thead>
   <tbody>
   <tr>
-    <td colspan="8" class="text-center" scope="col">There are no items to list...</td>
+    <td colspan="7" class="text-center" scope="col">There are no items to list...</td>
   </tr>
   </tbody>
 </table>
 <br/>
 <script>
   function loadJobQueueTable(data) {
-    var fields = ['job_name', 'status', 'execution_times', 'elapsed_time', 'user', 'last_error', 'result'];
+    var fields = ['job_name', 'status', 'execution_times', 'elapsed_time', 'user', 'result'];
     var tbody = $('#table-data').find('tbody');
     tbody.empty();
 
