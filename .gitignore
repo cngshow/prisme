@@ -30,7 +30,7 @@ db/schema.rb
 /db/data/*
 /version.txt
 test/reports/*
-config/oracle_database.yml.bak
+config/my_dev_database.yml
 /startup.bash
 .yardoc
 # React on Rails
