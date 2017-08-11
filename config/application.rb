@@ -36,7 +36,13 @@ module RailsPrisme
     config.active_job.queue_adapter = :sucker_punch
 
     oracle_yaml = (RbConfig::CONFIG["host_os"].eql?('mswin32')) ? "#{Rails.root}/config/oracle_database.yml" : $PROPS['PRISME.data_directory'] + '/oracle_database.yml'
-    self.paths['config/database'] = oracle_yaml if (File.exists?(oracle_yaml))
+    my_devdb_yaml = "#{Rails.root}/config/my_dev_database.yml"
+
+    if File.exists?(my_devdb_yaml)
+      self.paths['config/database'] = my_devdb_yaml
+    else
+      self.paths['config/database'] = oracle_yaml if (File.exists?(oracle_yaml))
+    end
     $database = (File.exists?(oracle_yaml)) ? RailsPrisme::ORACLE : RailsPrisme::H2
     #http://stackoverflow.com/questions/4204724/strategies-for-overriding-database-yml
   end
