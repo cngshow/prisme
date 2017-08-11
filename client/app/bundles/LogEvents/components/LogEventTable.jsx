@@ -2,19 +2,6 @@
 import React from 'react';
 import LogEventRow from './LogEventRow.jsx';
 
-/*
- class LogEventRow extends React.Component {
- render() {
- return (
- <tr>
- <td>{this.props.name}</td>
- <td>{this.props.product.price}</td>
- </tr>
- );
- }
- }
- */
-
 export default class LogEventTable extends React.Component {
     static propTypes = {
         // row_data: PropTypes.array.isRequired, // this is passed from the Rails view
@@ -43,7 +30,8 @@ export default class LogEventTable extends React.Component {
         fs['level'] = filter_state.level
         fs['acknowledgement'] = filter_state.acknowledgement
 console.log("filter state is ", fs);
-
+        //disable state
+        this.props.my_module.getFilter().setState({disabled: true})
         $.get('react_log_events', fs, function (data) {
             console.log("I got back ", data)
             outer.setState({row_data: data.rows})
@@ -54,6 +42,9 @@ console.log("filter state is ", fs);
             console.log('log levels are ', data.log_levels)
             console.log('the filter from the table is ', outer.props.my_module.getFilter())
             outer.props.my_module.getFilter().setState({log_level_values: data.log_levels, hostname_values: data.hostname, tag_values: data.tag, application_name_values: data.application_name })
+        }).always( function() {
+            //set state to enabled
+            outer.props.my_module.getFilter().setState({disabled: false})
         })
     }
 

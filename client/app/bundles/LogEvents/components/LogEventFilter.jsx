@@ -31,13 +31,20 @@ export default class LogEventFilter extends React.Component {
             tag_values: [],
             application_name_values: [],
             log_level_values: {},
+            disabled: false,
+            ack_values: {ack_only: 'Only Acknowledged Events', not_ack_only: 'Only Non-Acknowledged Events'},
+            row_values: {'15 Rows': 15, '30 Rows': 30, '45 Rows': 45, '60 Rows': 60}
         };
         this.fetchDropdown = this.fetchDropdown.bind(this)
+        this.fetchDropdownValues = this.fetchDropdownValues.bind(this)
         this.shouldTableUpdate = this.shouldTableUpdate.bind(this)
 
     }
 
     shouldTableUpdate(prevState) {
+        if (this.state.disabled == true){
+            return false
+        }
         let changed = false
         changed = changed || (prevState.num_rows != this.state.num_rows)
         changed = changed || (prevState.hostname != this.state.hostname)
@@ -91,26 +98,39 @@ export default class LogEventFilter extends React.Component {
         this.setState({acknowledgement: acknowledgement});
     };
 
-    fetchDropdown(val) {
+    fetchDropdown(type, values_key, callback, add_no_filter) {
+        let rval = null
+        if (this.state.disabled) {
+            rval = (
+                <select disabled value={type} onChange={(e) => this[callback](e.target.value)} className="form-control">
+                    {this.fetchDropdownValues(values_key, add_no_filter)}
+                </select>)
+        } else {
+            rval = (
+                <select value={type} onChange={(e) => this[callback](e.target.value)} className="form-control">
+                    {this.fetchDropdownValues(values_key, add_no_filter)}
+                </select>)
+        }
+        return rval
+    }
+
+    fetchDropdownValues(val, add_no_filter) {
         let the_data = this.state[val]
-        console.log('in fetch host names - ' + val, the_data)
         let rval = []
-        rval.push(<option value={'none'}>No Filter</option>)
+        if (add_no_filter) {
+            rval.push(<option value={'none'}>No Filter</option>)
+        }
         if (the_data.constructor == Array) {
-            console.log("array for ", val);
             for (let opt of the_data) {
                 rval.push(<option value={opt}>{opt}</option>)
             }
 
         } else {//Object (hash)
-            console.log("hash for ", val);
             for (let key in the_data) {
                 let value = the_data[key]
                 rval.push(<option value={value}>{key}</option>)
             }
         }
-
-        console.log('in fetch host names, returning', rval)
         return rval
     }
 
@@ -118,6 +138,7 @@ export default class LogEventFilter extends React.Component {
         // console.log("I am rendering log event filter!");
         // console.log("num_rows state is " + this.state.num_rows);
         // console.log("render logEventFilter! " + this.state.my_module.props.children);
+        console.log("am enabled = ", this.state.disabled);
         return (
             <div>
                 <table width="50%">
@@ -131,46 +152,22 @@ export default class LogEventFilter extends React.Component {
                     </tr>
                     <tr>
                         <td>
-                            <select value={this.state.num_rows} onChange={(e) => this.updateNumRows(e.target.value)}
-                                    className="form-control">
-                                <option value={15}>15 Rows</option>
-                                <option value={30}>30 Rows</option>
-                                <option value={45}>45 Rows</option>
-                                <option value={60}>60 Rows</option>
-                            </select>
+                            {this.fetchDropdown(this.state.num_rows, 'row_values', 'updateNumRows', false)}
                         </td>
                         <td>
-                            <select value={this.state.hostname} onChange={(e) => this.updateHostname(e.target.value)}
-                                    className="form-control">
-                                {this.fetchDropdown('hostname_values')}
-                            </select>
+                            {this.fetchDropdown(this.state.hostname, 'hostname_values', 'updateHostname', true)}
                         </td>
                         <td>
-                            <select value={this.state.application_name}
-                                    onChange={(e) => this.updateApplicationName(e.target.value)}
-                                    className="form-control">
-                                {this.fetchDropdown('application_name_values')}
-                            </select>
+                            {this.fetchDropdown(this.state.application_name, 'application_name_values', 'updateApplicationName', true)}
                         </td>
                         <td>
-                            <select value={this.state.level} onChange={(e) => this.updateLogLevel(e.target.value)}
-                                    className="form-control">
-                                {this.fetchDropdown('log_level_values')}
-                            </select>
+                            {this.fetchDropdown(this.state.level, 'log_level_values', 'updateLogLevel', true)}
                         </td>
                         <td>
-                            <select value={this.state.tag} onChange={(e) => this.updateTag(e.target.value)}
-                                    className="form-control">
-                                {this.fetchDropdown('tag_values')}
-                            </select>
+                            {this.fetchDropdown(this.state.tag, 'tag_values', 'updateTag', true)}
                         </td>
                         <td>
-                            <select value={this.state.acknowledgement}
-                                    onChange={(e) => this.updateAckFilter(e.target.value)} className="form-control">
-                                <option value={'none'}>No Filter</option>
-                                <option value={'ack_only'}>Only Acknowledged Events</option>
-                                <option value={'not_ack_only'}>Only Non-Acknowledged Events</option>
-                            </select>
+                            {this.fetchDropdown(this.state.acknowledgement, 'ack_values', 'updateAckFilter', true)}
                         </td>
                     </tr>
                 </table>
