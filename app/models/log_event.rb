@@ -8,7 +8,7 @@ class LogEvent < ActiveRecord::Base
   TAG = :tag
   HOSTNAME = :hostname
   APPLICATION_NAME = :application_name
-  UNIQUEABLE_COLUMS = [TAG, HOSTNAME, APPLICATION_NAME]
+  UNIQUEABLE_COLUMNS = [TAG, HOSTNAME, APPLICATION_NAME]
 
 
   def valid_level?
@@ -29,7 +29,7 @@ class LogEvent < ActiveRecord::Base
   end
 
   def self.unique_fetch(column:)
-    raise ArgumentError.new("Column #{column} is invalid.  Must be one of #{UNIQUEABLE_COLUMS}") unless UNIQUEABLE_COLUMS.include? column
+    raise ArgumentError.new("Column #{column} is invalid.  Must be one of #{UNIQUEABLE_COLUMNS}") unless UNIQUEABLE_COLUMNS.include? column
     rval = LogEvent.uniq.pluck(column)
     $log.trace("unique_fetch returning #{rval} for column #{column}")
     rval

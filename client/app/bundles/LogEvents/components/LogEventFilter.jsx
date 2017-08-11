@@ -32,7 +32,7 @@ export default class LogEventFilter extends React.Component {
             application_name_values: [],
             log_level_values: {},
             disabled: false,
-            ack_values: {ack_only: 'Only Acknowledged Events', not_ack_only: 'Only Non-Acknowledged Events'},
+            ack_values: {'Only Acknowledged Events': 'ack_only', 'Only Non-Acknowledged Events': 'not_ack_only'},
             row_values: {'15 Rows': 15, '30 Rows': 30, '45 Rows': 45, '60 Rows': 60}
         };
         this.fetchDropdown = this.fetchDropdown.bind(this)
