@@ -1,5 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+//import asyncPoll from 'react-async-poll'; //Can't figure this out
+
 
 export default class LogEventFilter extends React.Component {
     static propTypes = {
@@ -32,13 +34,14 @@ export default class LogEventFilter extends React.Component {
             application_name_values: [],
             log_level_values: {},
             disabled: false,
+            last_poll: 0,
             ack_values: {'Only Acknowledged Events': 'ack_only', 'Only Non-Acknowledged Events': 'not_ack_only'},
             row_values: {'15 Rows': 15, '30 Rows': 30, '45 Rows': 45, '60 Rows': 60}
         };
         this.fetchDropdown = this.fetchDropdown.bind(this)
         this.fetchDropdownValues = this.fetchDropdownValues.bind(this)
         this.shouldTableUpdate = this.shouldTableUpdate.bind(this)
-
+        this.poll = this.poll.bind(this)
     }
 
     shouldTableUpdate(prevState) {
@@ -60,8 +63,29 @@ export default class LogEventFilter extends React.Component {
     }
 
     componentDidMount() {
+        console.log("polling interval is ", LogEventPollData.polling_interval);
+        let pollIndex = setInterval(this.poll, LogEventPollData.polling_interval )//every minute
+        LogEventPollData.pollerIndex = pollIndex
+    }
 
-        // getTable().loadData();
+
+    poll() {
+        if (this.state.disabled == true){
+            console.log("Disabled skipping LogEvent poll.");
+            return//skip this poll
+        }
+        
+        if (((new Date()) - this.state.last_poll) > (LogEventPollData.polling_interval - LogEventPollData.log_event_poller_activity_delta)) {
+            console.log("About to do a LogEventPoll",this.state.last_poll);
+            this.props.my_update(this.state);
+        } else {
+            console.log("Skipping this poll, due to previous update.", this.state.last_poll);
+        }
+    }
+
+    componentWillUnmount() {
+        clearInterval(LogEventPollData.pollerIndex)
+        console.log("Log Event polling stoped!!!!!", LogEventPollData.pollerIndex);
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -102,12 +126,12 @@ export default class LogEventFilter extends React.Component {
         let rval = null
         if (this.state.disabled) {
             rval = (
-                <select disabled value={type} onChange={(e) => this[callback](e.target.value)} className="form-control">
+                <select key={values_key} disabled value={type} onChange={(e) => this[callback](e.target.value)} className="form-control">
                     {this.fetchDropdownValues(values_key, add_no_filter)}
                 </select>)
         } else {
             rval = (
-                <select value={type} onChange={(e) => this[callback](e.target.value)} className="form-control">
+                <select key={values_key} value={type} onChange={(e) => this[callback](e.target.value)} className="form-control">
                     {this.fetchDropdownValues(values_key, add_no_filter)}
                 </select>)
         }
@@ -122,13 +146,13 @@ export default class LogEventFilter extends React.Component {
         }
         if (the_data.constructor == Array) {
             for (let opt of the_data) {
-                rval.push(<option value={opt}>{opt}</option>)
+                rval.push(<option key={opt} value={opt}>{opt}</option>)
             }
 
         } else {//Object (hash)
             for (let key in the_data) {
                 let value = the_data[key]
-                rval.push(<option value={value}>{key}</option>)
+                rval.push(<option key={key} value={value}>{key}</option>)
             }
         }
         return rval

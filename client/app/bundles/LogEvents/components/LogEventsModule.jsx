@@ -20,32 +20,6 @@ export default class LogEventsModule extends React.Component {
         this.load_table = this.load_table.bind(this);
     }
 
-    registerComponent(component) {
-        console.log("registering " + component);
-        this.child_components.push(component);
-    }
-
-    notifyPropChange = (component) => {
-        // if (component.state.internal_name === 'gregger') {
-            console.log("-------------------- component.state.internal_name is " + component.state.internal_name);
-        // }
-if (component.state.internal_name === 'filter1') {
-    this.getTable().setState({filter_rows: component.state.num_rows});
-    return;
-} else {
-    console.log("------------------------------------------------- in else clause!!!!!!!!!!!");
-    this.getTable().setState({num_rows: component.state.num_rows});
-
-}
-        // console.log("inspect component is " + this.inspectObject(component));
-        // console.log("this.child_components name is " + this.inspectObject(component.context));
-        // console.log("notifyPropChange YAY!!!" + component.state.num_rows);
-        // console.log("_instance is " + this.inspectObject(component._instance));
-        // var greg = parseInt(component.state.num_rows);
-        // this.getTable().setState({num_rows: greg, filter_rows: greg + 5})
-        // this.setState({title: 'We updated via notifyPropChange with ' + component.state.num_rows})
-    }
-
     setFilter(filter) {
         this.setState({filter: filter})
     }
@@ -60,7 +34,7 @@ if (component.state.internal_name === 'filter1') {
     }
 
     getTable() {
-        console.log("calling getTable...returning " + this.state.table);
+        console.log("calling getTable...returning ", this.state.table);
         let table = this.state.table;
         console.log("table is ", table);
         return table;
@@ -75,7 +49,7 @@ if (component.state.internal_name === 'filter1') {
     load_table(filter_state) {
         console.log("loading table with props...", filter_state);
         filter_state.my_module.getTable().fetch_rows(filter_state)
-}
+    }
 
     render() {
         console.log("log event module rendered....");
@@ -92,7 +66,7 @@ if (component.state.internal_name === 'filter1') {
                     application_name='none'
                     tag='none'
                     acknowledgement='none'
-                    my_update={this.load_table} />
+                    my_update={this.load_table}/>
                 <hr/>
                 <LogEventTable my_module={this}/>
             </div>

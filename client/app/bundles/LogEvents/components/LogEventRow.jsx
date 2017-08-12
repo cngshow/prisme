@@ -3,7 +3,6 @@ import React from 'react';
 export default class LogEventRow extends React.Component {
     constructor(props) {
         super(props);
-        console.log("My row props are ", props)
         this.paint_ack.bind(this)
         this.handleAck = this.handleAck.bind(this)
     }

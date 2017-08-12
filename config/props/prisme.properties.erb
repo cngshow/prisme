@@ -62,3 +62,10 @@ tomcat_deployment_cache = 1
 
 #slack notify jenkins job build
 slack_job_notify = false
+
+#log event poll interval (in seconds)
+log_event_poller = 60
+
+#log event poll activity check (in seconds)
+#if the last update of the log event table was between (log_event_poller - log_event_poller_activity_delta) continue the update
+log_event_poller_activity_delta = 10

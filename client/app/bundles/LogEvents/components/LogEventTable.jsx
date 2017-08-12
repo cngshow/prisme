@@ -20,7 +20,13 @@ export default class LogEventTable extends React.Component {
         this.state.my_module.setTable(this);
     }
 
+    componentDidMount() {
+    }
+
     fetch_rows(filter_state) {
+        if (!filter_state || (this.props.my_module.getFilter().state.disabled == true)){
+            return//don't poll if an active fetch is happening or we have no state
+        }
         let outer = this;
         let fs = {}
         fs['num_rows'] = filter_state.num_rows
@@ -29,7 +35,6 @@ export default class LogEventTable extends React.Component {
         fs['tag'] = filter_state.tag
         fs['level'] = filter_state.level
         fs['acknowledgement'] = filter_state.acknowledgement
-console.log("filter state is ", fs);
         //disable state
         this.props.my_module.getFilter().setState({disabled: true})
         $.get('react_log_events', fs, function (data) {
@@ -45,6 +50,7 @@ console.log("filter state is ", fs);
         }).always( function() {
             //set state to enabled
             outer.props.my_module.getFilter().setState({disabled: false})
+            outer.props.my_module.getFilter().setState({last_poll: new Date()})
         })
     }
 

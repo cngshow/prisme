@@ -10,6 +10,7 @@
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
 //
+//= require log_event_globals.js
 //= require webpack-bundle.js
 //= require jquery2
 //= require jquery_ujs
@@ -139,5 +140,4 @@ function getEvent(e){
 };
 function getKeyCode(e) {
     return (e.keyCode ? e.keyCode : e.which);
-}; 
-
+};
