@@ -32,3 +32,4 @@ db/schema.rb
 test/reports/*
 config/oracle_database.yml.bak
 /startup.bash
+.DS_Store
