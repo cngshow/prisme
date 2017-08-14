@@ -1,6 +1,4 @@
 Rails.application.routes.draw do
-  get 'log_events', to: 'log_events#index'
-  get 'react_log_events', to: 'log_events#react_log_events'
   apipie
   class OnlyAjaxRequest
     def matches?(request)
@@ -22,8 +20,8 @@ Rails.application.routes.draw do
   post 'hl7_messaging/hl7_messaging_results_table', as: 'hl7_messaging_results_table'
 
   #resources :log_events
+  get 'react_log_events', to: 'log_events#react_log_events', :constraints => OnlyAjaxRequest.new
   match 'log_event' => 'log_events#log_event', :as => :log_event, via: [:get, :put, :post]
-  post 'log_events/acknowledge_log_event', as: :acknowledge_log_event, :constraints => OnlyAjaxRequest.new
 
   # javascript timer checking user session timeout
   get 'welcome/session_timeout', as: :session_timeout

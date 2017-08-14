@@ -37,7 +37,7 @@
   </div>
   <% if policy(:navigation).any_administrator? && 'true'.eql?($PROPS['PRISME.show_log_events']) %>
       <div id="tp-log_events">
-        <%= render partial: 'log_events' %>
+        <%= react_component('LogEventsModule', props: {title: 'Log Events'}, prerender: false) %>
       </div>
   <% end %>
 </div>

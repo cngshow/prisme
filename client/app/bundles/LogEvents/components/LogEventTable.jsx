@@ -60,13 +60,12 @@ export default class LogEventTable extends React.Component {
             result.push(<LogEventRow row={row} key={row.id}/>)
         }
         if (result.length == 0) {
-            result.push(<tr key="useless"><td colSpan="8">nothing yet</td></tr>)
+            result.push(<tr key="useless"><td colSpan="6">No results found</td></tr>)
         }
         return result
     }
 
     render() {
-        console.log("I am rendering the data")
         //flash_notify({message: 'I rendered!'}, {type: 'success', delay: 2500, z_index: 9999999});
         return (
             <div>
@@ -79,7 +78,6 @@ export default class LogEventTable extends React.Component {
                         <th scope="col" width="10%">Log Tag</th>
                         <th scope="col" width="100px">Created Date</th>
                         <th scope="col" width="30%">Log Message</th>
-                        <th scope="col" colSpan="2">Acknowledgement</th>
                     </tr>
                     </thead>
                     <tbody>

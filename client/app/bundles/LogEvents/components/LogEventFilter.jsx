@@ -21,6 +21,15 @@ export default class LogEventFilter extends React.Component {
         // How to set initial state in ES6 class syntax
         // https://facebook.github.io/react/docs/reusable-components.html#es6-classes
         // console.log("props in filter " + JSON.stringify(props));
+
+        //this code is to prevent people from putting values too low in the prop file
+        if (LogEventPollData.polling_interval < 15*1000) {
+            LogEventPollData.polling_interval = 60 * 1000;
+        }
+        if (LogEventPollData.log_event_poller_activity_delta < 2*1000) {
+            LogEventPollData.log_event_poller_activity_delta = 10*1000;
+        }
+
         this.state = {
             num_rows: this.props.num_rows,
             hostname: this.props.hostname,
@@ -142,7 +151,7 @@ export default class LogEventFilter extends React.Component {
         let the_data = this.state[val]
         let rval = []
         if (add_no_filter) {
-            rval.push(<option value={'none'}>No Filter</option>)
+            rval.push(<option key="no_filter_key" value={'none'}>No Filter</option>)
         }
         if (the_data.constructor == Array) {
             for (let opt of the_data) {
@@ -159,20 +168,15 @@ export default class LogEventFilter extends React.Component {
     }
 
     render() {
-        // console.log("I am rendering log event filter!");
-        // console.log("num_rows state is " + this.state.num_rows);
-        // console.log("render logEventFilter! " + this.state.my_module.props.children);
-        console.log("am enabled = ", this.state.disabled);
         return (
             <div>
-                <table width="50%">
+                <table width="50%" className="filter_padding">
                     <tr>
                         <th className="text-center">Filter Row Count</th>
                         <th className="text-center">Host Name</th>
                         <th className="text-center">Application</th>
                         <th className="text-center">Log Level</th>
                         <th className="text-center">Log Tag</th>
-                        <th className="text-center">Acknowledgement</th>
                     </tr>
                     <tr>
                         <td>
@@ -189,9 +193,6 @@ export default class LogEventFilter extends React.Component {
                         </td>
                         <td>
                             {this.fetchDropdown(this.state.tag, 'tag_values', 'updateTag', true)}
-                        </td>
-                        <td>
-                            {this.fetchDropdown(this.state.acknowledgement, 'ack_values', 'updateAckFilter', true)}
                         </td>
                     </tr>
                 </table>

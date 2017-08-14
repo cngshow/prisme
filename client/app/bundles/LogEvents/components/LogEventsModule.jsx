@@ -25,7 +25,6 @@ export default class LogEventsModule extends React.Component {
     }
 
     setTable(table) {
-        console.log("I am setting table to " + table);
         this.setState({table: table})
     }
 
@@ -34,30 +33,20 @@ export default class LogEventsModule extends React.Component {
     }
 
     getTable() {
-        console.log("calling getTable...returning ", this.state.table);
         let table = this.state.table;
-        console.log("table is ", table);
         return table;
     };
 
-    componentDidMount() {
-        console.log("componentDidMount logEventsModule! - " + this.props.children);
-        // console.log("componentDidMount get filter row num property! - " + this.child_components['greg']);
-        // this.getTable().loadData();
-    }
-
     load_table(filter_state) {
-        console.log("loading table with props...", filter_state);
         filter_state.my_module.getTable().fetch_rows(filter_state)
     }
 
     render() {
-        console.log("log event module rendered....");
         return (
             <div>
-                <h3>
+                <h4>
                     {this.state.title}
-                </h3>
+                </h4>
                 <LogEventFilter
                     my_module={this}
                     num_rows={15}
