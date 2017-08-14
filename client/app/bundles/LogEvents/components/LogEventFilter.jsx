@@ -1,7 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-//import asyncPoll from 'react-async-poll'; //Can't figure this out
-
 
 export default class LogEventFilter extends React.Component {
     static propTypes = {
@@ -170,7 +168,7 @@ export default class LogEventFilter extends React.Component {
     render() {
         return (
             <div>
-                <table width="50%" className="filter_padding">
+                <table width="80%" className="filter_padding">
                     <tr>
                         <th className="text-center">Filter Row Count</th>
                         <th className="text-center">Host Name</th>
