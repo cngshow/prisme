@@ -3,7 +3,10 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers where provided, and the git 
 commit history.
 
-* 2017/08/?? - 4.17 - PENDING
+* 2017/08/?? - 4.18 - PENDING
+   *
+
+* 2017/08/11 - 4.17
    * 564558 Partial fixes for 508; adding captions where missing as analyzed and reported by VA FireEyes 508 standards
    * firx for jazz ticket 572089
 
