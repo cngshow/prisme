@@ -4,7 +4,7 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 commit history.
 
 * 2017/08/?? - 4.18 - PENDING
-   *
+   * Log Events tab re-written.
 
 * 2017/08/11 - 4.17
    * 564558 Partial fixes for 508; adding captions where missing as analyzed and reported by VA FireEyes 508 standards
