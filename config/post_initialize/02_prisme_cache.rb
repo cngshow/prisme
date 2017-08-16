@@ -1,5 +1,3 @@
-$last_activity_time = 10.years.ago #default last run is 20 years ago, so durations must be 10 years or less.
-
 CACHE_ACTIVITIES = {
     #the pattern:
     #PrismeCacheManager::Some_Cache_Constant => [[work for registration 1, work for registration 2, ...], :roles_symbol?] (or nil if no roles are required)

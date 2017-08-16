@@ -57,6 +57,8 @@ class DeployWarJob < PrismeBaseJob
       $log.error(ex.backtrace.join("\n"))
       raise CargoSupport::CargoError.new(ex.message)
     ensure
+      TomcatUtility::TomcatDeploymentsCache.instance.dirty = true
+      PrismeCacheManager::CacheWorkerManager.instance.fetch(PrismeCacheManager::TOMCAT_DEPLOY).do_work
       results = logger.results
       results_hash = {tooltip: results, message: "Deployed #{file_name}"}
       save_result results, results_hash
