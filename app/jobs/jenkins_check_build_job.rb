@@ -80,6 +80,10 @@ class JenkinsCheckBuild < PrismeBaseJob
               result << "Jenkins job #{name} has a build result of " + build_result.to_s + ".\n"
               $log.info "Jenkins job #{name} has a build result of " + build_result.to_s + ".\n"
               result_hash[:build] = build_result.to_s
+
+              NexusUtility::DbBuilderSupport.instance.dirty = true
+              PrismeCacheManager::CacheWorkerManager.instance.fetch(PrismeCacheManager::DB_BUILDER).do_work
+
               begin
                 result_hash[:deleted] = Deleted::UNKNOWN
                 if (boolean($PROPS['JENKINS.delete_jenkins_jobs']))
