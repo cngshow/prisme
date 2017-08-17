@@ -86,6 +86,8 @@ isaacs.first.get_db_uuid
 isaacs.first.get_name
 isaacs.first.komets.first.get_name
 isaacs.first.komets.first.get_isaac_db_uuid #will match with isaacs.first.get_db_uuid
+include TomcatUtility
+TomcatDeploymentsCache.instance.last_activity_time
 =end
     #same as get_cached_deployments, but hash is indifferent
     def get_indifferent_cached_deployments
@@ -110,7 +112,7 @@ isaacs.first.komets.first.get_isaac_db_uuid #will match with isaacs.first.get_db
 
     def register
       duration = $PROPS['PRISME.tomcat_deployment_cache'].to_i.minutes
-      @worker.register_work('TomcatDeploymentsCache', duration) do
+      @worker.register_work('TomcatDeploymentsCache', duration, @dirty_lambda) do
         do_work
       end
     end
@@ -118,6 +120,7 @@ isaacs.first.komets.first.get_isaac_db_uuid #will match with isaacs.first.get_db
     private
     def initialize
       @worker = PrismeCacheManager::CacheWorkerManager.instance.fetch(PrismeCacheManager::TOMCAT_DEPLOY)
+      @worker.register_work_complete(observer: self)
       @work_lock = @worker.work_lock
       @deployments = {}
       super(@work_lock)

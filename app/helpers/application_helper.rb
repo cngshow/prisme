@@ -2,66 +2,6 @@ require './lib/time/time_utils'
 
 module ApplicationHelper
   include BootstrapNotifier
-=begin
-
-  NOTIFY = 'notify_'
-
-  def flash_notify(msg, **addl_settings)
-    options = {message: msg}
-    settings = {
-        element: 'body',
-        # position: null,
-        type: 'info',
-        allow_dismiss: false,
-        newest_on_top: false,
-        showProgressbar: false,
-        placement: {
-            from: 'top',
-            align: 'right'
-        },
-        offset: 20,
-        spacing: 10,
-        z_index: 1031,
-        delay: 5000,
-        timer: 1000,
-        url_target: '_blank',
-        # mouse_over: null,
-        animate: {
-            enter: 'animated fadeInDown',
-            exit: 'animated fadeOutUp'
-        },
-        # onShow: null,
-        # onShown: null,
-        # onClose: null,
-        # onClosed: null,
-        icon_type: 'class'
-    }
-
-    name = "#{NOTIFY}#{Time.now.to_i}"
-    settings.merge!(addl_settings)
-    flash[name] = [options, settings]
-  end
-
-  def show_flash_notify
-    ret = ''
-    flash.each do |name, vals|
-      show_flash = true
-
-      if name.is_a?(String) && name.start_with?(NOTIFY)
-        options = vals.first.to_json
-        settings = vals.last.to_json
-        flash.discard(name)
-      else
-        show_flash = false
-      end
-
-      if show_flash
-        ret << "flash_notify(#{options}, #{settings});"
-      end
-    end
-    ret
-  end
-=end
 
   def errors_to_flash(errors)
     retval = []
@@ -111,9 +51,8 @@ module ApplicationHelper
   end
 
   def update_caches
-    $last_activity_time = Time.now
     CACHE_ACTIVITIES.each_pair do |app, options|
-      if (options.last.nil? || (self.send options.last))
+      if (options.last.nil? || (self.send options.last)) #self.send options.last is the role check (:any_administrator?)
         $log.trace("About to wake up #{app} activity thread")
         PrismeCacheManager::CacheWorkerManager.instance.fetch(app).do_work
       end

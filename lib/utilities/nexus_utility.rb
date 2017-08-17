@@ -60,7 +60,7 @@ class DbBuilderSupport < PrismeCacheManager::ActivitySupport
 
     def register
       duration = $PROPS['PRISME.db_builder_cache'].to_i.minutes
-      @worker.register_work('DbBuilderSupport', duration) do
+      @worker.register_work('DbBuilderSupport', duration, @dirty_lambda) do
         do_work
       end
     end
@@ -68,6 +68,7 @@ class DbBuilderSupport < PrismeCacheManager::ActivitySupport
     private
     def initialize
       @worker = PrismeCacheManager::CacheWorkerManager.instance.fetch(PrismeCacheManager::DB_BUILDER)
+      @worker.register_work_complete(observer: self)
       @work_lock = @worker.work_lock
       super(@work_lock)
     end
@@ -150,7 +151,7 @@ class DbBuilderSupport < PrismeCacheManager::ActivitySupport
 
     def register
       duration = $PROPS['PRISME.app_deployer_cache'].to_i.minutes
-      @worker.register_work('DeployerSupport', duration) do
+      @worker.register_work('DeployerSupport', duration, @dirty_lambda) do
         do_work
       end
     end
@@ -158,6 +159,7 @@ class DbBuilderSupport < PrismeCacheManager::ActivitySupport
     private
     def initialize
       @worker = PrismeCacheManager::CacheWorkerManager.instance.fetch(PrismeCacheManager::APP_DEPLOYER)
+      @worker.register_work_complete(observer: self)
       @work_lock = @worker.work_lock
       super(@work_lock)
     end

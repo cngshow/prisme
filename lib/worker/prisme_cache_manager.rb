@@ -26,36 +26,53 @@ module PrismeCacheManager
   class CacheWorker
     attr_reader :work_lock
 
-    def register_work(work_tag, duration, &block)
+    #work tag is something like 'Tomcat_deployments'
+    #duration example '10.seconds'
+    #dirty lambda, a lambda returning a boolean (if dirty, work occurs independent of time)
+    #block is the work to do.
+    def register_work(work_tag, duration, dirty_lambda, &block)
       $log.info("Registering #{work_tag} for a duration of #{duration.inspect}")
       @work_lock.synchronize do
-        @registered_work << [work_tag, duration, block, 20.years.ago]
+        @registered_work << [work_tag, duration, dirty_lambda, block, 20.years.ago]
       end
+    end
+
+    def register_work_complete(observer:)
+      @notify_complete << observer
     end
 
     def do_work
       @registered_work.each do |work|
         work_tag = work[0]
         duration = work[1]
-        block = work[2]
-        last_run = work[3]
-        $log.trace("Maybe do work #{work_tag}")
-        if (($last_activity_time - last_run) >= duration)
+        dirty_lambda = work[2]
+        block = work[3]
+        last_run = work[4]
+        $log.error("Maybe do work #{work_tag}, are we dirty? #{dirty_lambda.call}")#GREG trace
+        if (((Time.now - last_run) >= duration) || dirty_lambda.call)
           @pool.post do
             @work_lock.synchronize do
-              $log.debug("Thread pool about to do work #{work_tag}")
+              $log.error("Thread pool about to do work #{work_tag}")#GREG debug
               begin
                 block.call
               rescue => ex
                 $log.error("#{work_tag} failed to execute! #{ex}")
                 $log.error(ex.backtrace.join("\n"))
               end
-              work[3] = Time.now
-              $log.debug("Work #{work_tag} is complete!")
+              work[4] = Time.now
+              $log.error("Work #{work_tag} is complete!")#GREG debug
+            end
+            @notify_complete.each do |notify|
+              begin
+                notify.work_complete if notify.respond_to? :work_complete
+              rescue => ex
+                $log.error("Notification of completion of work failed for #{work_tag}, error: #{ex}")
+                $log.error(ex.backtrace.join("\n"))
+              end
             end
           end
         else
-          $log.trace("Skipping work #{work_tag}")
+          $log.error("Skipping work #{work_tag}")#GREG trace
         end
       end
     end
@@ -63,11 +80,15 @@ module PrismeCacheManager
     def initialize
       @work_lock = Monitor.new
       @registered_work = []
+      @notify_complete = []
       @pool = Concurrent::FixedThreadPool.new(1)
     end
   end
 
   class ActivitySupport
+
+    attr_accessor :last_activity_time, :dirty
+
     def atomic_fetch(*fetches)
       @work_lock.synchronize do
         hash = {}
@@ -81,13 +102,30 @@ module PrismeCacheManager
 
     def initialize(lock)
       @work_lock = lock
+      @last_activity_time = 10.years.ago
+      @dirty = false
+      @dirty_lambda = -> do
+        @dirty
+      end
     end
+
+    def work_complete
+      @dirty = false
+      @last_activity_time = Time.now
+      $log.error("#{self} is updating dirty to false! Last activity time is now #{last_activity_time}")#GREG debug
+    end
+
+    #overwrite if needed
+    def to_s
+      self.class.to_s
+    end
+
   end
 
 end
 
 =begin
-load('./lib/worker/activity_based_work.rb')
+load('./lib/worker/prisme_cache_manager.rb')
 
 ActivityWorker.instance.register_work('play_work', 5.seconds) do puts "####################################Work #{Time.now}" end
 
