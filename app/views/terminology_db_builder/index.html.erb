@@ -151,11 +151,11 @@
         // validate that the DB name will be unique
         var db_name = $('#db_name').val();
         var version = $('#db_version').val();
-        var classifier = $('#classifier').val();
+        var classifier = $('#artifact_classifier').val();
         var params = {
             db_name: db_name,
             version: version,
-            classifier: classifier
+            artifact_classifier: classifier
         };
 
         // check that the db name/version is unique in git

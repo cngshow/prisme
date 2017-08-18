@@ -10,7 +10,7 @@ class TerminologyDatabaseBuilder < PrismeBaseJob
     classify = args.shift
     ibdf_files = args.shift
     metadata_version = args.shift
-    metadata_version = NexusArtifact.init_from_select_key(metadata_version).v
+    metadata_version = NexusUtility::NexusArtifact.init_from_select_key(metadata_version).v
 
     # pull out the git authentication information
     git_props = Service.get_git_props
