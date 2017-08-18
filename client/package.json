@@ -4,7 +4,8 @@
   "scripts": {
     "build:test": "webpack --config webpack.config.js",
     "build:production": "webpack -p --config webpack.config.js",
-    "build:development": "webpack -w --config webpack.config.js"
+    "build:development": "webpack -w --config webpack.config.js",
+    "build:development:watch": "webpack -w --config webpack.config.js --watch"
   },
   "cacheDirectories": [
     "node_modules",
