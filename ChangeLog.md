@@ -4,7 +4,7 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 commit history.
 
 * 2017/08/?? - 4.20 - PENDING
-   *
+   * 508 style on buttons + adding webpack watch on package.json
 
 * 2017/08/17 - 4.19
    * DBBuilder, cache and deployment changes.
