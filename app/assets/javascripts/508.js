@@ -1,11 +1,23 @@
   //tooltip on main page
-  $(document).on('blur', '.prismetooltip', function(e){
-    $(this).closest("td")
-           .siblings("td")
-           .last()
-           .find('button')
-           .first()
-           .focus();
+  $(document).on('keydown', '.prismetooltip', function(e){
+      var e = getEvent(e);
+      var keyCode = getKeyCode(e);
+
+      if (e.keyCode == 9 && e.shiftKey) {
+        e.preventDefault();
+        $(this).parent().prev('td').find('button')[0].focus();
+      };
+      if (e.keyCode == 9 && !e.shiftKey) {
+         e.preventDefault();
+         var siblings = $(this).parent().nextAll();
+        $.each(siblings, function(i , td){
+          var buttons = $(td).find('button');
+          if (buttons.length) {
+            buttons[0].focus();
+            return false;
+          };
+        });
+      };
   });
 
   function setModalTabs(modalSelector, maxTabIndex) { 

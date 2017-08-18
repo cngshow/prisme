@@ -5,6 +5,7 @@ commit history.
 
 * 2017/08/?? - 4.20 - PENDING
    * 508 style on buttons + adding webpack watch on package.json
+   * 508 tab fixes on dashboard tooltip
 
 * 2017/08/17 - 4.19
    * DBBuilder, cache and deployment changes.
