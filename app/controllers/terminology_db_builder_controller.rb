@@ -40,10 +40,10 @@ class TerminologyDbBuilderController < ApplicationController
     ret = {nexus_conflict: false}
     db_name = params['db_name']
     version = params['version']
-    classifier = params['classifier']
+    classifier = params['artifact_classifier']
 
     begin
-      zips = DeployerSupport.instance.atomic_fetch(:get_isaac_dbs)
+      zips = DeployerSupport.instance.atomic_fetch(:get_isaac_dbs).first.last
 
       if zips
         zips.each do |zip|

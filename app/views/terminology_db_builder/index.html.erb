@@ -1,6 +1,6 @@
 <!-- Trigger the modal with a button -->
 <br>
-<button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal" onclick="reset_form();">New
+<button type="button" class="btn btn-lg five-compliance" data-toggle="modal" data-target="#myModal" onclick="reset_form();">New
   Database Build Request
 </button>
 <div class="page-header">
@@ -151,11 +151,11 @@
         // validate that the DB name will be unique
         var db_name = $('#db_name').val();
         var version = $('#db_version').val();
-        var classifier = $('#classifier').val();
+        var classifier = $('#artifact_classifier').val();
         var params = {
             db_name: db_name,
             version: version,
-            classifier: classifier
+            artifact_classifier: classifier
         };
 
         // check that the db name/version is unique in git

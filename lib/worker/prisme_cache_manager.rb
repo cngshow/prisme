@@ -48,11 +48,11 @@ module PrismeCacheManager
         dirty_lambda = work[2]
         block = work[3]
         last_run = work[4]
-        $log.error("Maybe do work #{work_tag}, are we dirty? #{dirty_lambda.call}")#GREG trace
+        $log.trace("Maybe do work #{work_tag}, are we dirty? #{dirty_lambda.call}")#GREG trace
         if (((Time.now - last_run) >= duration) || dirty_lambda.call)
           @pool.post do
             @work_lock.synchronize do
-              $log.error("Thread pool about to do work #{work_tag}")#GREG debug
+              $log.debug("Thread pool about to do work #{work_tag}")#GREG debug
               begin
                 block.call
               rescue => ex
@@ -60,7 +60,7 @@ module PrismeCacheManager
                 $log.error(ex.backtrace.join("\n"))
               end
               work[4] = Time.now
-              $log.error("Work #{work_tag} is complete!")#GREG debug
+              $log.debug("Work #{work_tag} is complete!")#GREG debug
             end
             @notify_complete.each do |notify|
               begin
@@ -72,7 +72,7 @@ module PrismeCacheManager
             end
           end
         else
-          $log.error("Skipping work #{work_tag}")#GREG trace
+          $log.trace("Skipping work #{work_tag}")#GREG trace
         end
       end
     end
@@ -112,7 +112,7 @@ module PrismeCacheManager
     def work_complete
       @dirty = false
       @last_activity_time = Time.now
-      $log.error("#{self} is updating dirty to false! Last activity time is now #{last_activity_time}")#GREG debug
+      $log.debug("#{self} is updating dirty to false! Last activity time is now #{last_activity_time}")#GREG debug
     end
 
     #overwrite if needed
