@@ -4,7 +4,8 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 commit history.
 
 * 2017/08/?? - 4.21 - PENDING
-   *
+   * Defect 576574 - a refactor broke the database builder and the code was fixed
+   * Defect 568416 - modified the app deployer code to refresh the komet war and isaac db dropdown on wizard navigation in order to populate with the latest nexus artifacts and set the dirty flag on the cache with the completion of the respective job to force the refresh of the cache.
 
 * 2017/08/21 - 4.20
    * 508 style on buttons + adding webpack watch on package.json
