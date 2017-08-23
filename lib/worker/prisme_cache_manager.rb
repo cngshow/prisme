@@ -41,7 +41,7 @@ module PrismeCacheManager
       @notify_complete << observer
     end
 
-    def do_work
+    def do_work(asynchronous = true)
       @registered_work.each do |work|
         work_tag = work[0]
         duration = work[1]
@@ -50,7 +50,8 @@ module PrismeCacheManager
         last_run = work[4]
         $log.trace("Maybe do work #{work_tag}, are we dirty? #{dirty_lambda.call}")#GREG trace
         if (((Time.now - last_run) >= duration) || dirty_lambda.call)
-          @pool.post do
+          pool = asynchronous ? @pool : @synchronous
+          pool.post do
             @work_lock.synchronize do
               $log.debug("Thread pool about to do work #{work_tag}")#GREG debug
               begin
@@ -82,6 +83,8 @@ module PrismeCacheManager
       @registered_work = []
       @notify_complete = []
       @pool = Concurrent::FixedThreadPool.new(1)
+      @synchronous = Object.new
+      @synchronous.define_singleton_method(:post) do |&block| block.call end
     end
   end
 
