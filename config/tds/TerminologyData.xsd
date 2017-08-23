@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- edited with XMLSpy v2011 (http://www.altova.com) by Brent Jacox (Department of Veterans Affairs) -->
+<!-- Modified from the version created for VETs to correct the missing data type on MoveFromConceptCode.
+Also added a missing data type on the mapset item grouping field -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<xs:complexType name="MapSetType">
 		<xs:complexContent>
@@ -37,8 +38,6 @@
 							</xs:restriction>
 						</xs:simpleType>
 					</xs:element>
-					<xs:element name="EffectiveDate" type="xs:date" minOccurs="0"/>
-					<xs:element name="AllowDuplicates" minOccurs="0"/>
 				</xs:sequence>
 			</xs:extension>
 		</xs:complexContent>
@@ -51,6 +50,7 @@
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
 						<xs:maxLength value="255"/>
+						<xs:pattern value="[\w\d][\s\S]*"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -58,10 +58,11 @@
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
 						<xs:maxLength value="255"/>
+						<xs:pattern value="[\w\d%/\[\]][\s\S]*"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="Grouping" minOccurs="0"/>
+			<xs:element name="Grouping" type="xs:long" minOccurs="0"/>
 			<xs:element name="Sequence" type="xs:int"/>
 			<xs:element name="EffectiveDate" type="xs:date" minOccurs="0"/>
 			<xs:element name="Active" type="xs:boolean"/>
@@ -394,7 +395,6 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="AutoAssignVuids" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="DesignationType">
@@ -426,7 +426,13 @@
 						</xs:simpleType>
 					</xs:element>
 					<xs:element name="Active" type="xs:boolean" minOccurs="0"/>
-					<xs:element name="MoveFromConceptCode" minOccurs="0"/>
+					<xs:element name="MoveFromConceptCode" minOccurs="0">  <!--Dan added the missing object type here -->
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:maxLength value="255"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
 				</xs:sequence>
 			</xs:extension>
 		</xs:complexContent>
