@@ -6,30 +6,16 @@ class AppDeployerController < ApplicationController
   before_action :ensure_services_configured
 
   def index
-    hash = DeployerSupport.instance.atomic_fetch(:get_komet_wars,:get_isaac_wars,:get_isaac_dbs)
+    hash = DeployerSupport.instance.atomic_fetch(:get_komet_wars,:get_isaac_wars)
     @komet_wars = hash[:get_komet_wars]
     @isaac_wars = hash[:get_isaac_wars]
-    @isaac_dbs = hash[:get_isaac_dbs]
-    if(@komet_wars.nil? || @isaac_wars.nil? || @isaac_dbs.nil?)
+
+    if @komet_wars.nil? || @isaac_wars.nil?
       $log.warn('The cache DeployerSupport did not have my data.  Forcing a fetch...')
       DeployerSupport.instance.do_work
-      hash = DeployerSupport.instance.atomic_fetch(:get_komet_wars,:get_isaac_wars,:get_isaac_dbs)
+      hash = DeployerSupport.instance.atomic_fetch(:get_komet_wars, :get_isaac_wars)
       @komet_wars = hash[:get_komet_wars]
       @isaac_wars = hash[:get_isaac_wars]
-      @isaac_dbs = hash[:get_isaac_dbs]
-    end
-    @tomcat_isaac_rest = []
-
-    tomcat_server_deployments.each do |tsd|
-      service_name = tsd.first[:service_name]
-
-      tsd.last.each do |d|
-        if d.first =~ /isaac-rest/i
-          select_key = d.last[:link]
-          select_value = "#{service_name}::#{d.first}"
-          @tomcat_isaac_rest << {select_key: select_key, select_value: select_value}
-        end
-      end
     end
 
     if @komet_wars.nil? || @isaac_wars.nil?
@@ -157,7 +143,50 @@ class AppDeployerController < ApplicationController
     render json: is_context_deployed?
   end
 
+  def ajax_reload_app_deployer_dropdown
+    ret = []
+    dropdown = params['dropdown_name']
+    case dropdown
+      when 'tomcat_isaac_rest'
+        ret = load_tomcat_isaac_rest
+      when 'isaac_db'
+        ret = load_isaac_dbs
+      else
+        ret = []
+    end
+
+    render json: ret
+  end
+
   private
+
+  def load_isaac_dbs
+    PrismeCacheManager::CacheWorkerManager.instance.fetch(PrismeCacheManager::DB_BUILDER).do_work(false)
+    hash = DeployerSupport.instance.atomic_fetch(:get_isaac_dbs)
+    isaac_dbs = hash[:get_isaac_dbs]
+    ret = []
+    isaac_dbs.each do |db|
+      ret << {select_key: db.option_key, select_value: db.option_value}
+    end
+    ret
+  end
+
+  def load_tomcat_isaac_rest
+    ret = []
+
+    tomcat_server_deployments.each do |tsd|
+      service_name = tsd.first[:service_name]
+
+      tsd.last.each do |d|
+        if d.first =~ /isaac-rest/i
+          select_key = d.last[:link]
+          select_value = "#{service_name}::#{d.first}"
+          ret << {select_key: select_key, select_value: select_value}
+        end
+      end
+    end
+    ret
+  end
 
   def name_war(uuid, name, description)
     uuid_active_record = UuidProp.uuid(uuid: uuid)

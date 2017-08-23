@@ -107,6 +107,7 @@ Rails.application.routes.draw do
   get 'app_deployer/reload_deployments', :constraints => OnlyAjaxRequest.new
   get 'app_deployer/check_polling' => 'app_deployer#ajax_check_polling', :constraints => OnlyAjaxRequest.new
   get 'app_context_warning' => 'app_deployer#ajax_app_context_warning', :constraints => OnlyAjaxRequest.new
+  get 'reload_app_deployer_dropdown' => 'app_deployer#ajax_reload_app_deployer_dropdown', :constraints => OnlyAjaxRequest.new
   post 'app_deployer/deploy_app'
 
   get 'terminology_converter' => 'terminology_converter#index'
