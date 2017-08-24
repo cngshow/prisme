@@ -82,7 +82,6 @@ class JenkinsCheckBuild < PrismeBaseJob
               result_hash[:build] = build_result.to_s
 
               NexusUtility::DbBuilderSupport.instance.dirty = true
-              PrismeCacheManager::CacheWorkerManager.instance.fetch(PrismeCacheManager::DB_BUILDER).do_work
 
               begin
                 result_hash[:deleted] = Deleted::UNKNOWN

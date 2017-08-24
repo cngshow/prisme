@@ -54,7 +54,7 @@
                   <br>
                   <br>
                   <%= label_tag 'tomcat_isaac_rest', 'ISAAC Rest Version to Use' %><br>
-                  <%= select_tag 'tomcat_isaac_rest', options_for_select(@tomcat_isaac_rest.collect {|ir| [ir[:select_value], ir[:select_key]]}), {:prompt => '-- Select an ISAAC Rest Instance --', tabindex: 3} %>
+                  <%= select_tag 'tomcat_isaac_rest', options_for_select([]), {:prompt => '-- Select an ISAAC Rest Instance --', tabindex: 3} %>
                 </div>
                 <div id="isaac_wars">
                   <%= label_tag 'isaac_war', 'ISAAC Rest Version to Use' %><br>
@@ -62,7 +62,7 @@
                   <br>
                   <br>
                   <%= label_tag 'isaac_db', 'ISAAC Database Version to Use' %><br>
-                  <%= select_tag 'isaac_db', options_from_collection_for_select(@isaac_dbs, 'option_key', 'option_value'), {:prompt => '-- Select a terminology database --', tabindex: 3} %>
+                  <%= select_tag 'isaac_db', options_for_select([]), {:prompt => '-- Select a terminology database --', tabindex: 3} %>
                 </div>
                 <br>
             <% end %>
@@ -138,6 +138,26 @@
         });
     });
 
+    function reload_dropdown(id, default_option) {
+        var dropdown = $('#' + id);
+        dropdown.empty();
+        dropdown.append($('<option>', {value: "", text: '-- Loading. Please Wait --'},'</option>'));
+
+        $.get(gon.routes.reload_app_deployer_dropdown_path, {dropdown_name: id}, function(data) {
+            dropdown.empty();
+            dropdown.append($('<option>', {value: "", text: default_option},'</option>'));
+
+            $.each(data, function (index, item) {
+                    dropdown.append(
+                        $('<option>', {
+                            value: item.select_key,
+                            text: item.select_value
+                        }, '</option>'))
+                }
+            )
+        });
+    }
+
     function init_wizard() {
         var form = $('#app_deployer_form');
         form.show();
@@ -177,6 +197,9 @@
                         document.getElementById("isaac_war").required = false;
                         document.getElementById("isaac_db").required = false;
                         document.getElementById("tomcat_isaac_app_server").required = false;
+
+                        // reload the tomcat_isaac_rest dropdown
+                        reload_dropdown('tomcat_isaac_rest', '-- Select an ISAAC Rest Instance --');
                     }
                     else {
                         $('#komet_wars').hide();
@@ -189,6 +212,9 @@
                         document.getElementById("isaac_war").required = true;
                         document.getElementById("isaac_db").required = true;
                         document.getElementById("tomcat_isaac_app_server").required = true;
+
+                        // reload the isaac_dbs dropdown
+                        reload_dropdown('isaac_db', '-- Select an ISAAC terminology database--');
                     }
                     document.getElementById("komet_war").value = '';
                     document.getElementById("tomcat_isaac_rest").value = '';
