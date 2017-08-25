@@ -3,8 +3,16 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers where provided, and the git 
 commit history.
 
-* 2017/08/?? - 4.21 - PENDING
+* 2017/??/?? - 5.01 - PENDING
    *
+
+* 2017/08/25 - 5.00
+   * Release 5 build.
+
+* 2017/08/24 - 4.21
+   * Defect 576574 - a refactor broke the database builder and the code was fixed
+   * Defect 568416 - modified the app deployer code to refresh the komet war and isaac db dropdown on wizard navigation in order to populate with the latest nexus artifacts and set the dirty flag on the cache with the completion of the respective job to force the refresh of the cache.
+   * Defect 577952 - We only show the isaac uuid for isaac instances not for komets
 
 * 2017/08/21 - 4.20
    * 508 style on buttons + adding webpack watch on package.json

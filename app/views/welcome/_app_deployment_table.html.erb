@@ -55,7 +55,10 @@
                       <span class="tooltiptext">
                         <span tabindex="0" style="font-weight: bold; color: navy">Isaac Database <%= fetch_komets_isaac(row: row) %></span>
                         <ul>
-                          <li tabindex="0"><%= "Isaac DB UUID is #{row[:isaac][:db_id]}"%></li>
+                          <% unless row[:isaac][:db_id].to_s.empty? %>
+                            <li tabindex="0"><%= "Isaac DB UUID is #{row[:isaac][:db_id]}"%></li>
+                          <% end %>
+
                           <li tabindex="0"><%= row[:isaac][:database]['artifactId'].to_s rescue 'Unknown' %>&nbsp;version:&nbsp;<%= row[:isaac][:database]['version'].to_s rescue 'Unknown' %>&nbsp;<%= raw "Classifier: #{row[:isaac][:database]['classifier'].to_s}" unless (row[:isaac][:database].nil? || row[:isaac][:database]['classifier'].to_s.empty?) %></li>
                         </ul>
                         <% unless row[:isaac][:database_dependencies].nil? %>
