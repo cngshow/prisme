@@ -10,7 +10,7 @@ module TomcatConcern
   RUNNING_STATE = 'running'
   STATE_CHANGE_SUCCEDED = 'OK'
 
-  def get_connection(service_or_id:)
+  def get_connection(service_or_id:, timeout: 0)
     conn = nil
 
     if service_or_id.is_a? Service
@@ -32,6 +32,7 @@ module TomcatConcern
         faraday.use Faraday::Response::Logger, $log
         faraday.adapter :net_http # make requests with Net::HTTP
         faraday.basic_auth(username, pwd)
+        faraday.options.timeout = timeout unless (timeout == 0)
       end
     else
       raise StandardError.new('Invalid tomcat service passed to TomcatConcern.get_deployments!')

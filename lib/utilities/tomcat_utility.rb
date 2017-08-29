@@ -181,7 +181,8 @@ TomcatDeploymentsCache.instance.last_activity_time
     end
 
     def get_version_hash(war:, context:, tomcat_service:, state:)
-      conn = get_connection(service_or_id: tomcat_service)
+      @@version_cache ||= Hash.new
+      conn = get_connection(service_or_id: tomcat_service, timeout: 5)
       path = ''
       response = nil
       version_hash = {version: 'UNKNOWN'}
@@ -196,7 +197,9 @@ TomcatDeploymentsCache.instance.last_activity_time
         response = conn.get(path)
       rescue Faraday::ClientError => ex
         $log.warn("#{path} is unreachable! #{ex.message}")
-        return version_hash
+        $log.warn(ex.backtrace.join("\n"))
+        v = @@version_cache[[path, tomcat_service]]
+        return v.nil? ? version_hash : v #return last known good.
       end
       body = response.body
       json = {}
@@ -226,6 +229,7 @@ TomcatDeploymentsCache.instance.last_activity_time
         version_hash[:isaac][:database] = json['isaac_version']['isaacDbDependency'] rescue nil
         version_hash[:isaac][:database_dependencies] = json['isaac_version']['dbDependencies'] rescue nil
       end
+      @@version_cache[[path, tomcat_service]] = version_hash
       version_hash
     end
   end
