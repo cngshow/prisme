@@ -51,8 +51,8 @@ class DbBuilderSupport < PrismeCacheManager::ActivitySupport
         $log.debug('I am doing my work!')
         @ochre_metadatas = load_ochre_metadatas
         @ibdf_files = load_ibdf_files
-        $log.always("DBBuilder ochre #{@ochre_metadatas.inspect}")
-        $log.always("DBBuilder ibdf #{@ibdf_files.inspect}")
+        $log.trace("DBBuilder ochre #{@ochre_metadatas.inspect}")
+        $log.trace("DBBuilder ibdf #{@ibdf_files.inspect}")
 
         $log.debug('I am done!')
       end
