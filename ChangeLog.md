@@ -8,6 +8,9 @@ commit history.
 
 * 2017/08/25 - 5.00
    * Release 5 build.
+   * fixing slow homepage after a komet deploy.  The reqwuest of a Komet version number (for display on Prisme's homepage) was slowing everything down.
+    Now Prisme will timeout the request, and display 'UNKNOWN' or 'INVALID JSON' depending on how the request fails.  It will fix itself in a subsequent poll.
+    The homepage may still take a small while to load if we timeout, but will be much faster.
 
 * 2017/08/24 - 4.21
    * Defect 576574 - a refactor broke the database builder and the code was fixed
