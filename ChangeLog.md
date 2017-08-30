@@ -4,7 +4,7 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 commit history.
 
 * 2017/??/?? - 5.01 - PENDING
-   *
+   * 508 - tabbing for main page dashboard, changing button contrast colors for Checksum/Discovery
 
 * 2017/08/25 - 5.00
    * Release 5 build.
