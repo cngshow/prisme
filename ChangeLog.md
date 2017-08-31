@@ -3,7 +3,7 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers where provided, and the git 
 commit history.
 
-* 2017/??/?? - 5.01 - PENDING
+* 2017/08/31 - 5.01
    * 508 - tabbing for main page dashboard, changing button contrast colors for Checksum/Discovery
 
 * 2017/08/25 - 5.00
