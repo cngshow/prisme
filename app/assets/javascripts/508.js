@@ -8,18 +8,30 @@
         $(this).parent().prev('td').find('button')[0].focus();
       };
       if (e.keyCode == 9 && !e.shiftKey) {
-         e.preventDefault();
-         var siblings = $(this).parent().nextAll();
-        $.each(siblings, function(i , td){
-          var buttons = $(td).find('button');
-          if (buttons.length) {
-            buttons[0].focus();
-            return false;
-          };
-        });
+        var siblings = $(this).parent().nextAll();
+        if (buttonsPresent(siblings)) {
+          e.preventDefault();
+          focusOnNextButton(list);
+        };
       };
   });
-
+  function focusOnNextButton(list) {
+    $.each(list, function(i , td){
+      var buttons = $(td).find('button');
+      if (buttons.length) {
+        buttons[0].focus();
+        return false;
+      };
+    });
+  };
+  function buttonsPresent(list) {
+    $.each(list, function(i, el){
+      if ($(el).find('button').length) {
+        return true;
+      };
+    });
+    return false;
+  };
   function setModalTabs(modalSelector, maxTabIndex) { 
     var maxTabIndex = maxTabIndex;
     var maxSelector = modalSelector + ' [tabindex=' + maxTabIndex + ']';
