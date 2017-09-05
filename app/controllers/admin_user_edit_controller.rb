@@ -14,6 +14,7 @@ class AdminUserEditController < ApplicationController
     user_quick_search = params[AdminUserEditHelper::QUICK_SEARCH] if params[AdminUserEditHelper::QUICK_SEARCH]
     admin_role_review = session[AdminUserEditHelper::FILTER_GROUP][AdminUserEditHelper::ROLE_REVIEW]
     admin_role_review = params[AdminUserEditHelper::ROLE_REVIEW] if params[AdminUserEditHelper::ROLE_REVIEW]
+    request_id = params[AdminUserEditHelper::REQUEST_ID].to_s.to_i
 
     # default query - all users
     devise_users = User.all
@@ -38,7 +39,9 @@ class AdminUserEditController < ApplicationController
 
     session[AdminUserEditHelper::FILTER_GROUP][AdminUserEditHelper::QUICK_SEARCH] = user_quick_search
     session[AdminUserEditHelper::FILTER_GROUP][AdminUserEditHelper::ROLE_REVIEW] = admin_role_review
-    render :partial => 'users', :format => :html
+    html = (render_to_string :partial => 'users', :format => :html).html_safe
+    render json: {tbody: html, request_id: request_id}
+
   end
 
   def update_user_roles

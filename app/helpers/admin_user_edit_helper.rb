@@ -2,6 +2,7 @@ module AdminUserEditHelper
   FILTER_GROUP = 'user_admin_filters'
   QUICK_SEARCH = 'user_quick_search'
   ROLE_REVIEW = 'admin_role_review'
+  REQUEST_ID = 'request_id'
 
   def role_checkbox(role)
     ret = %{

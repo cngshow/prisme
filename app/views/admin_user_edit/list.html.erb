@@ -193,7 +193,8 @@
 </div>
 
 <script>
-  function edit_user_roles(edit_user_id, edit_user_current_roles) {
+    var user_quick_search_char_count = 0;
+    function edit_user_roles(edit_user_id, edit_user_current_roles) {
     // update the modal div with the user's current roles for form submission
     $('#user_id_to_edit').val(edit_user_id);
     $('span#edit_user_info_span').text($('td#user_name_td_' + edit_user_id).text());
@@ -286,8 +287,18 @@
   function load_table() {
     var admin_role_review = $('#admin_role_review').find('option:selected').val();
     var user_quick_search = $('#user_quick_search').val();
-    $.get(gon.routes.load_user_list_path, {user_quick_search: user_quick_search, admin_role_review: admin_role_review}, function (data) {
-      $('table#user_edit_list_table').find('tbody').html(data);
+    user_quick_search_char_count++;
+    //turn on
+      wait_cursor(true);
+    $.get(gon.routes.load_user_list_path, {user_quick_search: user_quick_search, admin_role_review: admin_role_review, request_id: user_quick_search_char_count}, function (data) {
+        console.log('The returning count is ', data.request_id);
+        console.log('The current count is ', user_quick_search_char_count);
+        //console.log('the html is ', data.tbody);
+        if (data.request_id === user_quick_search_char_count) {
+            //turn off
+            wait_cursor(false);
+            $('table#user_edit_list_table').find('tbody').html(data.tbody);
+        }
     });
   }
 
