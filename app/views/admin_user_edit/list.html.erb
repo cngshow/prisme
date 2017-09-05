@@ -288,14 +288,10 @@
     var admin_role_review = $('#admin_role_review').find('option:selected').val();
     var user_quick_search = $('#user_quick_search').val();
     user_quick_search_char_count++;
-    //turn on
-      wait_cursor(true);
+    wait_cursor(true);
+
     $.get(gon.routes.load_user_list_path, {user_quick_search: user_quick_search, admin_role_review: admin_role_review, request_id: user_quick_search_char_count}, function (data) {
-        console.log('The returning count is ', data.request_id);
-        console.log('The current count is ', user_quick_search_char_count);
-        //console.log('the html is ', data.tbody);
         if (data.request_id === user_quick_search_char_count) {
-            //turn off
             wait_cursor(false);
             $('table#user_edit_list_table').find('tbody').html(data.tbody);
         }
