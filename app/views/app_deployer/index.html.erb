@@ -37,12 +37,12 @@
         <%= form_tag(app_deployer_deploy_app_path, :id => 'app_deployer_form') do |f| %>
             <h3>Select the Application Type</h3>
             <%= field_set_tag 'Select the Application Type' do %>
-                <%= label_tag 'application_KOMET', class: 'radio-inline' do %>
-                    <%= radio_button_tag 'application', 'KOMET', true %><%= KOMET_NAME %> Tooling Deployment
-                <% end %>
-                <br/>
                 <%= label_tag 'application_ISAAC', class: 'radio-inline' do %>
                     <%= radio_button_tag 'application', 'ISAAC' %>ISAAC Deployment
+                <% end %>
+                <br/>
+                <%= label_tag 'application_KOMET', class: 'radio-inline' do %>
+                    <%= radio_button_tag 'application', 'KOMET', true %><%= KOMET_NAME %> Tooling Deployment
                 <% end %>
             <% end %>
 
