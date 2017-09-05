@@ -1,3 +1,11 @@
+module Concurrent
+  class JavaThreadPoolExecutor
+    def get_active_count
+      @executor.getActiveCount
+    end
+  end
+end
+
 module PrismeCacheManager
 
   APP_DEPLOYER = :app_deployer
@@ -42,18 +50,23 @@ module PrismeCacheManager
     end
 
     def do_work(asynchronous = true)
+      if (asynchronous && (@pool.get_active_count != 0))
+        $log.debug{"Currently doing work.  Skipping request for #{@registered_work.map do |e| e.first end}"}
+        return
+      end
+
       @registered_work.each do |work|
         work_tag = work[0]
         duration = work[1]
         dirty_lambda = work[2]
         block = work[3]
         last_run = work[4]
-        $log.trace("Maybe do work #{work_tag}, are we dirty? #{dirty_lambda.call}")#GREG trace
+        $log.debug("Maybe do work #{work_tag}, are we dirty? #{dirty_lambda.call}, last run was #{last_run}") #GREG trace
         if (((Time.now - last_run) >= duration) || dirty_lambda.call)
           pool = asynchronous ? @pool : @synchronous
           pool.post do
             @work_lock.synchronize do
-              $log.debug("Thread pool about to do work #{work_tag}")#GREG debug
+              $log.debug("Thread pool about to do work #{work_tag}") #GREG debug
               begin
                 block.call
               rescue => ex
@@ -61,7 +74,7 @@ module PrismeCacheManager
                 $log.error(ex.backtrace.join("\n"))
               end
               work[4] = Time.now
-              $log.debug("Work #{work_tag} is complete!")#GREG debug
+              $log.debug("Work #{work_tag} is complete!") #GREG debug
             end
             @notify_complete.each do |notify|
               begin
@@ -73,7 +86,7 @@ module PrismeCacheManager
             end
           end
         else
-          $log.trace("Skipping work #{work_tag}")#GREG trace
+          $log.trace("Skipping work #{work_tag}") #GREG trace
         end
       end
     end
@@ -84,7 +97,9 @@ module PrismeCacheManager
       @notify_complete = []
       @pool = Concurrent::FixedThreadPool.new(1)
       @synchronous = Object.new
-      @synchronous.define_singleton_method(:post) do |&block| block.call end
+      @synchronous.define_singleton_method(:post) do |&block|
+        block.call
+      end
     end
   end
 
@@ -115,7 +130,7 @@ module PrismeCacheManager
     def work_complete
       @dirty = false
       @last_activity_time = Time.now
-      $log.debug("#{self} is updating dirty to false! Last activity time is now #{last_activity_time}")#GREG debug
+      $log.debug("#{self} is updating dirty to false! Last activity time is now #{last_activity_time}") #GREG debug
     end
 
     #overwrite if needed
