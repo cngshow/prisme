@@ -39,7 +39,7 @@ class AdminUserEditController < ApplicationController
 
     session[AdminUserEditHelper::FILTER_GROUP][AdminUserEditHelper::QUICK_SEARCH] = user_quick_search
     session[AdminUserEditHelper::FILTER_GROUP][AdminUserEditHelper::ROLE_REVIEW] = admin_role_review
-    html = (render_to_string :partial => 'users', :format => :html).html_safe
+    html = render_to_string :partial => 'users', :format => :html
     render json: {tbody: html, request_id: request_id}
 
   end
