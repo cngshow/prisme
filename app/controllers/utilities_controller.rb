@@ -118,6 +118,10 @@ AITC_SQA_DB - #{PrismeUtilities::RouteHelper.route(:utilities_seed_services_url)
 
 AITC_TEST_DB - #{PrismeUtilities::RouteHelper.route(:utilities_seed_services_url)}?db=aitc_test_db
 
+AITC_PREPROD_DB - #{PrismeUtilities::RouteHelper.route(:utilities_seed_services_url)}?db=aitc_preprod_db
+
+AITC_PROD_DB - #{PrismeUtilities::RouteHelper.route(:utilities_seed_services_url)}?db=aitc_prod_db
+
 This route is executed by an admin to seed data in the services and service_properties tables which determine the routes to git, jenkins, and tomcat.<br>
 
 END_DESC
@@ -126,7 +130,7 @@ END_DESC
   def seed_services
     ret = nil
     seeds = []
-    valid_seeds = %w(localhost va_dev_db aitc_dev_db aitc_sqa_db aitc_test_db)
+    valid_seeds = %w(localhost va_dev_db aitc_dev_db aitc_sqa_db aitc_test_db aitc_preprod_db aitc_prod_db)
     db_seed = params[:db]
     v = $VERBOSE
     $VERBOSE = nil
@@ -147,6 +151,12 @@ END_DESC
         when 'aitc_sqa_db'
           load './lib/dbseeds/aitc_sqa_db.rb'
           seeds = SeedData::AITC_SQA
+        when 'aitc_preprod_db'
+          load './lib/dbseeds/aitc_preprod_db.rb'
+          seeds = SeedData::AITC_PREPROD
+        when 'aitc_prod_db'
+          load './lib/dbseeds/aitc_prod_db.rb'
+          seeds = SeedData::AITC_PROD
         else
           ret = 'A valid key was passed but we have not created the corresponding file in the lib/dbseeds'
       end
