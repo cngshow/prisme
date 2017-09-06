@@ -6,6 +6,7 @@ commit history.
 * 2017/09/?? - 5.02 - PENDING
    * Issue 580445 - reordered step 1 radio buttons to have ISAAC first and the default
    * Issue 578068 - refactored code to fix type ahead search on admin user edit page
+   * Adding is support for seeding aitc preprod and aitc prod.  The passwords are likely wrong and will require a manual update via the GUI.
 
 * 2017/08/31 - 5.01
    * 508 - tabbing for main page dashboard, changing button contrast colors for Checksum/Discovery
