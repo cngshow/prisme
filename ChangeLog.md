@@ -3,7 +3,10 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers where provided, and the git 
 commit history.
 
-* 2017/09/?? - 5.02 - PENDING
+* 2017/09/?? - 5.03 - PENDING
+   *
+
+* 2017/09/06 - 5.02
    * Issue 580445 - reordered step 1 radio buttons to have ISAAC first and the default
    * Issue 578068 - refactored code to fix type ahead search on admin user edit page
    * Adding is support for seeding aitc preprod and aitc prod.  The passwords are likely wrong and will require a manual update via the GUI.
