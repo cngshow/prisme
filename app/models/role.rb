@@ -24,9 +24,28 @@ class Role < ActiveRecord::Base
         UserRoleAssoc.destroy_all(role_id: bad_role.id)
         SsoiUserRoleAssoc.destroy_all(role_id: bad_role.id)
         Role.destroy(bad_role.id)
-    end
+      end
     rescue => ex
       $log.error("Failure to cleanup defunct roles! #{ex}")
+      $log.error(ex.backtrace.join("\n"))
+    end
+  end
+
+  #editors must be vuid requestors.  This business role was added later so we must fix data from earlier prisme versions.
+  def self.ensure_vuid_requester
+    begin
+      editor = Role.where(name: Roles::EDITOR).first
+      return if editor.nil?
+      records = UserRoleAssoc.where(role_id: editor).to_a + SsoiUserRoleAssoc.where(role_id: editor).to_a
+      records.each do |r|
+        unless r.user.has_role?(Roles::VUID_REQUESTOR)
+          user = r.user
+          user.add_role(Roles::VUID_REQUESTOR)
+          $log.always("Data integrity check: adding VUID requesting role to #{user.user_name}")
+        end
+      end
+    rescue => ex
+      $log.error("Failure to ensure_vuid_requester! #{ex}")
       $log.error(ex.backtrace.join("\n"))
     end
   end
