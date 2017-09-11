@@ -30,7 +30,7 @@ module AdminUserEditHelper
       cbx_name = "cbx_#{role}|#{uuid}|#{idx}"
       cbx_string = %{
 <input title="Undeployed UUID: #{name}" type="checkbox" name="#{cbx_name}" id="#{cbx_name}" value="true" class="cbx" checked onclick="isaac_uuid_clicked(this);"/>
-&nbsp;&nbsp;<label for="#{cbx_name}" title="Undeployed/Unreachable ISAAC: #{name}" style="color: red">Undeployed/Unreachable ISAAC: #{name}</label><br>
+&nbsp;&nbsp;<label for="#{cbx_name}" title="Undeployed/Unreachable ISAAC: #{name}" style="color: red">Undeployed/Unreachable ISAAC: #{name}</label>
     }
       ret << cbx_string
     end
