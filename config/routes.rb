@@ -94,7 +94,7 @@ Rails.application.routes.draw do
   # welcome controller routes
   get 'welcome/tomcat_app_action' => 'welcome#tomcat_app_action'
   get 'welcome/reload_job_queue_list'
-  get 'welcome/poll_test'
+  # get 'welcome/poll_test'
   get 'welcome/reload_deployments'
   get 'welcome/reload_log_events', :constraints => OnlyAjaxRequest.new
 
