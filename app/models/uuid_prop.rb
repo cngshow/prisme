@@ -6,6 +6,8 @@ class UuidProp < ActiveRecord::Base
   ISAAC_WAR_ID = 'warId'
   ISAAC_DB_ID = 'isaacDbId'
   KOMET_WAR_ID = 'war_uuid'
+  WAR_UUID_SELECTOR = ->(uuid_prop, uuid) do  uuid_prop.uuid.eql?(uuid) end
+  ISAAC_DB_UUID_SELECTOR = -> (uuid_prop, uuid) do uuid_prop.get(key: UuidProp::Keys::ISAAC_DB_ID).eql?(uuid) end
 
   module Keys
     NAME = :uuid_name
@@ -47,21 +49,17 @@ class UuidProp < ActiveRecord::Base
       end
     end
 
-    def isaac_war_uuids(db_uuid:)
+    #UuidProp.corresponding_issac_uuids(uuid: u, &UuidProp::WAR_UUID_SELECTOR)
+    #UuidProp.corresponding_issac_uuids(uuid: u, &UuidProp::ISAAC_DB_UUID_SELECTOR)
+    #Pull the name sample:
+    #UuidProp.corresponding_issac_uuids(uuid: iu, &UuidProp::ISAAC_DB_UUID_SELECTOR).first.get(key: UuidProp::Keys::NAME)
+    def corresponding_issac_uuids(uuid:, &block)
       props = UuidProp.all.to_a.select do |u| !u.get(key: UuidProp::Keys::ISAAC_DB_ID).nil? end
       rval = []
       props.each do |u|
-        rval << u.uuid if u.get(key: UuidProp::Keys::ISAAC_DB_ID).eql?(db_uuid)
+        rval << u if block.call(u, uuid)
       end
       rval
-    end
-
-
-    def isaac_db_uuid(war_uuid:)
-      props = UuidProp.all.to_a.select do |u| !u.get(key: UuidProp::Keys::ISAAC_DB_ID).nil? end
-      props.each do |u|
-        return u.get(key: UuidProp::Keys::ISAAC_DB_ID) if u.uuid.eql?(war_uuid)
-      end
     end
 
   end
