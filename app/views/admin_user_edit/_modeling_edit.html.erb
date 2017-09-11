@@ -1,6 +1,10 @@
 <div class="isaac_uuid_cbxs" style='border-top: solid thin darkred; padding-left: 20px'>
 <h4>ISAACs</h4>
-  <% uuids.each do |uuid| %>
-      <%= isaac_uuid_checkbox(modeling_role, uuid) %>
-  <% end %>
+<% uuids.each do |uuid| %>
+    <%= isaac_uuid_checkbox(modeling_role, uuid) %>
+<% end %>
+<% undeployed_uuids.each do |uuid| %>
+    <%= isaac_undeployed_uuid_checkbox(modeling_role, uuid) %>
+<% end %>
+
 </div>
