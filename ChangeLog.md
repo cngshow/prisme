@@ -4,7 +4,7 @@ This changelog summarizes changes and fixes which are a part of each revision.  
 commit history.
 
 * 2017/09/?? - 5.04 - PENDING
-   *
+   * Fix for Defect 585501. Modeling roles are shown for udeployed/unreachable isaacs.
 
 * 2017/09/08 - 5.03
    * Editors must be vuid requestors.  This business role was added later so we must fix data from earlier prisme versions.(Defect 583529)
