@@ -46,6 +46,24 @@ class UuidProp < ActiveRecord::Base
         prop
       end
     end
+
+    def isaac_war_uuids(db_uuid:)
+      props = UuidProp.all.to_a.select do |u| !u.get(key: UuidProp::Keys::ISAAC_DB_ID).nil? end
+      rval = []
+      props.each do |u|
+        rval << u.uuid if u.get(key: UuidProp::Keys::ISAAC_DB_ID).eql?(db_uuid)
+      end
+      rval
+    end
+
+
+    def isaac_db_uuid(war_uuid:)
+      props = UuidProp.all.to_a.select do |u| !u.get(key: UuidProp::Keys::ISAAC_DB_ID).nil? end
+      props.each do |u|
+        return u.get(key: UuidProp::Keys::ISAAC_DB_ID) if u.uuid.eql?(war_uuid)
+      end
+    end
+
   end
 #UuidProp.uuid(uuid: cris).running_dependency?
 
@@ -126,4 +144,7 @@ a.first.save_json_data(key: UuidProp::Keys::DESCRIPTION, value: 'I love Greg')
 a.last.save_json_data(key: UuidProp::Keys::NAME, value: 'I want pizza')
 a.last.save_json_data(key: UuidProp::Keys::DESCRIPTION, value: 'I want Cris')
 a.first.get(key: UuidProp::Keys::DESCRIPTION)
+      props = UuidProp.all.to_a.select do |u| !u.get(key: UuidProp::Keys::ISAAC_DB_ID).nil? end
+
+UuidProps.isaac_db_uuid.to_war_uuid(db_uuid: props.first.get(key: UuidProp::Keys::ISAAC_DB_ID)
 =end
