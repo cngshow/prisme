@@ -6,6 +6,8 @@ class UuidProp < ActiveRecord::Base
   ISAAC_WAR_ID = 'warId'
   ISAAC_DB_ID = 'isaacDbId'
   KOMET_WAR_ID = 'war_uuid'
+  WAR_UUID_SELECTOR = ->(uuid_prop, uuid) do  uuid_prop.uuid.eql?(uuid) end
+  ISAAC_DB_UUID_SELECTOR = -> (uuid_prop, uuid) do uuid_prop.get(key: UuidProp::Keys::ISAAC_DB_ID).eql?(uuid) end
 
   module Keys
     NAME = :uuid_name
@@ -46,6 +48,20 @@ class UuidProp < ActiveRecord::Base
         prop
       end
     end
+
+    #UuidProp.corresponding_issac_uuids(uuid: u, &UuidProp::WAR_UUID_SELECTOR)
+    #UuidProp.corresponding_issac_uuids(uuid: u, &UuidProp::ISAAC_DB_UUID_SELECTOR)
+    #Pull the name sample:
+    #UuidProp.corresponding_issac_uuids(uuid: iu, &UuidProp::ISAAC_DB_UUID_SELECTOR).first.get(key: UuidProp::Keys::NAME)
+    def corresponding_issac_uuids(uuid:, &block)
+      props = UuidProp.all.to_a.select do |u| !u.get(key: UuidProp::Keys::ISAAC_DB_ID).nil? end
+      rval = []
+      props.each do |u|
+        rval << u if block.call(u, uuid)
+      end
+      rval
+    end
+
   end
 #UuidProp.uuid(uuid: cris).running_dependency?
 
@@ -126,4 +142,7 @@ a.first.save_json_data(key: UuidProp::Keys::DESCRIPTION, value: 'I love Greg')
 a.last.save_json_data(key: UuidProp::Keys::NAME, value: 'I want pizza')
 a.last.save_json_data(key: UuidProp::Keys::DESCRIPTION, value: 'I want Cris')
 a.first.get(key: UuidProp::Keys::DESCRIPTION)
+      props = UuidProp.all.to_a.select do |u| !u.get(key: UuidProp::Keys::ISAAC_DB_ID).nil? end
+
+UuidProps.isaac_db_uuid.to_war_uuid(db_uuid: props.first.get(key: UuidProp::Keys::ISAAC_DB_ID)
 =end

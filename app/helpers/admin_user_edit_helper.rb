@@ -22,6 +22,21 @@ module AdminUserEditHelper
     ret.html_safe
   end
 
+  def isaac_undeployed_uuid_checkbox(role, uuid)
+    uuid_prop_arr = UuidProp.corresponding_issac_uuids(uuid: uuid, &UuidProp::ISAAC_DB_UUID_SELECTOR)
+    ret = []
+    uuid_prop_arr.each_with_index do |prop, idx|
+      name = "#{prop.get(key: UuidProp::Keys::NAME)} (#{uuid})" || uuid
+      cbx_name = "cbx_#{role}|#{uuid}|#{idx}"
+      cbx_string = %{
+<input title="Undeployed UUID: #{name}" type="checkbox" name="#{cbx_name}" id="#{cbx_name}" value="true" class="cbx" checked onclick="isaac_uuid_clicked(this);"/>
+&nbsp;&nbsp;<label for="#{cbx_name}" title="Undeployed/Unreachable ISAAC: #{name}" style="color: red">Undeployed/Unreachable ISAAC: #{name}</label>
+    }
+      ret << cbx_string
+    end
+    ret.join('<br>').html_safe
+  end
+
   def loading_uuids_message(div_classname:)
     ret = []
     Roles::MODELING_ROLES.each do |role|

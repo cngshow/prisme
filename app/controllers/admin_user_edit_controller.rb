@@ -136,17 +136,20 @@ class AdminUserEditController < ApplicationController
     user_to_edit = load_user_from_params(param_key: :user_id_to_edit)
     isaacs = TomcatUtility::TomcatDeploymentsCache.instance.get_isaac_deployments
 
-    isaac_uuids = []
+    isaac_uuids, deployed_isaac_uuids = [], []
     isaacs.each do |isaac|
       tomcat = isaac.tomcat.name
       db_uuid = isaac.get_db_uuid
       isaac_name = isaac.get_name
       title = "Komets:\n#{isaac.komets.map {|k| "&#8226;"<<(k.get_name || "Not Named:  #{k.war_uuid}")}.join("\n")}"
       isaac_uuids << {uuid: db_uuid, server: tomcat, display_name: (isaac_name || "Not Named:  #{db_uuid}") << " on #{tomcat}", title: title, checked: false}
+      deployed_isaac_uuids << db_uuid
     end
 
     ret = []
     Roles::MODELING_ROLES.each do |role|
+      role_metadata = nil
+
       isaac_uuids.each do |uuid|
         checked = false
         if user_to_edit.has_role? role
@@ -168,7 +171,17 @@ class AdminUserEditController < ApplicationController
         uuid[:checked] = checked
       end
 
-      uuid_selections = render_to_string(:partial => 'admin_user_edit/modeling_edit', :locals => {:user => user_to_edit, :modeling_role => role, :uuids => isaac_uuids})
+      # check to see if the user has access to any undeployed uuids (role_metadata will be the parsed JSON or nil)
+      undeployed_uuids = []
+      if role_metadata
+        role_metadata[RoleMetadataConcern::ISAAC_DB_UUIDS].each do |uuid|
+          unless deployed_isaac_uuids.include? uuid
+            undeployed_uuids << uuid
+          end
+        end
+      end
+
+      uuid_selections = render_to_string(:partial => 'admin_user_edit/modeling_edit', :locals => {:user => user_to_edit, :modeling_role => role, :uuids => isaac_uuids, :undeployed_uuids => undeployed_uuids})
       ret << [role, uuid_selections]
     end
 
