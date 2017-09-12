@@ -16,10 +16,11 @@ Obviously, this will not work if you hit prisme locally.  Prisme must be hit thr
 This page has another nice feature.  The page it reloads 500 times show all the header information
 prisme gets from SSOI (including any others).  If you want to snoop on SSOI this is the place to go.
 
-Try it!
-SSOI:
+Try it!<br>
+SSOI:<br>
 #{PrismeUtilities::RouteHelper.route(:utilities_warmup_url, true)}
-LOCAL:
+<br>
+LOCAL:<br>
 #{PrismeUtilities::RouteHelper.route(:utilities_warmup_url)}
 }
   #warm up apache
