@@ -17,7 +17,9 @@ This page has another nice feature.  The page it reloads 500 times show all the 
 prisme gets from SSOI (including any others).  If you want to snoop on SSOI this is the place to go.
 
 Try it!
-
+SSOI:
+#{PrismeUtilities::RouteHelper.route(:utilities_warmup_url, true)}
+LOCAL:
 #{PrismeUtilities::RouteHelper.route(:utilities_warmup_url)}
 }
   #warm up apache
