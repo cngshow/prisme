@@ -3,7 +3,7 @@ class WelcomeController < ApplicationController
   before_action :any_administrator, only: [:tomcat_app_action]
   before_action :ensure_services_configured
   skip_after_action :verify_authorized, :index, :reload_job_queue_list
-
+#
   def index
     # get tomcat deployments
     tomcat_deployments = tomcat_server_deployments
