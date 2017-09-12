@@ -3,8 +3,9 @@ PRISME Changelog
 This changelog summarizes changes and fixes which are a part of each revision.  For more details on the fixes, refer tracking numbers where provided, and the git 
 commit history.
 
-* 2017/09/?? - 5.04 - PENDING
+* 2017/09/12 - 5.04
    * Fix for Defect 585501. Modeling roles are shown for udeployed/unreachable isaacs.
+   * Official R5 release build. 
 
 * 2017/09/08 - 5.03
    * Editors must be vuid requestors.  This business role was added later so we must fix data from earlier prisme versions.(Defect 583529)
