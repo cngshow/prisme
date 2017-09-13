@@ -105,7 +105,7 @@ GEM
       thor (>= 0.14, < 2.0)
     jquery-ui-rails (5.0.5)
       railties (>= 3.2.16)
-    jruby-jars (9.1.8.0)
+    jruby-jars (9.1.13.0)
     jruby-rack (1.1.20)
     json (2.0.3-java)
     little-plugger (1.1.4)
@@ -246,6 +246,7 @@ DEPENDENCIES
   jdbc-h2 (= 1.4.181)
   jquery-rails (~> 4.1, >= 4.1.1)
   jquery-ui-rails
+  jruby-jars (= 9.1.13)
   logging (~> 2.0)
   mini_racer
   paperclip
