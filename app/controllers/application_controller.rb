@@ -23,6 +23,7 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
+  before_action :set_poll_controller
   before_action :validate_terminology_config, :setup_gon
   rescue_from Exception, java.lang.Throwable, :with => :internal_error
   rescue_from Pundit::NotAuthorizedError, Pundit::AuthorizationNotPerformedError, :with => :pundit_error

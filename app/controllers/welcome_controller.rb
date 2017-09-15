@@ -24,7 +24,7 @@ class WelcomeController < ApplicationController
     service_name = service.name
 
     # call TomcatConcern to perform the specified action
-    flash_state = change_state(tomcat_service_id: tomcat_service_id, context: tomcat_app, action: tomcat_action)
+    flash_state = change_state(tomcat_service_id: tomcat_service_id, context: tomcat_app, action: tomcat_action) #needs to user cache manager
     flash_state << " on #{service_name}"
     flash_notify(message: flash_state)
     if (@change_state_succeded)

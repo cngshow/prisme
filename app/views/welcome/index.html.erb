@@ -37,7 +37,7 @@
   </div>
   <% if policy(:navigation).any_administrator? && 'true'.eql?($PROPS['PRISME.show_log_events']) %>
       <div id="tp-log_events">
-        <%= react_component('LogEventsModule', props: {title: 'Log Events'}, prerender: false) %>
+        <%#= react_component('LogEventsModule', props: {title: 'Log Events'}, prerender: false) %>
       </div>
   <% end %>
 </div>
@@ -115,6 +115,6 @@
     <% end %>
 
     //register for polling
-    polling.registerPolling(polling.pollEnum.WELCOME_DEPLOYMENTS, deployments_poll, 30000);
+//    polling.registerPolling(polling.pollEnum.WELCOME_DEPLOYMENTS, deployments_poll, 30000);
   });
 </script>

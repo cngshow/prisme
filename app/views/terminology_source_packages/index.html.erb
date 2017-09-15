@@ -308,31 +308,13 @@
           }
       }
 
-      function poll() {
-          console.log('calling poll - tsp');
-          var row_limit = arguments[0];
+      function poll_params() {
+          var row_limit = $('#tsp_filter_rows').find('option:selected').val();
+          return {row_limit: row_limit};
+      }
 
-          if (row_limit === undefined) {
-              row_limit = $('#tsp_filter_rows').find('option:selected').val();
-          }
-
-          $.getJSON(gon.routes.terminology_source_packages_load_build_data_path, {row_limit: row_limit}, function (data) {
-              loadTable('data-table', data);
-
-              <% if Rails.env.development? %>
-              if (polling.isPolling(polling.pollEnum.TERM_SOURCE)) {
-                  $.getJSON(gon.routes.terminology_source_packages_check_polling_path, {}, function (data) {
-                      console.log(JSON.stringify(data));
-                      if (data.poll === false) {
-                          polling.unregisterPolling(polling.pollEnum.TERM_SOURCE);
-
-                          //call final poll in case there is a timing issue
-                          poll();
-                      }
-                  });
-              }
-              <% end %>
-          });
+      function poll_callback(data) {
+          loadTable('data-table', data);
       }
 
       $(document).ready(function () {
@@ -381,7 +363,8 @@
           init_select2();
 
           //register for polling
-          polling.registerPolling(polling.pollEnum.TERM_SOURCE, poll, 1000);
+          var tsp_poller = new Poller('term_source_pkg_poller', 1000, gon.routes.terminology_source_packages_load_build_data_path, poll_params, poll_callback);
+          PollMgr.registerPoller(tsp_poller);
       });
   </script>
 </div>
