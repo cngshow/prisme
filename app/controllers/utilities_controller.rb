@@ -25,7 +25,7 @@ LOCAL:<br>
 }
   #warm up apache
   def warmup
-    @headers = {}
+    @headers = {counter: params['counter']}
     @warmup_count = $PROPS['PRISME.warmup_apache'].to_i
     request.headers.each do |elem|
       @headers[elem.first.to_s] = elem.last.to_s

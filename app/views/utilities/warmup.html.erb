@@ -18,7 +18,7 @@
     for (var i = 0; i < num_calls; i++) {
       $.get(gon.routes.utilities_warmup_path, {
         counter: i, format: 'json'}, function (data) {
-        $('#counter').text(data);
+        $('#counter').text(data.counter);
         console.log("Warmup fetch number " + i);
         console.log("Warmup data is " + data.toString());
       });
