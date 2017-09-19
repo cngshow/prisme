@@ -37,7 +37,7 @@ export default class LogEventTable extends React.Component {
         fs['acknowledgement'] = filter_state.acknowledgement
         //disable state
         this.props.my_module.getFilter().setState({disabled: true})
-        $.get('react_log_events', fs, function (data) {
+        $.get(gon.routes.react_log_events_path, fs, function (data) {
             console.log("I got back ", data)
             outer.setState({row_data: data.rows})
             //can this be erbed?
