@@ -207,13 +207,11 @@ var PollMgr = (function() {
 
     function unregisterPoller(pollerName) {
         if (registeredPollers.length > 0) {
-            $.each(registeredPollers, function (idx, poller) {
-                if (poller.name === pollerName) {
-                    console.log("unregistering poller " + pollerName);
-                    poller.activate(false);
-                    return false;
-                }
-            });
+            var poller = getPoller(pollerName);
+            if (poller !== undefined) {
+                console.log("unregistering poller " + pollerName);
+                poller.activate(false);
+            }
         }
     }
 

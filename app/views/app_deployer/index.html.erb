@@ -15,10 +15,9 @@
   fields['leaf_data.completed_at'] = 'Last Check /<br>Completed At'
   fields['leaf_data.elapsed_time'] = 'Elapsed Time'
   locals['fields'] = fields
-  locals['poll_function_name'] = 'reload_deployments'
+  locals['tableId'] = 'data-table'
   locals['poll_key'] = 'polling.pollEnum.DEPLOYER'
   locals['poll_route'] = 'gon.routes.app_deployer_reload_deployments_path'
-  locals['check_poll_route'] = 'gon.routes.app_deployer_check_polling_path'
 %>
 
 <%= render 'app_deployer/app_deploments_table', locals: locals %>

@@ -1,4 +1,3 @@
-<%= render('layouts/filter_table_poll_results', filter_id: 'deploy_filter_rows', filter_label: 'Filter Results', include_all_rows: false, poll: locals['poll_function_name']) if locals['poll_function_name'] %>
 <style>
   .appDeployer_caption {
     color: #000000;
@@ -6,7 +5,9 @@
   }
 </style>
 
-<table id="data-table" class="prisme-table table-striped table-hover" aria-labelledby="caption">
+<%= render('layouts/filter_table_poll_results', filter_id: 'deploy_filter_rows', filter_label: 'Filter Results', include_all_rows: false, poller: locals['poll_key']) %>
+
+<table id="<%= locals['tableId'] %>" class="prisme-table table-striped table-hover" aria-labelledby="caption">
   <caption id="appdepcaption" class="appDeployer_caption">Application Deployments</caption>
   <thead>
   <tr>
@@ -28,7 +29,8 @@
 <br/>
 
 <script>
-    function loadTable(tableId, data) {
+    function loadTable(data) {
+        var tableId = '<%= locals['tableId'] %>';
         var fields = <%= raw locals['fields'].to_json %>;
         var tbody = $('#' + tableId).find('tbody'); //table id needs to be generic as local
         tbody.empty();
@@ -75,34 +77,11 @@
         }
     }
 
-    var _<%= locals['poll_function_name']%> = (function () {
-        var row_limit = arguments[0];
-
-        if (row_limit === undefined) {
-            row_limit = $('#deploy_filter_rows').find('option:selected').val();//generic local!!!
-        }
-
-        $.getJSON(<%= locals['poll_route'] %>, {row_limit: row_limit}, function (data) {
-            loadTable('data-table', data);
-
-            <% if Rails.env.development? %>
-            if (polling.isPolling(<%= locals['poll_key'] %>)) {
-                $.getJSON(<%= locals['check_poll_route'] %>, {}, function (data) {
-                    if (data.poll === false) {
-                        console.log("turn off polling");
-                        polling.unregisterPolling(<%= locals['poll_key'] %>);
-                        console.log("call poll once more");
-                        _<%= locals['poll_function_name']%>();
-                    }
-                });
-            }
-            <% end %>
-        });
-    });
-
     $(document).ready(function () {
         //register for polling
-        polling.registerPolling(<%= locals['poll_key'] %>, _<%= locals['poll_function_name'] %>, 5000);
+        var poller = new Poller('<%= locals['poll_key'] %>', 5000, <%= locals['poll_route'] %>, filterRowLimit, loadTable);
+        PollMgr.registerPoller(poller);
+
         $('span').tooltip({
             'selector': '',
             'placement': 'bottom',

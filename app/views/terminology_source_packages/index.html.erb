@@ -256,9 +256,13 @@
           }
       }
 
-      function loadTable(tableId, data) {
+      function jqTbody() {
+          return $('#data-table').find('tbody');
+      }
+
+      function loadTable(data) {
           var fields = ['user', 'uploaded_files', 'started_at', 'state', 'result', 'progress', 'state_time', 'elapsed_time'];
-          $('#' + tableId).find('tbody').empty();
+          jqTbody().empty();
 
           if (data.length > 0) {
               $.each(data, function (index, row) {
@@ -299,17 +303,13 @@
                               tr_data.append($('<td>').text(eval('row.' + field)));
                           }
                       }
-                  $('#' + tableId + ' tbody').append(tr_data);
+                  jqTbody().append(tr_data);
               });
           }
           else {
               var rows = '<tr><td colspan="8" class="text-center">There are no items to list...</td></tr>';
-              $('#' + tableId + ' tbody').html(rows);
+              jqTbody().html(rows);
           }
-      }
-
-      function poll_callback(data) {
-          loadTable('data-table', data);
       }
 
       $(document).ready(function () {
@@ -358,7 +358,7 @@
           init_select2();
 
           //register for polling
-          var tsp_poller = new Poller('term_source_pkg_poller', 1000, gon.routes.terminology_source_packages_load_build_data_path, filterRowLimit, poll_callback);
+          var tsp_poller = new Poller('term_source_pkg_poller', 1000, gon.routes.terminology_source_packages_load_build_data_path, filterRowLimit, loadTable);
           PollMgr.registerPoller(tsp_poller);
       });
   </script>
