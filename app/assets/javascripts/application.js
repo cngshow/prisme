@@ -10,6 +10,7 @@
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
 //
+//= require polling.js
 //= require log_event_globals.js
 //= require webpack-bundle.js
 //= require jquery2

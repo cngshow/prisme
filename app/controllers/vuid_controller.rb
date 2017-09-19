@@ -11,10 +11,10 @@ class VuidController < ApplicationController
   def request_vuid
     range = params['range'].to_i rescue 0
     reason = params['reason']
-    vuid = nil
     too_big = range > 1000000
     bad_reason = reason.eql?(REASON_PROMPT) || reason.to_s.empty?
     bad_range = range  <= 0
+
     if bad_reason || bad_range || too_big
       error = ''
       error << 'Invalid VUID reason!<br>' if bad_reason

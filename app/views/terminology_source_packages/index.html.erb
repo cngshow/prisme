@@ -21,7 +21,7 @@
   <h1>Terminology Source Package Dashboard</h1>
 </div>
 
-<%= render 'layouts/filter_table_poll_results', filter_id: 'tsp_filter_rows', filter_label: 'Filter Results', include_all_rows: true, poll: 'poll' %>
+<%= render 'layouts/filter_table_poll_results', filter_id: 'tsp_filter_rows', filter_label: 'Filter Results', include_all_rows: true, poller: 'term_source_pkg_poller' %>
 <table id="data-table" class="prisme-table table-striped table-hover">
   <thead>
   <tr>
@@ -308,11 +308,6 @@
           }
       }
 
-      function poll_params() {
-          var row_limit = $('#tsp_filter_rows').find('option:selected').val();
-          return {row_limit: row_limit};
-      }
-
       function poll_callback(data) {
           loadTable('data-table', data);
       }
@@ -363,7 +358,7 @@
           init_select2();
 
           //register for polling
-          var tsp_poller = new Poller('term_source_pkg_poller', 1000, gon.routes.terminology_source_packages_load_build_data_path, poll_params, poll_callback);
+          var tsp_poller = new Poller('term_source_pkg_poller', 1000, gon.routes.terminology_source_packages_load_build_data_path, filterRowLimit, poll_callback);
           PollMgr.registerPoller(tsp_poller);
       });
   </script>

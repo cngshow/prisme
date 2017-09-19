@@ -102,35 +102,17 @@
     }
   }
 
-  function poll() {
-    console.log('calling poll - <%= locals['poll_key'] %>');
-    var row_limit = arguments[0];
+  function poll_params() {
+      var row_limit = $('#<%= locals['poll_key'] %>').find('option:selected').val();
+      return {row_limit: row_limit};
+  }
 
-    if (row_limit === undefined) {
-      row_limit = $('#filter_rows').find('option:selected').val();
-    }
-
-    $.getJSON(<%= locals['poll_route'] %>, {row_limit: row_limit}, function (data) {
+  function poll_callback(data) {
       loadTable('data-table', data);
-
-      <% if Rails.env.development? %>
-      if (polling.isPolling(<%= locals['poll_key'] %>)) {
-        $.getJSON(<%= locals['check_poll_route'] %>, {}, function (data) {
-          console.log(JSON.stringify(data));
-          if (data.poll === false) {
-            polling.unregisterPolling(<%= locals['poll_key'] %>);
-
-            //call final poll in case there is a timing issue
-            poll();
-          }
-        });
-      }
-      <% end %>
-    });
   }
 
   $(document).ready(function () {
-    //register for polling
-    polling.registerPolling(<%= locals['poll_key'] %>, poll, <%=($PROPS['JENKINS.build_check_seconds'].to_i / 2) * 1000%>);
+      //register for polling
+      PollMgr.registerPoller(new Poller('<%= locals['poll_key'] %>', <%=($PROPS['JENKINS.build_check_seconds'].to_i / 2) * 1000%>, <%= locals['poll_route'] %>, poll_params, poll_callback));
   });
 </script>

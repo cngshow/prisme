@@ -111,6 +111,11 @@ Poller.prototype.isActive = function () {
 
 Poller.prototype.poll = function () {
     var that = this;
+    var is_exec_poll_call = false;
+
+    if (arguments[0] !== undefined) {
+        is_exec_poll_call = arguments[0]['execPoll'];
+    }
 
     if (PollMgr.isPollerActive(this.name)) {
         var params = this.params_callback.call(this);
@@ -118,7 +123,7 @@ Poller.prototype.poll = function () {
         $.get(this.ajaxPath, params, function (data) {
             that.callback.call(that, data);
 
-            if (PollMgr.isPollerActive(that.name)) {
+            if (PollMgr.isPollerActive(that.name) && !is_exec_poll_call) {
                 setTimeout(that.poll.bind(that), that.timeout);
             }
         });
@@ -142,15 +147,32 @@ var PollMgr = (function() {
         return ret;
     }
 
-    function registerPoller(poller) {
-        var found = false, call_poll = true, pollIt;
+    // this function is used to immediately call the poll programatically and is used with the row filter onchange
+    function execPoll(name) {
+        if (isPollerActive(name)) {
+            var poller = getPoller(name);
 
+            if (poller !== undefined) {
+                //pass execPoll argument to the poll call to prevent the setTimeout from executing as this is actively polling but we are immediately calling the method due to user GUI interaction
+                poller.poll({execPoll: true});
+            }
+        }
+    }
+
+    function getPoller(name) {
+        var poller;
         $.each(registeredPollers, function (idx, p) {
-            if (p.name === poller.name) {
-                found = true;
-                pollIt = p;
+            if (p.name === name) {
+                poller = p;
             }
         });
+        return poller;
+    }
+
+    function registerPoller(poller) {
+        var call_poll = true;
+        var pollIt = getPoller(poller.name);
+        var found = pollIt !== undefined;
 
         if (found) {
             // if this poll is already active so return in order to not have this polling multiple times
@@ -219,5 +241,8 @@ var PollMgr = (function() {
 
         // convenience function when registering a poller when it takes no parameters
         noParams: noParams,
+
+        // function to immediately call the poll method based on user action (for example: changing the row_limit in the filter)
+        execPoll: execPoll,
     };
 })();
