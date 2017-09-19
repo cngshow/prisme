@@ -130,6 +130,42 @@ Poller.prototype.poll = function () {
     }
 };
 
+function FunctionPoller(name, timeout, callback) {
+    this.controller_class = $( "body" ).data("poll_controller");
+    this.name = name;
+    this.timeout = timeout;
+    this.callback = callback;
+    this.active = false;
+}
+
+FunctionPoller.prototype.activate = function (bool) {
+    this.active = bool;
+};
+
+FunctionPoller.prototype.setCallback = function (newCallback) {
+    this.callback = newCallback;
+};
+
+FunctionPoller.prototype.setTimeoutMillis = function (millis) {
+    this.timeout = millis;
+};
+
+FunctionPoller.prototype.isActive = function () {
+    return this.active;
+};
+
+FunctionPoller.prototype.poll = function () {
+    var that = this;
+
+    if (PollMgr.isPollerActive(this.name)) {
+        if (this.callback.call(this) === true) {
+            setTimeout(that.poll.bind(that), that.timeout);
+        } else {
+            PollMgr.unregisterPoller(this.name);
+        }
+    }
+};
+
 var PollMgr = (function() {
     var registeredPollers = [];
 
@@ -178,9 +214,12 @@ var PollMgr = (function() {
             // if this poll is already active so return in order to not have this polling multiple times
             if (pollIt.isActive()) {
                 pollIt.setCallback(poller.callback);
-                pollIt.setParamsCallback(poller.params_callback);
                 pollIt.setTimeoutMillis(poller.timeout);
                 call_poll = false;
+
+                if (pollIt instanceof Poller) {
+                    pollIt.setParamsCallback(poller.params_callback);
+                }
             } else {
                 pollIt.activate(true);
             }
@@ -209,7 +248,7 @@ var PollMgr = (function() {
         if (registeredPollers.length > 0) {
             var poller = getPoller(pollerName);
             if (poller !== undefined) {
-                console.log("unregistering poller " + pollerName);
+                console.log("unregistering poller...", pollerName);
                 poller.activate(false);
             }
         }
