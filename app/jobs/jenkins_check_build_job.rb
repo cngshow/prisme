@@ -112,10 +112,10 @@ class JenkinsCheckBuild < PrismeBaseJob
       if (attempt_number < max_attempts)
         $log.info("Attempting to gain the status of #{name} again.")
         JenkinsCheckBuild.set(wait: time).perform_later(jenkins_config, name, attempt_number + 1, false, track_child_job)
-        raise JenkinsClient::JenkinsJavaError, ex
+        raise ex
       else
         result_hash[:build] = BuildResult::UNKNOWN
-        raise JenkinsClient::JenkinsJavaError, ex
+        raise ex
       end
     ensure
       save_result(result, result_hash)
