@@ -97,8 +97,18 @@
     })
   }
 
+  function pollParams() {
+      return {row_limit: $('#pjq_filter_rows').find('option:selected').val()};
+  }
+
   $(document).ready(function (e) {
-    // register for polling
-    polling.registerPolling(polling.pollEnum.WELCOME_QUEUE, reload, 5000);
+      var job_queue_poller = new Poller(
+          'job_queue',
+          5000,
+          gon.routes.welcome_reload_job_queue_list_path,
+          pollParams,
+          loadJobQueueTable
+      );
+      PollMgr.registerPoller(job_queue_poller);
   });
 </script>

@@ -11,15 +11,12 @@
   </select>
 </div>
 <script>
-  var $filter = $('#<%=filter_id%>');
-  $filter.change(function () {
-    var fnstring = "<%= poll %>";
-    var fnparams = [$filter.find('option:selected').val()];
-    var fn = window[fnstring];
+  function filterRowLimit() {
+      var row_limit = $('#<%=filter_id%>').find('option:selected').val();
+      return {row_limit: row_limit};
+  }
 
-    // is object a function?
-    if (typeof fn === "function") {
-      fn.apply(null, fnparams);
-    }
+  $('#<%=filter_id%>').change(function () {
+      PollMgr.execPoll('<%= poller %>');
   });
 </script>

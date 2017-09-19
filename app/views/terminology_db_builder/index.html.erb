@@ -7,8 +7,6 @@
   <h1>Terminology Database Builder</h1>
 </div>
 
-<%= render 'layouts/filter_table_poll_results', filter_id: 'filter_rows', filter_label: 'Filter Results', include_all_rows: true, poll: 'poll' %>
-
 <%
   locals = {}
   fields = {}
@@ -25,8 +23,9 @@
   locals['fields'] = fields
   locals['poll_key'] = 'polling.pollEnum.DB_BUILDER'
   locals['poll_route'] = 'gon.routes.terminology_db_builder_load_build_data_path'
-  locals['check_poll_route'] = 'gon.routes.terminology_db_builder_check_polling_path'
 %>
+
+<%= render 'layouts/filter_table_poll_results', filter_id: 'filter_rows', filter_label: 'Filter Results', include_all_rows: true, poller: locals['poll_key'] %>
 
 <%= render 'jenkins_check_build/job_data_table', locals: locals %>
 

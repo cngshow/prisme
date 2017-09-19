@@ -146,6 +146,7 @@ class AppDeployerController < ApplicationController
   def ajax_reload_app_deployer_dropdown
     ret = []
     dropdown = params['dropdown_name']
+    $log.always("params are...#{params}")
     case dropdown
       when 'tomcat_isaac_rest'
         ret = load_tomcat_isaac_rest

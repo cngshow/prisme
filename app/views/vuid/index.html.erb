@@ -5,7 +5,7 @@
   <h1>VUID Requests Dashboard</h1>
 </div>
 
-<%= render 'layouts/filter_table_poll_results', filter_id: 'vuid_filter_rows', filter_label: 'Filter Results', include_all_rows: true, poll: 'vuid_requests_poll' %>
+<%= render 'layouts/filter_table_poll_results', filter_id: 'vuid_filter_rows', filter_label: 'Filter Results', include_all_rows: true, poller: 'vuid_requests_poll' %>
 
 <table id="vuid-table" class="prisme-table table-striped table-hover">
   <thead>
@@ -116,20 +116,8 @@
         }
     }
 
-    var awaiting_poll_results = false;
-
-    function vuid_requests_poll() {
-        var rowlimit = arguments[0];
-
-        if (rowlimit === undefined) {
-            rowlimit = $('#vuid_filter_rows').find('option:selected').val();
-        }
-
-        awaiting_poll_results = true;
-        $.get('<%= vuid_poll_path %>', {row_limit: rowlimit}, function (data) {
-            $('#vuid-table').find('tbody').html(data);
-            awaiting_poll_results = false;
-        });
+    function load_vuid_table(data) {
+        $('#vuid-table').find('tbody').html(data);
     }
 
     $(document).ready(function () {
@@ -158,9 +146,9 @@
                 reason: "Please enter your reason for requesting these VUIDs."
             }
         });
-        vuid_requests_poll();
 
         //register for polling
-//        polling.registerPolling(polling.pollEnum.VUID_REQUESTS, vuid_requests_poll, 30000);
+        var poller = new Poller('vuid_requests_poll', 60000, gon.routes.vuid_poll_path, filterRowLimit, load_vuid_table);
+        PollMgr.registerPoller(poller);
     });
 </script>

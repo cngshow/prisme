@@ -3,6 +3,14 @@ require './lib/time/time_utils'
 module ApplicationHelper
   include BootstrapNotifier
 
+  def set_poll_controller
+    if self.is_a?(ApplicationController)
+      self.class.to_s
+    else
+      controller.class.to_s
+    end
+  end
+
   def errors_to_flash(errors)
     retval = []
     errors.each {|attr, error_array|
