@@ -2,4 +2,4 @@
 var LogEventPollData = new Object();
 LogEventPollData.polling_interval = <%=$PROPS['PRISME.log_event_poller'].to_i*1000%> ;
 LogEventPollData.log_event_poller_activity_delta = <%=$PROPS['PRISME.log_event_poller_activity_delta'].to_i*1000%> ;
-LogEventPollData.pollerIndex = null; //set in LogEventFilter
+LogEventPollData.poll_name = 'log_events';

@@ -118,15 +118,21 @@ Poller.prototype.poll = function () {
     }
 
     if (PollMgr.isPollerActive(this.name)) {
-        var params = this.params_callback.call(this);
+        try {
+            var params = this.params_callback.call(this);
 
-        $.get(this.ajaxPath, params, function (data) {
-            that.callback.call(that, data);
-
+            $.get(this.ajaxPath, params, function (data) {
+                that.callback.call(that, data);
+            });
+        }
+        catch (e) {
+            console.log("exception called in poll.....", e);
+        }
+        finally {
             if (PollMgr.isPollerActive(that.name) && !is_exec_poll_call) {
                 setTimeout(that.poll.bind(that), that.timeout);
             }
-        });
+        }
     }
 };
 
@@ -215,10 +221,10 @@ var PollMgr = (function() {
         return poller;
     }
 
-    function registerPoller(poller) {
-        var call_poll = true;
+    function registerPoller(poller, initial_poll) {
         var pollIt = getPoller(poller.name);
         var found = pollIt !== undefined;
+        var call_poll = (initial_poll === undefined ? true : initial_poll === true);
 
         if (found) {
             // if this poll is already active so return in order to not have this polling multiple times
@@ -238,9 +244,13 @@ var PollMgr = (function() {
             registeredPollers.push(poller);
             pollIt = poller;
         }
-console.log("------------------ we are registering the poller " + poller.name);
+
+        console.log("------------------ we are registering the poller " + poller.name);
         if (call_poll) {
             pollIt.poll();
+        } else {
+            console.log("no initial poll- calling setTimeout... please wait.");
+            setTimeout(poller.poll.bind(poller), poller.timeout);
         }
     }
 

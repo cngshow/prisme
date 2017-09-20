@@ -71,16 +71,12 @@ export default class LogEventFilter extends React.Component {
 
     componentDidMount() {
         console.log("polling interval is ", LogEventPollData.polling_interval);
-        PollMgr.registerPoller(new FunctionPoller('greg', 5000, this.poll));
-        // let pollIndex = setInterval(this.poll, LogEventPollData.polling_interval )//every minute
-        // LogEventPollData.pollerIndex = pollIndex
+        PollMgr.registerPoller(new FunctionPoller(LogEventPollData.poll_name, LogEventPollData.polling_interval, this.poll), false);
     }
 
 
     poll() {
-        // return true;
-        console.log("in poll-------------------------");
-        if (this.state.disabled == true){
+        if (this.state.disabled === true){
             console.log("Disabled skipping LogEvent poll.");
             //skip this poll
         } else {
@@ -95,9 +91,8 @@ export default class LogEventFilter extends React.Component {
     }
 
     componentWillUnmount() {
-        // clearInterval(LogEventPollData.pollerIndex)
-        console.log("Log Event polling stoped!!!!!", LogEventPollData.pollerIndex);
-        PollMgr.unregisterPoller('greg');
+        console.log("Log Event polling stopped!!!!!");
+        PollMgr.unregisterPoller(LogEventPollData.poll_name);
     }
 
     componentDidUpdate(prevProps, prevState) {
