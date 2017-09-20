@@ -156,15 +156,23 @@ FunctionPoller.prototype.isActive = function () {
 
 FunctionPoller.prototype.poll = function () {
     if (PollMgr.isPollerActive(this.name)) {
-        console.log("calling...");
-        var ret = this.callback.call(this);
+        var ret = true;
 
-        if (ret === true) {
-            console.log("trying to call setTimeout....");
-            setTimeout(this.poll.bind(this), this.timeout);
-        } else {
-            PollMgr.unregisterPoller(this.name);
+        try{
+            ret = this.callback.call(this);
         }
+        catch(e){
+            console.log("exception thrown in poll...", e);
+        }
+        finally{
+            if (ret === true) {
+                console.log("trying to call setTimeout....");
+                setTimeout(this.poll.bind(this), this.timeout);
+            } else {
+                PollMgr.unregisterPoller(this.name);
+            }
+        }
+        return ret;
     }
 };
 
