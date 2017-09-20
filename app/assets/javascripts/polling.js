@@ -155,11 +155,13 @@ FunctionPoller.prototype.isActive = function () {
 };
 
 FunctionPoller.prototype.poll = function () {
-    var that = this;
-
     if (PollMgr.isPollerActive(this.name)) {
-        if (this.callback.call(this) === true) {
-            setTimeout(that.poll.bind(that), that.timeout);
+        console.log("calling...");
+        var ret = this.callback.call(this);
+
+        if (ret === true) {
+            console.log("trying to call setTimeout....");
+            setTimeout(this.poll.bind(this), this.timeout);
         } else {
             PollMgr.unregisterPoller(this.name);
         }
@@ -228,7 +230,7 @@ var PollMgr = (function() {
             registeredPollers.push(poller);
             pollIt = poller;
         }
-
+console.log("------------------ we are registering the poller " + poller.name);
         if (call_poll) {
             pollIt.poll();
         }

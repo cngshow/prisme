@@ -71,28 +71,33 @@ export default class LogEventFilter extends React.Component {
 
     componentDidMount() {
         console.log("polling interval is ", LogEventPollData.polling_interval);
-        let pollIndex = setInterval(this.poll, LogEventPollData.polling_interval )//every minute
-        LogEventPollData.pollerIndex = pollIndex
+        PollMgr.registerPoller(new FunctionPoller('greg', 5000, this.poll));
+        // let pollIndex = setInterval(this.poll, LogEventPollData.polling_interval )//every minute
+        // LogEventPollData.pollerIndex = pollIndex
     }
 
 
     poll() {
+        // return true;
+        console.log("in poll-------------------------");
         if (this.state.disabled == true){
             console.log("Disabled skipping LogEvent poll.");
-            return//skip this poll
-        }
-        
-        if (((new Date()) - this.state.last_poll) > (LogEventPollData.polling_interval - LogEventPollData.log_event_poller_activity_delta)) {
-            console.log("About to do a LogEventPoll",this.state.last_poll);
-            this.props.my_update(this.state);
+            //skip this poll
         } else {
-            console.log("Skipping this poll, due to previous update.", this.state.last_poll);
+            if (((new Date()) - this.state.last_poll) > (LogEventPollData.polling_interval - LogEventPollData.log_event_poller_activity_delta)) {
+                console.log("About to do a LogEventPoll",this.state.last_poll);
+                this.props.my_update(this.state);
+            } else {
+                console.log("Skipping this poll, due to previous update.", this.state.last_poll);
+            }
         }
+        return true;
     }
 
     componentWillUnmount() {
-        clearInterval(LogEventPollData.pollerIndex)
+        // clearInterval(LogEventPollData.pollerIndex)
         console.log("Log Event polling stoped!!!!!", LogEventPollData.pollerIndex);
+        PollMgr.unregisterPoller('greg');
     }
 
     componentDidUpdate(prevProps, prevState) {
