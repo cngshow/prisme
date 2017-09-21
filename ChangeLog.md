@@ -5,6 +5,7 @@ commit history.
 
 * 2017/09/?? - 5.04 - PENDING
    * Fix for Defect 585501. Modeling roles are shown for udeployed/unreachable isaacs.
+   * Defect 590536 - fixed the code setting the user timezone into the session for dispay of the correct date and time on admin user edit
 
 * 2017/09/08 - 5.03
    * Editors must be vuid requestors.  This business role was added later so we must fix data from earlier prisme versions.(Defect 583529)
