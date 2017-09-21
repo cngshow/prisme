@@ -265,11 +265,9 @@ var PollMgr = (function() {
             pollIt = poller;
         }
 
-        console.log("------------------ we are registering the poller " + poller.name);
         if (call_poll) {
             pollIt.poll();
         } else {
-            console.log("no initial poll- calling setTimeout... please wait.");
             setTimeout(poller.poll.bind(poller), poller.timeout);
         }
     }

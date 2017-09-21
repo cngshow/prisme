@@ -51,7 +51,7 @@
     });
   }
 
-  var deploymentsPoller = new Poller('deployments', 5000, gon.routes.welcome_reload_deployments_path, PollMgr.noParams, deployments_poll);
+  var deploymentsPoller = new Poller('deployments', 30000, gon.routes.welcome_reload_deployments_path, PollMgr.noParams, deployments_poll);
   function registerDeploymentsPolling(bool) {
       if (bool === true) {
           //register for polling
@@ -124,15 +124,11 @@
         <% session.delete(:select_tabpage) %>
       <% end %>
 
-//      var _modal = $("#warNameModal");
-
       $(document).on('hide.bs.modal','#warNameModal', function () {
-          alert('wtf - hiding');
           registerDeploymentsPolling(true);
       });
 
       $(document).on('show.bs.modal','#warNameModal', function () {
-          alert('wtf - showing');
           registerDeploymentsPolling(false);
       });
 

@@ -87,7 +87,9 @@
   </table>
 </div>
 <!-- Modal -->
-<div id="warNameModal" class="modal fade" role="dialog">
+<% warModalId = '#warNameModal' %>
+
+<div id="<%= warModalId[1..warModalId.length] %>" class="modal fade" role="dialog">
   <div class="modal-dialog">
     <!-- Modal content-->
     <div class="modal-content">
@@ -112,9 +114,9 @@
     //508 containing tabs for modal
     $(function() {
 
-      $('#warNameModal').on('shown.bs.modal', function(e) {
+      $('<%= warModalId %>').on('shown.bs.modal', function(e) {
         e.preventDefault();
-        setModalTabs('#warNameModal', 4);
+        setModalTabs('<%= warModalId %>', 4);
         $('[autofocus]').focus();
       });
        
@@ -127,7 +129,7 @@
 
         if (war_name.length > 0) {
             $.getJSON(gon.routes.rename_war_path, {uuid: $(input).data('uuid'), war_name: war_name, war_description: war_description}, function () {
-                $('#warNameModal').modal('hide');
+                $('<%= warModalId %>').modal('hide');
             });
         } else {
             alert('Please enter an application name before attempting to rename the application.');
@@ -137,13 +139,21 @@
     }
 
     function renameDeployment(elem) {
-        registerDeploymentsPolling(false);
-
-        // turn off polling
+/*
         if (PollMgr.isPollerAwaitingResults('deployments')) { //use a name constant here
-            setTimeout(renameDeployment, 250, arguments);
+            setTimeout(renameDeployment, 3000, arguments);
             return false;
         }
+
+        ***NOTE*** weird timing bug can occur where the modal attempts to open and the overlay is shown but bcause polling fires just as the modal
+        * opens the modal is not shown. Another scenario has the modal shown but validation error message fires instructing the user to enter the name
+        * even though one is entered. Haven't come up with a solution so we are ignoring this for now. Chances are it won't be seen but this note is here
+        * to remind us of the issue. User can refresh their browser to reset it and attempt the rename again. The modal interferes with the polling which is
+        * why we are unregistering the polling before opening the modal. The PollMgr.isPollerAwaitingResults function was written to attempt to catch this
+        * situation and provide a fix.
+*/
+        // turn off polling
+        registerDeploymentsPolling(false);
 
         //set the war name and uuid into the text input and display the modal for editing
         var name_input = $('#war_name');
@@ -151,6 +161,6 @@
         name_input.val($(elem).data('<%=UuidProp::Keys::NAME.to_s%>'));
         var descr = $('#war_description');
         descr.val($(elem).data('<%=UuidProp::Keys::DESCRIPTION.to_s%>'));
-        $('#warNameModal').modal('show');
+        $('<%= warModalId %>').modal('show');
     }
 </script>
