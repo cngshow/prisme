@@ -37,21 +37,29 @@
   </div>
   <% if policy(:navigation).any_administrator? && 'true'.eql?($PROPS['PRISME.show_log_events']) %>
       <div id="tp-log_events">
-        <%#= react_component('LogEventsModule', props: {title: 'Log Events'}, prerender: false) %>
+        <%= react_component('LogEventsModule', props: {title: 'Log Events'}, prerender: false) %>
       </div>
   <% end %>
 </div>
 
 <script>
-  var awaiting_poll_results = false;
-
   function deployments_poll() {
     console.log('polling deployments...');
-    awaiting_poll_results = true;
+
     $.get('<%= welcome_reload_deployments_path %>', {}, function (data) {
       $('#tp-deployments').html(data);
-      awaiting_poll_results = false;
     });
+  }
+
+  var deploymentsPoller = new Poller('deployments', 5000, gon.routes.welcome_reload_deployments_path, PollMgr.noParams, deployments_poll);
+  function registerDeploymentsPolling(bool) {
+      if (bool === true) {
+          //register for polling
+          PollMgr.registerPoller(deploymentsPoller, true);
+
+      } else {
+          PollMgr.unregisterPoller(deploymentsPoller.name);
+      }
   }
 
   function tomcat_app(elem, tomcat_service_id, action, app) {
@@ -108,13 +116,26 @@
   }
 
   $(document).ready(function () {
-    $("#tabs").tabs();
-    <% if session[:select_tabpage] %>
-    $("#tabs").tabs("option", "active", <%= session[:select_tabpage] %>);
-    <% session.delete(:select_tabpage) %>
-    <% end %>
+      var t = $('#tabs');
+      t.tabs();
 
-    //register for polling
-//    polling.registerPolling(polling.pollEnum.WELCOME_DEPLOYMENTS, deployments_poll, 30000);
+      <% if session[:select_tabpage] %>
+        t.tabs("option", "active", <%= session[:select_tabpage] %>);
+        <% session.delete(:select_tabpage) %>
+      <% end %>
+
+//      var _modal = $("#warNameModal");
+
+      $(document).on('hide.bs.modal','#warNameModal', function () {
+          alert('wtf - hiding');
+          registerDeploymentsPolling(true);
+      });
+
+      $(document).on('show.bs.modal','#warNameModal', function () {
+          alert('wtf - showing');
+          registerDeploymentsPolling(false);
+      });
+
+      registerDeploymentsPolling(true);
   });
 </script>

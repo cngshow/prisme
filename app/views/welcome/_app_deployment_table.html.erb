@@ -120,10 +120,6 @@
        
     });
 
-    function check_awaiting_poll_results() {
-        return awaiting_poll_results;
-    }
-
     function submitRenameDeployment() {
         var input = $('#war_name');
         var war_name = $.trim(input.val());
@@ -141,15 +137,13 @@
     }
 
     function renameDeployment(elem) {
+        registerDeploymentsPolling(false);
+
         // turn off polling
-        if (awaiting_poll_results) {
-            console.log("awaiting poll results....");
+        if (PollMgr.isPollerAwaitingResults('deployments')) { //use a name constant here
             setTimeout(renameDeployment, 250, arguments);
             return false;
         }
-
-        // if we get here then we are not currently polling so unregister the polling to prevent issues with the modal
-        polling.unregisterPolling(polling.pollEnum.WELCOME_DEPLOYMENTS);
 
         //set the war name and uuid into the text input and display the modal for editing
         var name_input = $('#war_name');
@@ -158,12 +152,5 @@
         var descr = $('#war_description');
         descr.val($(elem).data('<%=UuidProp::Keys::DESCRIPTION.to_s%>'));
         $('#warNameModal').modal('show');
-
     }
-
-    $(document).ready(function () {
-        $("#warNameModal").on("hidden.bs.modal", function () {
-            polling.registerPolling(polling.pollEnum.WELCOME_DEPLOYMENTS, deployments_poll, 30000);
-        });
-    });
 </script>

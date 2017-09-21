@@ -87,6 +87,7 @@ function Poller(name, timeout, ajaxPath, params_callback, callback) {
     this.callback = callback;
     this.params_callback = params_callback;
     this.active = false;
+    this.awaiting_poll_resultz = false;
 }
 
 Poller.prototype.activate = function (bool) {
@@ -109,9 +110,14 @@ Poller.prototype.isActive = function () {
     return this.active;
 };
 
+Poller.prototype.isAwaitingPollResults = function () {
+    return this.awaiting_poll_resultz;
+};
+
 Poller.prototype.poll = function () {
     var that = this;
     var is_exec_poll_call = false;
+    this.awaiting_poll_resultz = true;
 
     if (arguments[0] !== undefined) {
         is_exec_poll_call = arguments[0]['execPoll'];
@@ -123,16 +129,20 @@ Poller.prototype.poll = function () {
 
             $.get(this.ajaxPath, params, function (data) {
                 that.callback.call(that, data);
+                that.awaiting_poll_resultz = false;
             });
         }
         catch (e) {
             console.log("exception called in poll.....", e);
+            that.awaiting_poll_resultz = false;
         }
         finally {
             if (PollMgr.isPollerActive(that.name) && !is_exec_poll_call) {
                 setTimeout(that.poll.bind(that), that.timeout);
             }
         }
+    } else {
+        this.awaiting_poll_resultz = false;
     }
 };
 
@@ -221,6 +231,16 @@ var PollMgr = (function() {
         return poller;
     }
 
+    function isPollerAwaitingResults(pollName) {
+        var ret = false;
+        var poller = getPoller(pollName);
+
+        if (poller instanceof Poller) {
+            ret = poller.isAwaitingPollResults();
+        }
+        return ret;
+    }
+
     function registerPoller(poller, initial_poll) {
         var pollIt = getPoller(poller.name);
         var found = pollIt !== undefined;
@@ -301,5 +321,8 @@ var PollMgr = (function() {
 
         // function to immediately call the poll method based on user action (for example: changing the row_limit in the filter)
         execPoll: execPoll,
+
+        // function to check if a given poller is currently awaiting results
+        isPollerAwaitingResults: isPollerAwaitingResults,
     };
 })();

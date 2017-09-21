@@ -1,5 +1,5 @@
 <h4><%=PRISME_NAME%> Job Queue</h4>
-<%= render 'layouts/filter_table_poll_results', filter_id: 'pjq_filter_rows', filter_label: 'Filter Results', include_all_rows: false, poll: 'reload' %>
+<%= render 'layouts/filter_table_poll_results', filter_id: 'pjq_filter_rows', filter_label: 'Filter Results', include_all_rows: false, poller: 'job_queue' %>
 <style>
   .jobqueue_caption {
     color: #000000;
@@ -7,7 +7,7 @@
   }
 </style>
 <table id="table-data" class="prisme-table table-striped table-hover" aria-labelledby="caption">
-  <caption id="jobcaption" class="jobqueue_caption_caption">Job Queue</caption>
+  <caption id="jobcaption" class="jobqueue_caption">Job Queue</caption>
 
   <thead>
   <tr>
@@ -85,28 +85,12 @@
     });
   }
 
-  function reload() {
-    var rowlimit = arguments[0];
-
-    if (rowlimit === undefined) {
-      rowlimit = $('#pjq_filter_rows').find('option:selected').val();
-    }
-
-    $.getJSON(gon.routes.welcome_reload_job_queue_list_path, {row_limit: rowlimit}, function (data) {
-      loadJobQueueTable(data);
-    })
-  }
-
-  function pollParams() {
-      return {row_limit: $('#pjq_filter_rows').find('option:selected').val()};
-  }
-
   $(document).ready(function (e) {
       var job_queue_poller = new Poller(
           'job_queue',
           5000,
           gon.routes.welcome_reload_job_queue_list_path,
-          pollParams,
+          filterRowLimit,
           loadJobQueueTable
       );
       PollMgr.registerPoller(job_queue_poller);
