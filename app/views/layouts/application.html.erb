@@ -26,6 +26,25 @@ Copyright Notice
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
   <%= include_gon %>
+  <script type="text/javascript" charset="utf-8">
+      <% unless session.has_key?('tzOffset') %>
+        (function() {
+            var localTime = new Date();
+            var tz = localTime.getTimezoneOffset() / 60 * (-1);
+            console.log("The timezone being sent is " + tz.toString());
+            $.ajax({
+                async: false,
+                type: "GET",
+                url: gon.routes.utilities_browser_tz_offset_path,
+                data: {tzOffset: tz},
+                dataType: "json",
+                success: function (data) {
+                    console.log("The timezone set was " + JSON.stringify(data));
+                }
+            });
+        })();
+      <% end %>
+  </script>
 </head>
 <body class="<%= controller_name %> <%= action_name %>" data-poll_controller="<%= controller_name %>">
 <a id="skip-nav-link" href="#maincontent">
@@ -51,12 +70,6 @@ Copyright Notice
 
 <script type="text/javascript" charset="utf-8">
     $(document).ready(function () {
-        var localTime = new Date();
-        var tz = localTime.getTimezoneOffset() / 60 * (-1);
-        console.log("The timezone being sent is " + tz.toString());
-        $.get(gon.routes.utilities_browser_tz_offset_path, {tzOffset: tz}, function (data) {
-            console.log("The timezone set was " + JSON.stringify(data));
-        });
         //unregister pollers based on poll_controller data in body tag
         PollMgr.checkCurrentController();
     });

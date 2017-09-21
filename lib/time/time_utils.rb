@@ -21,7 +21,7 @@ class TimeUtils
   def self.offset_to_zone(offset)
     return 'UTC' if offset.nil?
     is_dst = Time.now.dst?
-    offset = offset.to_i
+    offset = offset.to_s.to_i
     ZoneOffset.each_pair do |time_zone, zone_offset|
       return time_zone if ((zone_offset == offset) && ((time_zone.match('D') && is_dst) || (!time_zone.match('D') && !is_dst)))
     end
