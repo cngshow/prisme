@@ -93,6 +93,6 @@
           filterRowLimit,
           loadJobQueueTable
       );
-      PollMgr.registerPoller(job_queue_poller);
+      PollMgr.registerPoller(job_queue_poller, false, false);
   });
 </script>

@@ -1,3 +1,4 @@
+<!--
 <style>
   #tabs-nohdr {
     padding: 0px;
@@ -19,24 +20,25 @@
     border-width: 0px 1px 1px 1px;
   }
 </style>
+-->
 
 <!--tabs-->
 <div id="tabs">
   <ul>
-    <li><a href='#tp-deployments'>Deployments</a></li>
-    <li><a href='#tp-job_queue'>Job Queue</a></li>
+    <li><a href='#tp_deployments' class="tabLink">Deployments</a></li>
+    <li><a href='#tp_job_queue' class="tabLink">Job Queue</a></li>
     <% if policy(:navigation).any_administrator? && 'true'.eql?($PROPS['PRISME.show_log_events']) %>
-        <li><a href='#tp-log_events' class="log-events-link">Log Events</a></li>
+        <li><a href='#tp_log_events' class="log-events-link tabLink">Log Events</a></li>
     <% end %>
   </ul>
-  <div id="tp-deployments">
+  <div id="tp_deployments">
     Loading Tomcat Deployment Information...
   </div>
-  <div id="tp-job_queue">
+  <div id="tp_job_queue">
     <%= render partial: 'job_queue' %>
   </div>
   <% if policy(:navigation).any_administrator? && 'true'.eql?($PROPS['PRISME.show_log_events']) %>
-      <div id="tp-log_events">
+      <div id="tp_log_events">
         <%= react_component('LogEventsModule', props: {title: 'Log Events'}, prerender: false) %>
       </div>
   <% end %>
@@ -47,7 +49,7 @@
     console.log('polling deployments...');
 
     $.get('<%= welcome_reload_deployments_path %>', {}, function (data) {
-      $('#tp-deployments').html(data);
+      $('#tp_deployments').html(data);
     });
   }
 
@@ -110,20 +112,12 @@
       type: 'GET',
       data: {tomcat_service_id: tomcat_service_id, tomcat_action: action, tomcat_app: app, war_uuid: war_uuid},
       success: function (data) {
-        $("#tp-deployments").html(data);
+        $("#tp_deployments").html(data);
       }
     });
   }
 
   $(document).ready(function () {
-      var t = $('#tabs');
-      t.tabs();
-
-      <% if session[:select_tabpage] %>
-        t.tabs("option", "active", <%= session[:select_tabpage] %>);
-        <% session.delete(:select_tabpage) %>
-      <% end %>
-
       $(document).on('hide.bs.modal','#warNameModal', function () {
           registerDeploymentsPolling(true);
       });
@@ -133,5 +127,27 @@
       });
 
       registerDeploymentsPolling(true);
+
+      // set up the tabs
+      var poll_mappings = [{tp: 'tp_deployments', poll: 'deployments'}, {tp: 'tp_job_queue', poll: 'job_queue'}, {tp: 'tp_log_events', poll: LogEventPollData.poll_name}];
+      var t = $('#tabs');
+      t.tabs({
+          activate: function(event, ui) {
+              var t = ui.newPanel.selector.substr(1);
+              $.each(poll_mappings, function( index, value ) {
+                  if (value.tp === t) {
+                      PollMgr.reactivatePoller(value.poll);
+                  } else {
+                      PollMgr.unregisterPoller(value.poll);
+                  }
+              });
+          },
+          active: 0
+      });
+
+      <% if session[:select_tabpage] %>
+      t.tabs("option", "active", <%= session[:select_tabpage] %>);
+      <% session.delete(:select_tabpage) %>
+      <% end %>
   });
 </script>

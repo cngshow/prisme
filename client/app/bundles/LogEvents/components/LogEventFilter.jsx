@@ -71,7 +71,7 @@ export default class LogEventFilter extends React.Component {
 
     componentDidMount() {
         console.log("polling interval is ", LogEventPollData.polling_interval);
-        PollMgr.registerPoller(new FunctionPoller(LogEventPollData.poll_name, LogEventPollData.polling_interval, this.poll), false);
+        PollMgr.registerPoller(new FunctionPoller(LogEventPollData.poll_name, LogEventPollData.polling_interval, this.poll), false, false);
     }
 
 

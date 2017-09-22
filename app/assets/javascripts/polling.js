@@ -87,11 +87,17 @@ function Poller(name, timeout, ajaxPath, params_callback, callback) {
     this.callback = callback;
     this.params_callback = params_callback;
     this.active = false;
-    this.awaiting_poll_resultz = false;
+    this.awaiting_poll_results = false;
+    this.timeoutId = -1;
 }
 
 Poller.prototype.activate = function (bool) {
     this.active = bool;
+
+    if (!bool && this.timeoutId > 0) {
+        console.log("clearing poller timeout " + this.timeoutId.toString());
+        clearTimeout(this.timeoutId);
+    }
 };
 
 Poller.prototype.setCallback = function (newCallback) {
@@ -111,13 +117,14 @@ Poller.prototype.isActive = function () {
 };
 
 Poller.prototype.isAwaitingPollResults = function () {
-    return this.awaiting_poll_resultz;
+    return this.awaiting_poll_results;
 };
 
 Poller.prototype.poll = function () {
+    console.log("in poll for " + this.name);
     var that = this;
     var is_exec_poll_call = false;
-    this.awaiting_poll_resultz = true;
+    this.awaiting_poll_results = true;
 
     if (arguments[0] !== undefined) {
         is_exec_poll_call = arguments[0]['execPoll'];
@@ -129,20 +136,20 @@ Poller.prototype.poll = function () {
 
             $.get(this.ajaxPath, params, function (data) {
                 that.callback.call(that, data);
-                that.awaiting_poll_resultz = false;
+                that.awaiting_poll_results = false;
             });
         }
         catch (e) {
             console.log("exception called in poll.....", e);
-            that.awaiting_poll_resultz = false;
+            that.awaiting_poll_results = false;
         }
         finally {
             if (PollMgr.isPollerActive(that.name) && !is_exec_poll_call) {
-                setTimeout(that.poll.bind(that), that.timeout);
+                this.timeoutId = setTimeout(that.poll.bind(that), that.timeout);
             }
         }
     } else {
-        this.awaiting_poll_resultz = false;
+        this.awaiting_poll_results = false;
     }
 };
 
@@ -152,10 +159,16 @@ function FunctionPoller(name, timeout, callback) {
     this.timeout = timeout;
     this.callback = callback;
     this.active = false;
+    this.timeoutId = -10;
 }
 
 FunctionPoller.prototype.activate = function (bool) {
     this.active = bool;
+
+    if (!bool && this.timeoutId > 0) {
+        console.log("clearing function timeout " + this.timeoutId.toString());
+        clearTimeout(this.timeoutId);
+    }
 };
 
 FunctionPoller.prototype.setCallback = function (newCallback) {
@@ -171,8 +184,10 @@ FunctionPoller.prototype.isActive = function () {
 };
 
 FunctionPoller.prototype.poll = function () {
+    var ret = false;
+
     if (PollMgr.isPollerActive(this.name)) {
-        var ret = true;
+        ret = true;
 
         try{
             ret = this.callback.call(this);
@@ -183,13 +198,14 @@ FunctionPoller.prototype.poll = function () {
         finally{
             if (ret === true) {
                 console.log("trying to call setTimeout....");
-                setTimeout(this.poll.bind(this), this.timeout);
+                this.timeoutId = setTimeout(this.poll.bind(this), this.timeout);
             } else {
                 PollMgr.unregisterPoller(this.name);
             }
         }
-        return ret;
     }
+
+    return ret;
 };
 
 var PollMgr = (function() {
@@ -215,7 +231,8 @@ var PollMgr = (function() {
             var poller = getPoller(name);
 
             if (poller !== undefined) {
-                //pass execPoll argument to the poll call to prevent the setTimeout from executing as this is actively polling but we are immediately calling the method due to user GUI interaction
+                // pass execPoll argument to the poll call to prevent the setTimeout from executing as this is actively polling
+                // but we are immediately calling the method due to user GUI interaction
                 poller.poll({execPoll: true});
             }
         }
@@ -226,6 +243,7 @@ var PollMgr = (function() {
         $.each(registeredPollers, function (idx, p) {
             if (p.name === name) {
                 poller = p;
+                return false;//breaks the loop
             }
         });
         return poller;
@@ -241,10 +259,19 @@ var PollMgr = (function() {
         return ret;
     }
 
-    function registerPoller(poller, initial_poll) {
+    function reactivatePoller(pollName) {
+        var poller = getPoller(pollName);
+
+        if (poller !== undefined && ! poller.isActive()) {
+            PollMgr.registerPoller(poller);
+        }
+    }
+
+    function registerPoller(poller, initial_poll, auto_activate) {
         var pollIt = getPoller(poller.name);
-        var found = pollIt !== undefined;
+        var found = (pollIt !== undefined);
         var call_poll = (initial_poll === undefined ? true : initial_poll === true);
+        var auto_activate = (auto_activate === undefined ? true : auto_activate === true);
 
         if (found) {
             // if this poll is already active so return in order to not have this polling multiple times
@@ -257,10 +284,14 @@ var PollMgr = (function() {
                     pollIt.setParamsCallback(poller.params_callback);
                 }
             } else {
-                pollIt.activate(true);
+                if (auto_activate) {
+                    pollIt.activate(true);
+                }
             }
         } else {
-            poller.activate(true);
+            if (auto_activate) {
+                poller.activate(true);
+            }
             registeredPollers.push(poller);
             pollIt = poller;
         }
@@ -268,7 +299,7 @@ var PollMgr = (function() {
         if (call_poll) {
             pollIt.poll();
         } else {
-            setTimeout(poller.poll.bind(poller), poller.timeout);
+            poller.timeoutId = setTimeout(poller.poll.bind(poller), poller.timeout);
         }
     }
 
@@ -322,5 +353,8 @@ var PollMgr = (function() {
 
         // function to check if a given poller is currently awaiting results
         isPollerAwaitingResults: isPollerAwaitingResults,
+
+        // function to activate a registered poller
+        reactivatePoller: reactivatePoller,
     };
 })();
