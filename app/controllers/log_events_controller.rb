@@ -85,9 +85,9 @@ On token error returns:<br>
   def react_log_events
     num_rows = (params['num_rows'] ||= 15).to_i
     log_level = (params['level'] ||= 0).to_i
-    results_fatal = []
-    results_error = []
-    results_low_level = []
+    # results_fatal = []
+    # results_error = []
+    # results_low_level = []
     w = {}
     w['level'] = log_level if log_level != 0
     w['hostname'] = params['hostname'] unless params['hostname'].eql?('none')
@@ -102,17 +102,17 @@ On token error returns:<br>
     # get 'em
     records = (w.empty? ? LogEvent.all : LogEvent.where(w)).where(ack_where).order(created_at: :desc)
 
-    records.each do |record|
-      if record.level.eql?(PrismeLogEvent::LEVELS[:FATAL]) && record.acknowledged_by.nil?
-        results_fatal << record
-      elsif record.level.eql?(PrismeLogEvent::LEVELS[:ERROR]) && record.acknowledged_by.nil?
-        results_error << record
-      else
-        results_low_level << record
-      end
-    end
-    results = results_fatal + results_error + results_low_level
-    results = results[0...num_rows] unless results.length < num_rows
+    # records.each do |record|
+    #   if record.level.eql?(PrismeLogEvent::LEVELS[:FATAL]) && record.acknowledged_by.nil?
+    #     results_fatal << record
+    #   elsif record.level.eql?(PrismeLogEvent::LEVELS[:ERROR]) && record.acknowledged_by.nil?
+    #     results_error << record
+    #   else
+    #     results_low_level << record
+    #   end
+    # end
+    # results = results_fatal + results_error + results_low_level
+    results = records[0...num_rows] unless records.length < num_rows
     hash = {}
     # translate the log level in the results
     hash[:rows] = results.as_json
