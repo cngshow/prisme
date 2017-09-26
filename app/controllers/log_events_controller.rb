@@ -112,7 +112,7 @@ On token error returns:<br>
     #   end
     # end
     # results = results_fatal + results_error + results_low_level
-    results = records[0...num_rows] unless records.length < num_rows
+    results = records[0...num_rows]
     hash = {}
     # translate the log level in the results
     hash[:rows] = results.as_json
